@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <title>LibreWolf</title>
+    <style>
+	html,body {    
+          height:100%;
+          margin: 0;
+        }
+         #header {
+         height: 100%;
+        }
+         #content {
+         height: 70%;
+         width: 50%;
+         overflow: auto;
+}
+	</style>
+  </head>
+  <body onresize="positionInput()">
+    
+    <div class = "container" id = "content" style = "position:relative;border: 2px solid black;overflow:scroll;overflow-x:hidden;overflow-y:scroll;">
+    <ul id="chatbox">
+        <li>Welcome to LibreWolf, a free and open source mafia game. <b>Please type in a username you'd like to use.<b></li>
+    </ul>
+    </div>
+    <form action="">
+      <input id="msg" autocomplete="off" placeholder="Type Here" style = "" autofocus/><button style = "position:absolute; 	bottom:25%;left:40%;">Submit</button>
+    </form>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script>
+        positionInput();
+	function positionInput(){
+		var div = document.getElementById("content");
+		var input = document.getElementById("msg");
+        	input.style.top = (div.getBoundingClientRect().bottom + 10).toString() + "px";
+	}
+    </script>
+    <script src="client.js"></script>
+    </script>
+  </body>
+</html>
+
+
