@@ -1,42 +1,46 @@
 <!doctype html>
 <html>
   <head>
-    <title>Openwerewolf</title>
+    <title>OpenWerewolf</title>
     <style>
-	html,body {    
-          height:100%;
-          margin: 0;
-        }
-         #header {
+       * { margin: 0; padding: 0; box-sizing: border-box; }
+       html,body {    
+         height:100%;
+         margin: 0;
+         /*background: #23272a;*/
+         background:#212121;
+       }
+       #header {
          height: 100%;
-        }
-         #content {
+       }
+       #content {
          height: 70%;
          width: 50%;
          overflow: auto;
-}
-	</style>
+       }   
+       #chatbox{
+         list-style:none;
+         margin:0;
+         padding:0px 0px;
+         width:100;
+         font-size:18px;
+         font-family:Arial, Helvetica, sans-serif;
+       }
+       li { background: #23272a; padding:5px 5px;color:#cecece}
+       li:nth-child(odd) { background: #303030;}
+  </style>
   </head>
-  <body onresize="positionInput()">
-    
-    <div class = "container" id = "content" style = "position:relative;border: 2px solid black;overflow:scroll;overflow-x:hidden;overflow-y:scroll;">
+  <body>
+    <div class = "container" id = "content" style ="position:relative;border: 2px solid black;margin:auto;width:60%;margin-top:2%;height:70%">
     <ul id="chatbox">
-        <li>Welcome to Openwerewolf, an open source mafia game. <b>Please type in a username you'd like to use.<b></li>
+      <li>Welcome to OpenWerewolf, an open source mafia game. <b>Please type in a username you'd like to use.<b></li>
     </ul>
     </div>
     <form action="">
-      <input id="msg" autocomplete="off" placeholder="Type Here" style = "" autofocus/><button style = "position:absolute; 	bottom:25%;left:40%;">Submit</button>
+      <input id="msg" autocomplete="off" placeholder="Type Here" autofocus style = "position:absolute;left:20%;color:#cecece;width:calc(60% - 70px);outline:none;background-color:#23272a;border-bottom:2px solid black;border-top:none;border-left:2px solid black; border-right:2px solid black;height:30px;padding:0px 5px" autofocus/><button style = "position:absolute;left:calc(80% - 70px);width:70px;height:29px;padding:0px 0px;line-height: 11px;">Submit</button>
     </form>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-        positionInput();
-	function positionInput(){
-		var div = document.getElementById("content");
-		var input = document.getElementById("msg");
-        	input.style.top = (div.getBoundingClientRect().bottom + 10).toString() + "px";
-	}
-    </script>
     <script src="client.js"></script>
     </script>
   </body>
