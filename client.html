@@ -7,7 +7,6 @@
        html,body {    
          height:100%;
          margin: 0;
-         /*background: #23272a;*/
          background:#212121;
        }
        #header {
@@ -26,6 +25,28 @@
          font-size:18px;
          font-family:Arial, Helvetica, sans-serif;
        }
+       #msg{
+	 position:absolute;
+	 left:20%;
+         color:#cecece;
+         width:calc(60% - 70px);
+         outline:none;
+         background-color:#23272a;
+         border-bottom:2px solid black;
+         border-top:none;
+         border-left:2px solid black; 
+         border-right:2px solid black;
+         height:30px;
+         padding:0px 5px
+       }
+       #submit{
+         position:absolute;
+         left:calc(80% - 70px);
+         width:70px;
+         height:29px;
+         padding:0px 0px;
+         line-height: 11px;
+       }
        li { background: #23272a; padding:5px 5px;color:#cecece}
        li:nth-child(odd) { background: #303030;}
   </style>
@@ -33,11 +54,11 @@
   <body>
     <div class = "container" id = "content" style ="position:relative;border: 2px solid black;margin:auto;width:60%;margin-top:2%;height:70%">
     <ul id="chatbox">
-      <li>Welcome to OpenWerewolf, an open source mafia game. <b>Please type in a username you'd like to use.<b></li>
+      <li>Welcome to OpenWerewolf. <b>Please type in a username you'd like to use.<b></li>
     </ul>
     </div>
     <form action="">
-      <input id="msg" autocomplete="off" placeholder="Type Here" autofocus style = "position:absolute;left:20%;color:#cecece;width:calc(60% - 70px);outline:none;background-color:#23272a;border-bottom:2px solid black;border-top:none;border-left:2px solid black; border-right:2px solid black;height:30px;padding:0px 5px" autofocus/><button style = "position:absolute;left:calc(80% - 70px);width:70px;height:29px;padding:0px 0px;line-height: 11px;">Submit</button>
+      <input id="msg" autocomplete="off" placeholder="Type Here" autofocus/><button id = "submit">Submit</button>
     </form>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="/socket.io/socket.io.js"></script>
