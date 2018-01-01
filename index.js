@@ -1,3 +1,4 @@
+"use strict";
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
@@ -8,38 +9,119 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/client.html');
 });
 
-Settings = {
-	playerCount:5
+class Player{
+  constructor(socket){
+    this._socket = socket;
+    this._registered = false;
+    this._username = "randomuser";
+  }
+  get id(){
+    return this._socket.id;
+  }
+  get registered(){
+    return this._registered;
+  }
+  register(){
+    this._registered = true;
+  }
+  setUsername(username){
+    this._username = username;
+  }
+  get username(){
+    return this._username;
+  }
+  //send message to this player and only this player
+  send(msg){
+    this._socket.emit('message',msg);
+  }
 }
 
-var playerCount = 0;
-io.on('connection', function(socket){
-  socket.registered = 0;
-  var letters = /^[A-Za-z]+$/;
-  
-  socket.on('message', function(msg){
-    if(!socket.registered){
-      //get rid of spaces in name
-      msg = msg.replace(/\s/g,'');
-      //validate username 
-      if(!(msg.length < 2) && !(msg.length > 10) && letters.test(msg)){
-        socket.registered = 1;
-        socket.username = msg.trim().toLowerCase();
-	playerCount ++;
-        if(Settings.playerCount - playerCount > 0){
-        	io.emit('message', socket.username + ' has joined the game. Game will begin when '+
-	 	(Settings.playerCount - playerCount).toString() + " more players have joined." , "bold","green"); 	
-	}else{
-		io.emit('message', socket.username + ' has joined the game. The game begins now.' , "bold","green");
-	}
+class Server{
+  constructor(){
+    this._players = [];
+    this._registeredPlayerCount = 0;
+    this._minPlayerCount = 5;
+    this.game = new MessageRoom();
+  };
+  static cleanUpUsername(username){
+    username = username.toLowerCase();
+    username = username.replace(/\s/g,'');
+    return username;
+  }
+  static verifyUsername(username){
+    var letters = /^[A-Za-z]+$/;
+    return(username.length <= 10 && letters.test(username));
+  }
+  //send messages to all players on the server
+  static broadcast(msg){
+    if(msg.trim() != ''){
+      io.emit('message', msg);
+    }
+  }
+  addPlayer(player){
+    this._players.push(player);
+  }
+  get playersNeeded(){
+    return this._minPlayerCount - this._registeredPlayerCount;
+  }
+  register(player,msg){
+    //get rid of spaces in name
+    msg = Server.cleanUpUsername(msg);
+    //validate username 
+    if(Server.verifyUsername(msg)){
+      player.register();
+      player.setUsername(msg);
+      this._registeredPlayerCount ++;
+      if(this.playersNeeded > 0){
+        Server.broadcast(player.username + ' has joined the game. Game will begin when '+
+         this.playersNeeded.toString() + " more players have joined." , "bold","green"); 	
       }else{
-	socket.emit('message', 'Invalid username: must be only letters (no numbers or punctuation) and between 2 and 10 characters.', "bold","black");
+        Server.broadcast(player.username + ' has joined the game. The game begins now.', "bold","green");
       }
     }else{
-      if(msg.trim() != ''){
-    	  io.emit('message', socket.username + ': ' + msg, "black");
+      player.send('Invalid username: must be only letters and less than 10 characters.', "bold","black");
+    }
+  }
+  receive(id,msg){
+    var player = this.getPlayer(id);
+    if(!player.registered){
+      this.register(player,msg);
+    }else{
+      Server.broadcast(player.username + ': ' + msg, "black");
+    }
+  }
+  getPlayer(id){
+    for(var i = 0; i < this._players.length; i++){
+      if(this._players[i].id == id){
+        return this._players[i];
       }
     }
+  }
+}
+
+class MessageRoom{
+  constructor(){
+    this._players = [];
+  }
+  getPlayer(id){
+    for(var i = 0; i < this._players.length; i++){
+      if(this._players[i].id == id){
+        return this._players[i];
+      }
+    }
+  }
+  broadcast(msg){
+
+  }
+  receive(player,msg){
+
+  }
+}
+var server = new Server();
+io.on('connection', function(socket){
+  server.addPlayer(new Player(socket));
+  socket.on('message', function(msg){
+    server.receive(socket.id, msg);
   });
 });
 
