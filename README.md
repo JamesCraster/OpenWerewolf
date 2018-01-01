@@ -33,7 +33,7 @@ All dependencies are open source.
 
 On the server:
 Required node modules are included in the node_modules folder.
-They are Express and Socket.IO.
+They are Express and Socket.IO, and all of their dependencies.
 
 On the clientside:
 JQuery has been included in the jquery.js file in /Client.
