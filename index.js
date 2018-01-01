@@ -1,5 +1,4 @@
- /* The following copyright notice applies to all the files in this repository:
- 
+ /* 
     OpenWerewolf, an online one-night mafia game.
     Copyright (C) 2017 James Vaughan Craster  
 
