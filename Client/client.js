@@ -1,3 +1,4 @@
+//Copyright (C) 2017 James Vaughan Craster. Licensed under AGPL version 3, see index.js for full copyright notice.
 $(function () {
     var socket = io();
     
