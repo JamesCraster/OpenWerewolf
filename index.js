@@ -66,9 +66,23 @@ class Server{
     username = username.replace(/\s/g,'');
     return username;
   }
-  static verifyUsername(username){
+  verifyUsername(player,username){
     var letters = /^[A-Za-z]+$/;
-    return(username.length <= 10 && letters.test(username));
+    for(var i = 0; i < this._players.length; i++){
+      if(this._players[i].username == username){
+        player.send('Invalid username: This username has already been taken', "bold","black");
+        return false;
+      }
+    }
+    if(username.length > 10){
+      player.send('Invalid username: Must be no more than 10 letters long');
+      return false;
+    }
+    if(!letters.test(username)){
+      player.send('Invalid username: Must only contain letters (no numbers or punctuation)');
+      return false;
+    }
+    return true;
   }
   //send messages to all players on the server
   static broadcast(msg){
@@ -86,18 +100,16 @@ class Server{
     //get rid of spaces in name
     msg = Server.cleanUpUsername(msg);
     //validate username 
-    if(Server.verifyUsername(msg)){
+    if(this.verifyUsername(player,msg)){
       player.register();
       player.setUsername(msg);
-      this._registeredPlayerCount ++;
+      this._registeredPlayerCount++;
       if(this.playersNeeded > 0){
         Server.broadcast(player.username + ' has joined the game. Game will begin when '+
          this.playersNeeded.toString() + " more players have joined." , "bold","green"); 	
       }else{
         Server.broadcast(player.username + ' has joined the game. The game begins now.', "bold","green");
       }
-    }else{
-      player.send('Invalid username: must be only letters and less than 10 characters.', "bold","black");
     }
   }
   receive(id,msg){
@@ -115,6 +127,15 @@ class Server{
       }
     }
   }
+  kick(id){
+    var player = this.getPlayer(id);
+    var index = this._players.indexOf(player);
+    if (index !== -1) {
+        this._players.splice(index, 1);
+    }
+    Server.broadcast(player.username + " has disconnected", "bold");
+    this._registeredPlayerCount--;
+  }
 }
 
 class MessageRoom{
@@ -128,18 +149,15 @@ class MessageRoom{
       }
     }
   }
-  broadcast(msg){
-
-  }
-  receive(player,msg){
-
-  }
 }
 var server = new Server();
 io.on('connection', function(socket){
   server.addPlayer(new Player(socket));
   socket.on('message', function(msg){
     server.receive(socket.id, msg);
+  });
+  socket.on('disconnect', function(){
+    server.kick(socket.id);
   });
 });
 
