@@ -126,15 +126,18 @@ class Server{
         return this._players[i];
       }
     }
+    return undefined;
   }
   kick(id){
     var player = this.getPlayer(id);
     var index = this._players.indexOf(player);
     if (index !== -1) {
         this._players.splice(index, 1);
+        Server.broadcast(player.username + " has disconnected", "bold");
+        if(player.registered && this._registeredPlayerCount > 0){
+          this._registeredPlayerCount--;
+        }
     }
-    Server.broadcast(player.username + " has disconnected", "bold");
-    this._registeredPlayerCount--;
   }
 }
 
