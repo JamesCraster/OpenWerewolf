@@ -19,12 +19,8 @@ $(function () {
       return false;
     });
     
-    socket.on('message', function(msg,style,color){
-      if(style == "bold"){
-      	$('#chatbox').append($('<li style="font-weight:bold; color:'+color+'">').text(msg));
-      }else{
-	$('#chatbox').append($('<li style="color:'+color+'">').text(msg));
-      }
+    socket.on('message', function(msg){
+      $('#chatbox').append($('<li>').text(msg));
       $('#content')[0].scrollTop = $('#content')[0].scrollHeight;
     });
 });

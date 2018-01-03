@@ -16,14 +16,14 @@
     <title>OpenWerewolf</title>
     <link rel="stylesheet" type="text/css" href="style.css">
   </head>
-  <body>
+  <body onresize = "$('#content')[0].scrollTop = $('#content')[0].scrollHeight;">
     <div class = "container" id = "content">
       <ul id="chatbox">
         <li>Welcome to OpenWerewolf. <b>Please type in a nickname you'd like to use.</b></li>
       </ul>
     </div>
     <form action="">
-      <input id="msg" autocomplete="off" placeholder="Type Here" autofocus/><button id = "submit">Submit</button>
+      <input id="msg" autocomplete="off" placeholder="Type Here" maxlength="150" autofocus/><button id = "submit">Submit</button>
     </form>
     <script src="/socket.io/socket.io.js"></script>
     <script src="jquery.js"></script>

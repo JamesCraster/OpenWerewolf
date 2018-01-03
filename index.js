@@ -117,7 +117,9 @@ class Server{
     if(!player.registered){
       this.register(player,msg);
     }else{
-      Server.broadcast(player.username + ': ' + msg, "black");
+      if(msg.trim() != ""){
+        Server.broadcast(player.username + ': ' + msg, "black");
+      }
     }
   }
   getPlayer(id){
@@ -133,9 +135,10 @@ class Server{
     var index = this._players.indexOf(player);
     if (index !== -1) {
         this._players.splice(index, 1);
-        Server.broadcast(player.username + " has disconnected", "bold");
         if(player.registered && this._registeredPlayerCount > 0){
           this._registeredPlayerCount--;
+          Server.broadcast(player.username + " has disconnected. Game will begin when " + 
+          this.playersNeeded.toString() + " more players have joined.", "bold");
         }
     }
   }

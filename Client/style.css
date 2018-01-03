@@ -21,14 +21,13 @@
        }
        #content {
          height: 70%;
-         width: 50%;
+         width: 60%;
          overflow: auto;
          position:relative;
          border: 2px solid black;
          margin:auto;
          width:60%;
          margin-top:2%;
-         height:70%
        }   
        #chatbox{
          list-style:none;
@@ -39,8 +38,8 @@
          font-family:Arial, Helvetica, sans-serif;
        }
        #msg{
-	 position:absolute;
-	 left:20%;
+	       position:absolute;
+	       left:20%;
          color:#cecece;
          width:calc(60% - 80px);
          outline:none;
@@ -60,6 +59,6 @@
          padding:0px 0px;
          line-height: 11px;
        }
-       li { background: #23272a; padding:5px 5px;color:#cecece}
-       li:nth-child(odd) { background: #303030;}
+       li { background: #23272a;padding:5px 5px;color:#cecece;word-wrap:break-word;}
+       li:nth-child(odd) { background: #303030;padding:5px 5px;word-wrap:break-word;}
 
