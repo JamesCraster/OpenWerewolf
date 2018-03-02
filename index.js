@@ -16,12 +16,16 @@
     You should have received a copy of the GNU Affero General Public License
     along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 "use strict";
+
+//import statements
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+//serve static content
 app.use(express.static('Client'));
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/client.html');
@@ -30,14 +34,29 @@ app.get('/', function(req, res){
 class Player{
   constructor(socket){
     this._socket = socket;
+    //true if the player has a username
     this._registered = false;
     this._inGame = false;
     this._username = "randomuser";
-    this.data = new Object;
-    this.game;
+    //object that can be used to flexibly add data to player for game purposes
+    this._data = new Object;
+    //index of the game the player is in in the server's 'games' array
+    this._game;
+  }
+  get game(){
+    return this._game;
   }
   get id(){
     return this._socket.id;
+  }
+  get data(){
+    return this._data;
+  }
+  setData(data){
+    this._data = data;
+  }
+  get inGame(){
+    return this._inGame;
   }
   get registered(){
     return this._registered;
@@ -61,46 +80,51 @@ class Server{
   constructor(){
     this._players = [];
     this._registeredPlayerCount = 0;
-    this._minPlayerCount = 5;
-    this.game = new MessageRoom();
     this._games = [];
     this._games.push(new Game());
     this._games.push(new Game());
-    setInterval(this.joinGame.bind(this),500);
+    //call joinGame() every 50 ms to join waiting players to games that need them
+    setInterval(this.joinGame.bind(this),50);
   }
+  //join waiting players to games
   joinGame(){
-    for(var i = 0; i < this._players.length; i++){
-     //if player is waiting to join a game
-     if(this._players[i].registered && !this._players[i]._inGame){
+    //for(var i = 0; i < this._players.length; i++){
+    this._players.forEach((player) => {
+    //if player is registered and waiting to join a game
+     if(player.registered && !player.inGame){
       for(var j = 0; j < this._games.length; j++){
         //if game needs a player
         if(this._games[j].playersNeeded > 0){
-         this._games[j].addPlayer(this._players[i]);
-         this._players[i]._inGame = true;
-         this._players[i].game = j;
-         this._players[i].send("Hi, " + this._players[i].username + "! You have joined Game " + (j+1).toString() + "."); 
+         this._games[j].addPlayer(player);
+         player._inGame = true;
+         player._game = j;
+         player.send("Hi, " + player.username + "! You have joined Game " + (j+1).toString() + "."); 
          break;
         }
       }
       //otherwise (there must be a better way, instead of spamming the chat full!)
-      if(this._players[i]._inGame == false){
-          this._players[i].send("All Games are currently full. Games only last 5 minutes, so there should be one available very soon!");
+      if(player._inGame == false){
+          player.send("All Games are currently full. Games only last 5 minutes, so there should be one available very soon!");
       }
      }
-    }
+    });
   }
   static cleanUpUsername(username){
     username = username.toLowerCase();
     username = username.replace(/\s/g,'');
     return username;
   }
-  verifyUsername(player,username){
+  validateUsername(player,username){
     var letters = /^[A-Za-z]+$/;
     for(var i = 0; i < this._players.length; i++){
       if(this._players[i].username == username){
-        player.send('Invalid username: This username has already been taken', "bold","black");
+        player.send('Invalid username: This username has already been taken by someone', "bold","black");
         return false;
       }
+    }
+    if(username.length == 0){
+      player.send('Invalid username: Cannot be 0 letters long');
+      return false;
     }
     if(username.length > 10){
       player.send('Invalid username: Must be no more than 10 letters long');
@@ -112,7 +136,7 @@ class Server{
     }
     return true;
   }
-  //send messages to all players on the server
+  //send message to all players on the server
   static broadcast(msg){
     if(msg.trim() != ''){
       io.emit('message', msg);
@@ -121,38 +145,28 @@ class Server{
   addPlayer(player){
     this._players.push(player);
   }
-  get playersNeeded(){
-    return this._minPlayerCount - this._registeredPlayerCount;
-  }
   register(player,msg){
-    //get rid of spaces in name
+    //get rid of spaces in name and make lowercase
     msg = Server.cleanUpUsername(msg);
-    //validate username 
-    if(this.verifyUsername(player,msg)){
+
+    if(this.validateUsername(player,msg)){
       player.register();
       player.setUsername(msg);
       this._registeredPlayerCount++;
-      //if(this.playersNeeded > 0){
-       // Server.broadcast(player.username + ' has joined the game. Game will begin when '+
-       //  this.playersNeeded.toString() + " more players have joined." , "bold","green"); 	
-      //}else{
-       // Server.broadcast(player.username + ' has joined the game. The game begins now.', "bold","green");
-     // }
-    //}
     }
   }
   receive(id,msg){
-    //account for undefined case
     var player = this.getPlayer(id);
-    if(!player.registered){
-      this.register(player,msg);
-    }else{
-      if(msg.trim() != ""){
-        this._games[player.game].broadcast(player.username + ': ' + msg, "black");
+    if(player != undefined){
+      if(!player.registered){
+        this.register(player,msg);
+      }else{
+        if(msg.trim() != ""){
+          this._games[player.game].broadcast(player.username + ': ' + msg, "black");
+        }
       }
-      //if(msg.trim() != ""){
-       // Server.broadcast(player.username + ': ' + msg, "black");
-      //}
+    }else{
+      console.log("Player: " + id.toString() + " is not defined");
     }
   }
   getPlayer(id){
@@ -171,8 +185,7 @@ class Server{
         this._players.splice(index, 1);
         if(player.registered && this._registeredPlayerCount > 0){
           this._registeredPlayerCount--;
-          Server.broadcast(player.username + " has disconnected. Game will begin when " + 
-          this.playersNeeded.toString() + " more players have joined.", "bold");
+          Server.broadcast(player.username + " has disconnected. Game will begin when more players have joined.", "bold");
         }
     }
   }
@@ -181,21 +194,26 @@ class Game{
   constructor(){
     this._players = [];
     this._registeredPlayerCount = 0;
-    this._minPlayerCount = 2;
+    this._minPlayerCount = 5;
     this.messageRoom = new MessageRoom();
+    this._inPlay = false;
   }
   get playersNeeded(){
-    return this._minPlayerCount - this._registeredPlayerCount;
+    if(this._inPlay){
+      return 0;
+    }else{
+      return this._minPlayerCount - this._registeredPlayerCount;
+    }
   }
   addPlayer(player){
     this._players.push(player);   
     this._registeredPlayerCount++;
+    this.messageRoom.addPlayer(player);
   }
   broadcast(msg){
-      for(var i = 0; i < this._players.length; i++){
-        this._players[i].send(msg);
-      }
-      
+    for(var i = 0; i < this._players.length; i++){
+      this._players[i].send(msg);
+    }
   }
 }
 class MessageRoomMember{
@@ -213,7 +231,18 @@ class MessageRoomMember{
     get player(){
      return this._player;   
     }
-    
+    mute(){
+      this._muted = true;
+    }
+    unmute(){
+      this._muted = false;
+    }
+    deafen(){
+      this._deafened = true;
+    }
+    undeafen(){
+      this._deafened = false;
+    }
 }
 class MessageRoom{
   constructor(){
@@ -226,48 +255,67 @@ class MessageRoom{
       }
     }
   } 
-  //make this accept only a msg with no sender in addition
   broadcast(sender,msg){
-    if(!sender.muted)
-        for(var i = 0; i < this._members.length; i++){
-          if(!this._members[i].deafened){
-              this._members[i].player.send(msg);
-          }
+    //do not check for muting if sender is the game itself
+    if(sender == "GAME"){
+      for(var i = 0; i < this._members.length; i++){
+        if(!this._members[i].deafened){
+          this._members[i].player.send(msg);
         }
+      }
+    }else if(!sender.muted){
+      for(var i = 0; i < this._members.length; i++){
+        if(!this._members[i].deafened){
+          this._members[i].player.send(msg);
+        }
+      }
+    }
   }
-  addPlayer(){
-      
+  addPlayer(player){
+    this._members.push(new MessageRoomMember(player));
   }
   mute(id){
-      member = this.getMemberById(id);
+    member = this.getMemberById(id);
+    member.mute();
   }
   deafen(id){
-      member = this.getMemberById(id);
+    member = this.getMemberById(id);
+    member.deafen();
   }
   unmute(id){
-      member = this.getMemberById(id);
+    member = this.getMemberById(id);
+    member.unmute();
   }
   undeafen(id){
-      member = this.getMemberById(id);
+    member = this.getMemberById(id);
+    member.undeafen();
   }
   muteAll(){
-      
+    this._members.forEach((member)=>{
+      member.mute();
+    });
   }
   deafenAll(){
-      
+    this._members.forEach((member)=>{
+      member.deafen();
+    });
   }
   unmuteAll(){
-      
+    this._members.forEach((member)=>{
+      member.unmute();
+    });
   }
-  deafenAll(){
-      
+  undeafenAll(){
+    this._members.forEach((member)=>{
+      member.undeafen();
+    });
   }
-  
 }
+
 
 var server = new Server();
 
-
+//handle requests
 io.on('connection', function(socket){
   server.addPlayer(new Player(socket));
   socket.on('message', function(msg){
@@ -278,6 +326,7 @@ io.on('connection', function(socket){
   });
 });
 
+//listen on port
 var port = process.env.PORT || 8080;
 http.listen(port, function(){
   console.log('Port is:' + port);

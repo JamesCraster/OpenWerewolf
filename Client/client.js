@@ -13,6 +13,9 @@ $(function () {
     var socket = io();
     
     $('form').submit(function(){
+      if($('#msg').val() == ""){
+        return false;
+      }
       socket.emit('message', $('#msg').val());
       $('#msg').val('');
       $('#msg')[0].placeholder = "";
