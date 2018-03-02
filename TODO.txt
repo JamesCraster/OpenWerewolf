@@ -1,0 +1,3 @@
+Make 'Type here' field only 10 characters long at the beginning before registration. Change placeholder as well for this.
+Make 'Type here' placeholder appear when field empty. DONE
+Fix kicking player from game.

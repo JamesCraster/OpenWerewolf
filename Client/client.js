@@ -18,7 +18,7 @@ $(function () {
       }
       socket.emit('message', $('#msg').val());
       $('#msg').val('');
-      $('#msg')[0].placeholder = "";
+      //$('#msg')[0].placeholder = "";
       return false;
     });
     
