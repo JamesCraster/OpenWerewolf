@@ -70,6 +70,10 @@ class Player{
   get username(){
     return this._username;
   }
+  //send an event to the player
+  emit(event){
+    this._socket.emit(event);
+  }
   //send message to this player and only this player
   send(msg){
     this._socket.emit('message',msg);

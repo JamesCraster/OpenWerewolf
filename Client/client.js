@@ -24,6 +24,9 @@ $(function () {
     
     socket.on('message', function(msg){
       $('#chatbox').append($('<li>').text(msg));
-      $('#content')[0].scrollTop = $('#content')[0].scrollHeight;
+      $('#inner')[0].scrollTop = $('#inner')[0].scrollHeight;
     });
+
+    socket.on('registered',function(){
+    })
 });
