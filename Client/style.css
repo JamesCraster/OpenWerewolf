@@ -16,9 +16,11 @@ html,body {
   margin: 0;
   background:#212121;
 }
+
 #header {
   height: 100%;
 }
+
 #inner {
   height: 70%;
   width: 60%;
@@ -27,6 +29,7 @@ html,body {
   border: 2px solid black;
   box-sizing:border-box;
 }
+
 #outer {
   height:100%;
   width:100%;
@@ -35,7 +38,8 @@ html,body {
   align-items:center;
   align-content: stretch;
   flex-direction: column;
-}   
+}  
+
 #chatbox{
   list-style:none;
   margin:0;
@@ -43,14 +47,15 @@ html,body {
   font-size:18px;
   font-family:Arial, Helvetica, sans-serif;
 }
+
 form{
   width:60%;
-  margin:0;
-  padding:0;
+  display:inline-block;
 }
+
 #msg{
   color:#cecece;
-  width:100%;
+  width:calc(100% - 95px);
   outline:none;
   background-color:#23272a;
   border-bottom:2px solid black;
@@ -59,14 +64,19 @@ form{
   border-right:2px solid black;
   height:40px;
   padding:0px 5px;
-  box-sizing:border-box;
+  /*box-sizing:border-box;*/
+  float: left;
 }
+
 #submit{
   width:80px;
-  height:39px;
+  height:41px;
   padding:0px 0px;
-  line-height: 11px;
+  line-height: 0px;
+  border-radius:0px;
+  
 }
+
 li { background: #23272a;padding:5px 5px;color:#cecece;word-wrap:break-word;}
 li:nth-child(odd) { background: #303030;padding:5px 5px;word-wrap:break-word;}
 
