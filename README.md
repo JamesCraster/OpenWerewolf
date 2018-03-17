@@ -5,7 +5,7 @@ Currently in the earliest stage of development, but feel free to play around wit
 
 ## Documentation
 
-Check out the (full documentation)[https://jamescraster.github.io/OpenWerewolf/]
+Check out the [full documentation](https://jamescraster.github.io/OpenWerewolf/)
 The list of files is on the right.
 
 ## Running on a GNU/Linux server
