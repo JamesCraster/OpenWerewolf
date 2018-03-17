@@ -3,9 +3,8 @@
 
 Currently in the earliest stage of development, but feel free to play around with it.
 
-## Documentation
-
-Check out the [full documentation.](https://jamescraster.github.io/OpenWerewolf/)  
+## [Documentation](https://jamescraster.github.io/OpenWerewolf/) 
+ 
 The list of files is to the right.
 
 ## Running on a GNU/Linux server
