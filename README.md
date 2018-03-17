@@ -25,8 +25,8 @@ Ensure port 8080 is open:
 $ sudo ufw allow 8080/tcp
 ```
 If playing on the same private network as all other players,
-other players will connect by entering your ip address into their web browser, followed by :8080,
-(Eg 172.16.0.0:8080)
+other players will connect by entering your ip address into their web browser, followed by :8080
+(Eg 172.16.0.0:8080),
 ```
 $ hostname -I
 ```
