@@ -3,7 +3,7 @@
 
 Currently in the earliest stage of development, but feel free to play around with it.
 
-<h2>Running on a GNU/Linux server</h2>
+# Running on a GNU/Linux server
 
 First clone or manually download OpenWerewolf:
 ```
