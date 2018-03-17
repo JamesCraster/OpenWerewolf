@@ -229,12 +229,13 @@ class Game{
   }
 }
 class MessageRoomMember{
+  public _player:Player;
+  public _muted:boolean = false;
+  public _deafened:boolean = false;
     constructor(player:Player){
         this._player = player;
-        this._muted = false;
-        this._deafened = false;
     };
-    get muted(){
+    get muted():boolean{
      return this._muted;   
     }
     get deafened(){
@@ -243,7 +244,7 @@ class MessageRoomMember{
     get player(){
      return this._player;   
     }
-    mute(){
+    public mute(){
       this._muted = true;
     }
     unmute(){
@@ -257,17 +258,17 @@ class MessageRoomMember{
     }
 }
 class MessageRoom{
+  public _members:Array<MessageRoomMember> = [];
   constructor(){
-    this._members = [];
   }
-  getMemberById(id){
+  getMemberById(id:string):MessageRoomMember{
     for(var i = 0; i < this._members.length; i++){
       if(this._members[i].id == id){
         return this._members[i];
       }
     }
   } 
-  broadcast(sender,msg){
+  broadcast(sender:MessageRoomMember,msg:string){
     //do not check for muting if sender is the game itself
     if(sender == "GAME"){
       for(var i = 0; i < this._members.length; i++){
@@ -283,23 +284,23 @@ class MessageRoom{
       }
     }
   }
-  addPlayer(player){
+  addPlayer(player:Player){
     this._members.push(new MessageRoomMember(player));
   }
-  mute(id){
-    member = this.getMemberById(id);
+  mute(id:string){
+    let member = this.getMemberById(id);
     member.mute();
   }
-  deafen(id){
-    member = this.getMemberById(id);
+  deafen(id:string){
+    let member = this.getMemberById(id);
     member.deafen();
   }
-  unmute(id){
-    member = this.getMemberById(id);
+  unmute(id:string){
+    let member = this.getMemberById(id);
     member.unmute();
   }
-  undeafen(id){
-    member = this.getMemberById(id);
+  undeafen(id:string){
+    let member = this.getMemberById(id);
     member.undeafen();
   }
   muteAll(){
@@ -328,9 +329,9 @@ class MessageRoom{
 var server = new Server();
 
 //handle requests
-io.on('connection', function(socket){
+io.on('connection', function(socket:any){
   server.addPlayer(new Player(socket));
-  socket.on('message', function(msg){
+  socket.on('message', function(msg:string){
     server.receive(socket.id, msg);
   });
   socket.on('disconnect', function(){
