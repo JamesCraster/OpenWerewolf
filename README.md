@@ -3,6 +3,11 @@
 
 Currently in the earliest stage of development, but feel free to play around with it.
 
+## Documentation
+
+Check out the (full documentation)[https://jamescraster.github.io/OpenWerewolf/]
+The list of files is on the right.
+
 ## Running on a GNU/Linux server
 
 First clone or manually download OpenWerewolf:
