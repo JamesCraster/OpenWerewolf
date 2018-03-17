@@ -31,7 +31,7 @@ $ hostname -I
 ```
 will give you the ip address that you need.
 
-##Dependencies(already included in the OpenWerewolves repository):
+## Dependencies(already included in the OpenWerewolves repository):
 All dependencies are open source.
 
 On the server:
