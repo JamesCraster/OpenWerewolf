@@ -1,11 +1,11 @@
 # OpenWerewolf
-> An online multiplayer mafia game. 
+> An online multiplayer mafia game.  
 
 Currently in the earliest stage of development, but feel free to play around with it.
 
 ## [Documentation](https://jamescraster.github.io/OpenWerewolf/) 
  
-The list of files is to the right.
+Files are listed to the right.
 
 ## Running on a GNU/Linux server
 
