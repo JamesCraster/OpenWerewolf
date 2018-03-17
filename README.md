@@ -1,5 +1,5 @@
 # OpenWerewolf
-> An online multiplayer, one-night mafia game. 
+> An online multiplayer mafia game. 
 
 Currently in the earliest stage of development, but feel free to play around with it.
 
