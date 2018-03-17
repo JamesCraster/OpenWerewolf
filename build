@@ -1,0 +1,13 @@
+#!/bin/bash
+# Build script, call before each commit
+
+#compile typescript
+tsc
+
+#generate documentation
+typedoc --out docs ../OpenWerewolf --target es6 --theme default
+
+#add .nojekyll to docs folder so that github pages accepts urls with underscores
+touch docs/.nojekyll
+
+
