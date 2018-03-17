@@ -62,6 +62,12 @@ class Player{
   get inGame(){
     return this._inGame;
   }
+  set game(game:number){
+    this._game = game;
+  }
+  set inGame(isInGame:boolean){
+    this._inGame = isInGame;
+  }
   get registered(){
     return this._registered;
   }
@@ -106,14 +112,14 @@ class Server{
         //if game needs a player
         if(this._games[j].playersNeeded > 0){
          this._games[j].addPlayer(player);
-         player._inGame = true;
-         player._game = j;
+         player.inGame = true;
+         player.game = j;
          player.send("Hi, " + player.username + "! You have joined Game " + (j+1).toString() + "."); 
          break;
         }
       }
       //otherwise (there must be a better way, instead of spamming the chat full!)
-      if(player._inGame == false){
+      if(player.inGame == false){
           player.send("All Games are currently full. Games only last 5 minutes, so there should be one available very soon!");
       }
      }
@@ -185,8 +191,7 @@ class Server{
         return this._players[i];
       }
     }
-    //fix this, return a meaningful error
-    return new Player("");
+    throw new Error('No player found with given id');
   }
   public kick(id:string):void{
     var player = this.getPlayer(id);
@@ -256,6 +261,9 @@ class MessageRoomMember{
     undeafen(){
       this._deafened = false;
     }
+    get id(){
+      return this._player.id;
+    }
 }
 class MessageRoom{
   public _members:Array<MessageRoomMember> = [];
@@ -267,10 +275,11 @@ class MessageRoom{
         return this._members[i];
       }
     }
+    throw new Error('No message room member found with given id');
   } 
-  broadcast(sender:MessageRoomMember,msg:string){
+  broadcast(sender:MessageRoomMember,msg:string,game = true){
     //do not check for muting if sender is the game itself
-    if(sender == "GAME"){
+    if(game){
       for(var i = 0; i < this._members.length; i++){
         if(!this._members[i].deafened){
           this._members[i].player.send(msg);
