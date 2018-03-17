@@ -16,6 +16,7 @@ $ sudo apt-get install nodejs
 Then run:
 ```
 $ cd OpenWerewolf
+$ tsc
 $ node index.js
 Port is:8080
 ```
