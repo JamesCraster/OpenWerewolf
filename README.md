@@ -1,7 +1,9 @@
 # OpenWerewolf
-An open source one-night mafia game. Currently in the earliest stage of development, but feel free to play around with it.
+> An online multiplayer mafia game. 
 
-<h2>Running on a GNU/Linux server</h2>
+Currently in the earliest stage of development, but feel free to play around with it.
+
+## Running on a GNU/Linux server
 
 First clone or manually download OpenWerewolf:
 ```
@@ -21,14 +23,15 @@ Ensure port 8080 is open:
 ```
 $ sudo ufw allow 8080/tcp
 ```
-Other players will connect by entering your ip address into their web browser.
 If playing on the same private network as all other players,
+other players will connect by entering your ip address into their web browser, followed by :8080,
+(Eg 172.16.0.0:8080)
 ```
 $ hostname -I
 ```
-will give you the address that you need.
+will give you the ip address that you need.
 
-<h2>Dependencies(already included in the OpenWerewolves repository):</h2>
+## Dependencies(already included in the OpenWerewolves repository):
 All dependencies are open source.
 
 On the server:
