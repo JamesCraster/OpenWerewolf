@@ -1,0 +1,3 @@
+# Ignore javascript builds
+*.js
+
