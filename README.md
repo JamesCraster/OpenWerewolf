@@ -3,7 +3,7 @@
 
 Currently in the earliest stage of development, but feel free to play around with it.
 
-# Running on a GNU/Linux server
+## Running on a GNU/Linux server
 
 First clone or manually download OpenWerewolf:
 ```
@@ -31,7 +31,7 @@ $ hostname -I
 ```
 will give you the ip address that you need.
 
-<h2>Dependencies(already included in the OpenWerewolves repository):</h2>
+##Dependencies(already included in the OpenWerewolves repository):
 All dependencies are open source.
 
 On the server:
