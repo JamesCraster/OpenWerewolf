@@ -27,21 +27,25 @@ var io = require('socket.io')(http);
 
 //serve static content
 app.use(express.static('Client'));
-app.get('/', function(req, res){
+app.get('/', function(req:any, res:any){
   res.sendFile(__dirname + '/client.html');
 });
 
 class Player{
-  constructor(socket){
+  //true if the player has a username
+  private _registered: boolean = false;
+  private _socket: any;
+  private _inGame: boolean = false;
+  private _username: string = "randomuser";
+  //object that can be used to flexibly add data to player for game purposes
+  private _data: Object = new Object;
+  //index of the game the player is in in the server's 'games' array
+  private _game: number = -1;
+
+
+  public constructor(socket:any){
     this._socket = socket;
-    //true if the player has a username
-    this._registered = false;
-    this._inGame = false;
     this._username = "randomuser";
-    //object that can be used to flexibly add data to player for game purposes
-    this._data = new Object;
-    //index of the game the player is in in the server's 'games' array
-    this._game;
   }
   get game(){
     return this._game;
@@ -52,7 +56,7 @@ class Player{
   get data(){
     return this._data;
   }
-  setData(data){
+  public setData(data:Object){
     this._data = data;
   }
   get inGame(){
@@ -61,28 +65,30 @@ class Player{
   get registered(){
     return this._registered;
   }
-  register(){
+  public register(){
     this._registered = true;
   }
-  setUsername(username){
+  public setUsername(username:string){
     this._username = username;
   }
   get username(){
     return this._username;
   }
   //send an event to the player
-  emit(event){
+  public emit(event:string){
     this._socket.emit(event);
   }
   //send message to this player and only this player
-  send(msg){
+  public send(msg:string){
     this._socket.emit('message',msg);
   }
 }
 
 class Server{
-  constructor(){
-    this._players = [];
+  private _players:Array<Player> = [];
+  private _games:Array<Game> = [];
+  private _registeredPlayerCount:number = 0;
+  public constructor(){
     this._registeredPlayerCount = 0;
     this._games = [];
     this._games.push(new Game());
@@ -113,16 +119,16 @@ class Server{
      }
     });
   }
-  static cleanUpUsername(username){
+  static cleanUpUsername(username:string){
     username = username.toLowerCase();
     username = username.replace(/\s/g,'');
     return username;
   }
-  validateUsername(player,username){
+  validateUsername(player:Player,username:string){
     var letters = /^[A-Za-z]+$/;
     for(var i = 0; i < this._players.length; i++){
       if(this._players[i].username == username){
-        player.send('Invalid username: This username has already been taken by someone', "bold","black");
+        player.send('Invalid username: This username has already been taken by someone');
         return false;
       }
     }
@@ -141,15 +147,15 @@ class Server{
     return true;
   }
   //send message to all players on the server
-  static broadcast(msg){
+  static broadcast(msg:string){
     if(msg.trim() != ''){
       io.emit('message', msg);
     }
   }
-  addPlayer(player){
+  addPlayer(player:Player){
     this._players.push(player);
   }
-  register(player,msg){
+  register(player:Player,msg:string){
     //get rid of spaces in name and make lowercase
     msg = Server.cleanUpUsername(msg);
 
@@ -159,29 +165,30 @@ class Server{
       this._registeredPlayerCount++;
     }
   }
-  receive(id,msg){
-    var player = this.getPlayer(id);
+  receive(id:string,msg:string){
+    let player = this.getPlayer(id);
     if(player != undefined){
       if(!player.registered){
         this.register(player,msg);
       }else{
         if(msg.trim() != ""){
-          this._games[player.game].broadcast(player.username + ': ' + msg, "black");
+          this._games[player.game].broadcast(player.username + ': ' + msg);
         }
       }
     }else{
       console.log("Player: " + id.toString() + " is not defined");
     }
   }
-  getPlayer(id){
+  public getPlayer(id:string):Player{
     for(var i = 0; i < this._players.length; i++){
       if(this._players[i].id == id){
         return this._players[i];
       }
     }
-    return undefined;
+    //fix this, return a meaningful error
+    return new Player("");
   }
-  kick(id){
+  public kick(id:string):void{
     var player = this.getPlayer(id);
     var index = this._players.indexOf(player);
     //should be index != undefined
@@ -189,19 +196,20 @@ class Server{
         this._players.splice(index, 1);
         if(player.registered && this._registeredPlayerCount > 0){
           this._registeredPlayerCount--;
-          Server.broadcast(player.username + " has disconnected. Game will begin when more players have joined.", "bold");
+          Server.broadcast(player.username + " has disconnected. Game will begin when more players have joined.");
         }
     }
   }
 }
 class Game{
-  constructor(){
-    this._players = [];
-    this._registeredPlayerCount = 0;
-    this._minPlayerCount = 5;
-    this.messageRoom = new MessageRoom();
-    this._inPlay = false;
-  }
+  
+  private _players:Array<Player> = [];
+  private _registeredPlayerCount:number = 0;
+  private _minPlayerCount:number = 5;
+  private messageRoom:MessageRoom = new MessageRoom(); 
+  private _inPlay:boolean = false;
+
+  public constructor(){}
   get playersNeeded(){
     if(this._inPlay){
       return 0;
@@ -209,19 +217,19 @@ class Game{
       return this._minPlayerCount - this._registeredPlayerCount;
     }
   }
-  addPlayer(player){
+  addPlayer(player:Player){
     this._players.push(player);   
     this._registeredPlayerCount++;
     this.messageRoom.addPlayer(player);
   }
-  broadcast(msg){
+  broadcast(msg:string){
     for(var i = 0; i < this._players.length; i++){
       this._players[i].send(msg);
     }
   }
 }
 class MessageRoomMember{
-    constructor(player){
+    constructor(player:Player){
         this._player = player;
         this._muted = false;
         this._deafened = false;
