@@ -12,30 +12,33 @@
 
 
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>OpenWerewolf</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-  </head>
-  <!-- Move scrollbar to bottom on window resize --> 
-  <body onresize = "$('#inner')[0].scrollTop = $('#inner')[0].scrollHeight;">
-    <!-- Message box -->
-    <div id="outer">
-      <div id = "inner">
-        <ul id="chatbox">
-          <li>Welcome to OpenWerewolf. <b>Please type in a nickname you'd like to use.</b></li>
-        </ul>
-      </div>
-      <!-- Form for entering messages  -->
-      <form>
-        <input id="msg" autocomplete="off" placeholder="Type Here" maxlength="150" autofocus>
-        <input id = "submit" type="submit" value="Submit">
-      </form>
+
+<head>
+  <meta charset="UTF-8">
+  <title>OpenWerewolf</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<!-- Move scrollbar to bottom on window resize -->
+
+<body onresize="$('#inner')[0].scrollTop = $('#inner')[0].scrollHeight;">
+  <!-- Message box -->
+  <div id="outer">
+    <div id="inner">
+      <ul id="chatbox">
+        <li>Welcome to OpenWerewolf.
+          <b>Please type in a nickname you'd like to use.</b>
+        </li>
+      </ul>
     </div>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="jquery.js"></script>
-    <script src="client.js"></script>
-  </body>
+    <!-- Form for entering messages  -->
+    <form>
+      <input id="msg" autocomplete="off" placeholder="Type Here" maxlength="150" autofocus>
+      <input id="submit" type="submit" value="Submit">
+    </form>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="jquery.js"></script>
+  <script src="client.js"></script>
+</body>
+
 </html>
-
-
