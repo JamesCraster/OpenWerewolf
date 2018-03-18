@@ -41,8 +41,6 @@ class Player{
   private _data: Object = new Object;
   //index of the game the player is in in the server's 'games' array
   private _game: number = -1;
-
-
   public constructor(socket:any){
     this._socket = socket;
     this._username = "randomuser";

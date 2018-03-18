@@ -19,7 +19,7 @@
   <!-- Move scrollbar to bottom on window resize --> 
   <body onresize = "$('#inner')[0].scrollTop = $('#inner')[0].scrollHeight;">
     <!-- Message box -->
-    <div id='outer'>
+    <div id="outer">
       <div id = "inner">
         <ul id="chatbox">
           <li>Welcome to OpenWerewolf. <b>Please type in a nickname you'd like to use.</b></li>
@@ -28,7 +28,7 @@
       <!-- Form for entering messages  -->
       <form>
         <input id="msg" autocomplete="off" placeholder="Type Here" maxlength="150" autofocus>
-        <input id = "submit" type='submit' value='Submit'>
+        <input id = "submit" type="submit" value="Submit">
       </form>
     </div>
     <script src="/socket.io/socket.io.js"></script>

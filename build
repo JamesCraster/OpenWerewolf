@@ -11,3 +11,5 @@ typedoc --out docs ../OpenWerewolf --target es6 --theme default
 touch docs/.nojekyll
 
 
+
+
