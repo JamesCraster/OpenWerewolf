@@ -13,6 +13,8 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
+  /* IBM Plex Sans from google fonts */
+  font-family: 'IBM Plex Sans', sans-serif;
 }
 
 html,
@@ -74,11 +76,22 @@ form {
 }
 
 #submit {
-  width: 80px;
-  height: 41px;
+  width: 81px;
+  height: 42px;
   padding: 0px 0px;
   line-height: 0px;
   border-radius: 0px;
+  border:0px;
+  background-color:#0c0c0c;
+  color:#cecece;
+}
+
+#submit:focus{
+  outline: none;
+}
+
+#submit::-moz-focus-inner{
+  border: none;
 }
 
 li {
