@@ -18,7 +18,7 @@
 */
 
 "use strict";
-
+import {Socket} from "./node_modules/@types/socket.io"
 //import statements
 var express = require("express");
 var app = express();
@@ -34,14 +34,14 @@ app.get("/", function(req: any, res: any) {
 class Player {
   //true if the player has a username
   private _registered: boolean = false;
-  private _socket: any;
+  private _socket: Socket;
   private _inGame: boolean = false;
   private _username: string = "randomuser";
   //object that can be used to flexibly add data to player for game purposes
   private _data: Object = new Object();
   //index of the game the player is in in the server's 'games' array
   private _game: number = -1;
-  public constructor(socket: any) {
+  public constructor(socket: Socket) {
     this._socket = socket;
     this._username = "randomuser";
   }
@@ -86,6 +86,9 @@ class Player {
   public send(msg: string) {
     this._socket.emit("message", msg);
   }
+  get socket(){
+    return this._socket;
+  }
 }
 
 class Server {
@@ -101,7 +104,7 @@ class Server {
     setInterval(this.joinGame.bind(this), 50);
   }
   //join waiting players to games
-  joinGame() {
+  private joinGame() {
     //for(var i = 0; i < this._players.length; i++){
     this._players.forEach(player => {
       //if player is registered and waiting to join a game
@@ -131,12 +134,12 @@ class Server {
       }
     });
   }
-  static cleanUpUsername(username: string) {
+  private static cleanUpUsername(username: string) {
     username = username.toLowerCase();
     username = username.replace(/\s/g, "");
     return username;
   }
-  validateUsername(player: Player, username: string) {
+  private validateUsername(player: Player, username: string) {
     var letters = /^[A-Za-z]+$/;
     for (var i = 0; i < this._players.length; i++) {
       if (this._players[i].username == username) {
@@ -163,15 +166,15 @@ class Server {
     return true;
   }
   //send message to all players on the server
-  static broadcast(msg: string) {
+  private static broadcast(msg: string) {
     if (msg.trim() != "") {
       io.emit("message", msg);
     }
   }
-  addPlayer(player: Player) {
+  public addPlayer(player: Player) {
     this._players.push(player);
   }
-  register(player: Player, msg: string) {
+  private register(player: Player, msg: string) {
     //get rid of spaces in name and make lowercase
     msg = Server.cleanUpUsername(msg);
 
@@ -181,41 +184,57 @@ class Server {
       this._registeredPlayerCount++;
     }
   }
-  receive(id: string, msg: string) {
+  public receive(id: string, msg: string) {
     let player = this.getPlayer(id);
     if (player != undefined) {
       if (!player.registered) {
         this.register(player, msg);
       } else {
         if (msg.trim() != "") {
-          this._games[player.game].broadcast(player.username + ": " + msg);
+          this._games[player.game].receive(id, msg);
         }
       }
     } else {
       console.log("Player: " + id.toString() + " is not defined");
     }
   }
-  public getPlayer(id: string): Player {
+  public isPlayer(id: string): boolean {
+    for (var i = 0; i < this._players.length; i++) {
+      if (this._players[i].id == id) {
+        return true;
+      }
+    }
+    return false;
+  }
+  public getPlayer(id: string): Player | undefined {
     for (var i = 0; i < this._players.length; i++) {
       if (this._players[i].id == id) {
         return this._players[i];
       }
     }
-    throw new Error("No player found with given id");
+    console.log("Error: Server.getPlayer: No player found with given id");
+    return undefined;
   }
   public kick(id: string): void {
     var player = this.getPlayer(id);
-    var index = this._players.indexOf(player);
-    //should be index != undefined
-    if (index !== -1) {
-      this._players.splice(index, 1);
-      if (player.registered && this._registeredPlayerCount > 0) {
-        this._registeredPlayerCount--;
-        Server.broadcast(
-          player.username +
-            " has disconnected. Game will begin when more players have joined."
-        );
+    if (player instanceof Player) {
+      var index = this._players.indexOf(player);
+      if (index !== -1) {
+        this._players.splice(index, 1);
+        if (player.registered && this._registeredPlayerCount > 0) {
+          this._registeredPlayerCount--;
+          Server.broadcast(
+            player.username +
+              " has disconnected. Game will begin when more players have joined."
+          );
+        }
       }
+    } else {
+      console.log(
+        "Error: Server.kick: tried to kick player " +
+          "id" +
+          " but that player does not exist"
+      );
     }
   }
 }
@@ -234,94 +253,136 @@ class Game {
       return this._minPlayerCount - this._registeredPlayerCount;
     }
   }
-  addPlayer(player: Player) {
+  public addPlayer(player: Player) {
     this._players.push(player);
     this._registeredPlayerCount++;
     this.messageRoom.addPlayer(player);
   }
-  broadcast(msg: string) {
+  public broadcast(msg: string) {
     for (var i = 0; i < this._players.length; i++) {
       this._players[i].send(msg);
     }
   }
+  public receive(id: string, msg: string) {
+    //this.broadcast(msg);
+    this.messageRoom.broadcast(id, msg);
+  }
 }
-class MessageRoomMember {
-  public _player: Player;
+class MessageRoomMember extends Player {
   public _muted: boolean = false;
   public _deafened: boolean = false;
-  constructor(player: Player) {
-    this._player = player;
+  constructor(socket: Socket) {
+    super(socket);
   }
-  get muted(): boolean {
+  public get muted(): boolean {
     return this._muted;
   }
-  get deafened() {
+  public get deafened() {
     return this._deafened;
-  }
-  get player() {
-    return this._player;
   }
   public mute() {
     this._muted = true;
   }
-  unmute() {
+  public unmute() {
     this._muted = false;
   }
-  deafen() {
+  public deafen() {
     this._deafened = true;
   }
-  undeafen() {
+  public undeafen() {
     this._deafened = false;
-  }
-  get id() {
-    return this._player.id;
   }
 }
 class MessageRoom {
   public _members: Array<MessageRoomMember> = [];
   constructor() {}
-  getMemberById(id: string): MessageRoomMember {
+  getMemberById(id: string): MessageRoomMember | undefined {
+    console.log(typeof id);
     for (var i = 0; i < this._members.length; i++) {
+      console.log("loop runs");
       if (this._members[i].id == id) {
+        console.log("returns");
+        console.log(typeof this._members[i]);
+        console.log(this._members[i] instanceof MessageRoomMember);
+        console.log("***");
         return this._members[i];
       }
     }
-    throw new Error("No message room member found with given id");
+    console.log(
+      "Error: MessageRoom.getMemberById: No message room member found with given id"
+    );
+    return undefined;
   }
-  broadcast(sender: MessageRoomMember, msg: string, game = true) {
-    //do not check for muting if sender is the game itself
-    if (game) {
-      for (var i = 0; i < this._members.length; i++) {
-        if (!this._members[i].deafened) {
-          this._members[i].player.send(msg);
+  public broadcast(sender: MessageRoomMember | string,msg: string,game = false) {
+    //if message room member passed in
+    if (sender instanceof MessageRoomMember) {
+      //do not check for muting if sender is the game itself
+      if (game) {
+        for (var i = 0; i < this._members.length; i++) {
+          if (!this._members[i].deafened) {
+            this._members[i].send(msg);
+          }
+        }
+      } else if (!sender.muted) {
+        for (var i = 0; i < this._members.length; i++) {
+          if (!this._members[i].deafened) {
+            this._members[i].send(msg);
+          }
         }
       }
-    } else if (!sender.muted) {
-      for (var i = 0; i < this._members.length; i++) {
-        if (!this._members[i].deafened) {
-          this._members[i].player.send(msg);
+    } else {
+      //if id passed in, find the sender within the message room
+      let messageRoomSender = this.getMemberById(sender);
+      console.log(messageRoomSender instanceof MessageRoomMember);
+      console.log(this._members.length);
+      console.log(this._members[0].id);
+      console.log(sender);
+      console.log(this._members[0].id == sender);
+      if (messageRoomSender instanceof MessageRoomMember) {
+        console.log(messageRoomSender.muted);
+        //do not check for muting if sender is the game itself
+        if (game) {
+          for (var i = 0; i < this._members.length; i++) {
+            if (!this._members[i].deafened) {
+              this._members[i].send(msg);
+            }
+          }
+        } else if (!messageRoomSender.muted) {
+          for (var i = 0; i < this._members.length; i++) {
+            if (!this._members[i].deafened) {
+              this._members[i].send(msg);
+            }
+          }
         }
       }
     }
   }
   addPlayer(player: Player) {
-    this._members.push(new MessageRoomMember(player));
+    this._members.push(new MessageRoomMember(player.socket));
   }
   mute(id: string) {
     let member = this.getMemberById(id);
-    member.mute();
+    if (member instanceof MessageRoomMember) {
+      member.mute();
+    }
   }
   deafen(id: string) {
     let member = this.getMemberById(id);
-    member.deafen();
+    if (member instanceof MessageRoomMember) {
+      member.deafen();
+    }
   }
   unmute(id: string) {
     let member = this.getMemberById(id);
-    member.unmute();
+    if (member instanceof MessageRoomMember) {
+      member.unmute();
+    }
   }
   undeafen(id: string) {
     let member = this.getMemberById(id);
-    member.undeafen();
+    if (member instanceof MessageRoomMember) {
+      member.undeafen();
+    }
   }
   muteAll() {
     this._members.forEach(member => {
@@ -348,7 +409,7 @@ class MessageRoom {
 var server = new Server();
 
 //handle requests
-io.on("connection", function(socket: any) {
+io.on("connection", function(socket: Socket) {
   server.addPlayer(new Player(socket));
   socket.on("message", function(msg: string) {
     server.receive(socket.id, msg);
