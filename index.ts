@@ -19,7 +19,7 @@
 
 "use strict";
 
-import {Socket} from "./node_modules/@types/socket.io"
+import { Socket } from "./node_modules/@types/socket.io";
 //import statements
 var express = require("express");
 var app = express();
@@ -87,7 +87,7 @@ class Player {
   public send(msg: string) {
     this._socket.emit("message", msg);
   }
-  get socket(){
+  get socket() {
     return this._socket;
   }
 }
@@ -314,7 +314,11 @@ class MessageRoom {
     );
     return undefined;
   }
-  public broadcast(sender: MessageRoomMember | string,msg: string,game = false) {
+  public broadcast(
+    sender: MessageRoomMember | string,
+    msg: string,
+    game = false
+  ) {
     //if message room member passed in
     if (sender instanceof MessageRoomMember) {
       //do not check for muting if sender is the game itself

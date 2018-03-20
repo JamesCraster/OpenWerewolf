@@ -14,7 +14,7 @@
   padding: 0;
   overflow: hidden;
   /* IBM Plex Sans from google fonts */
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: "IBM Plex Sans", sans-serif;
 }
 
 html,
@@ -81,16 +81,16 @@ form {
   padding: 0px 0px;
   line-height: 0px;
   border-radius: 0px;
-  border:0px;
-  background-color:#0c0c0c;
-  color:#cecece;
+  border: 0px;
+  background-color: #0c0c0c;
+  color: #cecece;
 }
 
-#submit:focus{
+#submit:focus {
   outline: none;
 }
 
-#submit::-moz-focus-inner{
+#submit::-moz-focus-inner {
   border: none;
 }
 
