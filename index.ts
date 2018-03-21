@@ -124,6 +124,7 @@ class Server {
                 (j + 1).toString() +
                 "."
             );
+            this._games[j].broadcast(player.username + " has joined the game");
             break;
           }
         }
@@ -238,15 +239,18 @@ class Server {
         this._players.splice(index, 1);
         if (player.registered && this._registeredPlayerCount > 0) {
           this._registeredPlayerCount--;
-          Server.broadcast(
-            player.username +
-              " has disconnected. Game will begin when more players have joined."
-          );
+          if (player.inGame) {
+            this._games[player.game].broadcast(
+              player.username + " has disconnected"
+            );
+            this._games[player.game].kick(player);
+          }
         }
       }
     } else {
       console.log(
-        "Error: Server.kick: tried to kick player " +
+        "Error: Server.kick" +
+          ": tried to kick player " +
           "id" +
           " but that player does not exist"
       );
@@ -256,7 +260,7 @@ class Server {
 class Game {
   private _players: Array<Player> = [];
   private _registeredPlayerCount: number = 0;
-  private _minPlayerCount: number = 5;
+  private _minPlayerCount: number = 2;
   private messageRoom: MessageRoom = new MessageRoom();
   private _inPlay: boolean = false;
 
@@ -267,6 +271,15 @@ class Game {
     } else {
       return this._minPlayerCount - this._registeredPlayerCount;
     }
+  }
+  public getPlayer(id: string): Player | undefined {
+    for (var i = 0; i < this._players.length; i++) {
+      if (this._players[i].id == id) {
+        return this._players[i];
+      }
+    }
+    console.log("Error: Game.getPlayer: No player found with given id");
+    return undefined;
   }
   public addPlayer(player: Player) {
     this._players.push(player);
@@ -279,8 +292,17 @@ class Game {
     }
   }
   public receive(id: string, msg: string) {
-    //this.broadcast(msg);
-    this.messageRoom.broadcast(id, msg);
+    let player = this.getPlayer(id);
+    if (player instanceof Player) {
+      this.messageRoom.broadcast(player.id, player.username + ": " + msg);
+    }
+  }
+  public kick(player: Player) {
+    let index = this._players.indexOf(player);
+    if (index != -1) {
+      this._registeredPlayerCount--;
+      this._players.splice(index, 1);
+    }
   }
 }
 class MessageRoomMember extends Player {
