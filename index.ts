@@ -25,6 +25,7 @@ var express = require("express");
 var app = express();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
+var grawlix = require("grawlix");
 
 //serve static content
 app.use(express.static("Client"));
@@ -192,6 +193,7 @@ class Server {
         this.register(player, msg);
       } else {
         if (msg.trim() != "") {
+          msg = grawlix(msg, { style: "asterix" });
           this._games[player.game].receive(id, msg);
         }
       }
@@ -412,7 +414,6 @@ class MessageRoom {
 }
 
 var server = new Server();
-
 //handle requests
 io.on("connection", function(socket: Socket) {
   server.addPlayer(new Player(socket));
