@@ -33,7 +33,7 @@ body {
   width: 60%;
   overflow: auto;
   position: relative;
-  border: 2px solid black;
+  border: 2px solid #020202;
   box-sizing: border-box;
 }
 
@@ -65,10 +65,10 @@ form {
   width: calc(100% - 95px);
   outline: none;
   background-color: #23272a;
-  border-bottom: 2px solid black;
+  border-bottom: 2px solid #020202;
   border-top: none;
-  border-left: 2px solid black;
-  border-right: 2px solid black;
+  border-left: 2px solid #020202;
+  border-right: 2px solid #020202;
   height: 40px;
   padding: 0px 5px;
   /*box-sizing:border-box;*/
