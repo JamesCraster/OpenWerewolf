@@ -165,6 +165,10 @@ class Server {
       );
       return false;
     }
+    if (grawlix.isObscene(username)) {
+      player.send("Invalid username: Usernames can't contain swearwords");
+      return false;
+    }
     return true;
   }
   //send message to all players on the server
@@ -192,7 +196,7 @@ class Server {
       if (!player.registered) {
         this.register(player, msg);
       } else {
-        if (msg.trim() != "") {
+        if (this.validateMessage(msg)) {
           msg = grawlix(msg, { style: "asterix" });
           this._games[player.game].receive(id, msg);
         }
@@ -218,6 +222,14 @@ class Server {
     console.log("Error: Server.getPlayer: No player found with given id");
     return undefined;
   }
+  public validateMessage(msg: string): boolean {
+    if (msg.trim() == "" || msg.length > 151) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   public kick(id: string): void {
     var player = this.getPlayer(id);
     if (player instanceof Player) {
@@ -300,14 +312,8 @@ class MessageRoom {
   public _members: Array<MessageRoomMember> = [];
   constructor() {}
   getMemberById(id: string): MessageRoomMember | undefined {
-    console.log(typeof id);
     for (var i = 0; i < this._members.length; i++) {
-      console.log("loop runs");
       if (this._members[i].id == id) {
-        console.log("returns");
-        console.log(typeof this._members[i]);
-        console.log(this._members[i] instanceof MessageRoomMember);
-        console.log("***");
         return this._members[i];
       }
     }
@@ -340,13 +346,7 @@ class MessageRoom {
     } else {
       //if id passed in, find the sender within the message room
       let messageRoomSender = this.getMemberById(sender);
-      console.log(messageRoomSender instanceof MessageRoomMember);
-      console.log(this._members.length);
-      console.log(this._members[0].id);
-      console.log(sender);
-      console.log(this._members[0].id == sender);
       if (messageRoomSender instanceof MessageRoomMember) {
-        console.log(messageRoomSender.muted);
         //do not check for muting if sender is the game itself
         if (game) {
           for (var i = 0; i < this._members.length; i++) {
@@ -416,9 +416,16 @@ class MessageRoom {
 var server = new Server();
 //handle requests
 io.on("connection", function(socket: Socket) {
+  let time = 0;
   server.addPlayer(new Player(socket));
   socket.on("message", function(msg: string) {
-    server.receive(socket.id, msg);
+    if (Date.now() - time < 500) {
+      socket.emit("message", "Please do not spam the chat");
+      time = Date.now();
+    } else {
+      time = Date.now();
+      server.receive(socket.id, msg);
+    }
   });
   socket.on("disconnect", function() {
     server.kick(socket.id);
