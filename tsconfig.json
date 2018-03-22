@@ -57,5 +57,5 @@
     // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
   },
 
-  "files": ["index.ts"]
+  "files": ["index.ts", "core.ts", "Games/oneNight.ts"]
 }
