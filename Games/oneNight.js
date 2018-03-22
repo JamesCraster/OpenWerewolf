@@ -45,7 +45,6 @@ let threePlayer = new RoleList([
     Roles.seer,
     Roles.robber,
     Roles.transporter,
-    Roles.villager,
     Roles.villager
 ]);
 class OneNight extends core_2.Game {
@@ -53,6 +52,9 @@ class OneNight extends core_2.Game {
         super();
         //define new message room
         this.playerchat = new core_1.MessageRoom();
+        this.leftCard = "";
+        this.middleCard = "";
+        this.rightCard = "";
         setInterval(this.update.bind(this), 500);
     }
     addPlayer(player) {
@@ -68,24 +70,19 @@ class OneNight extends core_2.Game {
     start() {
         super.start();
         this.broadcast("The game has begun!");
-        //mute everyone in the default chat
         //mute and deafen everyone in the player chat
         this.playerchat.deafenAll();
         this.playerchat.muteAll();
-        //shuffle the rolelist
-        console.log(threePlayer.list);
-        console.log(threePlayer.list[0]);
-        console.log(core_4.Utils.shuffle(threePlayer.list));
-        console.log(Roles.werewolf);
-        console.log(core_4.Utils.shuffle(threePlayer.list)[0]);
-        //hand out roles
-        console.log(typeof core_4.Utils.shuffle(threePlayer.list));
-        let randomDeck = [];
-        randomDeck = core_4.Utils.shuffle(threePlayer.list).slice(0);
-        console.log(randomDeck);
+        //shuffle the deck and hand out roles to players
+        let randomDeck = core_4.Utils.shuffle(threePlayer.list);
         for (let i = 0; i < this._players.length; i++) {
             this._players[i].send("You are the " + randomDeck[i]);
+            this._players[i].data.role = randomDeck[i];
         }
+        //assign three cards in the middle
+        this.leftCard = randomDeck[randomDeck.length - 1];
+        this.middleCard = randomDeck[randomDeck.length - 2];
+        this.rightCard = randomDeck[randomDeck.length - 3];
         //perform night actions
         //unmute and undeafen everyone in the player chat
         //start timer with callback

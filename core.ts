@@ -41,6 +41,9 @@ export class Utils {
   }
 }
 
+interface PlayerData {
+  [key: string]: any;
+}
 export class Player {
   //true if the player has a username
   private _registered: boolean = false;
@@ -48,7 +51,7 @@ export class Player {
   private _inGame: boolean = false;
   private _username: string = "randomuser";
   //object that can be used to flexibly add data to player for game purposes
-  private _data: Object = new Object();
+  public data: PlayerData = {};
   //index of the game the player is in in the server's 'games' array
   private _game: number = -1;
   public constructor(socket: Socket) {
@@ -60,12 +63,6 @@ export class Player {
   }
   get id() {
     return this._socket.id;
-  }
-  get data() {
-    return this._data;
-  }
-  public setData(data: Object) {
-    this._data = data;
   }
   get inGame() {
     return this._inGame;

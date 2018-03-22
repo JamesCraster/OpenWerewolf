@@ -1,3 +1,4 @@
 # Ignore javascript builds in the root directory
 /*.js
+/Games/*.js
 
