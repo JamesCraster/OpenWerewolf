@@ -131,13 +131,16 @@ class OneNight extends core_2.Game {
                     let temporaryArray = this._players.slice();
                     temporaryArray.splice(i, 1);
                     let randomPlayer = this.getRandomPlayerFromArray(temporaryArray);
-                    this._players[i].send("You swapped your card with " +
+                    this._players[i].send("You swapped your card with '" +
                         randomPlayer.username +
-                        " who was a " +
+                        "' who was a " +
                         randomPlayer.data.role +
                         ".");
                     this._players[i].send("You are now a " + randomPlayer.data.role + ".");
-                    this._players[i].send(randomPlayer.username + " is now a robber");
+                    this._players[i].send("'" + randomPlayer.username + "' is now a robber.");
+                    if (randomPlayer.data.role == Roles.werewolf) {
+                        this._players[i].send("Tomorrow, try not to be suspicious! Pretend that you are not a werewolf.");
+                    }
                     this._players[i].data.role = randomPlayer.data.role;
                     randomPlayer.data.role = Roles.robber;
                     break;
