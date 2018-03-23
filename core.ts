@@ -310,6 +310,9 @@ export abstract class Game {
   }
   protected end() {
     this._inPlay = false;
+    for (let i = 0; i < this._players.length; i++) {
+      this._players[i].inGame = false;
+    }
     this._players = [];
     this._registeredPlayerCount = 0;
   }

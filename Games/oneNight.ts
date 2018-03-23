@@ -75,6 +75,11 @@ export class OneNight extends Game {
   private leftCard: string = "";
   private middleCard: string = "";
   private rightCard: string = "";
+  private time: number = 0;
+  private minutes: number = 1;
+  private length = 2;
+  private trial: boolean = false;
+  private won: boolean = false;
 
   public constructor() {
     super();
@@ -123,10 +128,51 @@ export class OneNight extends Game {
     ) {
       this.start();
     }
+    if (this._inPlay && this.time != 0) {
+      if (Date.now() - this.time > this.minutes * 1000 * 60 && this.minutes != this.length) {
+        this.playerchat.broadcast("game", this.length - this.minutes + " minutes remain until the trial. You can vote at any time using \"/vote username\"", true);
+        this.minutes += 1;
+      }
+      if (Date.now() - this.time > this.length * 60 * 1000 + 60 * 1000) {
+        this.playerchat.broadcast("game", "The game has ended.", true);
+        this.end();
+      } else if (Date.now() - this.time > this.length * 60 * 1000 + 30 * 1000 && !this.won) {
+        this.playerchat.broadcast("game", "The werewolves have won!", true);
+        this.won = true;
+      } else if (Date.now() - this.time > this.length * 60 * 1000 && !this.trial) {
+        this.trial = true;
+        this.playerchat.broadcast("game", "The trial has begun, you have 30 seconds! Vote now using \"/vote username\"", true);
+      }
+    }
+
+  }
+  end() {
+    for (let i = 0; i < this._players.length; i++) {
+      this._players[i].emit("reload");
+    }
+    super.end();
+    this.playerchat = new MessageRoom();
+    this.leftCard = "";
+    this.middleCard = "";
+    this.rightCard = "";
+    this.time = 0;
+    this.minutes = 1;
+    this.length = 2;
+    this.trial = false;
+    this.won = false;
   }
   start() {
     super.start();
     this.broadcast("***NEW GAME***");
+    //print out all players
+    let playersString = "";
+    for (let i = 0; i < this._players.length; i++) {
+      if (i != 0) {
+        playersString += ", "
+      }
+      playersString += this._players[i].username;
+    }
+    this.playerchat.broadcast("game", "Players: " + playersString + ".", true);
     //shuffle the deck and hand out roles to players
     let roleList: Array<string> = [];
     let randomDeck: Array<string> = [];
@@ -385,10 +431,11 @@ export class OneNight extends Game {
     );
     this.playerchat.broadcast(
       "game",
-      "You can secretly read the rules at any time by typing \"/rules.\"",
+      "You can secretly read the rules at any time by typing \"/rules\".",
       true
     );
-    //start timer with callback
+    //start timer
+    this.time = Date.now();
     for (let i = 0; i < this._players.length; i++) {
       console.log(this._players[i]);
     }

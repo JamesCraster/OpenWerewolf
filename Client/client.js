@@ -9,10 +9,10 @@
      You should have received a copy of the GNU Affero General Public License
      along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>*/
 
-$(function() {
+$(function () {
   var socket = io();
 
-  $("form").submit(function() {
+  $("form").submit(function () {
     if ($("#msg").val() == "") {
       return false;
     }
@@ -22,10 +22,12 @@ $(function() {
     return false;
   });
 
-  socket.on("message", function(msg) {
+  socket.on("message", function (msg) {
     $("#chatbox").append($("<li>").text(msg));
     $("#inner")[0].scrollTop = $("#inner")[0].scrollHeight;
   });
-
-  socket.on("registered", function() {});
+  socket.on("reload", function () {
+    location.reload(true);
+  });
+  socket.on("registered", function () {});
 });
