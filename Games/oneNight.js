@@ -47,6 +47,25 @@ let threePlayer = new RoleList([
     Roles.transporter,
     Roles.villager
 ]);
+let fourPlayer = new RoleList([
+    Roles.werewolf,
+    Roles.werewolf,
+    Roles.seer,
+    Roles.robber,
+    Roles.transporter,
+    Roles.villager,
+    Roles.villager
+]);
+let fivePlayer = new RoleList([
+    Roles.werewolf,
+    Roles.werewolf,
+    Roles.seer,
+    Roles.robber,
+    Roles.transporter,
+    Roles.villager,
+    Roles.villager,
+    Roles.villager
+]);
 class OneNight extends core_2.Game {
     constructor() {
         super();
@@ -101,20 +120,41 @@ class OneNight extends core_2.Game {
     }
     start() {
         super.start();
-        this.broadcast("The game has begun!");
-        //list all of the roles in the order in which they wake up
-        //mute and deafen everyone in the player chat
-        this.playerchat.broadcast("game", "Night has fallen.", true);
-        this.playerchat.broadcast("game", "If your card is swapped with another, you become the role on your new card. You do not wake up again.", true);
-        this.playerchat.broadcast("game", "Your card may be swapped by the robber or transporter without you realising it!", true);
-        this.playerchat.deafenAll();
-        this.playerchat.muteAll();
+        this.broadcast("***NEW GAME***");
         //shuffle the deck and hand out roles to players
-        let randomDeck = core_4.Utils.shuffle(threePlayer.list);
+        let roleList = [];
+        let randomDeck = [];
+        switch (this._players.length) {
+            case 3:
+                roleList = threePlayer.list;
+                break;
+            case 4:
+                roleList = fourPlayer.list;
+                break;
+            case 5:
+                roleList = fivePlayer.list;
+                break;
+        }
+        randomDeck = core_4.Utils.shuffle(roleList);
+        //list all of the roles in the order in which they wake up
+        let rolesString = "";
+        for (let i = 0; i < roleList.length; i++) {
+            if (i != 0) {
+                rolesString += ", ";
+            }
+            rolesString += roleList[i];
+        }
+        this.playerchat.broadcast("game", "Roles (in order of when they act): " + rolesString + ".", true);
+        //mute and everyone in the player chat
+        this.playerchat.muteAll();
+        this.playerchat.broadcast("game", "If your card is swapped with another, you become the role on your new card. You do not wake up again.", true);
+        this.playerchat.broadcast("game", "Your card may be swapped by the robber or transporter without you realising it.", true);
         //for debugging purposes, choose the deck:
         //randomDeck = [Roles.seer, Roles.werewolf, Roles.transporter, Roles.werewolf, Roles.villager, Roles.transporter];
         for (let i = 0; i < this._players.length; i++) {
-            this._players[i].send("You look at your card. You are a " + randomDeck[i] + ".");
+            this._players[i].send("You look at your card. You are a " + randomDeck[i] + "."
+            //add town team/ww team
+            );
             this._players[i].data.role = randomDeck[i];
             this._players[i].data.initialRole = randomDeck[i];
         }
@@ -127,6 +167,7 @@ class OneNight extends core_2.Game {
         //swap the robber's card with someone elses and tell them their new card
         //swap two roles excluding the transporter
         //tell the werewolves who the other werewolf is
+        //make sure transporter moves after the robber!!
         let randomvar = 0;
         let temporaryArray = [];
         for (let i = 0; i < this._players.length; i++) {
@@ -226,6 +267,12 @@ class OneNight extends core_2.Game {
                             break;
                     }
                     break;
+                case Roles.villager:
+                    this._players[i].send("You are a villager, so you do nothing. Goodnight!");
+            }
+        }
+        for (let i = 0; i < this._players.length; i++) {
+            switch (this._players[i].data.initialRole) {
                 case Roles.transporter:
                     randomvar = Math.floor(Math.random() * this._players.length);
                     if (randomvar >= this._players.length) {
@@ -241,39 +288,36 @@ class OneNight extends core_2.Game {
                     let secondTarget = this.getPlayer(temporaryArray[randomvar].id);
                     if (secondTarget instanceof core_3.Player) {
                         if (firstTarget == i) {
-                            this._players[i].send("You swap your own card with " +
+                            this._players[i].send("You swapped your own card with " +
                                 secondTarget.username +
-                                "'s card");
+                                "'s card.");
                         }
                         else if (secondTarget == this._players[i]) {
-                            this._players[i].send("You swap your own card with " +
+                            this._players[i].send("You swapped your own card with " +
                                 this._players[firstTarget].username +
-                                "'s card");
+                                "'s card.");
                         }
                         else {
                             this._players[i].send("You swapped '" +
                                 this._players[firstTarget].username +
                                 "''s card with '" +
                                 secondTarget.username +
-                                "''s card");
+                                "''s card.");
                         }
                         let temporaryRole = this._players[firstTarget].data.role;
                         this._players[firstTarget].data.role = secondTarget.data.role;
                         secondTarget.data.role = temporaryRole;
                     }
                     break;
-                case Roles.villager:
-                    this._players[i].send("You are a villager, so you do nothing. Goodnight!");
             }
         }
-        //unmute and undeafen everyone in the player chat
-        this.playerchat.undeafenAll();
+        //unmute and everyone in the player chat
         this.playerchat.unmuteAll();
-        this.playerchat.broadcast("game", "Morning has broken, discuss the evidence ahead of today's trial.", true);
         this.playerchat.broadcast("game", "6 minutes remain until trial. You can secretly vote to kill someone at any time by typing \"/vote username\"," +
-            "for example, \"/vote frank\" secretly casts a hidden vote for frank. You can undo your vote at any time" +
+            " for example, \"/vote frank\" secretly casts a hidden vote for frank. You can undo your vote at any time" +
             " by typing \"/unvote\". If everyone has voted, the game will end early.", true);
-        this.playerchat.broadcast("game", "If a werewolf is killed in the trial, the townies win. If no werewolves are killed in the trial, the werewolves win.", true);
+        this.playerchat.broadcast("game", "If a werewolf is killed in the trial, the town team win. If no werewolves are killed in the trial, the werewolves win.", true);
+        this.playerchat.broadcast("game", "You can secretly read the rules at any time by typing \"/rules.\"", true);
         //start timer with callback
         for (let i = 0; i < this._players.length; i++) {
             console.log(this._players[i]);
