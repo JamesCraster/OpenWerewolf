@@ -2,3 +2,5 @@ Make 'Type here' field only 10 characters long at the beginning before registrat
 Make 'Type here' placeholder appear when field empty. DONE
 Fix kicking player from game.
 Move spam filter to Server instead of where it is now.
+Add clear additional requirement under AGPLv3 section 7 b)
+Add Appropriate Legal Notices to user interface
