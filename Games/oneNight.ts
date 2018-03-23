@@ -77,7 +77,7 @@ export class OneNight extends Game {
   private rightCard: string = "";
   private time: number = 0;
   private minutes: number = 1;
-  private length = 2;
+  private length = 6;
   private trial: boolean = false;
   private won: boolean = false;
 
@@ -157,12 +157,15 @@ export class OneNight extends Game {
     this.rightCard = "";
     this.time = 0;
     this.minutes = 1;
-    this.length = 2;
+    this.length = 6;
     this.trial = false;
     this.won = false;
   }
   start() {
     super.start();
+    for (let i = 0; i < this._players.length; i++) {
+      this._players[i].data.vote = "";
+    }
     this.broadcast("***NEW GAME***");
     //print out all players
     let playersString = "";
@@ -443,7 +446,31 @@ export class OneNight extends Game {
   receive(id: string, msg: string) {
     let player = this.getPlayer(id);
     if (player instanceof Player) {
-      this.playerchat.broadcast(player.id, player.username + ": " + msg);
+      if (msg[0] == "/") {
+        if (msg.slice(0, 5) == "/vote") {
+          let username = msg.slice(5).trim();
+          let exists = false;
+          for (let i = 0; i < this._players.length; i++) {
+            if (this._players[i].username == username) {
+              player.send("Your vote for '" + username + "' has been received");
+              player.data.vote = username;
+              exists = true;
+            }
+          }
+          if (!exists) {
+            player.send("There's no player called '" + username + "'. Vote not changed.");
+          }
+        } else if (msg.slice(0, 7) == "/unvote" && player.data.vote != "") {
+          player.send("Your vote for '" + player.data.vote + "' has been cancelled");
+          player.data.vote = "";
+        } else if (msg.slice(0, 7) == "/unvote" && player.data.vote == "") {
+          player.send("You haven't voted for anybody yet, so there is nothing to cancel");
+        } else {
+          player.send("Error: no such command exists! Commands are /vote /unvote /rules");
+        }
+      } else {
+        this.playerchat.broadcast(player.id, player.username + ": " + msg);
+      }
     }
   }
 }
