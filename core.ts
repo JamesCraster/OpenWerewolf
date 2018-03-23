@@ -131,6 +131,13 @@ export class Server {
               "."
             );
             this._games[j].broadcast(player.username + " has joined the game");
+            player.send("There are " + this._games[j].playerCount + " players in this game");
+            if (this._games[j].minimumPlayersNeeded > 0) {
+              this._games[j].broadcast("The game will begin when at least " + this._games[j].minimumPlayersNeeded + " more players have joined");
+            } else {
+              //should be replaced shortly when flexible game sizes implemented
+              this._games[j].broadcast("The game will start now");
+            }
             break;
           }
         }
@@ -266,11 +273,21 @@ export class Server {
 export abstract class Game {
   protected _players: Array<Player> = [];
   protected _registeredPlayerCount: number = 0;
-  private _minPlayerCount: number = 2;
+  private _minPlayerCount: number = 5;
   protected _maxPlayerCount: number = 5;
   protected _inPlay: boolean = false;
 
   public constructor() { }
+  get playerCount() {
+    return this._registeredPlayerCount;
+  }
+  get minimumPlayersNeeded() {
+    if (this._inPlay) {
+      return 0;
+    } else {
+      return this._minPlayerCount - this._registeredPlayerCount;
+    }
+  }
   get playersNeeded() {
     if (this._inPlay) {
       return 0;
