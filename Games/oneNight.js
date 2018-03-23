@@ -134,9 +134,7 @@ class OneNight extends core_2.Game {
                 case Roles.werewolf:
                     temporaryArray = this._players.slice();
                     temporaryArray.splice(i, 1);
-                    //console.log(temporaryArray);
                     let werewolves = this.getPlayersWithInitialRoleInArray(temporaryArray, Roles.werewolf);
-                    console.log(werewolves);
                     if (werewolves.length == 1) {
                         this._players[i].send("There are two werewolves.");
                         this._players[i].send("Your werewolf partner is '" + werewolves[0].username + "'.");
@@ -272,6 +270,10 @@ class OneNight extends core_2.Game {
         this.playerchat.undeafenAll();
         this.playerchat.unmuteAll();
         this.playerchat.broadcast("game", "Morning has broken, discuss the evidence ahead of today's trial.", true);
+        this.playerchat.broadcast("game", "6 minutes remain until trial. You can secretly vote to kill someone at any time by typing \"/vote username\"," +
+            "for example, \"/vote frank\" secretly casts a hidden vote for frank. You can undo your vote at any time" +
+            " by typing \"/unvote\". If everyone has voted, the game will end early.", true);
+        this.playerchat.broadcast("game", "If a werewolf is killed in the trial, the townies win. If no werewolves are killed in the trial, the werewolves win.", true);
         //start timer with callback
         for (let i = 0; i < this._players.length; i++) {
             console.log(this._players[i]);

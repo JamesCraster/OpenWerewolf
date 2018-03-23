@@ -143,7 +143,7 @@ export class OneNight extends Game {
     //swap the robber's card with someone elses and tell them their new card
     //swap two roles excluding the transporter
     //tell the werewolves who the other werewolf is
-
+    //make sure transporter moves after the robber!!
     let randomvar = 0;
     let temporaryArray = [];
     for (let i = 0; i < this._players.length; i++) {
@@ -331,6 +331,18 @@ export class OneNight extends Game {
     this.playerchat.broadcast(
       "game",
       "Morning has broken, discuss the evidence ahead of today's trial.",
+      true
+    );
+    this.playerchat.broadcast(
+      "game",
+      "6 minutes remain until trial. You can secretly vote to kill someone at any time by typing \"/vote username\"," +
+      " for example, \"/vote frank\" secretly casts a hidden vote for frank. You can undo your vote at any time" +
+      " by typing \"/unvote\". If everyone has voted, the game will end early.",
+      true
+    );
+    this.playerchat.broadcast(
+      "game",
+      "If a werewolf is killed in the trial, the townies win. If no werewolves are killed in the trial, the werewolves win.",
       true
     );
     //start timer with callback
