@@ -125,10 +125,10 @@ export class Server {
             player.game = j;
             player.send(
               "Hi, " +
-                player.username +
-                "! You have joined Game " +
-                (j + 1).toString() +
-                "."
+              player.username +
+              "! You have joined Game " +
+              (j + 1).toString() +
+              "."
             );
             this._games[j].broadcast(player.username + " has joined the game");
             break;
@@ -256,9 +256,9 @@ export class Server {
     } else {
       console.log(
         "Error: Server.kick" +
-          ": tried to kick player " +
-          "id" +
-          " but that player does not exist"
+        ": tried to kick player " +
+        "id" +
+        " but that player does not exist"
       );
     }
   }
@@ -270,7 +270,7 @@ export abstract class Game {
   protected _maxPlayerCount: number = 3;
   protected _inPlay: boolean = false;
 
-  public constructor() {}
+  public constructor() { }
   get playersNeeded() {
     if (this._inPlay) {
       return 0;
@@ -342,7 +342,7 @@ export class MessageRoomMember extends Player {
 }
 export class MessageRoom {
   public _members: Array<MessageRoomMember> = [];
-  constructor() {}
+  constructor() { }
   getMemberById(id: string): MessageRoomMember | undefined {
     for (var i = 0; i < this._members.length; i++) {
       if (this._members[i].id == id) {
@@ -359,16 +359,16 @@ export class MessageRoom {
     msg: string,
     game = false
   ) {
+    if (game) {
+      for (var i = 0; i < this._members.length; i++) {
+        if (!this._members[i].deafened) {
+          this._members[i].send(msg);
+        }
+      }
+    }
     //if message room member passed in
     if (sender instanceof MessageRoomMember) {
-      //do not check for muting if sender is the game itself
-      if (game) {
-        for (var i = 0; i < this._members.length; i++) {
-          if (!this._members[i].deafened) {
-            this._members[i].send(msg);
-          }
-        }
-      } else if (!sender.muted) {
+      if (!sender.muted) {
         for (var i = 0; i < this._members.length; i++) {
           if (!this._members[i].deafened) {
             this._members[i].send(msg);

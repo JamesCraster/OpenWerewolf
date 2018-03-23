@@ -70,6 +70,15 @@ export class OneNight extends Game {
     }
     return players;
   }
+  public getPlayersWithInitialRoleInArray(players: Array<Player>, role: string) {
+    let out = [];
+    for (let i = 0; i < players.length; i++) {
+      if (players[i].data.initialRole == role) {
+        out.push(players[i]);
+      }
+    }
+    return out;
+  }
   public addPlayer(player: Player) {
     this.playerchat.addPlayer(player);
     super.addPlayer(player);
@@ -77,14 +86,14 @@ export class OneNight extends Game {
   public getRandomPlayer() {
     let randomvar = Math.floor(Math.random() * this._players.length);
     if (randomvar >= this._players.length) {
-      randomvar = this._players.length;
+      randomvar = this._players.length - 1;
     }
     return this._players[randomvar];
   }
   public getRandomPlayerFromArray(players: Array<Player>) {
     let randomvar = Math.floor(Math.random() * players.length);
     if (randomvar >= players.length) {
-      randomvar = players.length;
+      randomvar = players.length - 1;
     }
     return players[randomvar];
   }
@@ -101,12 +110,27 @@ export class OneNight extends Game {
     this.broadcast("The game has begun!");
     //list all of the roles in the order in which they wake up
     //mute and deafen everyone in the player chat
+    this.playerchat.broadcast("game", "Night has fallen.", true);
+    this.playerchat.broadcast(
+      "game",
+      "If your card is swapped with another, you become the role on your new card. You do not wake up again.",
+      true
+    );
+    this.playerchat.broadcast(
+      "game",
+      "You may be swapped by the robber or transporter without realising it!",
+      true
+    );
     this.playerchat.deafenAll();
     this.playerchat.muteAll();
     //shuffle the deck and hand out roles to players
     let randomDeck = Utils.shuffle(threePlayer.list);
+    //for debugging purposes, choose the deck:
+    randomDeck = [Roles.seer, Roles.werewolf, Roles.robber, Roles.werewolf, Roles.villager, Roles.transporter];
     for (let i = 0; i < this._players.length; i++) {
-      this._players[i].send("You are the " + randomDeck[i] + ".");
+      this._players[i].send(
+        "You look at your card. You are a " + randomDeck[i] + "."
+      );
       this._players[i].data.role = randomDeck[i];
       this._players[i].data.initialRole = randomDeck[i];
     }
@@ -119,13 +143,25 @@ export class OneNight extends Game {
     //swap the robber's card with someone elses and tell them their new card
     //swap two roles excluding the transporter
     //tell the werewolves who the other werewolf is
-    this.playerchat.broadcast("game", "Night has fallen", true);
+
+    let randomvar = 0;
+    let temporaryArray = [];
     for (let i = 0; i < this._players.length; i++) {
       switch (this._players[i].data.initialRole) {
         case Roles.werewolf:
-          let werewolves = this.getPlayersWithRole(Roles.werewolf);
-          if (werewolves.length == 2) {
+          temporaryArray = this._players.slice();
+          temporaryArray.splice(i, 1);
+          //console.log(temporaryArray);
+          let werewolves = this.getPlayersWithInitialRoleInArray(
+            temporaryArray,
+            Roles.werewolf
+          );
+          console.log(werewolves);
+          if (werewolves.length == 1) {
             this._players[i].send("There are two werewolves.");
+            this._players[i].send(
+              "Your werewolf partner is '" + werewolves[0].username + "'."
+            );
             this._players[i].send(
               "Tommorrow, try not to be suspicious! You and your partner must pretend to be something else."
             );
@@ -137,15 +173,30 @@ export class OneNight extends Game {
           }
           break;
         case Roles.robber:
-          let temporaryArray = this._players.slice();
+          temporaryArray = this._players.slice();
           temporaryArray.splice(i, 1);
           let randomPlayer = this.getRandomPlayerFromArray(temporaryArray);
+          console.log(this.getRandomPlayerFromArray(temporaryArray).username);
+          console.log(this.getRandomPlayerFromArray(temporaryArray).username);
+          console.log(this.getRandomPlayerFromArray(temporaryArray).username);
+          console.log(this.getRandomPlayerFromArray(temporaryArray).username);
+          console.log(this.getRandomPlayerFromArray(temporaryArray).username);
+          console.log(this.getRandomPlayerFromArray(temporaryArray).username);
+          console.log(this.getRandomPlayerFromArray(temporaryArray).username);
+          console.log(this.getRandomPlayerFromArray(temporaryArray).username);
+          console.log(this.getRandomPlayerFromArray(temporaryArray).username);
+          console.log(this.getRandomPlayerFromArray(temporaryArray).username);
+          console.log(this.getRandomPlayerFromArray(temporaryArray).username);
+          console.log(this.getRandomPlayerFromArray(temporaryArray).username);
+          console.log(this.getRandomPlayerFromArray(temporaryArray).username);
+          console.log(this.getRandomPlayerFromArray(temporaryArray).username);
+          console.log(this.getRandomPlayerFromArray(temporaryArray).username);
           this._players[i].send(
             "You swapped your card with '" +
-              randomPlayer.username +
-              "' who was a " +
-              randomPlayer.data.role +
-              "."
+            randomPlayer.username +
+            "' who was a " +
+            randomPlayer.data.role +
+            "."
           );
           this._players[i].send(
             "You are now a " + randomPlayer.data.role + "."
@@ -162,10 +213,96 @@ export class OneNight extends Game {
           randomPlayer.data.role = Roles.robber;
           break;
         case Roles.seer:
+          this._players[i].send(
+            "There are 3 cards in the center of the table, one left, one middle and one right."
+          );
           this._players[i].send("You look at two cards in the center.");
+          let cardArray = [this.leftCard, this.middleCard, this.rightCard];
+          randomvar = Math.floor(Math.random() * 3);
+          if (randomvar >= 3) {
+            randomvar = 2;
+          }
+          switch (randomvar) {
+            case 0:
+              this._players[i].send(
+                "You look at the left card. The left card is a " + this.leftCard + "."
+              );
+              break;
+            case 1:
+              this._players[i].send(
+                "You look at the middle card. The middle card is a " +
+                this.middleCard + "."
+              );
+              break;
+            case 2:
+              this._players[i].send(
+                "You look at the right card. The right card is a " +
+                this.rightCard + "."
+              );
+              break;
+          }
+          cardArray.splice(randomvar, 1);
+          randomvar = Math.floor(Math.random() * 2);
+          if (randomvar >= 2) {
+            randomvar = 1;
+          }
+          switch (randomvar) {
+            case 0:
+              this._players[i].send(
+                "You look at the left card. The left card is a " + this.leftCard + "."
+              );
+              break;
+            case 1:
+              this._players[i].send(
+                "You look at the middle card. The middle card is a " +
+                this.middleCard + "."
+              );
+              break;
+            case 3:
+              this._players[i].send(
+                "You look at the right card. The right card is a " +
+                this.rightCard + "."
+              );
+              break;
+          }
           break;
         case Roles.transporter:
-          this._players[i].send("You swap x's card with y's card");
+          randomvar = Math.floor(Math.random() * this._players.length);
+          if (randomvar >= this._players.length) {
+            randomvar = this._players.length - 1;
+          }
+          let firstTarget = randomvar;
+          temporaryArray = this._players.slice();
+          temporaryArray.splice(firstTarget, 1);
+          randomvar = Math.floor(Math.random() * temporaryArray.length);
+          if (randomvar >= temporaryArray.length) {
+            randomvar = temporaryArray.length - 1;
+          }
+          let secondTarget = randomvar;
+          if (firstTarget == i) {
+            this._players[i].send(
+              "You swap your own card with " +
+              this._players[secondTarget].username +
+              "'s card"
+            );
+          } else if (secondTarget == i) {
+            this._players[i].send(
+              "You swap your own card with " +
+              this._players[firstTarget].username +
+              "'s card"
+            );
+          } else {
+            this._players[i].send(
+              "You swap " +
+              this._players[firstTarget].username +
+              "'s card with " +
+              this._players[secondTarget].username +
+              "'s card"
+            );
+          }
+          let temporaryRole = this._players[firstTarget].data.role;
+          this._players[firstTarget].data.role = this._players[secondTarget].data.role;
+          this._players[secondTarget].data.role = temporaryRole;
           break;
         case Roles.villager:
           this._players[i].send(
@@ -178,7 +315,7 @@ export class OneNight extends Game {
     this.playerchat.unmuteAll();
     this.playerchat.broadcast(
       "game",
-      "Morning has broken, discuss the evidence ahead of today's trial",
+      "Morning has broken, discuss the evidence ahead of today's trial.",
       true
     );
     //start timer with callback
