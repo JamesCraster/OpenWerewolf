@@ -1,4 +1,5 @@
-/*   Copyright (C) 2017 James Vaughan Craster. This file is part of OpenWerewolf. 
+/*   
+     Copyright (C) 2017 James Vaughan Craster. This file is part of OpenWerewolf. 
      OpenWerewolf is free software: you can redistribute it and/or modify
      it under the terms of the GNU Affero General Public License as published
      by the Free Software Foundation, version 3 of the License.
@@ -7,7 +8,15 @@
      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
      GNU Affero General Public License for more details.
      You should have received a copy of the GNU Affero General Public License
-     along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>*/
+     along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>
+     
+     Additional terms under GNU AGPL version 3 section 7:
+     I, James Craster, require the preservation of this specified author attribution 
+     in the Appropriate Legal Notices displayed by works containing material that has 
+     been added to OpenWerewolf by me: 
+     "This project includes code from OpenWerewolf. OpenWerewolf author: James V. Craster." 
+
+*/
 
 $(function () {
   var socket = io();

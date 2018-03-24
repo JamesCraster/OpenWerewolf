@@ -15,6 +15,12 @@
 
     You should have received a copy of the GNU Affero General Public License
     along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>.
+    
+    Additional terms under GNU AGPL version 3 section 7:
+    I, James Craster, require the preservation of this specified author attribution 
+    in the Appropriate Legal Notices displayed by works containing material that has 
+    been added to OpenWerewolf by me: 
+    "This project includes code from OpenWerewolf. OpenWerewolf author: James V. Craster." 
 */
 
 "use strict";

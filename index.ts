@@ -15,6 +15,12 @@
 
     You should have received a copy of the GNU Affero General Public License
     along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>.
+
+    Additional terms under GNU AGPL version 3 section 7:
+    I, James Craster, require the preservation of this specified author attribution 
+    in the Appropriate Legal Notices displayed by works containing material that has 
+    been added to OpenWerewolf by me: 
+    "This project includes code from OpenWerewolf. OpenWerewolf author: James V. Craster." 
 */
 
 "use strict";
@@ -33,15 +39,15 @@ var server = new Server();
 server.addGame(new OneNight());
 //serve static content
 app.use(express.static("Client"));
-app.get("/", function(req: any, res: any) {
+app.get("/", function (req: any, res: any) {
   res.sendFile(__dirname + "/client.html");
 });
 
 //handle requests
-io.on("connection", function(socket: Socket) {
+io.on("connection", function (socket: Socket) {
   let time = 0;
   server.addPlayer(socket);
-  socket.on("message", function(msg: string) {
+  socket.on("message", function (msg: string) {
     if (Date.now() - time < 500) {
       socket.emit("message", "Please do not spam the chat");
       time = Date.now();
@@ -50,13 +56,13 @@ io.on("connection", function(socket: Socket) {
       server.receive(socket.id, msg);
     }
   });
-  socket.on("disconnect", function() {
+  socket.on("disconnect", function () {
     server.kick(socket.id);
   });
 });
 
 //listen on port
 var port = process.env.PORT || 8080;
-http.listen(port, function() {
+http.listen(port, function () {
   console.log("Port is:" + port);
 });
