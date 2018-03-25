@@ -129,6 +129,7 @@ export class OneNight extends Game {
     return players[randomvar];
   }
   public winResolution() {
+    //tally up all the votes
     for (let i = 0; i < this._players.length; i++) {
       if (this._players[i].data.vote != "") {
         for (let j = 0; j < this._players.length; j++) {
@@ -139,6 +140,7 @@ export class OneNight extends Game {
         }
       }
     }
+    //pick the player with the most votes and call them the loser
     let maxVoteCount = 0;
     let loser = this._players[0];
     for (let i = 0; i < this._players.length; i++) {
@@ -156,6 +158,7 @@ export class OneNight extends Game {
     } else {
       this.playerchat.broadcast("game", "The town have lost.", true);
     }
+    //print out all the list of who had what role and whether their role changed at all
     for (let i = 0; i < this._players.length; i++) {
       this.playerchat.broadcast("game", this._players[i].username + " started as a " + this._players[i].data.initialRole +
         " and became a " + this._players[i].data.role + ".", true);
@@ -163,33 +166,44 @@ export class OneNight extends Game {
 
   }
   update() {
+    //if have max number of players, start the game immediately
     if (
       this._registeredPlayerCount >= this._maxPlayerCount &&
       this._inPlay == false
     ) {
       this.start();
     }
+    //if players all voted early
     if (this.everyoneVoted() && this.won == false) {
       this.playerchat.broadcast("game", "Everyone has voted, so the game has ended.", true);
       this.winResolution();
       this.won = true;
+      //set timer so that in 40 seconds the game ends
       this.wonEarlyTime = Date.now();
     }
+    //if players voted early, kick everyone after 40 seconds 
     if (this.won == true && this.wonEarlyTime != 0 && Date.now() - this.wonEarlyTime > 40 * 1000) {
       this.playerchat.broadcast("game", "The game has ended.", true);
+      //redirect players and reset
       this.end();
     }
+    //if game is running
     if (this._inPlay && this.time != 0) {
+      //notify players of time left every minute
       if (Date.now() - this.time > this.minutes * 1000 * 60 && this.minutes != this.length) {
         this.playerchat.broadcast("game", this.length - this.minutes + " minutes remain until the trial. You can vote at any time using \"/vote username\"", true);
         this.minutes += 1;
       }
+      //end game
       if (Date.now() - this.time > this.length * 60 * 1000 + 70 * 1000) {
         this.playerchat.broadcast("game", "The game has ended.", true);
+        //redirect and reset
         this.end();
+        //do win resolution 40 seconds before game ends
       } else if (Date.now() - this.time > this.length * 60 * 1000 + 30 * 1000 && !this.won) {
         this.winResolution();
         this.won = true;
+        //notify players of last 30 seconds
       } else if (Date.now() - this.time > this.length * 60 * 1000 && !this.trial) {
         this.trial = true;
         this.playerchat.broadcast("game", "The trial has begun, you have 30 seconds! Vote now using \"/vote username\"", true);
@@ -198,9 +212,11 @@ export class OneNight extends Game {
 
   }
   end() {
+    //emit event that causes players to reload
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].emit("reload");
     }
+    //reset inital conditions
     super.end();
     this.playerchat = new MessageRoom();
     this.leftCard = "";
@@ -212,13 +228,16 @@ export class OneNight extends Game {
     this.trial = false;
     this.won = false;
   }
+  //returns true if everyone voted
   everyoneVoted() {
     let out = true;
     for (let i = 0; i < this._players.length; i++) {
+      //if someone hasn't voted, return false
       if (this._players[i].data.vote == "" || this._players[i].data.vote == undefined) {
         return false;
       }
     }
+    //if no players, return false
     if (this._players.length == 0) {
       return false;
     }
@@ -226,6 +245,7 @@ export class OneNight extends Game {
   }
   start() {
     super.start();
+    //set everyone's vote to blank
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].data.vote = "";
     }
@@ -263,7 +283,7 @@ export class OneNight extends Game {
       rolesString += roleList[i];
     }
     this.playerchat.broadcast("game", "Roles (in order of when they act): " + rolesString + ".", true);
-    //mute and everyone in the player chat
+    //mute everyone in the player chat
     this.playerchat.muteAll();
     this.playerchat.broadcast(
       "game",
@@ -281,8 +301,11 @@ export class OneNight extends Game {
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].send(
         "You look at your card. You are a " + randomDeck[i] + "."
-        //add town team/ww team
+        //add town team/ww team explanation
       );
+      //each player starts with two roles, the initialRole and the role. initialRole is constant
+      //and dictates when the player wakes up during the night.
+      //role can change if the player is robbed/transported etc 
       this._players[i].data.role = randomDeck[i];
       this._players[i].data.initialRole = randomDeck[i];
     }
@@ -293,9 +316,8 @@ export class OneNight extends Game {
     //perform night actions
     //tell the seer 2 of the cards at random
     //swap the robber's card with someone elses and tell them their new card
-    //swap two roles excluding the transporter
-    //tell the werewolves who the other werewolf is
-    //make sure transporter moves after the robber!!
+    //swap two roles (transporter)
+    //tell the werewolves who the other werewolf is.
     let randomvar = 0;
     let temporaryArray = [];
     for (let i = 0; i < this._players.length; i++) {
@@ -509,6 +531,7 @@ export class OneNight extends Game {
   receive(id: string, msg: string) {
     let player = this.getPlayer(id);
     if (player instanceof Player) {
+      //receive commands from players
       if (msg[0] == "/") {
         if (msg.slice(0, 5) == "/vote") {
           let username = msg.slice(5).trim();
@@ -531,6 +554,7 @@ export class OneNight extends Game {
         } else {
           player.send("Error: no such command exists! Commands are /vote /unvote /rules");
         }
+        //implement a /rules command
       } else {
         this.playerchat.broadcast(player.id, player.username + ": " + msg);
       }
