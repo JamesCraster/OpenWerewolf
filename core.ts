@@ -279,8 +279,8 @@ export class Server {
 export abstract class Game {
   protected _players: Array<Player> = [];
   protected _registeredPlayerCount: number = 0;
-  private _minPlayerCount: number = 5;
-  protected _maxPlayerCount: number = 5;
+  private _minPlayerCount: number = 3;
+  protected _maxPlayerCount: number = 3;
   protected _inPlay: boolean = false;
 
   public constructor() { }

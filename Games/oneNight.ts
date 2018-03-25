@@ -83,10 +83,10 @@ export class OneNight extends Game {
   private rightCard: string = "";
   private time: number = 0;
   private minutes: number = 1;
-  private length = 2;
+  private length = 6;
   private trial: boolean = false;
   private won: boolean = false;
-
+  private wonEarlyTime = 0;
   public constructor() {
     super();
     setInterval(this.update.bind(this), 500);
@@ -134,6 +134,7 @@ export class OneNight extends Game {
         for (let j = 0; j < this._players.length; j++) {
           if (this._players[j].username == this._players[i].data.vote) {
             this._players[j].data.voteCount++;
+            this.playerchat.broadcast("game", this._players[i].username + " voted for " + this._players[j].username + ".", true);
           }
         }
       }
@@ -141,11 +142,13 @@ export class OneNight extends Game {
     let maxVoteCount = 0;
     let loser = this._players[0];
     for (let i = 0; i < this._players.length; i++) {
+      console.log(this._players[i].data.voteCount);
       if (this._players[i].data.voteCount > maxVoteCount) {
-        maxVoteCount == this._players[i].data.voteCount;
+        maxVoteCount = this._players[i].data.voteCount;
         loser = this._players[i];
       }
     }
+
     this.playerchat.broadcast("game", loser.username + " has been hung.", true);
     this.playerchat.broadcast("game", loser.username + " was a " + loser.data.role + ".", true);
     if (loser.data.role == Roles.werewolf) {
@@ -166,12 +169,22 @@ export class OneNight extends Game {
     ) {
       this.start();
     }
+    if (this.everyoneVoted() && this.won == false) {
+      this.playerchat.broadcast("game", "Everyone has voted, so the game has ended.", true);
+      this.winResolution();
+      this.won = true;
+      this.wonEarlyTime = Date.now();
+    }
+    if (this.won == true && this.wonEarlyTime != 0 && Date.now() - this.wonEarlyTime > 40 * 1000) {
+      this.playerchat.broadcast("game", "The game has ended.", true);
+      this.end();
+    }
     if (this._inPlay && this.time != 0) {
       if (Date.now() - this.time > this.minutes * 1000 * 60 && this.minutes != this.length) {
         this.playerchat.broadcast("game", this.length - this.minutes + " minutes remain until the trial. You can vote at any time using \"/vote username\"", true);
         this.minutes += 1;
       }
-      if (Date.now() - this.time > this.length * 60 * 1000 + 60 * 1000) {
+      if (Date.now() - this.time > this.length * 60 * 1000 + 70 * 1000) {
         this.playerchat.broadcast("game", "The game has ended.", true);
         this.end();
       } else if (Date.now() - this.time > this.length * 60 * 1000 + 30 * 1000 && !this.won) {
@@ -198,6 +211,18 @@ export class OneNight extends Game {
     this.length = 6;
     this.trial = false;
     this.won = false;
+  }
+  everyoneVoted() {
+    let out = true;
+    for (let i = 0; i < this._players.length; i++) {
+      if (this._players[i].data.vote == "" || this._players[i].data.vote == undefined) {
+        return false;
+      }
+    }
+    if (this._players.length == 0) {
+      return false;
+    }
+    return out;
   }
   start() {
     super.start();
