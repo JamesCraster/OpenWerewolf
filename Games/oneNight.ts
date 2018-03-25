@@ -83,7 +83,7 @@ export class OneNight extends Game {
   private rightCard: string = "";
   private time: number = 0;
   private minutes: number = 1;
-  private length = 6;
+  private length = 2;
   private trial: boolean = false;
   private won: boolean = false;
 
@@ -110,6 +110,7 @@ export class OneNight extends Game {
     return out;
   }
   public addPlayer(player: Player) {
+    player.data.voteCount = 0;
     this.playerchat.addPlayer(player);
     super.addPlayer(player);
   }
@@ -127,6 +128,37 @@ export class OneNight extends Game {
     }
     return players[randomvar];
   }
+  public winResolution() {
+    for (let i = 0; i < this._players.length; i++) {
+      if (this._players[i].data.vote != "") {
+        for (let j = 0; j < this._players.length; j++) {
+          if (this._players[j].username == this._players[i].data.vote) {
+            this._players[j].data.voteCount++;
+          }
+        }
+      }
+    }
+    let maxVoteCount = 0;
+    let loser = this._players[0];
+    for (let i = 0; i < this._players.length; i++) {
+      if (this._players[i].data.voteCount > maxVoteCount) {
+        maxVoteCount == this._players[i].data.voteCount;
+        loser = this._players[i];
+      }
+    }
+    this.playerchat.broadcast("game", loser.username + " has been hung.", true);
+    this.playerchat.broadcast("game", loser.username + " was a " + loser.data.role + ".", true);
+    if (loser.data.role == Roles.werewolf) {
+      this.playerchat.broadcast("game", "The werewolves have lost.", true);
+    } else {
+      this.playerchat.broadcast("game", "The town have lost.", true);
+    }
+    for (let i = 0; i < this._players.length; i++) {
+      this.playerchat.broadcast("game", this._players[i].username + " started as a " + this._players[i].data.initialRole +
+        " and became a " + this._players[i].data.role + ".", true);
+    }
+
+  }
   update() {
     if (
       this._registeredPlayerCount >= this._maxPlayerCount &&
@@ -143,7 +175,7 @@ export class OneNight extends Game {
         this.playerchat.broadcast("game", "The game has ended.", true);
         this.end();
       } else if (Date.now() - this.time > this.length * 60 * 1000 + 30 * 1000 && !this.won) {
-        this.playerchat.broadcast("game", "The werewolves have won!", true);
+        this.winResolution();
         this.won = true;
       } else if (Date.now() - this.time > this.length * 60 * 1000 && !this.trial) {
         this.trial = true;
