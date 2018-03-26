@@ -142,6 +142,10 @@ export class OneNight extends Game {
     }
     //pick the player with the most votes and call them the loser
     let maxVoteCount = 0;
+    //if no players are around, stop here
+    if (this._players.length == 0) {
+      return;
+    }
     let loser = this._players[0];
     for (let i = 0; i < this._players.length; i++) {
       if (this._players[i].data.voteCount > maxVoteCount) {
@@ -172,22 +176,22 @@ export class OneNight extends Game {
     ) {
       this.start();
     }
-    //if players all voted early
-    if (this.everyoneVoted() && this.won == false) {
-      this.playerchat.broadcast("game", "Everyone has voted, so the game has ended.", true);
-      this.winResolution();
-      this.won = true;
-      //set timer so that in 40 seconds the game ends
-      this.wonEarlyTime = Date.now();
-    }
-    //if players voted early, kick everyone after 40 seconds 
-    if (this.won == true && this.wonEarlyTime != 0 && Date.now() - this.wonEarlyTime > 40 * 1000) {
-      this.playerchat.broadcast("game", "The game has ended.", true);
-      //redirect players and reset
-      this.end();
-    }
     //if game is running
     if (this._inPlay && this.time != 0) {
+      //if players all voted early
+      if (this.everyoneVoted() && this.won == false) {
+        this.playerchat.broadcast("game", "Everyone has voted, so the game has ended.", true);
+        this.winResolution();
+        this.won = true;
+        //set timer so that in 40 seconds the game ends
+        this.wonEarlyTime = Date.now();
+      }
+      //if players voted early, kick everyone after 40 seconds 
+      if (this.won == true && this.wonEarlyTime != 0 && Date.now() - this.wonEarlyTime > 40 * 1000) {
+        this.playerchat.broadcast("game", "The game has ended.", true);
+        //redirect players and reset
+        this.end();
+      }
       //notify players of time left every minute
       if (Date.now() - this.time > this.minutes * 1000 * 60 && this.minutes != this.length) {
         this.playerchat.broadcast("game", this.length - this.minutes + " minutes remain until the trial. You can vote at any time using \"/vote username\"", true);

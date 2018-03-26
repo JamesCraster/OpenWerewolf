@@ -37,6 +37,17 @@ var io = require("socket.io")(http);
 //create a new server
 var server = new Server();
 server.addGame(new OneNight());
+server.addGame(new OneNight());
+server.addGame(new OneNight());
+server.addGame(new OneNight());
+server.addGame(new OneNight());
+server.addGame(new OneNight());
+server.addGame(new OneNight());
+server.addGame(new OneNight());
+server.addGame(new OneNight());
+server.addGame(new OneNight());
+server.addGame(new OneNight());
+
 //serve static content
 app.use(express.static("Client"));
 app.get("/", function (req: any, res: any) {

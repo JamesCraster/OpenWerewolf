@@ -252,10 +252,14 @@ export class Server {
 
   public kick(id: string): void {
     var player = this.getPlayer(id);
+    console.log(player);
     if (player instanceof Player) {
       var index = this._players.indexOf(player);
+      console.log(index);
       if (index !== -1) {
-        this._players.splice(index, 1);
+        console.log(this._players.length);
+        console.log(this._players.splice(index, 1));
+        console.log(this._players.length);
         if (player.registered && this._registeredPlayerCount > 0) {
           this._registeredPlayerCount--;
           if (player.inGame) {
