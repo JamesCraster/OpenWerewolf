@@ -144,7 +144,6 @@ export class OneNight extends Game {
     let maxVoteCount = 0;
     let loser = this._players[0];
     for (let i = 0; i < this._players.length; i++) {
-      console.log(this._players[i].data.voteCount);
       if (this._players[i].data.voteCount > maxVoteCount) {
         maxVoteCount = this._players[i].data.voteCount;
         loser = this._players[i];
@@ -227,6 +226,7 @@ export class OneNight extends Game {
     this.length = 6;
     this.trial = false;
     this.won = false;
+    this.wonEarlyTime = 0;
   }
   //returns true if everyone voted
   everyoneVoted() {
@@ -524,9 +524,6 @@ export class OneNight extends Game {
     );
     //start timer
     this.time = Date.now();
-    for (let i = 0; i < this._players.length; i++) {
-      console.log(this._players[i]);
-    }
   }
   receive(id: string, msg: string) {
     let player = this.getPlayer(id);
