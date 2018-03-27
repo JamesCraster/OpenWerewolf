@@ -34,7 +34,8 @@ enum Roles {
   seer = "seer",
   robber = "robber",
   transporter = "transporter",
-  villager = "villager"
+  villager = "villager",
+  drunk = "drunk"
 }
 
 class RoleList {
@@ -53,7 +54,7 @@ let threePlayer: RoleList = new RoleList([
   Roles.seer,
   Roles.robber,
   Roles.transporter,
-  Roles.villager
+  Roles.drunk
 ]);
 let fourPlayer: RoleList = new RoleList([
   Roles.werewolf,
@@ -62,7 +63,7 @@ let fourPlayer: RoleList = new RoleList([
   Roles.robber,
   Roles.transporter,
   Roles.villager,
-  Roles.villager
+  Roles.drunk
 ]);
 let fivePlayer: RoleList = new RoleList([
   Roles.werewolf,
@@ -72,7 +73,7 @@ let fivePlayer: RoleList = new RoleList([
   Roles.transporter,
   Roles.villager,
   Roles.villager,
-  Roles.villager
+  Roles.drunk
 ]);
 
 export class OneNight extends Game {
@@ -505,6 +506,30 @@ export class OneNight extends Game {
             secondTarget.data.role = temporaryRole;
           }
           break;
+      }
+    }
+    //drunk
+    for (let i = 0; i < this._players.length; i++) {
+      if (this._players[i].data.initialRole == Roles.drunk) {
+        randomvar = Math.floor(Math.random() * 3);
+        if (randomvar >= 3) {
+          randomvar = 2;
+        }
+        this._players[i].send("There are 3 cards in the center of the table: one left, one middle and one right.");
+        switch (randomvar) {
+          case 0:
+            this._players[i].send("You took the leftmost card from the center and swapped it with your own.");
+            this._players[i].data.role = this.leftCard;
+            break;
+          case 1:
+            this._players[i].send("You took the middle card from the center and swapped it with your own.");
+            this._players[i].data.role = this.middleCard;
+            break;
+          case 2:
+            this._players[i].send("You took the rightmost card from the center and swapped it with your own.");
+            this._players[i].data.role = this.rightCard;
+        }
+
       }
     }
     //unmute and everyone in the player chat
