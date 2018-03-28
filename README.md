@@ -74,3 +74,15 @@ They are Express and Socket.IO, and all of their dependencies.
 
 On the clientside:
 JQuery has been included in the jquery.js file in /Client.
+
+## Legal Info:
+Please note that only the source code is licensed under the AGPL-3.0. 
+Artwork, logos, fonts and text files may be proprietary.
+
+I want to avoid confusion between the OpenWerewolf site that I run and the sites that others may run.
+Therefore "OpenWerewolf" is an unregistered trademark belonging to me, James Craster.
+I ask that you call forked versions of OpenWerewolf by a different name, and that you call your sites that include code from OpenWerewolf by a different name.
+
+
+
+
