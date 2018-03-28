@@ -36,17 +36,22 @@ var io = require("socket.io")(http);
 
 //create a new server
 var server = new Server();
-server.addGame(new OneNight());
-server.addGame(new OneNight());
-server.addGame(new OneNight());
-server.addGame(new OneNight());
-server.addGame(new OneNight());
-server.addGame(new OneNight());
-server.addGame(new OneNight());
-server.addGame(new OneNight());
-server.addGame(new OneNight());
-server.addGame(new OneNight());
-server.addGame(new OneNight());
+server.addGame(new OneNight(server));
+server.addGame(new OneNight(server));
+server.addGame(new OneNight(server));
+server.addGame(new OneNight(server));
+server.addGame(new OneNight(server));
+server.addGame(new OneNight(server));
+server.addGame(new OneNight(server));
+server.addGame(new OneNight(server));
+server.addGame(new OneNight(server));
+server.addGame(new OneNight(server));
+server.addGame(new OneNight(server));
+server.addGame(new OneNight(server));
+server.addGame(new OneNight(server));
+server.addGame(new OneNight(server));
+server.addGame(new OneNight(server));
+
 
 //serve static content
 app.use(express.static("Client"));

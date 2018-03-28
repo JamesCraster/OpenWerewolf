@@ -199,6 +199,7 @@ export class Server {
   }
   public addPlayer(socket: Socket) {
     this._players.push(new Player(socket));
+    console.log("Player length on add: " + this._players.length);
   }
   private register(player: Player, msg: string) {
     //get rid of spaces in name and make lowercase
@@ -252,14 +253,14 @@ export class Server {
 
   public kick(id: string): void {
     var player = this.getPlayer(id);
-    console.log(player);
     if (player instanceof Player) {
+      console.log(player.username);
       var index = this._players.indexOf(player);
-      console.log(index);
+      console.log("Player index: " + index);
       if (index !== -1) {
-        console.log(this._players.length);
-        console.log(this._players.splice(index, 1));
-        console.log(this._players.length);
+        console.log("Player length before remove: " + this._players.length);
+        console.log(this._players.splice(index, 1)[0].username);
+        console.log("Player length after remove: " + this._players.length);
         if (player.registered && this._registeredPlayerCount > 0) {
           this._registeredPlayerCount--;
           if (player.inGame) {
@@ -286,8 +287,10 @@ export abstract class Game {
   private _minPlayerCount: number = 4;
   protected _maxPlayerCount: number = 4;
   protected _inPlay: boolean = false;
-
-  public constructor() { }
+  protected _server: Server;
+  public constructor(server: Server) {
+    this._server = server;
+  }
   get playerCount() {
     return this._registeredPlayerCount;
   }

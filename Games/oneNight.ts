@@ -25,6 +25,7 @@
 
 "use strict";
 import { MessageRoom } from "../core";
+import { Server } from "../core";
 import { Game } from "../core";
 import { Player } from "../core";
 import { Utils } from "../core";
@@ -35,7 +36,8 @@ enum Roles {
   robber = "robber",
   transporter = "transporter",
   villager = "villager",
-  drunk = "drunk"
+  drunk = "drunk",
+  insomniac = "insomniac"
 }
 
 class RoleList {
@@ -62,8 +64,8 @@ let fourPlayer: RoleList = new RoleList([
   Roles.seer,
   Roles.robber,
   Roles.transporter,
-  Roles.villager,
-  Roles.drunk
+  Roles.drunk,
+  Roles.insomniac
 ]);
 let fivePlayer: RoleList = new RoleList([
   Roles.werewolf,
@@ -72,8 +74,8 @@ let fivePlayer: RoleList = new RoleList([
   Roles.robber,
   Roles.transporter,
   Roles.villager,
-  Roles.villager,
-  Roles.drunk
+  Roles.drunk,
+  Roles.insomniac
 ]);
 
 export class OneNight extends Game {
@@ -88,8 +90,8 @@ export class OneNight extends Game {
   private trial: boolean = false;
   private won: boolean = false;
   private wonEarlyTime = 0;
-  public constructor() {
-    super();
+  public constructor(server: Server) {
+    super(server);
     setInterval(this.update.bind(this), 500);
   }
   public getPlayersWithRole(role: string) {
@@ -179,6 +181,10 @@ export class OneNight extends Game {
     }
     //if game is running
     if (this._inPlay && this.time != 0) {
+      //if players have all left
+      /*if (this._players.length == 0) {
+        this.end();
+      }*/
       //if players all voted early
       if (this.everyoneVoted() && this.won == false) {
         this.playerchat.broadcast("game", "Everyone has voted, so the game has ended.", true);
@@ -192,9 +198,10 @@ export class OneNight extends Game {
         this.playerchat.broadcast("game", "The game has ended.", true);
         //redirect players and reset
         this.end();
+        console.log("Game ended.");
       }
       //notify players of time left every minute
-      if (Date.now() - this.time > this.minutes * 1000 * 60 && this.minutes != this.length) {
+      if (Date.now() - this.time > this.minutes * 1000 * 60 && this.minutes != this.length && !this.won) {
         this.playerchat.broadcast("game", this.length - this.minutes + " minutes remain until the trial. You can vote at any time using \"/vote username\"", true);
         this.minutes += 1;
       }
@@ -203,12 +210,13 @@ export class OneNight extends Game {
         this.playerchat.broadcast("game", "The game has ended.", true);
         //redirect and reset
         this.end();
+        console.log("Game ended.");
         //do win resolution 40 seconds before game ends
       } else if (Date.now() - this.time > this.length * 60 * 1000 + 30 * 1000 && !this.won) {
         this.winResolution();
         this.won = true;
         //notify players of last 30 seconds
-      } else if (Date.now() - this.time > this.length * 60 * 1000 && !this.trial) {
+      } else if (Date.now() - this.time > this.length * 60 * 1000 && !this.trial && !this.won) {
         this.trial = true;
         this.playerchat.broadcast("game", "The trial has begun, you have 30 seconds! Vote now using \"/vote username\"", true);
       }
@@ -220,8 +228,15 @@ export class OneNight extends Game {
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].emit("reload");
     }
+    //make sure all players are kicked from the server
+    //this only kicks 2 of the players when there are 3!
+    while (this._players.length != 0) {
+      this._server.kick(this._players[0].id);
+      this._players.splice(0, 1);
+    }
+    console.log("here is the length of the game list " + this._players.length);
+    console.log("here is the game player array " + this._players);
     //reset inital conditions
-    super.end();
     this.playerchat = new MessageRoom();
     this.leftCard = "";
     this.middleCard = "";
@@ -232,6 +247,7 @@ export class OneNight extends Game {
     this.trial = false;
     this.won = false;
     this.wonEarlyTime = 0;
+    super.end();
   }
   //returns true if everyone voted
   everyoneVoted() {
@@ -530,6 +546,22 @@ export class OneNight extends Game {
             this._players[i].data.role = this.rightCard;
         }
 
+      }
+    }
+    //insomniac
+    for (let i = 0; i < this._players.length; i++) {
+      if (this._players[i].data.initialRole == Roles.insomniac) {
+        this._players[i].send("It is the end of the night. You look at your card.");
+        if (this._players[i].data.role == Roles.insomniac) {
+          this._players[i].send("Your card has not changed. You are still an insomniac.");
+        } else {
+          this._players[i].send("Your card has been swapped by somebody. You are now a " + this._players[i].data.role + ".");
+        }
+        if (this._players[i].data.role == Roles.werewolf) {
+          this._players[i].send(
+            "Tomorrow, try not to be suspicious! Pretend that you are not a werewolf."
+          );
+        }
       }
     }
     //unmute and everyone in the player chat
