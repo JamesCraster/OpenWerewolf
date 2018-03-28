@@ -1,8 +1,14 @@
 # OpenWerewolf
 
-> An online multiplayer mafia game.
+> A fully-featured, online multiplayer mafia game for 3-5 players.
 
-Currently in the earliest stage of development, but feel free to play around with it.
+**Play now at http://openwerewolf.us-west-2.elasticbeanstalk.com/**
+
+## Features:
+* You can run multiple games simultaneously using the lobby system
+* The core is general. Use it to create and host whatever games you want
+* Documentation has begun
+* Free/Open Source software under the AGPL-3.0
 
 ## [Documentation](https://jamescraster.github.io/OpenWerewolf/)
 
