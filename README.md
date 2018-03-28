@@ -17,6 +17,9 @@
 It's up to you to piece together the truth (if you're a townie) or bluff your way to victory (if you're an evil, evil werewolf),
 in the Trial, where you'll be voting to kill the werewolf among you.
 
+* Traditional Mafia, Mafia execution, Mission games haven't been built yet: maybe you could help write them?
+## Contribute:
+All contributors are welcome. OpenWerewolf is written almost entirely in Typescript and uses nodejs/express/socket.io.
 
 ## [Documentation](https://jamescraster.github.io/OpenWerewolf/)
 
