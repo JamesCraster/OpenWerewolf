@@ -2,7 +2,7 @@
 
 > A fully-featured online multiplayer mafia game.
 
-**Play now at http://openwerewolf.us-west-2.elasticbeanstalk.com/**
+## Play now at http://openwerewolf.us-west-2.elasticbeanstalk.com/
 
 ## Features:
 * You can run multiple games at once using the lobby system
@@ -11,6 +11,8 @@
 * Includes spam and profanity filters (can be removed if you want)
 * Documentation has begun
 
+## Screenshot:
+![An image of the OpenWerewolf client](https://github.com/JamesCraster/OpenWerewolf/blob/master/croppedScreenshot.png)
 
 ## The Games:
 * One night: During the night, your cards are stolen, swapped, carefully inspected and drunkenly taken by accident.
