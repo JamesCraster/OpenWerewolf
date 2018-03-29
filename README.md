@@ -1,6 +1,6 @@
 # OpenWerewolf
 
-> A fully-featured, online multiplayer mafia game for 3-5 players.
+> A fully-featured online multiplayer mafia game.
 
 **Play now at http://openwerewolf.us-west-2.elasticbeanstalk.com/**
 
@@ -8,14 +8,14 @@
 * You can run multiple games at once using the lobby system
 * The core is general. Use it to create and host whatever games you want
 * Code is free/open source under the AGPL-3.0
-* Profanity filter (can be removed if you want)
+* Includes spam and profanity filters (can be removed if you want)
 * Documentation has begun
 
 
 ## The Games:
 * One night: During the night, your cards are stolen, swapped, carefully inspected and drunkenly taken by accident.
 It's up to you to piece together the truth (if you're a townie) or bluff your way to victory (if you're an evil, evil werewolf),
-in the Trial, where you'll be voting to kill the werewolf among you.
+in the Trial, where you'll be voting to kill the werewolves among you. For 3-5 players.
 
 * Traditional Mafia, Mafia execution, Mission games haven't been built yet: maybe you could help write them?
 ## Contribute:
@@ -78,14 +78,13 @@ JQuery has been included in the jquery.js file in /Client.
 ## Legal Info:
 Please note that only the source code is licensed under the AGPL-3.0. 
 
-Artwork, logos, fonts and text files may be proprietary.
+Artwork, music, logos, fonts and text files may be proprietary.
 
 I want to avoid confusion between the OpenWerewolf site that I run and the sites that others may run.
 
 Therefore "OpenWerewolf" is an unregistered trademark belonging to me, James Craster.
 
-I ask that you call forked versions of OpenWerewolf by a different name, and that you call your sites that include code from 
-OpenWerewolf by a different name.
+I ask that you call forked versions of OpenWerewolf by a different name, and that you call your websites by a different name.
 
 
 
