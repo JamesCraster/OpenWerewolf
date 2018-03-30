@@ -2,7 +2,7 @@
 
 > A fully-featured online multiplayer mafia game.
 
-## Play now at http://openwerewolf.us-west-2.elasticbeanstalk.com/
+## Play now at http://openwerewolf.com/
 
 ## Features:
 * You can run multiple games at once using the lobby system
