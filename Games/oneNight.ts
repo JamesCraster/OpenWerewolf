@@ -230,9 +230,9 @@ export class OneNight extends Game {
     }
     //make sure all players are kicked from the server
     //this only kicks 2 of the players when there are 3!
-    while (this._players.length != 0) {
-      this._server.kick(this._players[0].id);
-      this._players.splice(0, 1);
+    let temporaryPlayerList = this._players.slice();
+    for (let i = 0; i < temporaryPlayerList.length; i++) {
+      this._server.kick(temporaryPlayerList[i].id);
     }
     console.log("here is the length of the game list " + this._players.length);
     console.log("here is the game player array " + this._players);
@@ -335,14 +335,11 @@ export class OneNight extends Game {
     this.middleCard = randomDeck[randomDeck.length - 2];
     this.rightCard = randomDeck[randomDeck.length - 3];
     //perform night actions
-    //tell the seer 2 of the cards at random
-    //swap the robber's card with someone elses and tell them their new card
-    //swap two roles (transporter)
-    //tell the werewolves who the other werewolf is.
     let randomvar = 0;
     let temporaryArray = [];
     for (let i = 0; i < this._players.length; i++) {
       switch (this._players[i].data.initialRole) {
+        //tell the werewolves who the other werewolf is.
         case Roles.werewolf:
           temporaryArray = this._players.slice();
           temporaryArray.splice(i, 1);
@@ -365,6 +362,7 @@ export class OneNight extends Game {
             );
           }
           break;
+        //swap the robber's card with someone elses and tell them their new card
         case Roles.robber:
           temporaryArray = this._players.slice();
           temporaryArray.splice(i, 1);
@@ -390,6 +388,7 @@ export class OneNight extends Game {
           this._players[i].data.role = randomPlayer.data.role;
           randomPlayer.data.role = Roles.robber;
           break;
+        //tell the seer 2 of the cards at random
         case Roles.seer:
           this._players[i].send(
             "There are 3 cards in the center of the table, one left, one middle and one right."
@@ -480,6 +479,7 @@ export class OneNight extends Game {
           );
       }
     }
+    //transporter
     for (let i = 0; i < this._players.length; i++) {
       switch (this._players[i].data.initialRole) {
         case Roles.transporter:

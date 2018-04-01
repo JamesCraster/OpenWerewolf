@@ -99,6 +99,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_games_onenight_.onenight.html#_maxplayercount" class="tsd-kind-icon">_max<wbr>Player<wbr>Count</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_games_onenight_.onenight.html#_players" class="tsd-kind-icon">_players</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_games_onenight_.onenight.html#_registeredplayercount" class="tsd-kind-icon">_registered<wbr>Player<wbr>Count</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_games_onenight_.onenight.html#_server" class="tsd-kind-icon">_server</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_games_onenight_.onenight.html#leftcard" class="tsd-kind-icon">left<wbr>Card</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_games_onenight_.onenight.html#length" class="tsd-kind-icon">length</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_games_onenight_.onenight.html#middlecard" class="tsd-kind-icon">middle<wbr>Card</a></li>
@@ -108,6 +109,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_games_onenight_.onenight.html#time" class="tsd-kind-icon">time</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_games_onenight_.onenight.html#trial" class="tsd-kind-icon">trial</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_games_onenight_.onenight.html#won" class="tsd-kind-icon">won</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_games_onenight_.onenight.html#wonearlytime" class="tsd-kind-icon">won<wbr>Early<wbr>Time</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-inherited">
@@ -124,6 +126,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_games_onenight_.onenight.html#addplayer" class="tsd-kind-icon">add<wbr>Player</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_games_onenight_.onenight.html#broadcast" class="tsd-kind-icon">broadcast</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_games_onenight_.onenight.html#end" class="tsd-kind-icon">end</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_games_onenight_.onenight.html#everyonevoted" class="tsd-kind-icon">everyone<wbr>Voted</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_games_onenight_.onenight.html#getplayer" class="tsd-kind-icon">get<wbr>Player</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_games_onenight_.onenight.html#getplayerswithinitialroleinarray" class="tsd-kind-icon">get<wbr>Players<wbr>With<wbr>Initial<wbr>Role<wbr>InArray</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_games_onenight_.onenight.html#getplayerswithrole" class="tsd-kind-icon">get<wbr>Players<wbr>With<wbr>Role</a></li>
@@ -133,6 +136,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_games_onenight_.onenight.html#receive" class="tsd-kind-icon">receive</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_games_onenight_.onenight.html#start" class="tsd-kind-icon">start</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_games_onenight_.onenight.html#update" class="tsd-kind-icon">update</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_games_onenight_.onenight.html#winresolution" class="tsd-kind-icon">win<wbr>Resolution</a></li>
 							</ul>
 						</section>
 					</div>
@@ -144,16 +148,22 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>One<wbr>Night<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_games_onenight_.onenight.html" class="tsd-signature-type">OneNight</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>One<wbr>Night<span class="tsd-signature-symbol">(</span>server<span class="tsd-signature-symbol">: </span><a href="_core_.server.html" class="tsd-signature-type">Server</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_games_onenight_.onenight.html" class="tsd-signature-type">OneNight</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L82">Games/oneNight.ts:82</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L92">Games/oneNight.ts:92</a></li>
 								</ul>
 							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>server: <a href="_core_.server.html" class="tsd-signature-type">Server</a></h5>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_games_onenight_.onenight.html" class="tsd-signature-type">OneNight</a></h4>
 						</li>
 					</ul>
@@ -168,18 +178,18 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#_inplay">_inPlay</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/core.ts#L278">core.ts:278</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/core.ts#L289">core.ts:289</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 					<a name="_maxplayercount" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _max<wbr>Player<wbr>Count</h3>
-					<div class="tsd-signature tsd-kind-icon">_max<wbr>Player<wbr>Count<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;5</span></div>
+					<div class="tsd-signature tsd-kind-icon">_max<wbr>Player<wbr>Count<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;4</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#_maxplayercount">_maxPlayerCount</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/core.ts#L277">core.ts:277</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/core.ts#L288">core.ts:288</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -190,7 +200,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#_players">_players</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/core.ts#L274">core.ts:274</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/core.ts#L285">core.ts:285</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -201,7 +211,18 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#_registeredplayercount">_registeredPlayerCount</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/core.ts#L275">core.ts:275</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/core.ts#L286">core.ts:286</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="_server" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _server</h3>
+					<div class="tsd-signature tsd-kind-icon">_server<span class="tsd-signature-symbol">:</span> <a href="_core_.server.html" class="tsd-signature-type">Server</a></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#_server">_server</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/core.ts#L290">core.ts:290</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -211,7 +232,7 @@
 					<div class="tsd-signature tsd-kind-icon">left<wbr>Card<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L75">Games/oneNight.ts:75</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L84">Games/oneNight.ts:84</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -221,7 +242,7 @@
 					<div class="tsd-signature tsd-kind-icon">length<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;6</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L80">Games/oneNight.ts:80</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L89">Games/oneNight.ts:89</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -231,7 +252,7 @@
 					<div class="tsd-signature tsd-kind-icon">middle<wbr>Card<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L76">Games/oneNight.ts:76</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L85">Games/oneNight.ts:85</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -241,7 +262,7 @@
 					<div class="tsd-signature tsd-kind-icon">minutes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;1</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L79">Games/oneNight.ts:79</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L88">Games/oneNight.ts:88</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -251,7 +272,7 @@
 					<div class="tsd-signature tsd-kind-icon">playerchat<span class="tsd-signature-symbol">:</span> <a href="_core_.messageroom.html" class="tsd-signature-type">MessageRoom</a><span class="tsd-signature-symbol"> =&nbsp;new MessageRoom()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L74">Games/oneNight.ts:74</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L83">Games/oneNight.ts:83</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -261,7 +282,7 @@
 					<div class="tsd-signature tsd-kind-icon">right<wbr>Card<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L77">Games/oneNight.ts:77</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L86">Games/oneNight.ts:86</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -271,7 +292,7 @@
 					<div class="tsd-signature tsd-kind-icon">time<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L78">Games/oneNight.ts:78</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L87">Games/oneNight.ts:87</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -281,7 +302,7 @@
 					<div class="tsd-signature tsd-kind-icon">trial<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L81">Games/oneNight.ts:81</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L90">Games/oneNight.ts:90</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -291,7 +312,17 @@
 					<div class="tsd-signature tsd-kind-icon">won<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L82">Games/oneNight.ts:82</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L91">Games/oneNight.ts:91</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="wonearlytime" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> won<wbr>Early<wbr>Time</h3>
+					<div class="tsd-signature tsd-kind-icon">won<wbr>Early<wbr>Time<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L92">Games/oneNight.ts:92</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -309,7 +340,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#minimumplayersneeded">minimumPlayersNeeded</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/core.ts#L284">core.ts:284</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/core.ts#L297">core.ts:297</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -327,7 +358,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#playercount">playerCount</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/core.ts#L281">core.ts:281</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/core.ts#L294">core.ts:294</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -345,7 +376,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#playersneeded">playersNeeded</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/core.ts#L291">core.ts:291</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/core.ts#L304">core.ts:304</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -366,7 +397,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#addplayer">addPlayer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L106">Games/oneNight.ts:106</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L115">Games/oneNight.ts:115</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -390,7 +421,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#broadcast">broadcast</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/core.ts#L312">core.ts:312</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/core.ts#L325">core.ts:325</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -414,10 +445,27 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#end">end</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L149">Games/oneNight.ts:149</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L226">Games/oneNight.ts:226</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="everyonevoted" class="tsd-anchor"></a>
+					<h3>everyone<wbr>Voted</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">everyone<wbr>Voted<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L253">Games/oneNight.ts:253</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -432,7 +480,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#getplayer">getPlayer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/core.ts#L298">core.ts:298</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/core.ts#L311">core.ts:311</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -458,7 +506,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L97">Games/oneNight.ts:97</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L106">Games/oneNight.ts:106</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -484,7 +532,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L88">Games/oneNight.ts:88</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L97">Games/oneNight.ts:97</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -507,7 +555,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L110">Games/oneNight.ts:110</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L120">Games/oneNight.ts:120</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="_core_.player.html" class="tsd-signature-type">Player</a></h4>
@@ -524,7 +572,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L117">Games/oneNight.ts:117</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L127">Games/oneNight.ts:127</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -548,7 +596,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#kick">kick</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/core.ts#L318">core.ts:318</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/core.ts#L331">core.ts:331</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -572,7 +620,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#receive">receive</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L446">Games/oneNight.ts:446</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L589">Games/oneNight.ts:589</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -599,7 +647,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#start">start</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L164">Games/oneNight.ts:164</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L267">Games/oneNight.ts:267</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -617,7 +665,24 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#update">update</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a08c068/Games/oneNight.ts#L124">Games/oneNight.ts:124</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L174">Games/oneNight.ts:174</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="winresolution" class="tsd-anchor"></a>
+					<h3>win<wbr>Resolution</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">win<wbr>Resolution<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bb6eb37/Games/oneNight.ts#L134">Games/oneNight.ts:134</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -636,10 +701,10 @@
 						<a href="../modules/_games_onenight_.html">"<wbr>Games/one<wbr>Night"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_core_.html">"core"</a>
+						<a href="../modules/_app_.html">"app"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_index_.html">"index"</a>
+						<a href="../modules/_core_.html">"core"</a>
 					</li>
 				</ul>
 			</nav>
@@ -668,6 +733,9 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 								<a href="_games_onenight_.onenight.html#_registeredplayercount" class="tsd-kind-icon">_registered<wbr>Player<wbr>Count</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="_games_onenight_.onenight.html#_server" class="tsd-kind-icon">_server</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_games_onenight_.onenight.html#leftcard" class="tsd-kind-icon">left<wbr>Card</a>
 							</li>
@@ -695,6 +763,9 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_games_onenight_.onenight.html#won" class="tsd-kind-icon">won</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_games_onenight_.onenight.html#wonearlytime" class="tsd-kind-icon">won<wbr>Early<wbr>Time</a>
+							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
 								<a href="_games_onenight_.onenight.html#minimumplayersneeded" class="tsd-kind-icon">minimum<wbr>Players<wbr>Needed</a>
 							</li>
@@ -712,6 +783,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_games_onenight_.onenight.html#end" class="tsd-kind-icon">end</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_games_onenight_.onenight.html#everyonevoted" class="tsd-kind-icon">everyone<wbr>Voted</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="_games_onenight_.onenight.html#getplayer" class="tsd-kind-icon">get<wbr>Player</a>
@@ -739,6 +813,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_games_onenight_.onenight.html#update" class="tsd-kind-icon">update</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="_games_onenight_.onenight.html#winresolution" class="tsd-kind-icon">win<wbr>Resolution</a>
 							</li>
 						</ul>
 					</li>
