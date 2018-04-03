@@ -15,7 +15,7 @@
 ![An image of the OpenWerewolf client](https://github.com/JamesCraster/OpenWerewolf/blob/master/croppedScreenshot.png)
 
 ## The Games:
-* One night: During the night, your cards are stolen, swapped, carefully inspected and drunkenly taken by accident.
+* During the night, your cards are stolen, swapped, carefully inspected and drunkenly taken by accident.
 It's up to you to piece together the truth (if you're a townie) or bluff your way to victory (if you're an evil, evil werewolf),
 in the Trial, where you'll be voting to kill the werewolves among you. For 3-5 players.
 
