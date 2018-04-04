@@ -27,7 +27,7 @@
 
 import { Server } from "./core";
 import { Socket } from "./node_modules/@types/socket.io";
-import { OneNight } from "./Games/oneNight";
+import { OneDay } from "./Games/oneDay";
 
 var express = require("express");
 var app = express();
@@ -36,21 +36,21 @@ var io = require("socket.io")(http);
 
 //create a new server
 var server = new Server();
-server.addGame(new OneNight(server));
-server.addGame(new OneNight(server));
-server.addGame(new OneNight(server));
-server.addGame(new OneNight(server));
-server.addGame(new OneNight(server));
-server.addGame(new OneNight(server));
-server.addGame(new OneNight(server));
-server.addGame(new OneNight(server));
-server.addGame(new OneNight(server));
-server.addGame(new OneNight(server));
-server.addGame(new OneNight(server));
-server.addGame(new OneNight(server));
-server.addGame(new OneNight(server));
-server.addGame(new OneNight(server));
-server.addGame(new OneNight(server));
+server.addGame(new OneDay(server));
+server.addGame(new OneDay(server));
+server.addGame(new OneDay(server));
+server.addGame(new OneDay(server));
+server.addGame(new OneDay(server));
+server.addGame(new OneDay(server));
+server.addGame(new OneDay(server));
+server.addGame(new OneDay(server));
+server.addGame(new OneDay(server));
+server.addGame(new OneDay(server));
+server.addGame(new OneDay(server));
+server.addGame(new OneDay(server));
+server.addGame(new OneDay(server));
+server.addGame(new OneDay(server));
+server.addGame(new OneDay(server));
 
 
 //serve static content

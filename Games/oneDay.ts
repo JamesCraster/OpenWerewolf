@@ -78,7 +78,7 @@ let fivePlayer: RoleList = new RoleList([
   Roles.insomniac
 ]);
 
-export class OneNight extends Game {
+export class OneDay extends Game {
   //define new message room
   private playerchat: MessageRoom = new MessageRoom();
   private leftCard: string = "";
@@ -388,7 +388,7 @@ export class OneNight extends Game {
           this._players[i].data.role = randomPlayer.data.role;
           randomPlayer.data.role = Roles.robber;
           break;
-        //tell the seer 2 of the cards at random
+        //tell the seer 2 of the center cards at random
         case Roles.seer:
           this._players[i].send(
             "There are 3 cards in the center of the table, one left, one middle and one right."

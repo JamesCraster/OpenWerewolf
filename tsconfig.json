@@ -52,6 +52,6 @@
   "files": [
     "app.ts",
     "core.ts",
-    "Games/oneNight.ts"
+    "Games/oneDay.ts"
   ]
 }
