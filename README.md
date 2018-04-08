@@ -23,7 +23,7 @@ in the Trial, where you'll be voting to kill the werewolves among you. For 3-5 p
 ## Contribute:
 All contributors are welcome. OpenWerewolf is written almost entirely in Typescript and uses nodejs/express/socket.io.
 
-## [Documentation](https://jamescraster.github.io/OpenWerewolf/)
+## [Documentation](https://jamescraster.github.io/OpenWerewolf/index.html)
 
 Files are listed to the right.
 
