@@ -10,6 +10,16 @@ typedoc --out docs ../OpenWerewolf --target es6 --theme default
 #add .nojekyll to docs folder so that github pages accepts urls with underscores
 touch docs/.nojekyll
 
+#delete existing release (do this yourself)
 
+#create release
+mkdir release
+cp *.js release
+mkdir release/Games
+cp Games/*.js release/Games
+cp -r node_modules release
+cp -r Client release
+cp client.html release
 
-
+#zip release
+zip release.zip release/*

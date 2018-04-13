@@ -88,11 +88,17 @@ export class Player {
   get username() {
     return this._username;
   }
-  //send an event to the player
+  /**
+   * send an event to the player
+   * @param event 
+   */
   public emit(event: string) {
     this._socket.emit(event);
   }
-  //send message to this player and only this player
+  /** 
+   * send message to this player and only this player
+   * @param msg
+   */
   public send(msg: string) {
     this._socket.emit("message", msg);
   }
