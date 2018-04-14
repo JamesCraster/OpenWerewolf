@@ -1,0 +1,29 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/Cellar/node/9.11.1/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   '-g',
+1 verbose cli   'typedoc' ]
+2 info using npm@3.6.0
+3 info using node@v9.11.1
+4 verbose stack Error: Cannot find module 'internal/util/types'
+4 verbose stack     at Function.Module._resolveFilename (internal/modules/cjs/loader.js:548:15)
+4 verbose stack     at Function.Module._load (internal/modules/cjs/loader.js:475:25)
+4 verbose stack     at Module.require (internal/modules/cjs/loader.js:598:17)
+4 verbose stack     at require (internal/modules/cjs/helpers.js:11:18)
+4 verbose stack     at evalmachine.<anonymous>:31:26
+4 verbose stack     at Object.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/cmd-shim/node_modules/graceful-fs/fs.js:11:1)
+4 verbose stack     at Module._compile (internal/modules/cjs/loader.js:654:30)
+4 verbose stack     at Object.Module._extensions..js (internal/modules/cjs/loader.js:665:10)
+4 verbose stack     at Module.load (internal/modules/cjs/loader.js:566:32)
+4 verbose stack     at tryModuleLoad (internal/modules/cjs/loader.js:506:12)
+5 verbose cwd /Users/jcraster/OpenWerewolf
+6 error Darwin 14.5.0
+7 error argv "/usr/local/Cellar/node/9.11.1/bin/node" "/usr/local/bin/npm" "install" "-g" "typedoc"
+8 error node v9.11.1
+9 error npm  v3.6.0
+10 error code MODULE_NOT_FOUND
+11 error Cannot find module 'internal/util/types'
+12 error If you need help, you may report this error at:
+12 error     <https://github.com/npm/npm/issues>
+13 verbose exit [ 1, true ]
