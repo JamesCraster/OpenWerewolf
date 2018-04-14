@@ -27,6 +27,8 @@ import { Player } from "../core";
 import { Utils } from "../core";
 
 enum Roles {
+  /** @member {string} */
+  /** The evil role, there may be two in the game. */
   werewolf = "werewolf",
   seer = "seer",
   robber = "robber",
@@ -582,6 +584,13 @@ export class OneDay extends Game {
     //start timer
     this.time = Date.now();
   }
+  /**
+   * Processes a message typed into the client by a player.
+   * 
+   * @param {string} id The id of the sender of the message.
+   * @param {string} msg The message the sender sent to the game.
+   * @memberof OneDay
+   */
   receive(id: string, msg: string) {
     let player = this.getPlayer(id);
     if (player instanceof Player) {

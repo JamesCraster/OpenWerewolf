@@ -88,7 +88,13 @@ export class Player {
   get username() {
     return this._username;
   }
-  //send an event to the player
+
+  /**
+   * Sends event to this player
+   * 
+   * @param {string} event 
+   * @memberof Player
+   */
   public emit(event: string) {
     this._socket.emit(event);
   }
@@ -344,7 +350,11 @@ export abstract class Game {
     this._registeredPlayerCount = 0;
   }
 }
-
+/**
+ * 
+ * Adds 'muted' and 'deafened' properties to Player so that it can be used in a MessageRoom.      
+ * Each MessageRoom will have a different MessageRoomMember for the same Player.
+ */
 export class MessageRoomMember extends Player {
   public _muted: boolean = false;
   public _deafened: boolean = false;
