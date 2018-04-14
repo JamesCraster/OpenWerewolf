@@ -88,21 +88,12 @@ export class Player {
   get username() {
     return this._username;
   }
-<<<<<<< HEAD
 
   /**
    * Sends event to this player
    * 
    * @param {string} event 
    * @memberof Player
-=======
-  
-  /**
-   * Sends event to this player
-   * 
-   * @param {string} event 
-   * @memberof Player
->>>>>>> 73e05bc134d50fe901719193a636cddb46a9f586
    */
   public emit(event: string) {
     this._socket.emit(event);
