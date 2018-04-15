@@ -39,7 +39,7 @@ enum Roles {
 }
 
 class RoleList {
-  private _list: Array<string> = [];
+  private readonly _list: Array<string> = [];
   constructor(list: Array<string>) {
     this._list = list;
   }
@@ -48,7 +48,7 @@ class RoleList {
   }
 }
 
-let threePlayer: RoleList = new RoleList([
+const threePlayer: RoleList = new RoleList([
   Roles.werewolf,
   Roles.werewolf,
   Roles.seer,
@@ -56,7 +56,7 @@ let threePlayer: RoleList = new RoleList([
   Roles.transporter,
   Roles.drunk
 ]);
-let fourPlayer: RoleList = new RoleList([
+const fourPlayer: RoleList = new RoleList([
   Roles.werewolf,
   Roles.werewolf,
   Roles.seer,
@@ -65,7 +65,7 @@ let fourPlayer: RoleList = new RoleList([
   Roles.drunk,
   Roles.insomniac
 ]);
-let fivePlayer: RoleList = new RoleList([
+const fivePlayer: RoleList = new RoleList([
   Roles.werewolf,
   Roles.werewolf,
   Roles.seer,
@@ -84,7 +84,7 @@ export class OneDay extends Game {
   private rightCard: string = "";
   private time: number = 0;
   private minutes: number = 1;
-  private length = 6;
+  private readonly length = 6;
   private trial: boolean = false;
   private won: boolean = false;
   private wonEarlyTime = 0;
@@ -92,7 +92,7 @@ export class OneDay extends Game {
     super(server);
     setInterval(this.update.bind(this), 500);
   }
-  public getPlayersWithRole(role: string) {
+  private getPlayersWithRole(role: string) {
     let players = [];
     for (let i = 0; i < this._players.length; i++) {
       if (this._players[i].data.role == role) {
@@ -101,7 +101,7 @@ export class OneDay extends Game {
     }
     return players;
   }
-  public getPlayersWithInitialRoleInArray(players: Array<Player>, role: string) {
+  private getPlayersWithInitialRoleInArray(players: Array<Player>, role: string) {
     let out = [];
     for (let i = 0; i < players.length; i++) {
       if (players[i].data.initialRole == role) {
@@ -115,21 +115,21 @@ export class OneDay extends Game {
     this.playerchat.addPlayer(player);
     super.addPlayer(player);
   }
-  public getRandomPlayer() {
+  private getRandomPlayer() {
     let randomvar = Math.floor(Math.random() * this._players.length);
     if (randomvar >= this._players.length) {
       randomvar = this._players.length - 1;
     }
     return this._players[randomvar];
   }
-  public getRandomPlayerFromArray(players: Array<Player>) {
+  private getRandomPlayerFromArray(players: Array<Player>) {
     let randomvar = Math.floor(Math.random() * players.length);
     if (randomvar >= players.length) {
       randomvar = players.length - 1;
     }
     return players[randomvar];
   }
-  public winResolution() {
+  private winResolution() {
     //tally up all the votes
     for (let i = 0; i < this._players.length; i++) {
       if (this._players[i].data.vote != "") {
@@ -169,7 +169,7 @@ export class OneDay extends Game {
     }
 
   }
-  update() {
+  protected update() {
     //if have max number of players, start the game immediately
     if (
       this._registeredPlayerCount >= this._maxPlayerCount &&
@@ -221,7 +221,7 @@ export class OneDay extends Game {
     }
 
   }
-  end() {
+  protected end() {
     //emit event that causes players to reload
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].emit("reload");
@@ -241,14 +241,13 @@ export class OneDay extends Game {
     this.rightCard = "";
     this.time = 0;
     this.minutes = 1;
-    this.length = 6;
     this.trial = false;
     this.won = false;
     this.wonEarlyTime = 0;
     super.end();
   }
   //returns true if everyone voted
-  everyoneVoted() {
+  private everyoneVoted() {
     let out = true;
     for (let i = 0; i < this._players.length; i++) {
       //if someone hasn't voted, return false
@@ -262,7 +261,7 @@ export class OneDay extends Game {
     }
     return out;
   }
-  start() {
+  protected start() {
     super.start();
     //set everyone's vote to blank
     for (let i = 0; i < this._players.length; i++) {
@@ -591,7 +590,7 @@ export class OneDay extends Game {
    * @param {string} msg The message the sender sent to the game.
    * @memberof OneDay
    */
-  receive(id: string, msg: string) {
+  public receive(id: string, msg: string) {
     let player = this.getPlayer(id);
     if (player instanceof Player) {
       //receive commands from players

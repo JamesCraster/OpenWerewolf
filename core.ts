@@ -32,7 +32,7 @@ var io = require("socket.io")(http);
 var grawlix = require("grawlix");
 
 export class Utils {
-  static shuffle(deck: Array<string>): Array<string> {
+  public static shuffle<T>(deck: Array<T>): Array<T> {
     let randomDeck = [];
     let hat = deck.slice();
     while (hat.length !== 0) {
@@ -50,7 +50,7 @@ interface PlayerData {
 export class Player {
   //true if the player has a username
   private _registered: boolean = false;
-  private _socket: Socket;
+  private readonly _socket: Socket;
   private _inGame: boolean = false;
   private _username: string = "randomuser";
   //object that can be used to flexibly add data to player for game purposes
@@ -249,7 +249,7 @@ export class Server {
     console.log("Error: Server.getPlayer: No player found with given id");
     return undefined;
   }
-  public validateMessage(msg: string): boolean {
+  private validateMessage(msg: string): boolean {
     if (msg.trim() == "" || msg.length > 151) {
       return false;
     } else {
@@ -290,10 +290,10 @@ export class Server {
 export abstract class Game {
   protected _players: Array<Player> = [];
   protected _registeredPlayerCount: number = 0;
-  private _minPlayerCount: number = 4;
-  protected _maxPlayerCount: number = 4;
+  private readonly _minPlayerCount: number = 4;
+  protected readonly _maxPlayerCount: number = 4;
   protected _inPlay: boolean = false;
-  protected _server: Server;
+  protected readonly _server: Server;
   public constructor(server: Server) {
     this._server = server;
   }
@@ -323,7 +323,7 @@ export abstract class Game {
     console.log("Error: Game.getPlayer: No player found with given id");
     return undefined;
   }
-  public abstract update(): void;
+  protected abstract update(): void;
   public addPlayer(player: Player) {
     this._players.push(player);
     this._registeredPlayerCount++;
@@ -359,8 +359,8 @@ export abstract class Game {
  * Each MessageRoom will have a different MessageRoomMember for the same Player.
  */
 export class MessageRoomMember extends Player {
-  public _muted: boolean = false;
-  public _deafened: boolean = false;
+  private _muted: boolean = false;
+  private _deafened: boolean = false;
   constructor(socket: Socket) {
     super(socket);
   }
@@ -384,9 +384,9 @@ export class MessageRoomMember extends Player {
   }
 }
 export class MessageRoom {
-  public _members: Array<MessageRoomMember> = [];
+  private _members: Array<MessageRoomMember> = [];
   constructor() { }
-  getMemberById(id: string): MessageRoomMember | undefined {
+  public getMemberById(id: string): MessageRoomMember | undefined {
     for (var i = 0; i < this._members.length; i++) {
       if (this._members[i].id == id) {
         return this._members[i];
@@ -439,49 +439,49 @@ export class MessageRoom {
       }
     }
   }
-  addPlayer(player: Player) {
+  public addPlayer(player: Player) {
     this._members.push(new MessageRoomMember(player.socket));
   }
-  mute(id: string) {
+  public mute(id: string) {
     let member = this.getMemberById(id);
     if (member instanceof MessageRoomMember) {
       member.mute();
     }
   }
-  deafen(id: string) {
+  public deafen(id: string) {
     let member = this.getMemberById(id);
     if (member instanceof MessageRoomMember) {
       member.deafen();
     }
   }
-  unmute(id: string) {
+  public unmute(id: string) {
     let member = this.getMemberById(id);
     if (member instanceof MessageRoomMember) {
       member.unmute();
     }
   }
-  undeafen(id: string) {
+  public undeafen(id: string) {
     let member = this.getMemberById(id);
     if (member instanceof MessageRoomMember) {
       member.undeafen();
     }
   }
-  muteAll() {
+  public muteAll() {
     this._members.forEach(member => {
       member.mute();
     });
   }
-  deafenAll() {
+  public deafenAll() {
     this._members.forEach(member => {
       member.deafen();
     });
   }
-  unmuteAll() {
+  public unmuteAll() {
     this._members.forEach(member => {
       member.unmute();
     });
   }
-  undeafenAll() {
+  public undeafenAll() {
     this._members.forEach(member => {
       member.undeafen();
     });

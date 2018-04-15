@@ -5,14 +5,12 @@
 tsc
 
 #generate documentation
-typedoc --out docs ../OpenWerewolf --target es6 --theme default
+typedoc --out docs ../OpenWerewolf --target es6 --theme default --readme none
 
 #add .nojekyll to docs folder so that github pages accepts urls with underscores
 touch docs/.nojekyll
 
-#delete existing release (do this yourself)
-
-#create release
+#create release folder
 mkdir release
 cp *.js release
 mkdir release/Games
@@ -23,3 +21,6 @@ cp client.html release
 
 #zip release
 zip release.zip release/*
+
+#delete release folder
+rm -rI release

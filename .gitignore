@@ -2,3 +2,9 @@
 /*.js
 /Games/*.js
 
+#Ignore releases
+release/
+*.zip
+
+#Ignore notes
+TODO.txt
