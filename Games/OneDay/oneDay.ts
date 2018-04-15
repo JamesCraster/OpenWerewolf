@@ -20,11 +20,13 @@
 */
 
 "use strict";
-import { MessageRoom } from "../core";
-import { Server } from "../core";
-import { Game } from "../core";
-import { Player } from "../core";
-import { Utils } from "../core";
+
+import { MessageRoom } from "../../core";
+import { Server } from "../../core";
+import { Game } from "../../core";
+import { Player } from "../../core";
+import { Utils } from "../../core";
+import { RoleList } from "../../core";
 
 enum Roles {
   /** @member {string} */
@@ -38,15 +40,6 @@ enum Roles {
   insomniac = "insomniac"
 }
 
-class RoleList {
-  private readonly _list: Array<string> = [];
-  constructor(list: Array<string>) {
-    this._list = list;
-  }
-  get list() {
-    return this._list;
-  }
-}
 
 const threePlayer: RoleList = new RoleList([
   Roles.werewolf,
@@ -89,7 +82,7 @@ export class OneDay extends Game {
   private won: boolean = false;
   private wonEarlyTime = 0;
   public constructor(server: Server) {
-    super(server);
+    super(server, 3, 3);
     setInterval(this.update.bind(this), 500);
   }
   private getPlayersWithRole(role: string) {
@@ -179,10 +172,10 @@ export class OneDay extends Game {
     }
     //if game is running
     if (this._inPlay && this.time != 0) {
-      //if players have all left
-      /*if (this._players.length == 0) {
+      //if players have all left, end the game
+      if (this._players.length == 0) {
         this.end();
-      }*/
+      }
       //if players all voted early
       if (this.everyoneVoted() && this.won == false) {
         this.playerchat.broadcast("game", "Everyone has voted, so the game has ended.", true);
@@ -269,14 +262,7 @@ export class OneDay extends Game {
     }
     this.broadcast("***NEW GAME***");
     //print out all players
-    let playersString = "";
-    for (let i = 0; i < this._players.length; i++) {
-      if (i != 0) {
-        playersString += ", "
-      }
-      playersString += this._players[i].username;
-    }
-    this.playerchat.broadcast("game", "Players: " + playersString + ".", true);
+    this.broadcastPlayerList();
     //shuffle the deck and hand out roles to players
     let roleList: Array<string> = [];
     let randomDeck: Array<string> = [];
@@ -293,14 +279,7 @@ export class OneDay extends Game {
     }
     randomDeck = Utils.shuffle(roleList);
     //list all of the roles in the order in which they wake up
-    let rolesString = "";
-    for (let i = 0; i < roleList.length; i++) {
-      if (i != 0) {
-        rolesString += ", "
-      }
-      rolesString += roleList[i];
-    }
-    this.playerchat.broadcast("game", "Roles (in order of when they act): " + rolesString + ".", true);
+    this.broadcastRoleList(roleList);
     //mute everyone in the player chat
     this.playerchat.muteAll();
     this.playerchat.broadcast(
@@ -332,6 +311,31 @@ export class OneDay extends Game {
     this.middleCard = randomDeck[randomDeck.length - 2];
     this.rightCard = randomDeck[randomDeck.length - 3];
     //perform night actions
+    this.nightActions();
+    //unmute and everyone in the player chat
+    this.playerchat.unmuteAll();
+    this.playerchat.broadcast(
+      "game",
+      "6 minutes remain until trial. You can secretly vote to kill someone at any time by typing \"/vote username\"," +
+      " for example, \"/vote frank\" secretly casts a hidden vote for frank. You can undo your vote at any time" +
+      " by typing \"/unvote\". If everyone has voted, the game will end early.",
+      true
+    );
+    this.playerchat.broadcast(
+      "game",
+      "If a werewolf is killed in the trial, the town team win. If no werewolves are killed in the trial, the werewolves win.",
+      true
+    );
+    this.playerchat.broadcast(
+      "game",
+      "You can secretly read the rules at any time by typing \"/rules\".",
+      true
+    );
+    //start timer
+    this.time = Date.now();
+  }
+
+  private nightActions(): void {
     let randomvar = 0;
     let temporaryArray = [];
     for (let i = 0; i < this._players.length; i++) {
@@ -478,47 +482,46 @@ export class OneDay extends Game {
     }
     //transporter
     for (let i = 0; i < this._players.length; i++) {
-      switch (this._players[i].data.initialRole) {
-        case Roles.transporter:
-          randomvar = Math.floor(Math.random() * this._players.length);
-          if (randomvar >= this._players.length) {
-            randomvar = this._players.length - 1;
+      if (this._players[i].data.initialRole == Roles.transporter) {
+        randomvar = Math.floor(Math.random() * this._players.length);
+        if (randomvar >= this._players.length) {
+          randomvar = this._players.length - 1;
+        }
+        let firstTarget = randomvar;
+        temporaryArray = this._players.slice();
+        temporaryArray.splice(firstTarget, 1);
+        randomvar = Math.floor(Math.random() * temporaryArray.length);
+        if (randomvar >= temporaryArray.length) {
+          randomvar = temporaryArray.length - 1;
+        }
+        let secondTarget = this.getPlayer(temporaryArray[randomvar].id);
+        if (secondTarget instanceof Player) {
+          if (firstTarget == i) {
+            this._players[i].send(
+              "You swapped your own card with " +
+              secondTarget.username +
+              "'s card."
+            );
+          } else if (secondTarget == this._players[i]) {
+            this._players[i].send(
+              "You swapped your own card with " +
+              this._players[firstTarget].username +
+              "'s card."
+            );
+          } else {
+            this._players[i].send(
+              "You swapped '" +
+              this._players[firstTarget].username +
+              "''s card with '" +
+              secondTarget.username +
+              "''s card."
+            );
           }
-          let firstTarget = randomvar;
-          temporaryArray = this._players.slice();
-          temporaryArray.splice(firstTarget, 1);
-          randomvar = Math.floor(Math.random() * temporaryArray.length);
-          if (randomvar >= temporaryArray.length) {
-            randomvar = temporaryArray.length - 1;
-          }
-          let secondTarget = this.getPlayer(temporaryArray[randomvar].id);
-          if (secondTarget instanceof Player) {
-            if (firstTarget == i) {
-              this._players[i].send(
-                "You swapped your own card with " +
-                secondTarget.username +
-                "'s card."
-              );
-            } else if (secondTarget == this._players[i]) {
-              this._players[i].send(
-                "You swapped your own card with " +
-                this._players[firstTarget].username +
-                "'s card."
-              );
-            } else {
-              this._players[i].send(
-                "You swapped '" +
-                this._players[firstTarget].username +
-                "''s card with '" +
-                secondTarget.username +
-                "''s card."
-              );
-            }
-            let temporaryRole = this._players[firstTarget].data.role;
-            this._players[firstTarget].data.role = secondTarget.data.role;
-            secondTarget.data.role = temporaryRole;
-          }
-          break;
+          let temporaryRole = this._players[firstTarget].data.role;
+          this._players[firstTarget].data.role = secondTarget.data.role;
+          secondTarget.data.role = temporaryRole;
+        }
+        break;
       }
     }
     //drunk
@@ -561,27 +564,6 @@ export class OneDay extends Game {
         }
       }
     }
-    //unmute and everyone in the player chat
-    this.playerchat.unmuteAll();
-    this.playerchat.broadcast(
-      "game",
-      "6 minutes remain until trial. You can secretly vote to kill someone at any time by typing \"/vote username\"," +
-      " for example, \"/vote frank\" secretly casts a hidden vote for frank. You can undo your vote at any time" +
-      " by typing \"/unvote\". If everyone has voted, the game will end early.",
-      true
-    );
-    this.playerchat.broadcast(
-      "game",
-      "If a werewolf is killed in the trial, the town team win. If no werewolves are killed in the trial, the werewolves win.",
-      true
-    );
-    this.playerchat.broadcast(
-      "game",
-      "You can secretly read the rules at any time by typing \"/rules\".",
-      true
-    );
-    //start timer
-    this.time = Date.now();
   }
   /**
    * Processes a message typed into the client by a player.

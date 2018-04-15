@@ -24,7 +24,8 @@
 
 import { Server } from "./core";
 import { Socket } from "./node_modules/@types/socket.io";
-import { OneDay } from "./Games/oneDay";
+import { OneDay } from "./Games/OneDay/oneDay";
+import { Classic } from "./Games/Classic/Classic"
 
 var express = require("express");
 var app = express();

@@ -23,6 +23,7 @@
 "use strict";
 
 import { Socket } from "./node_modules/@types/socket.io";
+import { lstat } from "fs";
 
 //import statements
 var express = require("express");
@@ -32,6 +33,10 @@ var io = require("socket.io")(http);
 var grawlix = require("grawlix");
 
 export class Utils {
+  /**
+   * Shuffles an array
+   * @returns {Array<T>} An array of the same elements in random order
+   */
   public static shuffle<T>(deck: Array<T>): Array<T> {
     let randomDeck = [];
     let hat = deck.slice();
@@ -44,9 +49,53 @@ export class Utils {
   }
 }
 
+export class RoleList {
+  private readonly _list: Array<string> = [];
+  constructor(list: Array<string>) {
+    this._list = list;
+  }
+  get list() {
+    return this._list;
+  }
+}
+
+export class Stopwatch {
+  private _time: number = Date.now();
+  private _storedElapsed: number = 0;
+  private _running: boolean = false;
+
+  public restart(): void {
+    this._storedElapsed = 0;
+    this._time = Date.now();
+  }
+  get time(): number {
+    if (this._running) {
+      return Date.now() - this._time + this._storedElapsed;
+    } else {
+      return this._storedElapsed;
+    }
+  }
+  public stop(): number {
+    if (this._running) {
+      this._storedElapsed += Date.now() - this._time;
+      this._time = Date.now();
+      this._running = false;
+    }
+    return this.time;
+  }
+  public start(): number {
+    if (!this._running) {
+      this._time = Date.now();
+      this._running = true;
+    }
+    return this.time;
+  }
+}
+
 interface PlayerData {
   [key: string]: any;
 }
+
 export class Player {
   //true if the player has a username
   private _registered: boolean = false;
@@ -290,12 +339,14 @@ export class Server {
 export abstract class Game {
   protected _players: Array<Player> = [];
   protected _registeredPlayerCount: number = 0;
-  private readonly _minPlayerCount: number = 4;
-  protected readonly _maxPlayerCount: number = 4;
+  private readonly _minPlayerCount: number;
+  protected readonly _maxPlayerCount: number;
   protected _inPlay: boolean = false;
   protected readonly _server: Server;
-  public constructor(server: Server) {
+  public constructor(server: Server, minPlayerCount: number, maxPlayerCount: number) {
     this._server = server;
+    this._minPlayerCount = minPlayerCount;
+    this._maxPlayerCount = maxPlayerCount;
   }
   get playerCount() {
     return this._registeredPlayerCount;
@@ -352,6 +403,26 @@ export abstract class Game {
     this._players = [];
     this._registeredPlayerCount = 0;
   }
+  protected broadcastPlayerList() {
+    let playersString = "";
+    for (let i = 0; i < this._players.length; i++) {
+      if (i != 0) {
+        playersString += ", "
+      }
+      playersString += this._players[i].username;
+    }
+    this.broadcast("Players: " + playersString + ".");
+  }
+  protected broadcastRoleList(list: Array<string>) {
+    let string = "";
+    for (let i = 0; i < list.length; i++) {
+      if (i != 0) {
+        string += ", "
+      }
+      string += list[i];
+    }
+    this.broadcast("Roles (in order of when they act): " + string + ".");
+  }
 }
 /**
  * 
@@ -385,7 +456,6 @@ export class MessageRoomMember extends Player {
 }
 export class MessageRoom {
   private _members: Array<MessageRoomMember> = [];
-  constructor() { }
   public getMemberById(id: string): MessageRoomMember | undefined {
     for (var i = 0; i < this._members.length; i++) {
       if (this._members[i].id == id) {

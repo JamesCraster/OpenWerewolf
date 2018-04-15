@@ -1,6 +1,8 @@
 # Ignore javascript builds in the root directory
 /*.js
 /Games/*.js
+/Games/OneDay/*.js
+/Games/Classic/*.js
 
 #Ignore releases
 release/

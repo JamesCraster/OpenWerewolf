@@ -14,7 +14,11 @@ touch docs/.nojekyll
 mkdir release
 cp *.js release
 mkdir release/Games
+mkdir release/Games/OneDay
+mkdir release/Games/Classic
 cp Games/*.js release/Games
+cp Games/OneDay/*.js release/Games/OneDay
+cp Games/Classic/*.js release/Games/Classic
 cp -r node_modules release
 cp -r Client release
 cp client.html release

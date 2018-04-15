@@ -15,11 +15,13 @@
 ![An image of the OpenWerewolf client](https://github.com/JamesCraster/OpenWerewolf/blob/master/croppedScreenshot.png)
 
 ## The Games:
-* During the night, your cards are stolen, swapped, carefully inspected and drunkenly taken by accident.
+* OneDay: During the night, your cards are stolen, swapped, carefully inspected and drunkenly taken by accident.
 It's up to you to piece together the truth (if you're a townie) or bluff your way to victory (if you're an evil, evil werewolf),
 in the Trial, where you'll be voting to kill the werewolves among you. For 3-5 players.
 
-* Traditional Mafia, Mafia execution, Mission games haven't been built yet: maybe you could help write them?
+* Classic: A classic game of werewolf lasting multiple nights. Currently under development.
+
+* Mafia execution, Mission games haven't been started yet: maybe you could help write them?
 ## Contribute:
 All contributors are welcome. OpenWerewolf is written almost entirely in Typescript and uses nodejs/express/socket.io.
 
@@ -46,7 +48,7 @@ Then run:
 ```
 $ cd OpenWerewolf
 $ tsc
-$ node index.js
+$ node app.js
 Port is:8080
 ```
 
