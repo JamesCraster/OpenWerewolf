@@ -151,8 +151,16 @@ export class Player {
    * send message to this player and only this player
    * @param msg
    */
-  public send(msg: string) {
-    this._socket.emit("message", msg);
+  public send(msg: string, textColor?: string, backgroundColor?: string): void {
+    if (textColor && backgroundColor) {
+      this._socket.emit("message", msg, textColor, backgroundColor);
+    } else if (textColor) {
+      this._socket.emit("message", msg, textColor);
+    } else if (backgroundColor) {
+      this._socket.emit("message", msg, undefined, backgroundColor);
+    } else {
+      this._socket.emit("message", msg);
+    }
   }
   get socket() {
     return this._socket;
@@ -379,9 +387,9 @@ export abstract class Game {
     this._players.push(player);
     this._registeredPlayerCount++;
   }
-  public broadcast(msg: string) {
+  public broadcast(msg: string, textColor?: string, backgroundColor?: string) {
     for (var i = 0; i < this._players.length; i++) {
-      this._players[i].send(msg);
+      this._players[i].send(msg, textColor, backgroundColor);
     }
   }
   public abstract receive(id: string, msg: string): void;
@@ -467,24 +475,13 @@ export class MessageRoom {
     );
     return undefined;
   }
-  public broadcast(
-    sender: MessageRoomMember | string,
-    msg: string,
-    game = false
-  ) {
-    if (game) {
-      for (var i = 0; i < this._members.length; i++) {
-        if (!this._members[i].deafened) {
-          this._members[i].send(msg);
-        }
-      }
-    }
+  public receive(sender: MessageRoomMember | string, msg: string, textColor?: string, backgroundColor?: string) {
     //if message room member passed in
     if (sender instanceof MessageRoomMember) {
       if (!sender.muted) {
         for (var i = 0; i < this._members.length; i++) {
           if (!this._members[i].deafened) {
-            this._members[i].send(msg);
+            this._members[i].send(msg, textColor, backgroundColor);
           }
         }
       }
@@ -492,20 +489,20 @@ export class MessageRoom {
       //if id passed in, find the sender within the message room
       let messageRoomSender = this.getMemberById(sender);
       if (messageRoomSender instanceof MessageRoomMember) {
-        //do not check for muting if sender is the game itself
-        if (game) {
+        if (!messageRoomSender.muted) {
           for (var i = 0; i < this._members.length; i++) {
             if (!this._members[i].deafened) {
-              this._members[i].send(msg);
-            }
-          }
-        } else if (!messageRoomSender.muted) {
-          for (var i = 0; i < this._members.length; i++) {
-            if (!this._members[i].deafened) {
-              this._members[i].send(msg);
+              this._members[i].send(msg, textColor, backgroundColor);
             }
           }
         }
+      }
+    }
+  }
+  public broadcast(msg: string, textColor?: string, backgroundColor?: string) {
+    for (var i = 0; i < this._members.length; i++) {
+      if (!this._members[i].deafened) {
+        this._members[i].send(msg, textColor, backgroundColor);
       }
     }
   }

@@ -100,14 +100,13 @@ export class Classic extends Game {
   }
   public start() {
     super.start()
-    this.broadcast("***NEW GAME***");
+    this.broadcast("***NEW GAME***", "#03b603");
     this.broadcastPlayerList();
     let randomDeck: Array<string> = [];
     let roleList = ninePlayer.list;
     this.broadcastRoleList(roleList);
     randomDeck = Utils.shuffle(roleList);
     this.daychat.muteAll();
-
     this.daychat.unmuteAll();
   }
   public end() {
@@ -116,7 +115,7 @@ export class Classic extends Game {
   public receive(id: string, msg: string) {
     let player = this.getPlayer(id);
     if (player instanceof Player) {
-      this.daychat.broadcast(player.id, player.username + ": " + msg);
+      this.daychat.receive(player.id, player.username + ": " + msg);
     }
   }
   public addPlayer(player: Player) {

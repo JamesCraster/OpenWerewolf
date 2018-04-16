@@ -31,11 +31,18 @@ $(function () {
     return false;
   });
 
-  socket.on("message", function (msg) {
+  socket.on("message", function (msg, textColor, backgroundColor) {
     //test if client scrolled down
     var scrollDown = isClientScrolledDown();
-
-    $("#chatbox").append($("<li>").text(msg));
+    if (textColor && backgroundColor) {
+      $("#chatbox").append($("<li style='color:" + textColor + ";background-color:" + backgroundColor + "'>").text(msg));
+    } else if (textColor) {
+      $("#chatbox").append($("<li style='color:" + textColor + "'>").text(msg));
+    } else if (backgroundColor) {
+      $("#chatbox").append($("<li style='background-color:" + backgroundColor + "'>").text(msg));
+    } else {
+      $("#chatbox").append($("<li>").text(msg));
+    }
     //only scroll down if the client was scrolled down before the message arrived
     if (scrollDown) {
       $("#inner")[0].scrollTop = $("#inner")[0].scrollHeight - $('#inner')[0].clientHeight;

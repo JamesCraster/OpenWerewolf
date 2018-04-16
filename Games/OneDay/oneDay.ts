@@ -40,6 +40,10 @@ enum Roles {
   insomniac = "insomniac"
 }
 
+enum Colors {
+  red = "#950d0d",
+  green = "#017501"
+}
 
 const threePlayer: RoleList = new RoleList([
   Roles.werewolf,
@@ -129,7 +133,7 @@ export class OneDay extends Game {
         for (let j = 0; j < this._players.length; j++) {
           if (this._players[j].username == this._players[i].data.vote) {
             this._players[j].data.voteCount++;
-            this.playerchat.broadcast("game", this._players[i].username + " voted for " + this._players[j].username + ".", true);
+            this.playerchat.broadcast(this._players[i].username + " voted for " + this._players[j].username + ".");
           }
         }
       }
@@ -148,17 +152,17 @@ export class OneDay extends Game {
       }
     }
 
-    this.playerchat.broadcast("game", loser.username + " has been hung.", true);
-    this.playerchat.broadcast("game", loser.username + " was a " + loser.data.role + ".", true);
+    this.playerchat.broadcast(loser.username + " has been hung.");
+    this.playerchat.broadcast(loser.username + " was a " + loser.data.role + ".");
     if (loser.data.role == Roles.werewolf) {
-      this.playerchat.broadcast("game", "The werewolves have lost.", true);
+      this.playerchat.broadcast("The werewolves have lost.");
     } else {
-      this.playerchat.broadcast("game", "The town have lost.", true);
+      this.playerchat.broadcast("The town have lost.");
     }
     //print out all the list of who had what role and whether their role changed at all
     for (let i = 0; i < this._players.length; i++) {
-      this.playerchat.broadcast("game", this._players[i].username + " started as a " + this._players[i].data.initialRole +
-        " and became a " + this._players[i].data.role + ".", true);
+      this.playerchat.broadcast(this._players[i].username + " started as a " + this._players[i].data.initialRole +
+        " and became a " + this._players[i].data.role + ".");
     }
 
   }
@@ -178,7 +182,7 @@ export class OneDay extends Game {
       }
       //if players all voted early
       if (this.everyoneVoted() && this.won == false) {
-        this.playerchat.broadcast("game", "Everyone has voted, so the game has ended.", true);
+        this.playerchat.broadcast("Everyone has voted, so the game has ended.");
         this.winResolution();
         this.won = true;
         //set timer so that in 40 seconds the game ends
@@ -186,19 +190,19 @@ export class OneDay extends Game {
       }
       //if players voted early, kick everyone after 40 seconds 
       if (this.won == true && this.wonEarlyTime != 0 && Date.now() - this.wonEarlyTime > 40 * 1000) {
-        this.playerchat.broadcast("game", "The game has ended.", true);
+        this.playerchat.broadcast("The game has ended.");
         //redirect players and reset
         this.end();
         console.log("Game ended.");
       }
       //notify players of time left every minute
       if (Date.now() - this.time > this.minutes * 1000 * 60 && this.minutes != this.length && !this.won) {
-        this.playerchat.broadcast("game", this.length - this.minutes + " minutes remain until the trial. You can vote at any time using \"/vote username\"", true);
+        this.playerchat.broadcast(this.length - this.minutes + " minutes remain until the trial. You can vote at any time using \"/vote username\"");
         this.minutes += 1;
       }
       //end game
       if (Date.now() - this.time > this.length * 60 * 1000 + 70 * 1000) {
-        this.playerchat.broadcast("game", "The game has ended.", true);
+        this.playerchat.broadcast("The game has ended.");
         //redirect and reset
         this.end();
         console.log("Game ended.");
@@ -209,7 +213,7 @@ export class OneDay extends Game {
         //notify players of last 30 seconds
       } else if (Date.now() - this.time > this.length * 60 * 1000 && !this.trial && !this.won) {
         this.trial = true;
-        this.playerchat.broadcast("game", "The trial has begun, you have 30 seconds! Vote now using \"/vote username\"", true);
+        this.playerchat.broadcast("The trial has begun, you have 30 seconds! Vote now using \"/vote username\"");
       }
     }
 
@@ -220,7 +224,6 @@ export class OneDay extends Game {
       this._players[i].emit("reload");
     }
     //make sure all players are kicked from the server
-    //this only kicks 2 of the players when there are 3!
     let temporaryPlayerList = this._players.slice();
     for (let i = 0; i < temporaryPlayerList.length; i++) {
       this._server.kick(temporaryPlayerList[i].id);
@@ -260,7 +263,7 @@ export class OneDay extends Game {
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].data.vote = "";
     }
-    this.broadcast("***NEW GAME***");
+    this.broadcast("***NEW GAME***", "#03b603");
     //print out all players
     this.broadcastPlayerList();
     //shuffle the deck and hand out roles to players
@@ -283,23 +286,25 @@ export class OneDay extends Game {
     //mute everyone in the player chat
     this.playerchat.muteAll();
     this.playerchat.broadcast(
-      "game",
       "If your card is swapped with another, you become the role on your new card. You do not wake up again.",
-      true
     );
     this.playerchat.broadcast(
-      "game",
       "Your card may be swapped by the robber or transporter without you realising it.",
-      true
     );
 
     //for debugging purposes, choose the deck:
     //randomDeck = [Roles.seer, Roles.werewolf, Roles.transporter, Roles.werewolf, Roles.villager, Roles.transporter];
     for (let i = 0; i < this._players.length; i++) {
-      this._players[i].send(
-        "You look at your card. You are a " + randomDeck[i] + "."
-        //add town team/ww team explanation
-      );
+      if (randomDeck[i] == Roles.werewolf) {
+        this._players[i].send(
+          "You look at your card. You are a " + randomDeck[i] + ".", undefined, Colors.red
+          //add town team/ww team explanation
+        );
+      } else {
+        this._players[i].send(
+          "You look at your card. You are a " + randomDeck[i] + ".", undefined, Colors.green
+        )
+      }
       //each player starts with two roles, the initialRole and the role. initialRole is constant
       //and dictates when the player wakes up during the night.
       //role can change if the player is robbed/transported etc 
@@ -315,21 +320,16 @@ export class OneDay extends Game {
     //unmute and everyone in the player chat
     this.playerchat.unmuteAll();
     this.playerchat.broadcast(
-      "game",
       "6 minutes remain until trial. You can secretly vote to kill someone at any time by typing \"/vote username\"," +
       " for example, \"/vote frank\" secretly casts a hidden vote for frank. You can undo your vote at any time" +
       " by typing \"/unvote\". If everyone has voted, the game will end early.",
-      true
     );
     this.playerchat.broadcast(
-      "game",
-      "If a werewolf is killed in the trial, the town team win. If no werewolves are killed in the trial, the werewolves win.",
-      true
+      "If a werewolf is killed in the trial, the town team win. If no werewolves are killed in the trial, the werewolves win."
     );
     this.playerchat.broadcast(
-      "game",
       "You can secretly read the rules at any time by typing \"/rules\".",
-      true
+
     );
     //start timer
     this.time = Date.now();
@@ -375,9 +375,15 @@ export class OneDay extends Game {
             randomPlayer.data.role +
             "."
           );
-          this._players[i].send(
-            "You are now a " + randomPlayer.data.role + "."
-          );
+          if (randomPlayer.data.role == Roles.werewolf) {
+            this._players[i].send(
+              "You are now a " + randomPlayer.data.role + ".", undefined, Colors.red
+            );
+          } else {
+            this._players[i].send(
+              "You are now a " + randomPlayer.data.role + ".", undefined, Colors.green
+            );
+          }
           this._players[i].send(
             "'" + randomPlayer.username + "' is now a robber."
           );
@@ -553,9 +559,13 @@ export class OneDay extends Game {
       if (this._players[i].data.initialRole == Roles.insomniac) {
         this._players[i].send("It is the end of the night. You look at your card.");
         if (this._players[i].data.role == Roles.insomniac) {
-          this._players[i].send("Your card has not changed. You are still an insomniac.");
+          this._players[i].send("Your card has not changed. You are still an insomniac.", undefined, Colors.green);
         } else {
-          this._players[i].send("Your card has been swapped by somebody. You are now a " + this._players[i].data.role + ".");
+          if (this._players[i].data.role == Roles.werewolf) {
+            this._players[i].send("Your card has been swapped by somebody. You are now a " + this._players[i].data.role + ".", undefined, Colors.red);
+          } else {
+            this._players[i].send("Your card has been swapped by somebody. You are now a " + this._players[i].data.role + ".", undefined, Colors.green);
+          }
         }
         if (this._players[i].data.role == Roles.werewolf) {
           this._players[i].send(
@@ -600,7 +610,7 @@ export class OneDay extends Game {
         }
         //implement a /rules command
       } else {
-        this.playerchat.broadcast(player.id, player.username + ": " + msg);
+        this.playerchat.receive(player.id, player.username + ": " + msg);
       }
     }
   }
