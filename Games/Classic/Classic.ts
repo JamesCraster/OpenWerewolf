@@ -21,13 +21,7 @@
 
 "use strict";
 
-import { MessageRoom } from "../../core";
-import { Server } from "../../core";
-import { Game } from "../../core";
-import { Player } from "../../core";
-import { Utils } from "../../core";
-import { Stopwatch } from "../../core";
-import { RoleList } from "../../core";
+import { MessageRoom, Colors, Server, Game, Player, Utils, Stopwatch, RoleList } from "../../core";
 
 enum Phase {
   day = "day",
@@ -44,7 +38,9 @@ enum Roles {
   cop = "cop",
   vigilante = "vigilante"
 }
-abstract class Role { };
+abstract class Role {
+  constructor() { };
+};
 class Werewolf extends Role {
   private alignment: string = Alignment.werewolf;
 }
@@ -62,7 +58,10 @@ class Vigilante extends Role {
 }
 class PlayerData {
   private alive: boolean = true;
-  private role: any;
+  private role: Role;
+  constructor(role: Role) {
+    this.role = role;
+  }
 }
 const ninePlayer: RoleList = new RoleList([
   Roles.werewolf,
@@ -78,6 +77,8 @@ const ninePlayer: RoleList = new RoleList([
 export class Classic extends Game {
   private phase: string = Phase.day;
   private stopWatch: Stopwatch = new Stopwatch();
+  private dayClock: Stopwatch = new Stopwatch();
+  private nightClock: Stopwatch = new Stopwatch();
   private daychat: MessageRoom = new MessageRoom();
   private werewolfchat: MessageRoom = new MessageRoom();
 
@@ -107,7 +108,51 @@ export class Classic extends Game {
     this.broadcastRoleList(roleList);
     randomDeck = Utils.shuffle(roleList);
     this.daychat.muteAll();
-    this.daychat.unmuteAll();
+    //hand out roles
+    for (let i = 0; i < randomDeck.length; i++) {
+      switch (randomDeck[i]) {
+        case Roles.werewolf:
+          this._players[i].data = new Werewolf();
+          this._players[i].send("You are a werewolf", undefined, Colors.red);
+          this.werewolfchat.addPlayer(this._players[i]);
+          this.werewolfchat.mute(this._players[i].id);
+          break;
+        case Roles.doctor:
+          this._players[i].data = new Doctor();
+          this._players[i].send("You are a doctor", undefined, Colors.green);
+          break;
+        case Roles.townie:
+          this._players[i].data = new Townie();
+          this._players[i].send("You are a townie", undefined, Colors.green);
+          break;
+        case Roles.cop:
+          this._players[i].data = new Cop();
+          this._players[i].send("You are a cop", undefined, Colors.green);
+          break;
+        case Roles.vigilante:
+          this._players[i].data = new Vigilante();
+          this._players[i].send("You are a vigilante", undefined, Colors.green);
+          break;
+      }
+    }
+    this.broadcast("Night has begun", "blue", undefined);
+    this.werewolfchat.unmuteAll();
+    this.werewolfchat.broadcast("This is the werewolf chat, you can talk to other wolves now in secret.");
+    let werewolfList: Array<string> = [];
+    for (let i = 0; i < this._players.length; i++) {
+      if (this._players[i].data instanceof Werewolf) {
+        werewolfList.push(this._players[i].username);
+      }
+    }
+    let werewolfString = "The werewolves are : ";
+    for (let i = 0; i < werewolfList.length; i++) {
+      if (i != 0) {
+        werewolfString += ", "
+      }
+      werewolfString += werewolfList[i];
+    }
+    this.werewolfchat.broadcast(werewolfString);
+    this.phase = Phase.night;
   }
   public end() {
     super.end();
@@ -116,11 +161,13 @@ export class Classic extends Game {
     let player = this.getPlayer(id);
     if (player instanceof Player) {
       this.daychat.receive(player.id, player.username + ": " + msg);
+      if (player.data instanceof Werewolf) {
+        this.werewolfchat.receive(player.id, player.username + ": " + msg);
+      }
     }
   }
   public addPlayer(player: Player) {
     this.daychat.addPlayer(player);
     super.addPlayer(player);
   }
-
 }

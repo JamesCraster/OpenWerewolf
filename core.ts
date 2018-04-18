@@ -59,6 +59,10 @@ export class RoleList {
   }
 }
 
+export enum Colors {
+  red = "#950d0d",
+  green = "#017501"
+}
 export class Stopwatch {
   private _time: number = Date.now();
   private _storedElapsed: number = 0;

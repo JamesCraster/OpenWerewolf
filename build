@@ -1,30 +1,63 @@
 #!/bin/bash
-# Build script, call before each commit
+# Build script, call with option -d before each commit
+# Options:
+# -b builds for release
+# -r runs node and opens firefox tabs
+# -d generates documentation
 
-#compile typescript
-tsc
+while [ "$1" != "" ]; do
+	case $1 in 
+		-b) 
+      
+      #compile typescript
+      tsc
 
-#generate documentation
-typedoc --out docs ../OpenWerewolf --target es6 --theme default --readme none
+      #create release folder
+      mkdir release
+      cp *.js release
+      mkdir release/Games
+      mkdir release/Games/OneDay
+      mkdir release/Games/Classic
+      cp Games/*.js release/Games
+      cp Games/OneDay/*.js release/Games/OneDay
+      cp Games/Classic/*.js release/Games/Classic
+      cp -r node_modules release
+      cp -r Client release
+      cp client.html release
 
-#add .nojekyll to docs folder so that github pages accepts urls with underscores
-touch docs/.nojekyll
+      #zip release
+      zip release.zip release/*
 
-#create release folder
-mkdir release
-cp *.js release
-mkdir release/Games
-mkdir release/Games/OneDay
-mkdir release/Games/Classic
-cp Games/*.js release/Games
-cp Games/OneDay/*.js release/Games/OneDay
-cp Games/Classic/*.js release/Games/Classic
-cp -r node_modules release
-cp -r Client release
-cp client.html release
+      #delete release folder
+      rm -rI release
 
-#zip release
-zip release.zip release/*
+      ;;
+    
+    -r)
 
-#delete release folder
-rm -rI release
+      #kill all node instances
+      killall node
+
+      #run application on local host and open firefox (linux specific)
+      url="localhost:8080" 
+      sh -c "node app.js" & sh -c "firefox $url $url $url $url $url $url $url $url $url"
+      
+      ;;
+    
+    -d)
+
+      #generate documentation
+      typedoc --out docs ../OpenWerewolf --target es6 --theme default --readme none
+
+      #add .nojekyll to docs folder so that github pages accepts urls with underscores
+      touch docs/.nojekyll
+
+      ;;
+    
+    *)
+      
+      ;;
+	
+  esac
+  shift
+done

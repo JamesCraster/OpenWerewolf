@@ -21,12 +21,7 @@
 
 "use strict";
 
-import { MessageRoom } from "../../core";
-import { Server } from "../../core";
-import { Game } from "../../core";
-import { Player } from "../../core";
-import { Utils } from "../../core";
-import { RoleList } from "../../core";
+import { MessageRoom, Server, Game, Player, Utils, RoleList, Colors } from "../../core";
 
 enum Roles {
   /** @member {string} */
@@ -38,11 +33,6 @@ enum Roles {
   villager = "villager",
   drunk = "drunk",
   insomniac = "insomniac"
-}
-
-enum Colors {
-  red = "#950d0d",
-  green = "#017501"
 }
 
 const threePlayer: RoleList = new RoleList([
