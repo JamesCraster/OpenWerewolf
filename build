@@ -6,8 +6,8 @@
 # -d generates documentation
 
 while [ "$1" != "" ]; do
-	case $1 in 
-		-b) 
+  case $1 in 
+    -b) 
       
       #compile typescript
       tsc

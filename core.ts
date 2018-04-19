@@ -17,7 +17,7 @@
     I (James Craster) require the preservation of this specified author attribution 
     in the Appropriate Legal Notices displayed by works containing material that has 
     been added to OpenWerewolf by me: 
-    "This project includes code from OpenWerewolf. OpenWerewolf author: James V. Craster." 
+    "This project includes code from OpenWerewolf." 
 */
 
 "use strict";
