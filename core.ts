@@ -61,7 +61,11 @@ export class RoleList {
 
 export enum Colors {
   red = "#950d0d",
-  green = "#017501"
+  brightRed = "#ff1b1b",
+  green = "#017501",
+  brightGreen = "#03b603",
+  yellow = "#756f00",
+  brightYellow = "yellow",
 }
 export class Stopwatch {
   private _time: number = Date.now();
@@ -110,9 +114,18 @@ export class Player {
   public data: PlayerData = {};
   //index of the game the player is in in the server's 'games' array
   private _game: number = -1;
+  //true if the player has disconnected entirely
+  private _disconnected: boolean = false;
+
   public constructor(socket: Socket) {
     this._socket = socket;
     this._username = "randomuser";
+  }
+  get disconnected() {
+    return this._disconnected;
+  }
+  public disconnect() {
+    this._disconnected = true;
   }
   get game() {
     return this._game;
@@ -193,7 +206,6 @@ export class Server {
         for (var j = 0; j < this._games.length; j++) {
           //if game needs a player
           if (this._games[j].playersNeeded > 0) {
-            this._games[j].addPlayer(player);
             player.inGame = true;
             player.game = j;
             player.send(
@@ -204,12 +216,19 @@ export class Server {
               "."
             );
             this._games[j].broadcast(player.username + " has joined the game");
-            player.send("There are " + this._games[j].playerCount + " players in this game");
+            player.send("There are " + (this._games[j].playerCount + 1).toString() + " players in this game");
+            if (this._games[j].minimumPlayersNeeded - 1 > 0) {
+              this._games[j].broadcast("The game will begin when at least " + (this._games[j].minimumPlayersNeeded - 1).toString() + " more players have joined");
+              //if just hit the minimum number of players
+            } else if (this._games[j].minimumPlayersNeeded - 1 == 0) {
+              this._games[j].broadcast("The game will start in 30 seconds. Type \"/start\" to start the game now");
+            }
+            this._games[j].addPlayer(player);
             if (this._games[j].minimumPlayersNeeded > 0) {
-              this._games[j].broadcast("The game will begin when at least " + this._games[j].minimumPlayersNeeded + " more players have joined");
-            } else {
-              //should be replaced shortly when flexible game sizes implemented
-              this._games[j].broadcast("The game will start now");
+              player.send("The game will begin when at least " + (this._games[j].minimumPlayersNeeded).toString() + " more players have joined");
+              //if just hit the minimum number of players
+            } else if (this._games[j].minimumPlayersNeeded == 0) {
+              player.send("The game will start in 30 seconds. Type \"/start\" to start the game now");
             }
             break;
           }
@@ -334,7 +353,10 @@ export class Server {
             this._games[player.game].broadcast(
               player.username + " has disconnected"
             );
-            this._games[player.game].kick(player);
+            if (!this._games[player.game].inPlay) {
+              this._games[player.game].kick(player);
+            }
+            player.disconnect();
           }
         }
       }
@@ -351,7 +373,7 @@ export class Server {
 export abstract class Game {
   protected _players: Array<Player> = [];
   protected _registeredPlayerCount: number = 0;
-  private readonly _minPlayerCount: number;
+  protected readonly _minPlayerCount: number;
   protected readonly _maxPlayerCount: number;
   protected _inPlay: boolean = false;
   protected readonly _server: Server;
@@ -359,6 +381,9 @@ export abstract class Game {
     this._server = server;
     this._minPlayerCount = minPlayerCount;
     this._maxPlayerCount = maxPlayerCount;
+  }
+  get inPlay() {
+    return this._inPlay;
   }
   get playerCount() {
     return this._registeredPlayerCount;

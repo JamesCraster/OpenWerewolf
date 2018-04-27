@@ -21,7 +21,8 @@
 
 "use strict";
 
-import { MessageRoom, Server, Game, Player, Utils, RoleList, Colors } from "../../core";
+import { MessageRoom, Server, Game, Player, Utils, RoleList, Colors, Stopwatch } from "../../core";
+import { SIGXFSZ } from "constants";
 
 enum Roles {
   /** @member {string} */
@@ -32,7 +33,8 @@ enum Roles {
   transporter = "transporter",
   villager = "villager",
   drunk = "drunk",
-  insomniac = "insomniac"
+  insomniac = "insomniac",
+  jester = "jester"
 }
 
 const threePlayer: RoleList = new RoleList([
@@ -58,9 +60,20 @@ const fivePlayer: RoleList = new RoleList([
   Roles.seer,
   Roles.robber,
   Roles.transporter,
-  Roles.villager,
   Roles.drunk,
-  Roles.insomniac
+  Roles.insomniac,
+  Roles.villager
+]);
+const sixPlayer: RoleList = new RoleList([
+  Roles.werewolf,
+  Roles.werewolf,
+  Roles.seer,
+  Roles.robber,
+  Roles.transporter,
+  Roles.drunk,
+  Roles.insomniac,
+  Roles.villager,
+  Roles.jester
 ]);
 
 export class OneDay extends Game {
@@ -75,10 +88,14 @@ export class OneDay extends Game {
   private trial: boolean = false;
   private won: boolean = false;
   private wonEarlyTime = 0;
+  private startClock: Stopwatch = new Stopwatch();
+  private startWait = 30000;
+
   public constructor(server: Server) {
-    super(server, 3, 3);
+    super(server, 3, 6);
     setInterval(this.update.bind(this), 500);
   }
+
   private getPlayersWithRole(role: string) {
     let players = [];
     for (let i = 0; i < this._players.length; i++) {
@@ -88,6 +105,7 @@ export class OneDay extends Game {
     }
     return players;
   }
+
   private getPlayersWithInitialRoleInArray(players: Array<Player>, role: string) {
     let out = [];
     for (let i = 0; i < players.length; i++) {
@@ -97,11 +115,20 @@ export class OneDay extends Game {
     }
     return out;
   }
+
   public addPlayer(player: Player) {
-    player.data.voteCount = 0;
-    this.playerchat.addPlayer(player);
     super.addPlayer(player);
+
+    player.data.voteCount = 0;
+    player.data.startVote = false;
+    this.playerchat.addPlayer(player);
+    //If the number of players is between minimum and maximum count, inform them of the wait remaining before game starts
+    if (this._players.length > this._minPlayerCount && this._players.length < this._maxPlayerCount) {
+      player.send("The game will start in " + (Math.floor((this.startWait - this.startClock.time) / 1000)).toString() + " seconds");
+      player.send("Type \"/start\" to start the game immediately");
+    }
   }
+
   private getRandomPlayer() {
     let randomvar = Math.floor(Math.random() * this._players.length);
     if (randomvar >= this._players.length) {
@@ -109,6 +136,7 @@ export class OneDay extends Game {
     }
     return this._players[randomvar];
   }
+
   private getRandomPlayerFromArray(players: Array<Player>) {
     let randomvar = Math.floor(Math.random() * players.length);
     if (randomvar >= players.length) {
@@ -116,6 +144,7 @@ export class OneDay extends Game {
     }
     return players[randomvar];
   }
+
   private winResolution() {
     //tally up all the votes
     for (let i = 0; i < this._players.length; i++) {
@@ -145,9 +174,32 @@ export class OneDay extends Game {
     this.playerchat.broadcast(loser.username + " has been hung.");
     this.playerchat.broadcast(loser.username + " was a " + loser.data.role + ".");
     if (loser.data.role == Roles.werewolf) {
-      this.playerchat.broadcast("The werewolves have lost.");
+      this.playerchat.broadcast("The town has won!", undefined, Colors.green);
+      for (let i = 0; i < this._players.length; i++) {
+        if (this._players[i].data.role != Roles.jester && this._players[i].data.role != Roles.werewolf) {
+          this._players[i].send("*** YOU WIN! ***", Colors.brightGreen);
+        } else {
+          this._players[i].send("*** YOU LOSE! ***", Colors.brightRed);
+        }
+      }
+    } else if (loser.data.role == Roles.jester) {
+      this.playerchat.broadcast("The jester has won! Everyone else loses.", undefined, Colors.yellow);
+      for (let i = 0; i < this._players.length; i++) {
+        if (this._players[i].data.role == Roles.jester) {
+          this._players[i].send("*** YOU WIN! ***", Colors.brightGreen);
+        } else {
+          this._players[i].send("*** YOU LOSE! ***", Colors.brightRed);
+        }
+      }
     } else {
-      this.playerchat.broadcast("The town have lost.");
+      this.playerchat.broadcast("The werewolves have won!", undefined, Colors.red);
+      for (let i = 0; i < this._players.length; i++) {
+        if (this._players[i].data.role == Roles.werewolf) {
+          this._players[i].send("*** YOU WIN! ***", Colors.brightGreen);
+        } else {
+          this._players[i].send("*** YOU LOSE! ***", Colors.brightRed);
+        }
+      }
     }
     //print out all the list of who had what role and whether their role changed at all
     for (let i = 0; i < this._players.length; i++) {
@@ -156,13 +208,36 @@ export class OneDay extends Game {
     }
 
   }
+
   protected update() {
-    //if have max number of players, start the game immediately
-    if (
-      this._registeredPlayerCount >= this._maxPlayerCount &&
-      this._inPlay == false
-    ) {
-      this.start();
+    if (!this.inPlay) {
+      //if have max number of players, start the game immediately
+      if (this._registeredPlayerCount >= this._maxPlayerCount) {
+        this.start();
+        //if have minimum number of players
+      } else if (this._registeredPlayerCount >= this._minPlayerCount) {
+        //if startClock has been ticking for startWait time, start:
+        if (this.startClock.time > this.startWait) {
+          this.start();
+
+          //if a majority has typed /start, start:
+        } else {
+          let voteCount = 0;
+          for (let i = 0; i < this._players.length; i++) {
+            if (this._players[i].data.startVote) {
+              voteCount++;
+            }
+          }
+          if (voteCount >= this._players.length / 2) {
+            this.start();
+          }
+        }
+        //if everyone has typed /wait, wait a further 30 seconds up to a limit of 3 minutes:
+
+      } else {
+        this.startClock.restart();
+        this.startClock.start();
+      }
     }
     //if game is running
     if (this._inPlay && this.time != 0) {
@@ -208,6 +283,7 @@ export class OneDay extends Game {
     }
 
   }
+
   protected end() {
     //emit event that causes players to reload
     for (let i = 0; i < this._players.length; i++) {
@@ -221,6 +297,7 @@ export class OneDay extends Game {
     console.log("here is the length of the game list " + this._players.length);
     console.log("here is the game player array " + this._players);
     //reset inital conditions
+    this._players = [];
     this.playerchat = new MessageRoom();
     this.leftCard = "";
     this.middleCard = "";
@@ -236,8 +313,8 @@ export class OneDay extends Game {
   private everyoneVoted() {
     let out = true;
     for (let i = 0; i < this._players.length; i++) {
-      //if someone hasn't voted, return false
-      if (this._players[i].data.vote == "" || this._players[i].data.vote == undefined) {
+      //if someone hasn't voted and isn't disconnected, return false
+      if ((this._players[i].data.vote == "" || this._players[i].data.vote == undefined) && !this._players[i].disconnected) {
         return false;
       }
     }
@@ -253,7 +330,7 @@ export class OneDay extends Game {
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].data.vote = "";
     }
-    this.broadcast("***NEW GAME***", "#03b603");
+    this.broadcast("*** NEW GAME ***", Colors.brightGreen);
     //print out all players
     this.broadcastPlayerList();
     //shuffle the deck and hand out roles to players
@@ -268,6 +345,9 @@ export class OneDay extends Game {
         break;
       case 5:
         roleList = fivePlayer.list;
+        break;
+      case 6:
+        roleList = sixPlayer.list;
         break;
     }
     randomDeck = Utils.shuffle(roleList);
@@ -290,10 +370,14 @@ export class OneDay extends Game {
           "You look at your card. You are a " + randomDeck[i] + ".", undefined, Colors.red
           //add town team/ww team explanation
         );
+      } else if (randomDeck[i] == Roles.jester) {
+        this._players[i].send(
+          "You look at your card. You are a " + randomDeck[i] + ".", undefined, Colors.yellow
+        );
       } else {
         this._players[i].send(
           "You look at your card. You are a " + randomDeck[i] + ".", undefined, Colors.green
-        )
+        );
       }
       //each player starts with two roles, the initialRole and the role. initialRole is constant
       //and dictates when the player wakes up during the night.
@@ -315,7 +399,8 @@ export class OneDay extends Game {
       " by typing \"/unvote\". If everyone has voted, the game will end early.",
     );
     this.playerchat.broadcast(
-      "If a werewolf is killed in the trial, the town team win. If no werewolves are killed in the trial, the werewolves win."
+      "If a werewolf is killed in the trial, the town team win. If no werewolves are killed in the trial, the werewolves win. But if the " +
+      "jester (if there is one, check the rolelist) is killed in the trial, the jester wins, and everyone else loses."
     );
     this.playerchat.broadcast(
       "You can secretly read the rules at any time by typing \"/rules\".",
@@ -369,6 +454,10 @@ export class OneDay extends Game {
             this._players[i].send(
               "You are now a " + randomPlayer.data.role + ".", undefined, Colors.red
             );
+          } else if (randomPlayer.data.role == Roles.jester) {
+            this._players[i].send(
+              "You are now a " + randomPlayer.data.role + ".", undefined, Colors.yellow
+            )
           } else {
             this._players[i].send(
               "You are now a " + randomPlayer.data.role + ".", undefined, Colors.green
@@ -474,6 +563,13 @@ export class OneDay extends Game {
           this._players[i].send(
             "You are a villager, so you do nothing. Goodnight!"
           );
+          break;
+        case Roles.jester:
+          this._players[i].send("You are the jester, so you do nothing.");
+          this._players[i].send(
+            "Tomorrow, you want to be killed in the trial. Act as suspiciously as possible!"
+          );
+          break;
       }
     }
     //transporter
@@ -565,6 +661,7 @@ export class OneDay extends Game {
       }
     }
   }
+
   /**
    * Processes a message typed into the client by a player.
    * 
@@ -575,8 +672,8 @@ export class OneDay extends Game {
   public receive(id: string, msg: string) {
     let player = this.getPlayer(id);
     if (player instanceof Player) {
-      //receive commands from players
-      if (msg[0] == "/") {
+      //receive in-game commands from players if game is running
+      if (msg[0] == "/" && this.inPlay) {
         if (msg.slice(0, 5) == "/vote") {
           let username = msg.slice(5).trim();
           let exists = false;
@@ -598,7 +695,12 @@ export class OneDay extends Game {
         } else {
           player.send("Error: no such command exists! Commands are /vote /unvote /rules");
         }
-        //implement a /rules command
+        //TODO: implement a /rules command
+      } else if (msg[0] == "/" && !this.inPlay && player.data.startVote == false) {
+        if (msg.slice(0, 6) == "/start") {
+          player.data.startVote = true;
+          this.playerchat.broadcast(player.username + " has voted to start the game immediately by typing \"/start\"");
+        }
       } else {
         this.playerchat.receive(player.id, player.username + ": " + msg);
       }
