@@ -111,7 +111,9 @@
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_core_.messageroommember.html#admin" class="tsd-kind-icon">admin</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_core_.messageroommember.html#deafened" class="tsd-kind-icon">deafened</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_core_.messageroommember.html#disconnected" class="tsd-kind-icon">disconnected</a></li>
 								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="_core_.messageroommember.html#game" class="tsd-kind-icon">game</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_core_.messageroommember.html#id" class="tsd-kind-icon">id</a></li>
 								<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="_core_.messageroommember.html#ingame" class="tsd-kind-icon">in<wbr>Game</a></li>
@@ -125,6 +127,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_.messageroommember.html#deafen" class="tsd-kind-icon">deafen</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_core_.messageroommember.html#disconnect" class="tsd-kind-icon">disconnect</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_core_.messageroommember.html#emit" class="tsd-kind-icon">emit</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_.messageroommember.html#mute" class="tsd-kind-icon">mute</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_core_.messageroommember.html#register" class="tsd-kind-icon">register</a></li>
@@ -132,6 +135,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_core_.messageroommember.html#setusername" class="tsd-kind-icon">set<wbr>Username</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_.messageroommember.html#undeafen" class="tsd-kind-icon">undeafen</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_.messageroommember.html#unmute" class="tsd-kind-icon">unmute</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_core_.messageroommember.html#verifyasadmin" class="tsd-kind-icon">verify<wbr>AsAdmin</a></li>
 							</ul>
 						</section>
 					</div>
@@ -150,7 +154,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L446">core.ts:446</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L494">core.ts:494</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -172,7 +176,7 @@
 					<div class="tsd-signature tsd-kind-icon">_deafened<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L446">core.ts:446</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L494">core.ts:494</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -182,7 +186,7 @@
 					<div class="tsd-signature tsd-kind-icon">_muted<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L445">core.ts:445</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L493">core.ts:493</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -193,13 +197,31 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#data">data</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L110">core.ts:110</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L116">core.ts:116</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<a name="admin" class="tsd-anchor"></a>
+					<h3>admin</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> admin<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#admin">admin</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L168">core.ts:168</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="deafened" class="tsd-anchor"></a>
 					<h3>deafened</h3>
@@ -210,7 +232,25 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L453">core.ts:453</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L501">core.ts:501</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<a name="disconnected" class="tsd-anchor"></a>
+					<h3>disconnected</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> disconnected<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#disconnected">disconnected</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L127">core.ts:127</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -229,7 +269,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#game">game</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L117">core.ts:117</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L133">core.ts:133</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -238,7 +278,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#game">game</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L126">core.ts:126</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L142">core.ts:142</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -262,7 +302,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#id">id</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L120">core.ts:120</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L136">core.ts:136</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -281,7 +321,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#ingame">inGame</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L123">core.ts:123</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L139">core.ts:139</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -290,7 +330,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#ingame">inGame</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L129">core.ts:129</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L145">core.ts:145</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -313,7 +353,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L450">core.ts:450</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L498">core.ts:498</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -331,7 +371,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#registered">registered</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L132">core.ts:132</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L148">core.ts:148</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -349,7 +389,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#socket">socket</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L169">core.ts:169</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L195">core.ts:195</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Socket</span></h4>
@@ -367,7 +407,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#username">username</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L141">core.ts:141</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L157">core.ts:157</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -387,7 +427,25 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L462">core.ts:462</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L510">core.ts:510</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="disconnect" class="tsd-anchor"></a>
+					<h3>disconnect</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">disconnect<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#disconnect">disconnect</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L130">core.ts:130</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -405,7 +463,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#emit">emit</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L151">core.ts:151</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L177">core.ts:177</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -438,7 +496,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L456">core.ts:456</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L504">core.ts:504</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -456,7 +514,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#register">register</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L135">core.ts:135</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L151">core.ts:151</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -474,7 +532,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#send">send</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L158">core.ts:158</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L184">core.ts:184</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -511,7 +569,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#setusername">setUsername</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L138">core.ts:138</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L154">core.ts:154</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -534,7 +592,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L465">core.ts:465</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L513">core.ts:513</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -551,10 +609,34 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/aca932e/core.ts#L459">core.ts:459</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L507">core.ts:507</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="verifyasadmin" class="tsd-anchor"></a>
+					<h3>verify<wbr>AsAdmin</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">verify<wbr>AsAdmin<span class="tsd-signature-symbol">(</span>msg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_core_.player.html">Player</a>.<a href="_core_.player.html#verifyasadmin">verifyAsAdmin</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/9c3eb8c/core.ts#L160">core.ts:160</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>msg: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -608,8 +690,14 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="_core_.messageroommember.html#data" class="tsd-kind-icon">data</a>
 							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+								<a href="_core_.messageroommember.html#admin" class="tsd-kind-icon">admin</a>
+							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="_core_.messageroommember.html#deafened" class="tsd-kind-icon">deafened</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+								<a href="_core_.messageroommember.html#disconnected" class="tsd-kind-icon">disconnected</a>
 							</li>
 							<li class=" tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
 								<a href="_core_.messageroommember.html#game" class="tsd-kind-icon">game</a>
@@ -636,6 +724,9 @@
 								<a href="_core_.messageroommember.html#deafen" class="tsd-kind-icon">deafen</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="_core_.messageroommember.html#disconnect" class="tsd-kind-icon">disconnect</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="_core_.messageroommember.html#emit" class="tsd-kind-icon">emit</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
@@ -655,6 +746,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="_core_.messageroommember.html#unmute" class="tsd-kind-icon">unmute</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="_core_.messageroommember.html#verifyasadmin" class="tsd-kind-icon">verify<wbr>AsAdmin</a>
 							</li>
 						</ul>
 					</li>
@@ -692,6 +786,9 @@
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../modules/_core_.html#io" class="tsd-kind-icon">io</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_core_.html#password" class="tsd-kind-icon">password</a>
 					</li>
 				</ul>
 			</nav>

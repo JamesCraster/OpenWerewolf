@@ -22,18 +22,39 @@
 "use strict";
 
 import { MessageRoom, Server, Game, Player, Utils, RoleList, Colors, Stopwatch } from "../../core";
-import { SIGXFSZ } from "constants";
 
 enum Roles {
-  /** @member {string} */
-  /** The evil role, there may be two in the game. */
+  /** 
+   * The evil role, there may be two in the game. They wake up and see each other
+   */
   werewolf = "werewolf",
+  /** 
+   *  Sees two cards from the centre
+   */
   seer = "seer",
+  /**
+   *  Swaps someone one else's card with their own and looks at it
+   */
   robber = "robber",
+  /**
+   *  Swaps two people's cards, potentially including themselves
+   */
   transporter = "transporter",
+  /**
+   *  Does nothing
+   */
   villager = "villager",
+  /**
+   *  Takes one card from the middle without looking at it
+   */
   drunk = "drunk",
+  /**
+   *  Looks at their card at the end of the night phase to see if it has changed
+   */
   insomniac = "insomniac",
+  /**
+   *  Wants to be lynched in the trial. If the jester wins, everyone else loses
+   */
   jester = "jester"
 }
 
@@ -90,6 +111,7 @@ export class OneDay extends Game {
   private wonEarlyTime = 0;
   private startClock: Stopwatch = new Stopwatch();
   private startWait = 30000;
+  private holdVote: boolean = false;
 
   public constructor(server: Server) {
     super(server, 3, 6);
@@ -174,7 +196,7 @@ export class OneDay extends Game {
     this.playerchat.broadcast(loser.username + " has been hung.");
     this.playerchat.broadcast(loser.username + " was a " + loser.data.role + ".");
     if (loser.data.role == Roles.werewolf) {
-      this.playerchat.broadcast("The town has won!", undefined, Colors.green);
+      this.playerchat.broadcast("The town has won! Everyone else loses.", undefined, Colors.green);
       for (let i = 0; i < this._players.length; i++) {
         if (this._players[i].data.role != Roles.jester && this._players[i].data.role != Roles.werewolf) {
           this._players[i].send("*** YOU WIN! ***", Colors.brightGreen);
@@ -192,7 +214,7 @@ export class OneDay extends Game {
         }
       }
     } else {
-      this.playerchat.broadcast("The werewolves have won!", undefined, Colors.red);
+      this.playerchat.broadcast("The werewolves have won! Everyone else loses.", undefined, Colors.red);
       for (let i = 0; i < this._players.length; i++) {
         if (this._players[i].data.role == Roles.werewolf) {
           this._players[i].send("*** YOU WIN! ***", Colors.brightGreen);
@@ -221,7 +243,7 @@ export class OneDay extends Game {
           this.start();
 
           //if a majority has typed /start, start:
-        } else {
+        } else if (!this.holdVote) {
           let voteCount = 0;
           for (let i = 0; i < this._players.length; i++) {
             if (this._players[i].data.startVote) {
@@ -362,7 +384,7 @@ export class OneDay extends Game {
       "Your card may be swapped by the robber or transporter without you realising it.",
     );
 
-    //for debugging purposes, choose the deck:
+    //for debugging purposes, ou can choose the deck:
     //randomDeck = [Roles.seer, Roles.werewolf, Roles.transporter, Roles.werewolf, Roles.villager, Roles.transporter];
     for (let i = 0; i < this._players.length; i++) {
       if (randomDeck[i] == Roles.werewolf) {
@@ -703,6 +725,42 @@ export class OneDay extends Game {
         }
       } else {
         this.playerchat.receive(player.id, player.username + ": " + msg);
+      }
+    }
+  }
+  //admin commands
+  public adminReceive(id: string, msg: string) {
+    let player = this.getPlayer(id);
+    if (player instanceof Player) {
+      if (msg[0] == "!" && !this.inPlay && player.admin == true) {
+        console.log("true");
+        console.log(msg.slice(0, 4));
+        if (msg.slice(0, 5) == "!stop") {
+          this.startClock.stop();
+          player.send("Countdown stopped", undefined, Colors.green);
+        } else if (msg.slice(0, 6) == "!start") {
+          if (this._registeredPlayerCount >= this._minPlayerCount) {
+            this.start();
+          } else {
+            player.send("Not enough players to start game", Colors.brightRed);
+          }
+        } else if (msg.slice(0, 7) == "!resume") {
+          this.startClock.start();
+          player.send("Countdown resumed", undefined, Colors.green);
+        } else if (msg.slice(0, 8) == "!restart") {
+          this.startClock.restart();
+          player.send("Countdown restarted", undefined, Colors.green);
+        } else if (msg.slice(0, 5) == "!time") {
+          player.send(this.startClock.time.toString());
+        } else if (msg.slice(0, 5) == "!hold") {
+          player.send("The vote to start has been halted.", undefined, Colors.green);
+          this.holdVote = true;
+        } else if (msg.slice(0, 8) == "!release") {
+          player.send("The vote to start has been resumed", undefined, Colors.green);
+          this.holdVote = false;
+        } else if (msg.slice(0, 5) == "!help") {
+          player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !help", undefined, Colors.green);
+        }
       }
     }
   }

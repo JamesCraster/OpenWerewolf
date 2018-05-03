@@ -23,7 +23,6 @@
 "use strict";
 
 import { Socket } from "./node_modules/@types/socket.io";
-import { lstat } from "fs";
 
 //import statements
 var express = require("express");
@@ -31,6 +30,8 @@ var app = express();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
 var grawlix = require("grawlix");
+
+const password = "password";
 
 export class Utils {
   /**
@@ -116,6 +117,7 @@ export class Player {
   private _game: number = -1;
   //true if the player has disconnected entirely
   private _disconnected: boolean = false;
+  private _admin: boolean = false;
 
   public constructor(socket: Socket) {
     this._socket = socket;
@@ -154,7 +156,17 @@ export class Player {
   get username() {
     return this._username;
   }
-
+  public verifyAsAdmin(msg: string): boolean {
+    if (msg == "!" + password) {
+      this._admin = true;
+      return true;
+    } else {
+      return false;
+    }
+  }
+  get admin(): boolean {
+    return this._admin;
+  }
   /**
    * Sends event to this player
    * 
@@ -303,7 +315,15 @@ export class Server {
       if (!player.registered) {
         this.register(player, msg);
       } else {
-        if (this.validateMessage(msg)) {
+        //if trying to sign in as admin 
+        if (msg.slice(0, 1) == "!") {
+          if (player.verifyAsAdmin(msg)) {
+            player.send('You have been granted administrator access', undefined, Colors.green);
+          }
+          if (player.admin) {
+            this._games[player.game].adminReceive(id, msg);
+          }
+        } else if (this.validateMessage(msg)) {
           msg = grawlix(msg, { style: "asterix" });
           this._games[player.game].receive(id, msg);
         }
@@ -311,6 +331,7 @@ export class Server {
     } else {
       console.log("Player: " + id.toString() + " is not defined");
     }
+
   }
   public isPlayer(id: string): boolean {
     for (var i = 0; i < this._players.length; i++) {
@@ -460,6 +481,7 @@ export abstract class Game {
     }
     this.broadcast("Roles (in order of when they act): " + string + ".");
   }
+  public abstract adminReceive(id: string, msg: string): void;
 }
 /**
  * 

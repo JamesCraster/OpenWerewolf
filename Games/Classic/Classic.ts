@@ -170,4 +170,7 @@ export class Classic extends Game {
     this.daychat.addPlayer(player);
     super.addPlayer(player);
   }
+  public adminReceive(id: string, msg: string) {
+
+  }
 }
