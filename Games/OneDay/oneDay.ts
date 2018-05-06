@@ -109,13 +109,9 @@ export class OneDay extends Game {
   private trial: boolean = false;
   private won: boolean = false;
   private wonEarlyTime = 0;
-  private startClock: Stopwatch = new Stopwatch();
-  private startWait = 30000;
-  private holdVote: boolean = false;
 
   public constructor(server: Server) {
     super(server, 3, 6);
-    setInterval(this.update.bind(this), 500);
   }
 
   private getPlayersWithRole(role: string) {
@@ -232,35 +228,6 @@ export class OneDay extends Game {
   }
 
   protected update() {
-    if (!this.inPlay) {
-      //if have max number of players, start the game immediately
-      if (this._registeredPlayerCount >= this._maxPlayerCount) {
-        this.start();
-        //if have minimum number of players
-      } else if (this._registeredPlayerCount >= this._minPlayerCount) {
-        //if startClock has been ticking for startWait time, start:
-        if (this.startClock.time > this.startWait) {
-          this.start();
-
-          //if a majority has typed /start, start:
-        } else if (!this.holdVote) {
-          let voteCount = 0;
-          for (let i = 0; i < this._players.length; i++) {
-            if (this._players[i].data.startVote) {
-              voteCount++;
-            }
-          }
-          if (voteCount >= this._players.length / 2) {
-            this.start();
-          }
-        }
-        //if everyone has typed /wait, wait a further 30 seconds up to a limit of 3 minutes:
-
-      } else {
-        this.startClock.restart();
-        this.startClock.start();
-      }
-    }
     //if game is running
     if (this._inPlay && this.time != 0) {
       //if players have all left, end the game
@@ -303,7 +270,6 @@ export class OneDay extends Game {
         this.playerchat.broadcast("The trial has begun, you have 30 seconds! Vote now using \"/vote username\"");
       }
     }
-
   }
 
   protected end() {
@@ -329,7 +295,7 @@ export class OneDay extends Game {
     this.trial = false;
     this.won = false;
     this.wonEarlyTime = 0;
-    super.end();
+    this.afterEnd();
   }
   //returns true if everyone voted
   private everyoneVoted() {
@@ -347,7 +313,7 @@ export class OneDay extends Game {
     return out;
   }
   protected start() {
-    super.start();
+    this.beforeStart();
     //set everyone's vote to blank
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].data.vote = "";
@@ -714,10 +680,30 @@ export class OneDay extends Game {
           player.data.vote = "";
         } else if (msg.slice(0, 7) == "/unvote" && player.data.vote == "") {
           player.send("You haven't voted for anybody yet, so there is nothing to cancel");
+        } else if (msg.slice(0, 6) == "/rules") {
+          player.send("*** RULES ***", Colors.brightGreen);
+          player.send("Everyone has a role on their card. There are also 3 cards in the middle that no one has.");
+          player.send("During the night each player performs their role.");
+          player.send("Not all these roles will be in the game: check the role list at the start.");
+          player.send("First, the werewolves see who each other are.");
+          player.send("Then the seer looks at two cards in the middle.");
+          player.send("Then the robber swaps their card with someone else's and looks at it.");
+          player.send("Then the transporter swaps two peoples cards (possibly including themselves).");
+          player.send("Then the drunk swaps their card with one from the middle without seeing it.");
+          player.send("Finally, the insomniac looks at their card to see if it changed.");
+          player.send("The villager does nothing.");
+          player.send("The jester wants to die.");
+          player.send("If you card is swapped you become the role on your new card.");
+          player.send("You may not know that you have been swapped.");
+          player.send("During the day, everyone votes for someone to die.");
+          player.send("If a werewolf dies, the town(everyone except the werewolves and the jester) wins.");
+          player.send("The werewolves win if they survive and the jester doesn't die.");
+          player.send("The jester wins if they die.");
+          player.send("*** END RULES ***", Colors.brightGreen);
+
         } else {
           player.send("Error: no such command exists! Commands are /vote /unvote /rules");
         }
-        //TODO: implement a /rules command
       } else if (msg[0] == "/" && !this.inPlay && player.data.startVote == false) {
         if (msg.slice(0, 6) == "/start") {
           player.data.startVote = true;
@@ -725,42 +711,6 @@ export class OneDay extends Game {
         }
       } else {
         this.playerchat.receive(player.id, player.username + ": " + msg);
-      }
-    }
-  }
-  //admin commands
-  public adminReceive(id: string, msg: string) {
-    let player = this.getPlayer(id);
-    if (player instanceof Player) {
-      if (msg[0] == "!" && !this.inPlay && player.admin == true) {
-        console.log("true");
-        console.log(msg.slice(0, 4));
-        if (msg.slice(0, 5) == "!stop") {
-          this.startClock.stop();
-          player.send("Countdown stopped", undefined, Colors.green);
-        } else if (msg.slice(0, 6) == "!start") {
-          if (this._registeredPlayerCount >= this._minPlayerCount) {
-            this.start();
-          } else {
-            player.send("Not enough players to start game", Colors.brightRed);
-          }
-        } else if (msg.slice(0, 7) == "!resume") {
-          this.startClock.start();
-          player.send("Countdown resumed", undefined, Colors.green);
-        } else if (msg.slice(0, 8) == "!restart") {
-          this.startClock.restart();
-          player.send("Countdown restarted", undefined, Colors.green);
-        } else if (msg.slice(0, 5) == "!time") {
-          player.send(this.startClock.time.toString());
-        } else if (msg.slice(0, 5) == "!hold") {
-          player.send("The vote to start has been halted.", undefined, Colors.green);
-          this.holdVote = true;
-        } else if (msg.slice(0, 8) == "!release") {
-          player.send("The vote to start has been resumed", undefined, Colors.green);
-          this.holdVote = false;
-        } else if (msg.slice(0, 5) == "!help") {
-          player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !help", undefined, Colors.green);
-        }
       }
     }
   }

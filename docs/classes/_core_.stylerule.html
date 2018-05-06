@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>PlayerData | openwerewolf</title>
+	<title>StyleRule | openwerewolf</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,24 +56,38 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_games_classic_classic_.html">&quot;Games/Classic/Classic&quot;</a>
+					<a href="../modules/_core_.html">&quot;core&quot;</a>
 				</li>
 				<li>
-					<a href="_games_classic_classic_.playerdata.html">PlayerData</a>
+					<a href="_core_.stylerule.html">StyleRule</a>
 				</li>
 			</ul>
-			<h1>Class PlayerData</h1>
+			<h1>Class StyleRule</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<dl class="tsd-comment-tags">
+						<dt>abstract</dt>
+						<dd><p>Directs the client to add the passed in style data to some text by a logical rule.</p>
+						</dd>
+					</dl>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">PlayerData</span>
+						<span class="target">StyleRule</span>
+						<ul class="tsd-hierarchy">
+							<li>
+								<a href="_core_.matchrule.html" class="tsd-signature-type">MatchRule</a>
+							</li>
+						</ul>
 					</li>
 				</ul>
 			</section>
@@ -81,67 +95,65 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
+						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported"><a href="_games_classic_classic_.playerdata.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="_core_.stylerule.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-private tsd-is-private-protected tsd-is-not-exported">
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_games_classic_classic_.playerdata.html#alive" class="tsd-kind-icon">alive</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_games_classic_classic_.playerdata.html#role" class="tsd-kind-icon">role</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.stylerule.html#_style" class="tsd-kind-icon">_style</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Player<wbr>Data<span class="tsd-signature-symbol">(</span>role<span class="tsd-signature-symbol">: </span><a href="_games_classic_classic_.role.html" class="tsd-signature-type">Role</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_games_classic_classic_.playerdata.html" class="tsd-signature-type">PlayerData</a></li>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Style<wbr>Rule<span class="tsd-signature-symbol">(</span>textColor<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, backgroundColor<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, bold<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span>, underlined<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_core_.stylerule.html" class="tsd-signature-type">StyleRule</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/8617030/Games/Classic/Classic.ts#L61">Games/Classic/Classic.ts:61</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/8617030/core.ts#L97">core.ts:97</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>role: <a href="_games_classic_classic_.role.html" class="tsd-signature-type">Role</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> textColor: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> backgroundColor: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> bold: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> underlined: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="_games_classic_classic_.playerdata.html" class="tsd-signature-type">PlayerData</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="_core_.stylerule.html" class="tsd-signature-type">StyleRule</a></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected tsd-is-not-exported">
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-					<a name="alive" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> alive</h3>
-					<div class="tsd-signature tsd-kind-icon">alive<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_style" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _style</h3>
+					<div class="tsd-signature tsd-kind-icon">_style<span class="tsd-signature-symbol">:</span> <a href="_core_.style.html" class="tsd-signature-type">Style</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/8617030/Games/Classic/Classic.ts#L60">Games/Classic/Classic.ts:60</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-					<a name="role" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> role</h3>
-					<div class="tsd-signature tsd-kind-icon">role<span class="tsd-signature-symbol">:</span> <a href="_games_classic_classic_.role.html" class="tsd-signature-type">Role</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/8617030/Games/Classic/Classic.ts#L61">Games/Classic/Classic.ts:61</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/8617030/core.ts#L97">core.ts:97</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -153,7 +165,7 @@
 					<li class="globals  ">
 						<a href="../index.html"><em>Globals</em></a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_games_classic_classic_.html">"<wbr>Games/<wbr>Classic/<wbr>Classic"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
@@ -162,63 +174,81 @@
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_app_.html">"app"</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_core_.html">"core"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../enums/_games_classic_classic_.alignment.html" class="tsd-kind-icon">Alignment</a>
-					</li>
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../enums/_games_classic_classic_.phase.html" class="tsd-kind-icon">Phase</a>
-					</li>
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../enums/_games_classic_classic_.roles.html" class="tsd-kind-icon">Roles</a>
+					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
+						<a href="../enums/_core_.colors.html" class="tsd-kind-icon">Colors</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_games_classic_classic_.classic.html" class="tsd-kind-icon">Classic</a>
+						<a href="_core_.game.html" class="tsd-kind-icon">Game</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_games_classic_classic_.cop.html" class="tsd-kind-icon">Cop</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_core_.matchrule.html" class="tsd-kind-icon">Match<wbr>Rule</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_games_classic_classic_.doctor.html" class="tsd-kind-icon">Doctor</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_core_.messageroom.html" class="tsd-kind-icon">Message<wbr>Room</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_core_.messageroommember.html" class="tsd-kind-icon">Message<wbr>Room<wbr>Member</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_core_.player.html" class="tsd-kind-icon">Player</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_core_.rolelist.html" class="tsd-kind-icon">Role<wbr>List</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_core_.server.html" class="tsd-kind-icon">Server</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_core_.stopwatch.html" class="tsd-kind-icon">Stopwatch</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_core_.style.html" class="tsd-kind-icon">Style</a>
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_games_classic_classic_.playerdata.html" class="tsd-kind-icon">Player<wbr>Data</a>
+					<li class="current tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_core_.stylerule.html" class="tsd-kind-icon">Style<wbr>Rule</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
-								<a href="_games_classic_classic_.playerdata.html#constructor" class="tsd-kind-icon">constructor</a>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="_core_.stylerule.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-								<a href="_games_classic_classic_.playerdata.html#alive" class="tsd-kind-icon">alive</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-								<a href="_games_classic_classic_.playerdata.html#role" class="tsd-kind-icon">role</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_core_.stylerule.html#_style" class="tsd-kind-icon">_style</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_games_classic_classic_.role.html" class="tsd-kind-icon">Role</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module">
+						<a href="_core_.utils.html" class="tsd-kind-icon">Utils</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_games_classic_classic_.townie.html" class="tsd-kind-icon">Townie</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_games_classic_classic_.vigilante.html" class="tsd-kind-icon">Vigilante</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_games_classic_classic_.werewolf.html" class="tsd-kind-icon">Werewolf</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../interfaces/_core_.playerdata.html" class="tsd-kind-icon">Player<wbr>Data</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_games_classic_classic_.html#nineplayer" class="tsd-kind-icon">nine<wbr>Player</a>
+						<a href="../modules/_core_.html#app" class="tsd-kind-icon">app</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_core_.html#express" class="tsd-kind-icon">express</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_core_.html#grawlix" class="tsd-kind-icon">grawlix</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_core_.html#http" class="tsd-kind-icon">http</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_core_.html#io" class="tsd-kind-icon">io</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../modules/_core_.html#password" class="tsd-kind-icon">password</a>
 					</li>
 				</ul>
 			</nav>

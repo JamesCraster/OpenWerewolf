@@ -31,6 +31,7 @@ var http = require("http").Server(app);
 var io = require("socket.io")(http);
 var grawlix = require("grawlix");
 
+//set this to what the admin password should be
 const password = "password";
 
 export class Utils {
@@ -60,6 +61,10 @@ export class RoleList {
   }
 }
 
+/**
+ * All the colors used in games. No color should be used if it is not in this enum,
+ * for consistency.
+ */
 export enum Colors {
   red = "#950d0d",
   brightRed = "#ff1b1b",
@@ -67,6 +72,47 @@ export enum Colors {
   brightGreen = "#03b603",
   yellow = "#756f00",
   brightYellow = "yellow",
+}
+/** 
+ * Contains style data for text.
+ */
+export class Style {
+  private readonly _backgroundColor: string | undefined;
+  private readonly _textColor: string | undefined;
+  private readonly _bold: boolean | undefined;
+  private readonly _underlined: boolean | undefined;
+
+  constructor(textColor?: string, backgroundColor?: string, bold?: boolean, underlined?: boolean) {
+    this._textColor = textColor;
+    this._backgroundColor = backgroundColor;
+    this._bold = bold;
+    this._underlined = underlined;
+  }
+}
+/**
+ * @abstract
+ * Directs the client to apply the passed in style data to some text by a logical rule.
+ */
+export abstract class StyleRule {
+  private readonly _style: Style;
+  constructor(textColor?: string, backgroundColor?: string, bold?: boolean, underlined?: boolean) {
+    this._style = new Style(textColor, backgroundColor, bold, underlined);
+  }
+}
+/**
+ * Directs client to apply passed in style data to a given keyword in some text.
+ */
+export class MatchRule extends StyleRule {
+  private readonly _keyword: string;
+
+  constructor(keyword: string, textColor?: string, backgroundColor?: string, bold?: boolean, underlined?: boolean) {
+    super(textColor, backgroundColor, bold, underlined);
+    this._keyword = keyword;
+  }
+
+  get keyword() {
+    return this._keyword;
+  }
 }
 export class Stopwatch {
   private _time: number = Date.now();
@@ -398,10 +444,16 @@ export abstract class Game {
   protected readonly _maxPlayerCount: number;
   protected _inPlay: boolean = false;
   protected readonly _server: Server;
+  protected readonly startClock: Stopwatch = new Stopwatch();
+  protected readonly startWait = 30000;
+  protected holdVote: boolean = false;
+
   public constructor(server: Server, minPlayerCount: number, maxPlayerCount: number) {
     this._server = server;
     this._minPlayerCount = minPlayerCount;
     this._maxPlayerCount = maxPlayerCount;
+    setInterval(this.pregameLobbyUpdate.bind(this), 500);
+    setInterval(this.update.bind(this), 500);
   }
   get inPlay() {
     return this._inPlay;
@@ -432,6 +484,37 @@ export abstract class Game {
     console.log("Error: Game.getPlayer: No player found with given id");
     return undefined;
   }
+  private pregameLobbyUpdate() {
+    if (!this.inPlay) {
+      //if have max number of players, start the game immediately
+      if (this._registeredPlayerCount >= this._maxPlayerCount) {
+        this.start();
+        //if have minimum number of players
+      } else if (this._registeredPlayerCount >= this._minPlayerCount) {
+        //if startClock has been ticking for startWait time, start:
+        if (this.startClock.time > this.startWait) {
+          this.start();
+
+          //if a majority has typed /start, start:
+        } else if (!this.holdVote) {
+          let voteCount = 0;
+          for (let i = 0; i < this._players.length; i++) {
+            if (this._players[i].data.startVote) {
+              voteCount++;
+            }
+          }
+          if (voteCount >= this._players.length / 2) {
+            this.start();
+          }
+        }
+        //TODO: if everyone has typed /wait, wait a further 30 seconds up to a limit of 3 minutes:
+
+      } else {
+        this.startClock.restart();
+        this.startClock.start();
+      }
+    }
+  }
   protected abstract update(): void;
   public addPlayer(player: Player) {
     this._players.push(player);
@@ -450,10 +533,10 @@ export abstract class Game {
       this._players.splice(index, 1);
     }
   }
-  protected start() {
+  protected beforeStart() {
     this._inPlay = true;
   }
-  protected end() {
+  protected afterEnd() {
     this._inPlay = false;
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].inGame = false;
@@ -461,6 +544,8 @@ export abstract class Game {
     this._players = [];
     this._registeredPlayerCount = 0;
   }
+  protected abstract start(): void;
+  protected abstract end(): void;
   protected broadcastPlayerList() {
     let playersString = "";
     for (let i = 0; i < this._players.length; i++) {
@@ -481,7 +566,40 @@ export abstract class Game {
     }
     this.broadcast("Roles (in order of when they act): " + string + ".");
   }
-  public abstract adminReceive(id: string, msg: string): void;
+  //admin commands
+  public adminReceive(id: string, msg: string): void {
+    let player = this.getPlayer(id);
+    if (player instanceof Player) {
+      if (msg[0] == "!" && !this.inPlay && player.admin == true) {
+        if (msg.slice(0, 5) == "!stop") {
+          this.startClock.stop();
+          player.send("Countdown stopped", undefined, Colors.green);
+        } else if (msg.slice(0, 6) == "!start") {
+          if (this._registeredPlayerCount >= this._minPlayerCount) {
+            this.start();
+          } else {
+            player.send("Not enough players to start game", Colors.brightRed);
+          }
+        } else if (msg.slice(0, 7) == "!resume") {
+          this.startClock.start();
+          player.send("Countdown resumed", undefined, Colors.green);
+        } else if (msg.slice(0, 8) == "!restart") {
+          this.startClock.restart();
+          player.send("Countdown restarted", undefined, Colors.green);
+        } else if (msg.slice(0, 5) == "!time") {
+          player.send(this.startClock.time.toString());
+        } else if (msg.slice(0, 5) == "!hold") {
+          player.send("The vote to start has been halted.", undefined, Colors.green);
+          this.holdVote = true;
+        } else if (msg.slice(0, 8) == "!release") {
+          player.send("The vote to start has been resumed", undefined, Colors.green);
+          this.holdVote = false;
+        } else if (msg.slice(0, 5) == "!help") {
+          player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !help", undefined, Colors.green);
+        }
+      }
+    }
+  }
 }
 /**
  * 

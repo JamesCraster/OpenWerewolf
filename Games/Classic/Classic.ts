@@ -100,7 +100,7 @@ export class Classic extends Game {
     }
   }
   public start() {
-    super.start()
+    this.beforeStart();
     this.broadcast("***NEW GAME***", "#03b603");
     this.broadcastPlayerList();
     let randomDeck: Array<string> = [];
@@ -155,7 +155,7 @@ export class Classic extends Game {
     this.phase = Phase.night;
   }
   public end() {
-    super.end();
+    this.afterEnd();
   }
   public receive(id: string, msg: string) {
     let player = this.getPlayer(id);
@@ -169,8 +169,5 @@ export class Classic extends Game {
   public addPlayer(player: Player) {
     this.daychat.addPlayer(player);
     super.addPlayer(player);
-  }
-  public adminReceive(id: string, msg: string) {
-
   }
 }
