@@ -39,28 +39,58 @@ enum Roles {
   vigilante = "vigilante"
 }
 abstract class Role {
-  constructor() { };
+  private readonly _alignment:string;
+  private readonly _roleID:string;
+  constructor(alignment:string, roleID:string) {
+    this._alignment = alignment;
+    this._roleID = roleID; 
+   };
+   public get alignment():string{
+    return this._alignment;
+   }
+   public get roleID():string{
+     return this._roleID;
+   }
 };
 class Werewolf extends Role {
-  private alignment: string = Alignment.werewolf;
+  constructor(){
+    super(Alignment.werewolf, Roles.werewolf);
+  }
 }
 class Townie extends Role {
-  private alignment: string = Alignment.town;
+  constructor(){
+    super(Alignment.town, Roles.townie);
+  }
 }
 class Doctor extends Role {
-  private alignment: string = Alignment.town;
+  constructor(){
+    super(Alignment.town, Roles.doctor);
+  }
 }
 class Cop extends Role {
-  private alignment: string = Alignment.town;
+  constructor(){
+    super(Alignment.town, Roles.cop);
+  }
 }
 class Vigilante extends Role {
-  private alignment: string = Alignment.town;
+  constructor(){
+    super(Alignment.town, Roles.vigilante);
+  }
 }
 class PlayerData {
-  private alive: boolean = true;
-  private role: Role;
+  private _alive: boolean = true;
+  private _role: Role;
   constructor(role: Role) {
-    this.role = role;
+    this._role = role;
+  }
+  public get alignment():string{
+    return this._role.alignment;
+  }
+  public get roleID():string{
+    return this._role.roleID;
+  }
+  public isRole(roleID:string){
+    return this._role.roleID == roleID;
   }
 }
 const ninePlayer: RoleList = new RoleList([
@@ -112,35 +142,37 @@ export class Classic extends Game {
     for (let i = 0; i < randomDeck.length; i++) {
       switch (randomDeck[i]) {
         case Roles.werewolf:
-          this._players[i].data = new Werewolf();
+          this._players[i].data = new PlayerData(new Werewolf());
           this._players[i].send("You are a werewolf", undefined, Colors.red);
           this.werewolfchat.addPlayer(this._players[i]);
           this.werewolfchat.mute(this._players[i].id);
           break;
         case Roles.doctor:
-          this._players[i].data = new Doctor();
+          this._players[i].data = new PlayerData(new Doctor());
           this._players[i].send("You are a doctor", undefined, Colors.green);
           break;
         case Roles.townie:
-          this._players[i].data = new Townie();
+          this._players[i].data = new PlayerData(new Townie());
           this._players[i].send("You are a townie", undefined, Colors.green);
           break;
         case Roles.cop:
-          this._players[i].data = new Cop();
+          this._players[i].data = new PlayerData(new Cop());
           this._players[i].send("You are a cop", undefined, Colors.green);
           break;
         case Roles.vigilante:
-          this._players[i].data = new Vigilante();
+          this._players[i].data = new PlayerData(new Vigilante());
           this._players[i].send("You are a vigilante", undefined, Colors.green);
           break;
       }
     }
     this.broadcast("Night has begun", "blue", undefined);
+    this.phase = Phase.night;
+    //Let the werewolves communicate with one another
     this.werewolfchat.unmuteAll();
     this.werewolfchat.broadcast("This is the werewolf chat, you can talk to other wolves now in secret.");
     let werewolfList: Array<string> = [];
     for (let i = 0; i < this._players.length; i++) {
-      if (this._players[i].data instanceof Werewolf) {
+      if (this._players[i].data.isRole(Roles.werewolf)) {
         werewolfList.push(this._players[i].username);
       }
     }
@@ -152,7 +184,13 @@ export class Classic extends Game {
       werewolfString += werewolfList[i];
     }
     this.werewolfchat.broadcast(werewolfString);
-    this.phase = Phase.night;
+    //Gather the actions of each player
+    for(let i = 0; i < this._players.length; i++){
+      switch(this._players[i].data.roleID){
+      
+      }
+    }
+    //Perform night action resolution
   }
   public end() {
     this.afterEnd();

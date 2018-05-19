@@ -10,3 +10,4 @@ release/
 
 #Ignore notes
 TODO.txt
+.DS_Store

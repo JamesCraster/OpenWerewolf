@@ -22,20 +22,51 @@
 "use strict";
 
 import { MessageRoom, Server, Game, Player, Utils, RoleList, Colors, Stopwatch } from "../../core";
+import { Socket } from "../.././node_modules/@types/socket.io";
 
 enum Roles {
   /** 
    * The evil role, there may be two in the game. They wake up and see each other
    */
   werewolf = "werewolf",
+  /**
+   * Wolf that gets to see two cards from the middle
+   */
+  wolfseer = "wolf seer",
+  /**
+   * Wolf that sees one other players' card
+   */
+  psychicWolf = "psychic wolf",
+  /**
+   * Wolf that doesn't wake up with the other wolves
+   */
+  drunkwolf = "drunk wolf",
+  /**
+   * Sees one card from the centre
+   */
+  apprenticeSeer = "apprentice seer",
   /** 
    *  Sees two cards from the centre
    */
   seer = "seer",
+  /*
+   * Town role. Picks two player's cards and sees if they are on the same team or not.
+   * Neutral roles show up as on different teams unless they have the same win condition or are the same role.
+   * Two executioners are on the same team.
+   * Apprentice jester and jester are on the same team.
+   * Serial killer and survivor are on the same team.
+   * 
+   * Love does not affect who is or isn't on the same team.
+  */
+  mentalist = "mentalist",
   /**
-   *  Swaps someone one else's card with their own and looks at it
+   *  Swaps someone else's card with their own and looks at it
    */
   robber = "robber",
+  /*
+   * Swaps someone else's card with their own and does not look at it
+  */
+  drunkRobber = "drunk robber",
   /**
    *  Swaps two people's cards, potentially including themselves
    */
@@ -45,7 +76,48 @@ enum Roles {
    */
   villager = "villager",
   /**
-   *  Takes one card from the middle without looking at it
+   *  Sees the other masons (including the weremasons)
+   */
+  mason = "mason",
+  /*
+   * A werewolf that wakes up and sees the masons.
+  */
+  weremason = "weremason",
+  /*
+   *  A werewolf-aligned role that can die without the werewolves losing.
+   *  Knows the werewolves, but is unknown to the werewolves.
+  */
+  minion = "minion",
+  /*
+   * Town-aligned role, forces a player to choose someone specific as (one of) their targets.
+   * The chosen player will be informed that they were bewitched. 
+  */
+  witch = "witch",
+  /*
+   * Town aligned role, cannot be swapped by anyone except the robber. 
+  */
+  android = "android",
+  /*
+   * Prevents someone from doing their role's action. Their target will be informed they were jailed.
+   * Jailed targets can have their role swapped.
+  */
+  jailor = "jailor",
+  /*
+   * Neutral. Looks at a card in the middle and becomes that role, and then does the corresponding night action,
+   * if they haven't been jailed.
+  */
+  amnesiac = "amnesiac",
+  /*
+   * Neutral. Looks at someone else's card and becomes that role, and then does the corresponding night action,
+   * unless they have been jailed.
+  */
+  doppleganger = "doppleganger",
+  /*
+   * Has no alignment, just wants to avoid being hung.
+  */
+  survivor = "survivor",
+  /**
+   *  Takes one card from the middle without looking at it, unless it is executioner.
    */
   drunk = "drunk",
   /**
@@ -53,11 +125,66 @@ enum Roles {
    */
   insomniac = "insomniac",
   /**
-   *  Wants to be lynched in the trial. If the jester wins, everyone else loses
+   *  Neutral. Wants to be lynched in the trial. If the jester wins, everyone else loses
    */
-  jester = "jester"
-}
+  jester = "jester",
+  /*
+   * Neutral. Wins if the jester wins, unless there is no jester, in which case they win if they die.
+   * They see the jester if they are in play at the start.
+  */
+  apprenticeJester = "apprentice jester",
+  /**
+   * Neutral role. If they die, everyone else wins (both ww and town) except for the jester/apprenticeJester.
+   * Their win condition is to survive. They get to look at 2 cards from the middle.
+   */
+  serialKiller = "serial killer",
+  /*
+   * Neutral role. Gets given a target, and wins if and only if that target dies.
+   * Cannot be swapped by transporter. Can be robbed, but remains an executioner.
+   * The robber also becomes an executioner with the same target. 
+   * Doppleganger will be given the same target.
+   * Drunk roles will be told if they are executioner and given their target.
+   * An executioner can receive themselves as a target.
+  */
+  executioner = "executioner",
+  /*
+   * Neutral role. Gets given a target, and wins if and only if that target survives.
+   * Cannot be swapped by transporter. Can be robbed, but remains a guardian angel.
+   * The robber becomes a guardian angel with the same target.
+   * Doppleganger will be given the same target.
+   * Drunk roles will be told if they are guardian angel and given their target.
+   * A guardian angel can receive themselves as a target.
+   */
+  guardianAngel = "guardian angel",
+  /*
+   * Town role. Picks two lovers. Lovers win only if their lover is not killed. This is in addition
+   * to their other win condition. Lovers are not told what their partner's role is.
+   * All executioner's targets will become the cupid if any executioner's target is their lover.
+   * Love is permanent and does not change when people are swapped. 
+   */
+  cupid = "cupid"
 
+
+}
+/*
+These classes are planned to replace the current .data setup
+class OneDayPlayer extends Player{
+  public data:PlayerData;
+  constructor(socket: Socket){
+    super(socket);
+  }
+}
+class PlayerData{
+  private readonly intialRole:Role;
+  private actionRole:Role;
+  private finalRole:Role;
+}
+class Role{
+  private readonly name:string;
+  private readonly wakesWithWolves:boolean;
+  private readonly wakesWithMasons:boolean;
+}
+*/
 const threePlayer: RoleList = new RoleList([
   Roles.werewolf,
   Roles.werewolf,
@@ -83,9 +210,10 @@ const fivePlayer: RoleList = new RoleList([
   Roles.transporter,
   Roles.drunk,
   Roles.insomniac,
-  Roles.villager
+  Roles.jester
 ]);
 const sixPlayer: RoleList = new RoleList([
+  Roles.doppleganger,
   Roles.werewolf,
   Roles.werewolf,
   Roles.seer,
@@ -93,7 +221,6 @@ const sixPlayer: RoleList = new RoleList([
   Roles.transporter,
   Roles.drunk,
   Roles.insomniac,
-  Roles.villager,
   Roles.jester
 ]);
 
@@ -154,7 +281,15 @@ export class OneDay extends Game {
     }
     return this._players[randomvar];
   }
-
+  private getRandomPlayerExcludingPlayer(index: number) {
+    let randomvar = Math.floor(Math.random() * (this._players.length - 1));
+    if (randomvar >= this._players.length - 1) {
+      randomvar = this._players.length - 2;
+    }
+    let temporaryArray = this._players.slice();
+    temporaryArray.splice(index, 1);
+    return temporaryArray[randomvar];
+  }
   private getRandomPlayerFromArray(players: Array<Player>) {
     let randomvar = Math.floor(Math.random() * players.length);
     if (randomvar >= players.length) {
@@ -401,6 +536,54 @@ export class OneDay extends Game {
   private nightActions(): void {
     let randomvar = 0;
     let temporaryArray = [];
+    //doppleganger
+    for (let i = 0; i < this._players.length; i++) {
+      if (this._players[i].data.initialRole == Roles.doppleganger) {
+        this._players[i].send("You look at another player's card, and become that role.");
+        let target = this.getRandomPlayerExcludingPlayer(i);
+        this._players[i].send("You look at " + target.username + "'s card.");
+        this._players[i].send(target.username + " is a " + target.data.initialRole + ".");
+        this._players[i].send("You are now a " + target.data.initialRole + ".");
+        this._players[i].data.initialRole = target.data.initialRole;
+      }
+    }
+    //amnesiac
+    for (let i = 0; i < this._players.length; i++) {
+      if (this._players[i].data.initialRole == Roles.amnesiac) {
+        this._players[i].send("You look at a card from the center, and become that role.");
+        switch (Math.floor(Math.random() * 3)) {
+          case 0:
+            this._players[i].send("You look at the leftmost card.");
+            this._players[i].send("The leftmost card is a " + this.leftCard + ".");
+            this._players[i].send("You are now a " + this.leftCard + ".");
+            this._players[i].data.initialRole = this.leftCard + ".";
+            break;
+          case 1:
+            this._players[i].send("You look at the middle card.");
+            this._players[i].send("The middle card is a " + this.middleCard + ".");
+            this._players[i].send("You are now a " + this.middleCard + ".");
+            this._players[i].data.initialRole = this.middleCard + ".";
+            break;
+          case 2:
+            this._players[i].send("You look at the rightmost card.");
+            this._players[i].send("The rightmost card is a " + this.rightCard + ".");
+            this._players[i].send("You are now a " + this.rightCard + ".");
+            this._players[i].data.initialRole = this.rightCard + ".";
+            break;
+        }
+      }
+    }
+    //amnesiac turned doppleganger
+    for (let i = 0; i < this._players.length; i++) {
+      if (this._players[i].data.initialRole == Roles.doppleganger) {
+        this._players[i].send("You look at another player's card, and become that role.");
+        let target = this.getRandomPlayerExcludingPlayer(i);
+        this._players[i].send("You look at " + target.username + "'s card.");
+        this._players[i].send(target.username + " is a " + target.data.initialRole);
+        this._players[i].send("You are now a " + target.data.initialRole);
+        this._players[i].data.initialRole = target.data.initialRole;
+      }
+    }
     for (let i = 0; i < this._players.length; i++) {
       switch (this._players[i].data.initialRole) {
         //tell the werewolves who the other werewolf is.
@@ -601,7 +784,6 @@ export class OneDay extends Game {
           this._players[firstTarget].data.role = secondTarget.data.role;
           secondTarget.data.role = temporaryRole;
         }
-        break;
       }
     }
     //drunk
@@ -637,7 +819,10 @@ export class OneDay extends Game {
         } else {
           if (this._players[i].data.role == Roles.werewolf) {
             this._players[i].send("Your card has been swapped by somebody. You are now a " + this._players[i].data.role + ".", undefined, Colors.red);
-          } else {
+          } else if (this._players[i].data.role == Roles.jester){
+            this._players[i].send("Your card has been swapped by somebody. You are now a " + this._players[i].data.role + ".", undefined, Colors.yellow);
+            this._players[i].send("Tomorrow, you want to be killed in the trial. Act as suspiciously as possible!");
+          }else{
             this._players[i].send("Your card has been swapped by somebody. You are now a " + this._players[i].data.role + ".", undefined, Colors.green);
           }
         }
