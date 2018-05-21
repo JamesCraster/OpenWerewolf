@@ -289,6 +289,16 @@ export class OneDay extends Game {
     return players;
   }
 
+  private getPlayersWithInitialRole(role: string) {
+    let players = [];
+    for (let i = 0; i < this._players.length; i++) {
+      if (this._players[i].data.initialRole == role) {
+        players.push(this._players[i]);
+      }
+    }
+    return players;
+  }
+
   private getPlayersWithInitialRoleInArray(players: Array<Player>, role: string) {
     let out = [];
     for (let i = 0; i < players.length; i++) {
@@ -367,7 +377,8 @@ export class OneDay extends Game {
     if (loser.data.role == Roles.werewolf) {
       this.playerchat.broadcast("The town has won! Everyone else loses.", undefined, Colors.green);
       for (let i = 0; i < this._players.length; i++) {
-        if (this._players[i].data.role != Roles.jester && this._players[i].data.role != Roles.werewolf) {
+        if (this._players[i].data.role != Roles.jester && this._players[i].data.role != Roles.werewolf
+           && this._players[i].data.role != Roles.minion) {
           this._players[i].send("*** YOU WIN! ***", Colors.brightGreen);
         } else {
           this._players[i].send("*** YOU LOSE! ***", Colors.brightRed);
@@ -385,7 +396,7 @@ export class OneDay extends Game {
     } else {
       this.playerchat.broadcast("The werewolves have won! Everyone else loses.", undefined, Colors.red);
       for (let i = 0; i < this._players.length; i++) {
-        if (this._players[i].data.role == Roles.werewolf) {
+        if (this._players[i].data.role == Roles.werewolf || this._players[i].data.role == Roles.minion) {
           this._players[i].send("*** YOU WIN! ***", Colors.brightGreen);
         } else {
           this._players[i].send("*** YOU LOSE! ***", Colors.brightRed);
@@ -526,7 +537,7 @@ export class OneDay extends Game {
     //for debugging purposes, ou can choose the deck:
     //randomDeck = [Roles.seer, Roles.werewolf, Roles.transporter, Roles.werewolf, Roles.villager, Roles.transporter];
     for (let i = 0; i < this._players.length; i++) {
-      if (randomDeck[i] == Roles.werewolf) {
+      if (randomDeck[i] == Roles.werewolf || randomDeck[i] == Roles.minion) {
         this._players[i].send(
           "You look at your card. You are a " + randomDeck[i] + ".", undefined, Colors.red
           //add town team/ww team explanation
@@ -560,8 +571,9 @@ export class OneDay extends Game {
       " by typing \"/unvote\". If everyone has voted, the game will end early.",
     );
     this.playerchat.broadcast(
-      "If a werewolf is killed in the trial, the town team win. If no werewolves are killed in the trial, the werewolves win. But if the " +
-      "jester (if there is one, check the rolelist) is killed in the trial, the jester wins, and everyone else loses."
+      "If a werewolf is killed in the trial, the town team win. If no werewolves are killed in the trial, the werewolves win. If the " +
+      "jester (if there is one) is killed in the trial, the jester wins, and everyone else loses. The minion is on the werewolves' team " + 
+      "but does not lose if they die."
     );
     this.playerchat.broadcast(
       "You can secretly read the rules at any time by typing \"/rules\".",
@@ -648,12 +660,31 @@ export class OneDay extends Game {
       }
     }
     for (let i = 0; i < this._players.length; i++) {
+      let werewolves = [];
       switch (this._players[i].data.initialRole) {
+        //tell the minion who the werewolves are
+        case Roles.minion:
+          werewolves = this.getPlayersWithInitialRole(Roles.werewolf);
+          this._players[i].send("You wake up to see if there are any werewolves.");
+          console.log(werewolves);
+          if(werewolves.length == 0){
+            this._players[i].send("There are no werewolves.");
+          }else if(werewolves.length == 1){
+            this._players[i].send("There is one werewolf.");
+            this._players[i].send("The werewolf is " + werewolves[0].username + ".");
+          }else{
+            this._players[i].send("The werewolves are: ");
+            for(let i = 0; i < werewolves.length; i++){
+              this._players[i].send(werewolves[i] + " is a werewolf.");
+            }
+          }
+          this._players[i].send("Tommorrow, help the werewolves survive. You can die without consequences.");
+          break;
         //tell the werewolves who the other werewolf is.
         case Roles.werewolf:
           temporaryArray = this._players.slice();
           temporaryArray.splice(i, 1);
-          let werewolves = this.getPlayersWithInitialRoleInArray(
+          werewolves = this.getPlayersWithInitialRoleInArray(
             temporaryArray,
             Roles.werewolf
           );
@@ -692,7 +723,7 @@ export class OneDay extends Game {
             randomPlayer.data.role +
             "."
           );
-          if (randomPlayer.data.role == Roles.werewolf) {
+          if (randomPlayer.data.role == Roles.werewolf || randomPlayer.data.role == Roles.minion) {
             this._players[i].send(
               "You are now a " + randomPlayer.data.role + ".", undefined, Colors.red
             );
@@ -888,7 +919,7 @@ export class OneDay extends Game {
         if (this._players[i].data.role == Roles.insomniac) {
           this._players[i].send("Your card has not changed. You are still an insomniac.", undefined, Colors.green);
         } else {
-          if (this._players[i].data.role == Roles.werewolf) {
+          if (this._players[i].data.role == Roles.werewolf || this._players[i].data.role == Roles.minion) {
             this._players[i].send("Your card has been swapped by somebody. You are now a " + this._players[i].data.role + ".", undefined, Colors.red);
           } else if (this._players[i].data.role == Roles.jester) {
             this._players[i].send("Your card has been swapped by somebody. You are now a " + this._players[i].data.role + ".", undefined, Colors.yellow);
@@ -1020,6 +1051,9 @@ export class OneDay extends Game {
           break;
         case "v":
           out.push(Roles.villager);
+          break;
+        case "n":
+          out.push(Roles.minion);
           break;
         default:
           out.push(Roles.villager);
