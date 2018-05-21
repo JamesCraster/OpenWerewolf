@@ -185,7 +185,8 @@ class Role{
   private readonly wakesWithMasons:boolean;
 }
 */
-const threePlayer: RoleList = new RoleList([
+
+const defaultThreePlayer: RoleList = new RoleList([
   Roles.werewolf,
   Roles.werewolf,
   Roles.seer,
@@ -193,7 +194,7 @@ const threePlayer: RoleList = new RoleList([
   Roles.transporter,
   Roles.drunk
 ]);
-const fourPlayer: RoleList = new RoleList([
+const defaultFourPlayer: RoleList = new RoleList([
   Roles.werewolf,
   Roles.werewolf,
   Roles.seer,
@@ -202,7 +203,7 @@ const fourPlayer: RoleList = new RoleList([
   Roles.drunk,
   Roles.insomniac
 ]);
-const fivePlayer: RoleList = new RoleList([
+const defaultFivePlayer: RoleList = new RoleList([
   Roles.werewolf,
   Roles.werewolf,
   Roles.seer,
@@ -212,7 +213,7 @@ const fivePlayer: RoleList = new RoleList([
   Roles.insomniac,
   Roles.jester
 ]);
-const sixPlayer: RoleList = new RoleList([
+const defaultSixPlayer: RoleList = new RoleList([
   Roles.doppleganger,
   Roles.werewolf,
   Roles.werewolf,
@@ -236,7 +237,44 @@ export class OneDay extends Game {
   private trial: boolean = false;
   private won: boolean = false;
   private wonEarlyTime = 0;
-
+  private threePlayer: RoleList = new RoleList([
+    Roles.werewolf,
+    Roles.werewolf,
+    Roles.seer,
+    Roles.robber,
+    Roles.transporter,
+    Roles.drunk
+  ]);
+  private fourPlayer: RoleList = new RoleList([
+    Roles.werewolf,
+    Roles.werewolf,
+    Roles.seer,
+    Roles.robber,
+    Roles.transporter,
+    Roles.drunk,
+    Roles.insomniac
+  ]);
+  private fivePlayer: RoleList = new RoleList([
+    Roles.werewolf,
+    Roles.werewolf,
+    Roles.seer,
+    Roles.robber,
+    Roles.transporter,
+    Roles.drunk,
+    Roles.insomniac,
+    Roles.jester
+  ]);
+  private sixPlayer: RoleList = new RoleList([
+    Roles.doppleganger,
+    Roles.werewolf,
+    Roles.werewolf,
+    Roles.seer,
+    Roles.robber,
+    Roles.transporter,
+    Roles.drunk,
+    Roles.insomniac,
+    Roles.jester
+  ]);
   public constructor(server: Server) {
     super(server, 3, 6);
   }
@@ -461,16 +499,16 @@ export class OneDay extends Game {
     let randomDeck: Array<string> = [];
     switch (this._players.length) {
       case 3:
-        roleList = threePlayer.list;
+        roleList = this.threePlayer.list;
         break;
       case 4:
-        roleList = fourPlayer.list;
+        roleList = this.fourPlayer.list;
         break;
       case 5:
-        roleList = fivePlayer.list;
+        roleList = this.fivePlayer.list;
         break;
       case 6:
-        roleList = sixPlayer.list;
+        roleList = this.sixPlayer.list;
         break;
     }
     randomDeck = Utils.shuffle(roleList);
@@ -545,6 +583,7 @@ export class OneDay extends Game {
         this._players[i].send(target.username + " is a " + target.data.initialRole + ".");
         this._players[i].send("You are now a " + target.data.initialRole + ".");
         this._players[i].data.initialRole = target.data.initialRole;
+        this._players[i].data.role = this._players[i].data.initialRole;
       }
     }
     //amnesiac
@@ -556,21 +595,22 @@ export class OneDay extends Game {
             this._players[i].send("You look at the leftmost card.");
             this._players[i].send("The leftmost card is a " + this.leftCard + ".");
             this._players[i].send("You are now a " + this.leftCard + ".");
-            this._players[i].data.initialRole = this.leftCard + ".";
+            this._players[i].data.initialRole = this.leftCard;
             break;
           case 1:
             this._players[i].send("You look at the middle card.");
             this._players[i].send("The middle card is a " + this.middleCard + ".");
             this._players[i].send("You are now a " + this.middleCard + ".");
-            this._players[i].data.initialRole = this.middleCard + ".";
+            this._players[i].data.initialRole = this.middleCard;
             break;
           case 2:
             this._players[i].send("You look at the rightmost card.");
             this._players[i].send("The rightmost card is a " + this.rightCard + ".");
             this._players[i].send("You are now a " + this.rightCard + ".");
-            this._players[i].data.initialRole = this.rightCard + ".";
+            this._players[i].data.initialRole = this.rightCard;
             break;
         }
+        this._players[i].data.role = this._players[i].data.initialRole;
       }
     }
     //amnesiac turned doppleganger
@@ -582,6 +622,29 @@ export class OneDay extends Game {
         this._players[i].send(target.username + " is a " + target.data.initialRole);
         this._players[i].send("You are now a " + target.data.initialRole);
         this._players[i].data.initialRole = target.data.initialRole;
+        this._players[i].data.role = this._players[i].data.initialRole;
+      }
+    }
+
+    //masons
+    for (let i = 0; i < this._players.length; i++) {
+      if (this._players[i].data.initialRole == Roles.mason) {
+        temporaryArray = this._players.slice();
+        temporaryArray.splice(i, 1);
+        let masons = this.getPlayersWithInitialRoleInArray(temporaryArray, Roles.mason);
+        if (masons.length == 2) {
+          this._players[i].send("There are three masons.");
+          this._players[i].send(
+            "Your mason partners are " + masons[0].username + " and " + masons[1].username + "."
+          );
+        } else if (masons.length == 1) {
+          this._players[i].send("There are two masons.");
+          this._players[i].send(
+            "Your mason partner is " + masons[0].username + "."
+          );
+        } else {
+          this._players[i].send("You are the only mason.");
+        }
       }
     }
     for (let i = 0; i < this._players.length; i++) {
@@ -594,7 +657,15 @@ export class OneDay extends Game {
             temporaryArray,
             Roles.werewolf
           );
-          if (werewolves.length == 1) {
+          if (werewolves.length == 2) {
+            this._players[i].send("There are three werewolves.");
+            this._players[i].send(
+              "Your werewolf partners are " + werewolves[0].username + " and " + werewolves[1].username + "."
+            )
+            this._players[i].send(
+              "Tommorrow, try not to be suspicious! You must all pretend to be something else."
+            );
+          } else if (werewolves.length == 1) {
             this._players[i].send("There are two werewolves.");
             this._players[i].send(
               "Your werewolf partner is '" + werewolves[0].username + "'."
@@ -819,10 +890,10 @@ export class OneDay extends Game {
         } else {
           if (this._players[i].data.role == Roles.werewolf) {
             this._players[i].send("Your card has been swapped by somebody. You are now a " + this._players[i].data.role + ".", undefined, Colors.red);
-          } else if (this._players[i].data.role == Roles.jester){
+          } else if (this._players[i].data.role == Roles.jester) {
             this._players[i].send("Your card has been swapped by somebody. You are now a " + this._players[i].data.role + ".", undefined, Colors.yellow);
             this._players[i].send("Tomorrow, you want to be killed in the trial. Act as suspiciously as possible!");
-          }else{
+          } else {
             this._players[i].send("Your card has been swapped by somebody. You are now a " + this._players[i].data.role + ".", undefined, Colors.green);
           }
         }
@@ -834,7 +905,129 @@ export class OneDay extends Game {
       }
     }
   }
-
+  public adminReceive(id: string, msg: string): void {
+    let player = this.getPlayer(id);
+    if (player instanceof Player) {
+      if (msg[0] == "!" && !this.inPlay && player.admin == true) {
+        if (msg.slice(0, 5) == "!stop") {
+          this.startClock.stop();
+          player.send("Countdown stopped", undefined, Colors.green);
+        } else if (msg.slice(0, 6) == "!start") {
+          if (this._registeredPlayerCount >= this._minPlayerCount) {
+            this.start();
+          } else {
+            player.send("Not enough players to start game", Colors.brightRed);
+          }
+        } else if (msg.slice(0, 7) == "!resume") {
+          this.startClock.start();
+          player.send("Countdown resumed", undefined, Colors.green);
+        } else if (msg.slice(0, 8) == "!restart") {
+          this.startClock.restart();
+          player.send("Countdown restarted", undefined, Colors.green);
+        } else if (msg.slice(0, 5) == "!time") {
+          player.send(this.startClock.time.toString());
+        } else if (msg.slice(0, 5) == "!hold") {
+          player.send("The vote to start has been halted.", undefined, Colors.green);
+          this.holdVote = true;
+        } else if (msg.slice(0, 8) == "!release") {
+          player.send("The vote to start has been resumed", undefined, Colors.green);
+          this.holdVote = false;
+        //view the rolelist before the game begins
+        } else if (msg.slice(0, 5) == "!show") {
+          if (msg[6] == "3") {
+            player.send(this.threePlayer.toString());
+          } else if (msg[6] == "4") {
+            player.send(this.fourPlayer.toString());
+          } else if (msg[6] == "5") {
+            player.send(this.fivePlayer.toString());
+          } else if (msg[6] == "6") {
+            player.send(this.sixPlayer.toString());
+          } else {
+            player.send("Error: number of players is missing or incorrect." +
+              " Example usage: !show 5 will show the rolelist for 5 players", Colors.brightRed);
+          }
+        //set the rolelist before the game begins
+        } else if (msg.slice(0, 4) == "!set") {
+          let newlist:Array<string> = [];
+          if (msg[5] == "3") {
+            this.threePlayer.list = this.parseRoleString(msg.slice(7,7+6));
+          } else if (msg[5] == "4") {
+            this.fourPlayer.list = this.parseRoleString(msg.slice(7,7+7));
+          } else if (msg[5] == "5") {
+            this.fivePlayer.list = this.parseRoleString(msg.slice(7,7+8));
+          } else if (msg[5] == "6") {
+            this.sixPlayer.list = this.parseRoleString(msg.slice(7,7+9));
+          } else {
+            player.send("Error: number of players is missing or incorrect." +
+              " Example usage: !show 5 will show the rolelist for 5 players", Colors.brightRed);
+          }
+        //reset rolelist to default if there has been a messup
+        } else if (msg.slice(0, 8) == "!default") {
+          console.log(msg[9]);
+          if(msg[9] == "3"){
+            this.threePlayer.list = defaultThreePlayer.list;
+          }else if(msg[9] == "4"){
+            this.fourPlayer.list = defaultFourPlayer.list;
+          }else if(msg[9] == "5"){
+            this.fivePlayer.list = defaultFivePlayer.list;
+          }else if(msg[9] == "6"){
+            this.sixPlayer.list = defaultSixPlayer.list;
+          }else{
+            player.send("Error: number of players is missing or incorrect." +
+              " Example usage: !default 5 will show the rolelist for 5 players", Colors.brightRed);
+          }
+        } else if (msg.slice(0, 5) == "!help") {
+          player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !show !help", undefined, Colors.green);
+        }
+      }
+    }
+  }
+  //convert a string into an array of roles, e.g
+  // 'dwa' becomes [doppleganger, werewolf, amnesiac]
+  private parseRoleString(roleString:string):Array<string>{
+    let out:Array<string> = [];
+    for(let i = 0; i < roleString.length; i++){
+      switch(roleString[i]){
+        case "m":
+          out.push(Roles.mason);
+          break;
+        case "w":
+          out.push(Roles.werewolf);
+          break;
+        case "a":
+          out.push(Roles.amnesiac);
+          break;
+        case "d":
+          out.push(Roles.doppleganger);
+          break;
+        case "s":
+          out.push(Roles.seer);
+          break;
+        case "r":
+          out.push(Roles.robber);
+          break;
+        case "t":
+          out.push(Roles.transporter);
+          break;
+        case "i":
+          out.push(Roles.insomniac);
+          break;
+        case "j":
+          out.push(Roles.jester);
+          break;
+        case "u":
+          out.push(Roles.drunk);
+          break;
+        case "v":
+          out.push(Roles.villager);
+          break;
+        default:
+          out.push(Roles.villager);
+          break;
+      }
+    }
+    return out;
+  }
   /**
    * Processes a message typed into the client by a player.
    * 
@@ -842,7 +1035,7 @@ export class OneDay extends Game {
    * @param {string} msg The message the sender sent to the game.
    * @memberof OneDay
    */
-  public receive(id: string, msg: string) {
+  public receive(id: string, msg: string): void {
     let player = this.getPlayer(id);
     if (player instanceof Player) {
       //receive in-game commands from players if game is running

@@ -52,12 +52,25 @@ export class Utils {
 }
 
 export class RoleList {
-  private readonly _list: Array<string> = [];
+  private _list: Array<string> = [];
   constructor(list: Array<string>) {
     this._list = list;
   }
-  get list() {
+  get list():Array<string> {
     return this._list;
+  }
+  set list(list:Array<string>){
+    this._list = list;
+  }
+  public toString():string{
+    let out = "";
+    for(let i = 0; i < this._list.length; i++){
+      out += this._list[i];
+      if(i != this._list.length - 1){
+        out += ", ";
+      }
+    }
+    return out;
   }
 }
 
