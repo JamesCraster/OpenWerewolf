@@ -56,17 +56,17 @@ export class RoleList {
   constructor(list: Array<string>) {
     this._list = list;
   }
-  get list():Array<string> {
+  get list(): Array<string> {
     return this._list;
   }
-  set list(list:Array<string>){
+  set list(list: Array<string>) {
     this._list = list;
   }
-  public toString():string{
+  public toString(): string {
     let out = "";
-    for(let i = 0; i < this._list.length; i++){
+    for (let i = 0; i < this._list.length; i++) {
       out += this._list[i];
-      if(i != this._list.length - 1){
+      if (i != this._list.length - 1) {
         out += ", ";
       }
     }
@@ -162,6 +162,16 @@ export class Stopwatch {
 
 interface PlayerData {
   [key: string]: any;
+}
+
+abstract class PlayerContainer{
+  private _player:Player;
+  constructor(player:Player){
+    this._player = player;
+  }
+  get player():Player{
+    return this._player;
+  }
 }
 
 export class Player {
@@ -343,7 +353,7 @@ export class Server {
       return false;
     }
     if (grawlix.isObscene(username)) {
-      player.send("Invalid username: Usernames can't contain swearwords");
+      player.send("Invalid username: Usernames can't contain profanity");
       return false;
     }
     return true;
@@ -550,6 +560,17 @@ export abstract class Game {
     this._inPlay = true;
   }
   protected afterEnd() {
+    //emit event that causes players to reload
+    for (let i = 0; i < this._players.length; i++) {
+      this._players[i].emit("reload");
+    }
+    //make sure all players are kicked from the server
+    let temporaryPlayerList = this._players.slice();
+    for (let i = 0; i < temporaryPlayerList.length; i++) {
+      this._server.kick(temporaryPlayerList[i].id);
+    }
+    //console.log("here is the length of the game list " + this._players.length);
+    //console.log("here is the game player array " + this._players);
     this._inPlay = false;
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].inGame = false;

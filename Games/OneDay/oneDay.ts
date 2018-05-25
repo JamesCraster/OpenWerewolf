@@ -457,19 +457,7 @@ export class OneDay extends Game {
   }
 
   protected end() {
-    //emit event that causes players to reload
-    for (let i = 0; i < this._players.length; i++) {
-      this._players[i].emit("reload");
-    }
-    //make sure all players are kicked from the server
-    let temporaryPlayerList = this._players.slice();
-    for (let i = 0; i < temporaryPlayerList.length; i++) {
-      this._server.kick(temporaryPlayerList[i].id);
-    }
-    console.log("here is the length of the game list " + this._players.length);
-    console.log("here is the game player array " + this._players);
     //reset inital conditions
-    this._players = [];
     this.playerchat = new MessageRoom();
     this.leftCard = "";
     this.middleCard = "";

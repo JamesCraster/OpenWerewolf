@@ -1,4 +1,3 @@
-<!doctype html>
 <!-- Copyright (C) 2017 James V. Craster. This file is part of OpenWerewolf. 
      OpenWerewolf is free software: you can redistribute it and/or modify
      it under the terms of the GNU Affero General Public License as published
@@ -14,41 +13,38 @@
      in the Appropriate Legal Notices displayed by works containing material that has 
      been added to OpenWerewolf by me: 
      "This project includes code from OpenWerewolf." -->
-
-<html>
-
-<head>
-  <!-- IBM Plex Sans google font -->
-  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans" rel="stylesheet">
-  <meta charset="UTF-8">
-  <title>OpenWerewolf</title>
-  <link rel="stylesheet" type="text/css" href="style.css">
-</head>
-<!-- Move scrollbar to bottom on window resize -->
-
-<body onresize="$('#inner')[0].scrollTop = $('#inner')[0].scrollHeight;">
-  <!-- Message box -->
-  <div id="outer">
-    <div id="inner">
-      <ul id="chatbox">
-        <li>OpenWerewolf (C) 2017 James Craster</li>
-        <li>
-          <a href="https://github.com/JamesCraster/OpenWerewolf" style="color:#1f76cc;" target="_blank">Github</a>
-        </li>
-        <li>Welcome to OpenWerewolf.
-          <b>Please type in a nickname you'd like to use.</b>
-        </li>
-      </ul>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <!-- IBM Plex Sans google font -->
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans" rel="stylesheet">
+    <title>OpenWerewolf</title>
+  </head>
+  <!-- Move scrollbar to bottom on window resize -->
+  <body onresize="$('#inner')[0].scrollTop = $('#inner')[0].scrollHeight;">
+    <!-- Message box -->
+    <div id="outer">
+      <div id="inner">
+        <ul id="chatbox">
+          <li>OpenWerewolf (C) 2017 James Craster</li>
+          <li>
+            <a href="https://github.com/JamesCraster/OpenWerewolf" style="color:#1f76cc;" target="_blank">Github</a>
+          </li>
+          <li>Welcome to OpenWerewolf.
+            <b>Please type in a nickname you'd like to use.</b>
+          </li>
+        </ul>
+      </div>
+      <!-- Form for entering messages  -->
+      <form>
+        <input id="msg" autocomplete="off" placeholder="Type Here" maxlength="150" autofocus>
+        <input id="submit" type="submit" value="Submit">
+      </form>
     </div>
-    <!-- Form for entering messages  -->
-    <form>
-      <input id="msg" autocomplete="off" placeholder="Type Here" maxlength="150" autofocus>
-      <input id="submit" type="submit" value="Submit">
-    </form>
-  </div>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="client.js"></script>
-</body>
-
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="client.js"></script>
+  </body>
 </html>

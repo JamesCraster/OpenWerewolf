@@ -29,7 +29,7 @@ enum Phase {
 }
 enum Alignment {
   werewolf = "werewolf",
-  town = "town"
+  town = "town member"
 }
 enum Roles {
   werewolf = "werewolf",
@@ -39,59 +39,100 @@ enum Roles {
   vigilante = "vigilante"
 }
 abstract class Role {
-  private readonly _alignment:string;
-  private readonly _roleID:string;
-  constructor(alignment:string, roleID:string) {
+  private readonly _alignment: string;
+  private readonly _roleID: string;
+  constructor(alignment: string, roleID: string) {
     this._alignment = alignment;
-    this._roleID = roleID; 
-   };
-   public get alignment():string{
+    this._roleID = roleID;
+  };
+  public get alignment(): string {
     return this._alignment;
-   }
-   public get roleID():string{
-     return this._roleID;
-   }
+  }
+  public get roleID(): string {
+    return this._roleID;
+  }
+  public isRole(role: string): boolean {
+    return this.roleID == role;
+  }
 };
 class Werewolf extends Role {
-  constructor(){
+  constructor() {
     super(Alignment.werewolf, Roles.werewolf);
   }
 }
 class Townie extends Role {
-  constructor(){
+  constructor() {
     super(Alignment.town, Roles.townie);
   }
 }
 class Doctor extends Role {
-  constructor(){
+  constructor() {
     super(Alignment.town, Roles.doctor);
   }
 }
 class Cop extends Role {
-  constructor(){
+  constructor() {
     super(Alignment.town, Roles.cop);
   }
 }
 class Vigilante extends Role {
-  constructor(){
+  constructor() {
     super(Alignment.town, Roles.vigilante);
   }
 }
 class PlayerData {
   private _alive: boolean = true;
   private _role: Role;
+  private _target: string = "";
+  private _healed: boolean = false;
+  private _wolfVotes: number = 0;
   constructor(role: Role) {
     this._role = role;
   }
-  public get alignment():string{
+  public get alive() {
+    return this._alive;
+  }
+  public get alignment(): string {
     return this._role.alignment;
   }
-  public get roleID():string{
+  public get roleID(): string {
     return this._role.roleID;
   }
-  public isRole(roleID:string){
+  public isRole(roleID: string): boolean {
     return this._role.roleID == roleID;
   }
+  public set target(target: string) {
+    this._target = target;
+  }
+  public get target(): string {
+    return this._target;
+  }
+  private clearTarget() {
+    this._target = "";
+  }
+  public resetAfterNight() {
+    this.clearTarget();
+    this._healed = false;
+    this._wolfVotes = 0;
+  }
+  public set healed(healed: boolean) {
+    this._healed = healed;
+  }
+  public get healed(): boolean {
+    return this._healed;
+  }
+  public kill(): void {
+    this._alive = false;
+  }
+  public get wolfVotes() {
+    return this._wolfVotes;
+  }
+  public incrementWolfVote() {
+    if (this.alignment != Alignment.werewolf) {
+      this._wolfVotes++;
+    }
+  }
+
 }
 const ninePlayer: RoleList = new RoleList([
   Roles.werewolf,
@@ -165,7 +206,7 @@ export class Classic extends Game {
           break;
       }
     }
-    this.broadcast("Night has begun", "blue", undefined);
+    this.broadcast("Night has fallen.", "blue", undefined);
     this.phase = Phase.night;
     //Let the werewolves communicate with one another
     this.werewolfchat.unmuteAll();
@@ -184,13 +225,102 @@ export class Classic extends Game {
       werewolfString += werewolfList[i];
     }
     this.werewolfchat.broadcast(werewolfString);
-    //Gather the actions of each player
-    for(let i = 0; i < this._players.length; i++){
-      switch(this._players[i].data.roleID){
-      
+    this.daychat.broadcast("Type '/act username' to do your action on someone. E.g /act frank will perform your" +
+      " action on frank. You have 20 seconds to act.");
+
+    setTimeout(this.nightResolution.bind(this), 30000);
+
+  }
+  public nightResolution() {
+    //Gather the actions of each player, and perform night action resolution
+    for (let i = 0; i < this._players.length; i++) {
+      if (this._players[i].data.isRole(Roles.doctor)) {
+        let targetPlayer = this.getPlayer(this._players[i].data.target);
+        if (targetPlayer != undefined) {
+          targetPlayer.data.healed = true;
+        }
       }
     }
-    //Perform night action resolution
+    //calculate the plurality target of the wolves
+    let maxVotes = 0;
+    let finalTargetPlayer: undefined | Player = undefined;
+    for (let i = 0; i < this._players.length; i++) {
+      if (this._players[i].data.isRole(Roles.werewolf)) {
+        let targetPlayer = this.getPlayer(this._players[i].data.target);
+        if (targetPlayer != undefined) {
+          targetPlayer.data.incrementWolfVote();
+          if (targetPlayer.data.wolfVotes >= maxVotes) {
+            maxVotes = targetPlayer.data.wolfVotes;
+            finalTargetPlayer = targetPlayer;
+          }
+        }
+      }
+    }
+    for (let i = 0; i < this._players.length; i++) {
+      let targetPlayer = this.getPlayer(this._players[i].data.target);
+      if (targetPlayer != undefined) {
+        switch (this._players[i].data.roleID) {
+          case Roles.werewolf:
+            //tell the wolves who the target is
+            this._players[i].send("Your target is: ");
+            if (finalTargetPlayer != undefined) {
+              this._players[i].send(finalTargetPlayer.username)
+              this._players[i].send("You attack your target.");
+              if (finalTargetPlayer.data.healed) {
+                this._players[i].send(finalTargetPlayer.username + " has died.");
+              } else {
+                this._players[i].send(finalTargetPlayer.username + " was healed during the night and so"+
+                +" they have survived.");
+              }
+            } else {
+              this._players[i].send("No one, as neither of you voted for a target.");
+            }
+            //tell the wolves if target is healed
+            break;
+          case Roles.cop:
+            this._players[i].send("You investigated your target:");
+            this._players[i].send(targetPlayer.username + " is a " + targetPlayer.data.alignment + ".");
+            break;
+          case Roles.vigilante:
+            this._players[i].send("You shoot your target.");
+            if (targetPlayer.data.healed) {
+              this._players[i].send(targetPlayer.username + " was healed, and so has survived your attack.");
+            } else {
+              this._players[i].send(targetPlayer.username + " has died.");
+              targetPlayer.data.kill();
+            }
+            break;
+        }
+      }
+    }
+    let deaths: number = 0;
+    //Notify the dead that they have died
+    for (let i = 0; i < this._players.length; i++) {
+      if (!this._players[i].data.alive) {
+        this._players[i].send("You have been killed!", undefined, Colors.red);
+        deaths++;
+      }
+    }
+    //Clear the actions of each player
+    for (let i = 0; i < this._players.length; i++) {
+      this._players[i].data.resetAfterNight();
+    }
+    this.werewolfchat.muteAll();
+    this.phase = Phase.day;
+    this.daychat.broadcast("Dawn has broken.", undefined, Colors.yellow);
+    this.daychat.unmuteAll();
+    //Notify the living that the dead have died
+    this.daychat.broadcast("The deaths:");
+    if (deaths == 0) {
+      this.daychat.broadcast("Nobody died.");
+    } else {
+      for (let i = 0; i < this._players.length; i++) {
+        if (!this._players[i].data.alive) {
+          this.daychat.broadcast(this._players[i].username + " has died.");
+          this.daychat.mute(this._players[i].id);
+        }
+      }
+    }
   }
   public end() {
     this.afterEnd();
@@ -198,9 +328,26 @@ export class Classic extends Game {
   public receive(id: string, msg: string) {
     let player = this.getPlayer(id);
     if (player instanceof Player) {
-      this.daychat.receive(player.id, player.username + ": " + msg);
-      if (player.data instanceof Werewolf) {
-        this.werewolfchat.receive(player.id, player.username + ": " + msg);
+      if (msg[0] == "/") {
+        if (msg.slice(0, 4) == "/act" && this.phase == Phase.night) {
+          let username = msg.slice(4).trim();
+          let exists = false;
+          for (let i = 0; i < this._players.length; i++) {
+            if (this._players[i].username == username) {
+              player.send("Your choice of '" + username + "' has been received");
+              player.data.target = this._players[i].id;
+              exists = true;
+            }
+          }
+          if (!exists) {
+            player.send("There's no player called '" + username + "'. Try again.");
+          }
+        }
+      } else {
+        this.daychat.receive(player.id, player.username + ": " + msg);
+        if (player.data.isRole(Roles.werewolf)) {
+          this.werewolfchat.receive(player.id, player.username + ": " + msg);
+        }
       }
     }
   }
