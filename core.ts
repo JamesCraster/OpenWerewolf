@@ -187,6 +187,7 @@ export class Player {
   //true if the player has disconnected entirely
   private _disconnected: boolean = false;
   private _admin: boolean = false;
+  private _startVote: boolean = false;
 
   public constructor(socket: Socket) {
     this._socket = socket;
@@ -262,6 +263,12 @@ export class Player {
   }
   get socket() {
     return this._socket;
+  }
+  get startVote(){
+    return this._startVote;
+  }
+  set startVote(startVote:boolean){
+    this._startVote = startVote;
   }
 }
 
@@ -391,6 +398,11 @@ export class Server {
           }
           if (player.admin) {
             this._games[player.game].adminReceive(id, msg);
+          }
+        }else if(msg[0] == "/" && !this._games[player.game].inPlay && player.startVote == false) {
+          if (msg.slice(0, 6) == "/start") {
+            player.startVote = true;
+            this._games[player.game].broadcast(player.username + " has voted to start the game immediately by typing \"/start\"");
           }
         } else if (this.validateMessage(msg)) {
           msg = grawlix(msg, { style: "asterix" });
@@ -522,7 +534,7 @@ export abstract class Game {
         } else if (!this.holdVote) {
           let voteCount = 0;
           for (let i = 0; i < this._players.length; i++) {
-            if (this._players[i].data.startVote) {
+            if (this._players[i].startVote) {
               voteCount++;
             }
           }
@@ -540,8 +552,14 @@ export abstract class Game {
   }
   protected abstract update(): void;
   public addPlayer(player: Player) {
+    player.startVote = false;
     this._players.push(player);
     this._registeredPlayerCount++;
+    //If the number of players is between minimum and maximum count, inform them of the wait remaining before game starts
+    if (this._players.length > this._minPlayerCount && this._players.length < this._maxPlayerCount) {
+      player.send("The game will start in " + (Math.floor((this.startWait - this.startClock.time) / 1000)).toString() + " seconds");
+      player.send("Type \"/start\" to start the game immediately");
+    }
   }
   public broadcast(msg: string, textColor?: string, backgroundColor?: string) {
     for (var i = 0; i < this._players.length; i++) {
@@ -558,6 +576,7 @@ export abstract class Game {
   }
   protected beforeStart() {
     this._inPlay = true;
+    this.broadcast("*** NEW GAME ***", Colors.brightGreen);
   }
   protected afterEnd() {
     //emit event that causes players to reload
@@ -629,8 +648,11 @@ export abstract class Game {
           player.send("The vote to start has been resumed", undefined, Colors.green);
           this.holdVote = false;
         } else if (msg.slice(0, 5) == "!help") {
-          player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !help", undefined, Colors.green);
+          player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !yell, !help", undefined, Colors.green);
         }
+      }
+      if(msg.slice(0,5) == "!yell" && player.admin == true){
+        this.broadcast("ADMIN:" + msg.slice(5), Colors.brightGreen);
       }
     }
   }

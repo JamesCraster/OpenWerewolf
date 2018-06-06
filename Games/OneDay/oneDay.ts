@@ -57,7 +57,7 @@ enum Roles {
    * Serial killer and survivor are on the same team.
    * 
    * Love does not affect who is or isn't on the same team.
-  */
+   */
   mentalist = "mentalist",
   /**
    *  Swaps someone else's card with their own and looks at it
@@ -65,7 +65,7 @@ enum Roles {
   robber = "robber",
   /*
    * Swaps someone else's card with their own and does not look at it
-  */
+   */
   drunkRobber = "drunk robber",
   /**
    *  Swaps two people's cards, potentially including themselves
@@ -81,40 +81,40 @@ enum Roles {
   mason = "mason",
   /*
    * A werewolf that wakes up and sees the masons.
-  */
+   */
   weremason = "weremason",
   /*
    *  A werewolf-aligned role that can die without the werewolves losing.
    *  Knows the werewolves, but is unknown to the werewolves.
-  */
+   */
   minion = "minion",
   /*
    * Town-aligned role, forces a player to choose someone specific as (one of) their targets.
    * The chosen player will be informed that they were bewitched. 
-  */
+   */
   witch = "witch",
   /*
    * Town aligned role, cannot be swapped by anyone except the robber. 
-  */
+   */
   android = "android",
   /*
    * Prevents someone from doing their role's action. Their target will be informed they were jailed.
    * Jailed targets can have their role swapped.
-  */
+   */
   jailor = "jailor",
   /*
    * Neutral. Looks at a card in the middle and becomes that role, and then does the corresponding night action,
    * if they haven't been jailed.
-  */
+   */
   amnesiac = "amnesiac",
   /*
    * Neutral. Looks at someone else's card and becomes that role, and then does the corresponding night action,
    * unless they have been jailed.
-  */
+   */
   doppleganger = "doppleganger",
   /*
    * Has no alignment, just wants to avoid being hung.
-  */
+   */
   survivor = "survivor",
   /**
    *  Takes one card from the middle without looking at it, unless it is executioner.
@@ -131,7 +131,7 @@ enum Roles {
   /*
    * Neutral. Wins if the jester wins, unless there is no jester, in which case they win if they die.
    * They see the jester if they are in play at the start.
-  */
+   */
   apprenticeJester = "apprentice jester",
   /**
    * Neutral role. If they die, everyone else wins (both ww and town) except for the jester/apprenticeJester.
@@ -145,7 +145,7 @@ enum Roles {
    * Doppleganger will be given the same target.
    * Drunk roles will be told if they are executioner and given their target.
    * An executioner can receive themselves as a target.
-  */
+   */
   executioner = "executioner",
   /*
    * Neutral role. Gets given a target, and wins if and only if that target survives.
@@ -224,6 +224,18 @@ const defaultSixPlayer: RoleList = new RoleList([
   Roles.insomniac,
   Roles.jester
 ]);
+const defaultSevenPlayer: RoleList = new RoleList([
+  Roles.doppleganger,
+  Roles.werewolf,
+  Roles.werewolf,
+  Roles.seer,
+  Roles.robber,
+  Roles.transporter,
+  Roles.drunk,
+  Roles.insomniac,
+  Roles.jester,
+  Roles.villager
+]);
 
 export class OneDay extends Game {
   //define new message room
@@ -233,7 +245,7 @@ export class OneDay extends Game {
   private rightCard: string = "";
   private time: number = 0;
   private minutes: number = 1;
-  private readonly length = 6;
+  private length:number = 10;
   private trial: boolean = false;
   private won: boolean = false;
   private wonEarlyTime = 0;
@@ -275,8 +287,20 @@ export class OneDay extends Game {
     Roles.insomniac,
     Roles.jester
   ]);
+  private sevenPlayer: RoleList = new RoleList([
+    Roles.doppleganger,
+    Roles.werewolf,
+    Roles.werewolf,
+    Roles.seer,
+    Roles.robber,
+    Roles.transporter,
+    Roles.drunk,
+    Roles.insomniac,
+    Roles.jester,
+    Roles.villager
+  ]);
   public constructor(server: Server) {
-    super(server, 3, 6);
+    super(server, 3, 7);
   }
 
   private getPlayersWithRole(role: string) {
@@ -311,15 +335,8 @@ export class OneDay extends Game {
 
   public addPlayer(player: Player) {
     super.addPlayer(player);
-
     player.data.voteCount = 0;
-    player.data.startVote = false;
     this.playerchat.addPlayer(player);
-    //If the number of players is between minimum and maximum count, inform them of the wait remaining before game starts
-    if (this._players.length > this._minPlayerCount && this._players.length < this._maxPlayerCount) {
-      player.send("The game will start in " + (Math.floor((this.startWait - this.startClock.time) / 1000)).toString() + " seconds");
-      player.send("Type \"/start\" to start the game immediately");
-    }
   }
 
   private getRandomPlayer() {
@@ -490,7 +507,6 @@ export class OneDay extends Game {
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].data.vote = "";
     }
-    this.broadcast("*** NEW GAME ***", Colors.brightGreen);
     //print out all players
     this.broadcastPlayerList();
     //shuffle the deck and hand out roles to players
@@ -508,6 +524,9 @@ export class OneDay extends Game {
         break;
       case 6:
         roleList = this.sixPlayer.list;
+        break;
+      case 7:
+        roleList = this.sevenPlayer.list;
         break;
     }
     randomDeck = Utils.shuffle(roleList);
@@ -554,7 +573,7 @@ export class OneDay extends Game {
     //unmute and everyone in the player chat
     this.playerchat.unmuteAll();
     this.playerchat.broadcast(
-      "6 minutes remain until trial. You can secretly vote to kill someone at any time by typing \"/vote username\"," +
+      this.length + " minutes remain until trial. You can secretly vote to kill someone at any time by typing \"/vote username\"," +
       " for example, \"/vote frank\" secretly casts a hidden vote for frank. You can undo your vote at any time" +
       " by typing \"/unvote\". If everyone has voted, the game will end early.",
     );
@@ -927,6 +946,15 @@ export class OneDay extends Game {
   public adminReceive(id: string, msg: string): void {
     let player = this.getPlayer(id);
     if (player instanceof Player) {
+      if(msg[0] == "!" && player.admin == true){
+        if(msg.slice(0,10) == "!roundtime"){
+          player.send(this.length.toString());
+        }else if(msg.slice(0,7) == "!sround"){
+          this.length = parseInt(msg.slice(8));
+        }else if(msg.slice(0,5) == "!yell" && player.admin == true){
+          this.broadcast("ADMIN:" + msg.slice(5), Colors.brightGreen);
+        }
+      }
       if (msg[0] == "!" && !this.inPlay && player.admin == true) {
         if (msg.slice(0, 5) == "!stop") {
           this.startClock.stop();
@@ -961,6 +989,8 @@ export class OneDay extends Game {
             player.send(this.fivePlayer.toString());
           } else if (msg[6] == "6") {
             player.send(this.sixPlayer.toString());
+          }else if(msg[7] == "7"){
+            player.send(this.sevenPlayer.toString());
           } else {
             player.send("Error: number of players is missing or incorrect." +
               " Example usage: !show 5 will show the rolelist for 5 players", Colors.brightRed);
@@ -976,6 +1006,8 @@ export class OneDay extends Game {
             this.fivePlayer.list = this.parseRoleString(msg.slice(7,7+8));
           } else if (msg[5] == "6") {
             this.sixPlayer.list = this.parseRoleString(msg.slice(7,7+9));
+          }else if(msg[5] == "7"){
+            this.sevenPlayer.list = this.parseRoleString(msg.slice(7,7+10));
           } else {
             player.send("Error: number of players is missing or incorrect." +
               " Example usage: !show 5 will show the rolelist for 5 players", Colors.brightRed);
@@ -996,7 +1028,7 @@ export class OneDay extends Game {
               " Example usage: !default 5 will show the rolelist for 5 players", Colors.brightRed);
           }
         } else if (msg.slice(0, 5) == "!help") {
-          player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !show !help", undefined, Colors.green);
+          player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !show, !yell, !help", undefined, Colors.green);
         }
       }
     }
@@ -1103,11 +1135,6 @@ export class OneDay extends Game {
 
         } else {
           player.send("Error: no such command exists! Commands are /vote /unvote /rules");
-        }
-      } else if (msg[0] == "/" && !this.inPlay && player.data.startVote == false) {
-        if (msg.slice(0, 6) == "/start") {
-          player.data.startVote = true;
-          this.playerchat.broadcast(player.username + " has voted to start the game immediately by typing \"/start\"");
         }
       } else {
         this.playerchat.receive(player.id, player.username + ": " + msg);

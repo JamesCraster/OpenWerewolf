@@ -22,6 +22,7 @@
   overflow: hidden;
   /* IBM Plex Sans from google fonts */
   font-family: "IBM Plex Sans", sans-serif;
+  font-size: 1em;
 }
 
 html,
@@ -47,11 +48,11 @@ body {
 #outer {
   height: 100%;
   width: 100%;
-  display: flex;
+  /*display: flex;
   justify-content: center;
   align-items: center;
   align-content: stretch;
-  flex-direction: column;
+  flex-direction: column;*/
 }
 
 #chatbox {
@@ -68,6 +69,7 @@ form {
 }
 
 #msg {
+  font-size: 0.8em;
   color: #cecece;
   width: calc(100% - 95px);
   outline: none;
@@ -78,11 +80,11 @@ form {
   border-right: 2px solid #020202;
   height: 40px;
   padding: 0px 5px;
-  /*box-sizing:border-box;*/
   float: left;
 }
 
 #submit {
+  font-size: 0.8em;
   width: 81px;
   height: 42px;
   padding: 0px 0px;
@@ -106,10 +108,44 @@ li {
   padding: 5px 5px;
   color: #cecece;
   word-wrap: break-word;
+
 }
 
 li:nth-child(odd) {
   background: #303030;
   padding: 5px 5px;
   word-wrap: break-word;
+}
+
+a{
+  color:#1f76cc;
+}
+
+@media only screen and (max-device-width: 430px){
+  #inner{
+    height:100%;
+    width:100%;
+  }
+  #msg{
+    height:60px;
+  }
+  #submit{
+    height:62px;
+  }
+  #outer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: stretch;
+    flex-direction: column;
+  }
+}
+@media only screen and (min-device-width:430px){
+  #outer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: stretch;
+    flex-direction: column;
+  }
 }

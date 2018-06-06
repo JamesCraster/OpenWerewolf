@@ -81,6 +81,7 @@ class Vigilante extends Role {
   }
 }
 class PlayerData {
+  private _diedThisNight:boolean = false;
   private _alive: boolean = true;
   private _role: Role;
   private _target: string = "";
@@ -123,6 +124,7 @@ class PlayerData {
   }
   public kill(): void {
     this._alive = false;
+    this._diedThisNight = true;
   }
   public get wolfVotes() {
     return this._wolfVotes;
@@ -132,7 +134,9 @@ class PlayerData {
       this._wolfVotes++;
     }
   }
-
+  public set diedThisNight(diedThisNight:boolean){
+    this._diedThisNight = false;
+  }
 }
 const ninePlayer: RoleList = new RoleList([
   Roles.werewolf,
@@ -145,6 +149,16 @@ const ninePlayer: RoleList = new RoleList([
   Roles.townie,
   Roles.townie
 ]);
+const eightPlayer:RoleList = new RoleList([
+  Roles.werewolf,
+  Roles.werewolf,
+  Roles.doctor,
+  Roles.vigilante,
+  Roles.cop,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+])
 export class Classic extends Game {
   private phase: string = Phase.day;
   private stopWatch: Stopwatch = new Stopwatch();
@@ -175,7 +189,15 @@ export class Classic extends Game {
     this.broadcast("***NEW GAME***", "#03b603");
     this.broadcastPlayerList();
     let randomDeck: Array<string> = [];
-    let roleList = ninePlayer.list;
+    let roleList = eightPlayer.list;
+    switch(this._players.length){
+      case 8:
+        roleList = eightPlayer.list;
+        break;
+      case 9:
+        roleList = ninePlayer.list;
+        break;
+    }
     this.broadcastRoleList(roleList);
     randomDeck = Utils.shuffle(roleList);
     this.daychat.muteAll();
@@ -296,12 +318,12 @@ export class Classic extends Game {
     let deaths: number = 0;
     //Notify the dead that they have died
     for (let i = 0; i < this._players.length; i++) {
-      if (!this._players[i].data.alive) {
+      if (this._players[i].data.diedThisNight) {
         this._players[i].send("You have been killed!", undefined, Colors.red);
         deaths++;
       }
     }
-    //Clear the actions of each player
+    //Reset each player's action
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].data.resetAfterNight();
     }
@@ -315,12 +337,22 @@ export class Classic extends Game {
       this.daychat.broadcast("Nobody died.");
     } else {
       for (let i = 0; i < this._players.length; i++) {
-        if (!this._players[i].data.alive) {
+        if (this._players[i].data.diedThisNight) {
           this.daychat.broadcast(this._players[i].username + " has died.");
           this.daychat.mute(this._players[i].id);
         }
       }
     }
+    for(let i = 0; i < this._players.length; i++){
+      this._players[i].data.diedThisNight = false;
+    }
+  }
+  public day(){
+    this.daychat.broadcast("20 seconds - write a statement now.");
+    this.daychat.broadcast("1 minute of general discussion until the trial:");
+  }
+  public trial(){
+    
   }
   public end() {
     this.afterEnd();
@@ -334,9 +366,13 @@ export class Classic extends Game {
           let exists = false;
           for (let i = 0; i < this._players.length; i++) {
             if (this._players[i].username == username) {
-              player.send("Your choice of '" + username + "' has been received");
-              player.data.target = this._players[i].id;
               exists = true;
+              if(this._players[i].data.alive){
+                player.send("Your choice of '" + username + "' has been received");
+                player.data.target = this._players[i].id;
+              }else{
+                player.send("That player is dead, you cannot vote for them.");
+              }
             }
           }
           if (!exists) {
