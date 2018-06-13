@@ -87,6 +87,7 @@ class PlayerData {
   private _target: string = "";
   private _healed: boolean = false;
   private _wolfVotes: number = 0;
+  private _vote: string = "";
   constructor(role: Role) {
     this._role = role;
   }
@@ -136,6 +137,15 @@ class PlayerData {
   }
   public set diedThisNight(diedThisNight:boolean){
     this._diedThisNight = false;
+  }
+  public get diedThisNight(){
+    return this._diedThisNight;
+  }
+  public voteFor(target:Player){
+    this._vote = target.id;
+  }
+  public get vote(){
+    return this._vote;
   }
 }
 const ninePlayer: RoleList = new RoleList([
@@ -292,7 +302,7 @@ export class Classic extends Game {
                 this._players[i].send(finalTargetPlayer.username + " has died.");
               } else {
                 this._players[i].send(finalTargetPlayer.username + " was healed during the night and so"+
-                +" they have survived.");
+                " they have survived.");
               }
             } else {
               this._players[i].send("No one, as neither of you voted for a target.");
@@ -346,13 +356,15 @@ export class Classic extends Game {
     for(let i = 0; i < this._players.length; i++){
       this._players[i].data.diedThisNight = false;
     }
+    this.day();
   }
   public day(){
-    this.daychat.broadcast("20 seconds - write a statement now.");
-    this.daychat.broadcast("1 minute of general discussion until the trial:");
+    this.daychat.broadcast("1 minute of general discussion until the trials begin.");
+    setInterval(this.trialVote,1000);
   }
-  public trial(){
-    
+  public trialVote(){
+    this.daychat.broadcast("The trial has begun! The player with the most votes will be put on trial.");
+    this.daychat.broadcast("Vote with '/vote', e.g /vote frank casts a vote for frank");
   }
   public end() {
     this.afterEnd();

@@ -3,6 +3,9 @@
 /Games/*.js
 /Games/OneDay/*.js
 /Games/Classic/*.js
+/Client/login.js
+lobby.html
+login.html
 
 #Ignore releases
 release/
