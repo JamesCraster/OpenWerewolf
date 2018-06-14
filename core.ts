@@ -85,7 +85,18 @@ export enum Colors {
   brightGreen = "#03b603",
   yellow = "#756f00",
   brightYellow = "yellow",
+  magenta = "magenta",
+  lightBlue = "cyan",
+  orange = "orange",
+  usernameGreen = "#4bff00",
+  usernameRed = "#ff0000",
+  darkBlue = "#007eff"
 }
+/*
+ * Possible player colors in order of when they will be given out.
+ */
+const PlayerColorArray:Array<string> = [Colors.magenta, Colors.lightBlue, Colors.brightYellow, Colors.orange, Colors.usernameRed, Colors.usernameGreen,
+                          Colors.darkBlue]; 
 /** 
  * Contains style data for text.
  */
@@ -188,6 +199,7 @@ export class Player {
   private _disconnected: boolean = false;
   private _admin: boolean = false;
   private _startVote: boolean = false;
+  private _color:string = "";
 
   public constructor(socket: Socket) {
     this._socket = socket;
@@ -250,16 +262,8 @@ export class Player {
    * send message to this player and only this player
    * @param msg
    */
-  public send(msg: string, textColor?: string, backgroundColor?: string): void {
-    if (textColor && backgroundColor) {
-      this._socket.emit("message", msg, textColor, backgroundColor);
-    } else if (textColor) {
-      this._socket.emit("message", msg, textColor);
-    } else if (backgroundColor) {
-      this._socket.emit("message", msg, undefined, backgroundColor);
-    } else {
-      this._socket.emit("message", msg);
-    }
+  public send(msg: string, textColor?: string, backgroundColor?: string, usernameColor?:string): void {
+    this._socket.emit("message", msg, textColor, backgroundColor, usernameColor);
   }
   get socket() {
     return this._socket;
@@ -269,6 +273,12 @@ export class Player {
   }
   set startVote(startVote:boolean){
     this._startVote = startVote;
+  }
+  set color(color:string){
+    this._color = color;
+  }
+  get color(){
+    return this._color;
   }
 }
 
@@ -482,6 +492,7 @@ export abstract class Game {
   protected readonly startClock: Stopwatch = new Stopwatch();
   protected readonly startWait = 30000;
   protected holdVote: boolean = false;
+  private colorPool = PlayerColorArray.slice();
 
   public constructor(server: Server, minPlayerCount: number, maxPlayerCount: number) {
     this._server = server;
@@ -552,6 +563,8 @@ export abstract class Game {
   }
   protected abstract update(): void;
   public addPlayer(player: Player) {
+    player.color = this.colorPool[0];
+    this.colorPool.splice(0,1);
     player.startVote = false;
     this._players.push(player);
     this._registeredPlayerCount++;
@@ -573,6 +586,7 @@ export abstract class Game {
       this._registeredPlayerCount--;
       this._players.splice(index, 1);
     }
+    this.colorPool.push(player.color);
   }
   protected beforeStart() {
     this._inPlay = true;
@@ -700,13 +714,13 @@ export class MessageRoom {
     );
     return undefined;
   }
-  public receive(sender: MessageRoomMember | string, msg: string, textColor?: string, backgroundColor?: string) {
+  public receive(sender: MessageRoomMember | string, msg: string, textColor?: string, backgroundColor?: string, usernameColor?:string) {
     //if message room member passed in
     if (sender instanceof MessageRoomMember) {
       if (!sender.muted) {
         for (var i = 0; i < this._members.length; i++) {
           if (!this._members[i].deafened) {
-            this._members[i].send(msg, textColor, backgroundColor);
+            this._members[i].send(msg, textColor, backgroundColor, usernameColor);
           }
         }
       }
@@ -717,7 +731,7 @@ export class MessageRoom {
         if (!messageRoomSender.muted) {
           for (var i = 0; i < this._members.length; i++) {
             if (!this._members[i].deafened) {
-              this._members[i].send(msg, textColor, backgroundColor);
+              this._members[i].send(msg, textColor, backgroundColor, usernameColor);
             }
           }
         }

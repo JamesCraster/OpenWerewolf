@@ -31,22 +31,33 @@ $(function () {
     return false;
   });
 
-  socket.on("message", function (msg, textColor, backgroundColor) {
+  socket.on("message", function (msg, textColor, backgroundColor, usernameColor) {
     //test if client scrolled down
     var scrollDown = isClientScrolledDown();
     if (textColor && backgroundColor) {
-      $("#chatbox").append($("<li style='color:" + textColor + ";background-color:" + backgroundColor + "'>").text(msg));
+      $("#chatbox").append($("<li style='color:" + textColor + ";background-color:" + backgroundColor + "'>"));
     } else if (textColor) {
-      $("#chatbox").append($("<li style='color:" + textColor + "'>").text(msg));
+      $("#chatbox").append($("<li style='color:" + textColor + "'>"));
     } else if (backgroundColor) {
-      $("#chatbox").append($("<li style='background-color:" + backgroundColor + "'>").text(msg));
+      $("#chatbox").append($("<li style='background-color:" + backgroundColor + "'>"));
     } else {
-      $("#chatbox").append($("<li>").text(msg));
+      $("#chatbox").append($("<li>"));
     }
-    //only scroll down if the client was scrolled down before the message arrived
-    if (scrollDown) {
-      $("#inner")[0].scrollTop = $("#inner")[0].scrollHeight - $('#inner')[0].clientHeight;
+    if(usernameColor){
+      username = msg.split(":")[0];
+      messageBody = ":" + msg.split(":")[1];
+      $("#chatbox li:last").append($("<span style='color:"+usernameColor+"'>"));
+      $("#chatbox li:last span").text(username);
+      $("#chatbox li:last").append($("<span>"));
+      $("#chatbox li:last span:last").text(messageBody);
+    }else{
+      $("#chatbox li:last").text(msg);
     }
+
+      //only scroll down if the client was scrolled down before the message arrived
+      if (scrollDown) {
+        $("#inner")[0].scrollTop = $("#inner")[0].scrollHeight - $('#inner')[0].clientHeight;
+      }
   });
   socket.on("reload", function () {
     location.reload(true);

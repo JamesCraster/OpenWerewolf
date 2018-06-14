@@ -1190,7 +1190,7 @@ export class OneDay extends Game {
           player.send("Error: no such command exists! Commands are /vote /unvote /rules");
         }
       } else {
-        this.playerchat.receive(player.id, player.username + ": " + msg);
+        this.playerchat.receive(player.id, player.username + ": " + msg, undefined, undefined, player.color);
       }
     }
   }
