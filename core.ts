@@ -95,8 +95,8 @@ export enum Colors {
 /*
  * Possible player colors in order of when they will be given out.
  */
-const PlayerColorArray:Array<string> = [Colors.magenta, Colors.lightBlue, Colors.brightYellow, Colors.orange, Colors.usernameRed, Colors.usernameGreen,
-                          Colors.darkBlue]; 
+const PlayerColorArray: Array<string> = [Colors.magenta, Colors.lightBlue, Colors.brightYellow, Colors.orange, Colors.usernameRed, Colors.usernameGreen,
+Colors.darkBlue];
 /** 
  * Contains style data for text.
  */
@@ -175,12 +175,12 @@ interface PlayerData {
   [key: string]: any;
 }
 
-abstract class PlayerContainer{
-  private _player:Player;
-  constructor(player:Player){
+abstract class PlayerContainer {
+  private _player: Player;
+  constructor(player: Player) {
     this._player = player;
   }
-  get player():Player{
+  get player(): Player {
     return this._player;
   }
 }
@@ -199,7 +199,7 @@ export class Player {
   private _disconnected: boolean = false;
   private _admin: boolean = false;
   private _startVote: boolean = false;
-  private _color:string = "";
+  private _color: string = "";
 
   public constructor(socket: Socket) {
     this._socket = socket;
@@ -262,22 +262,22 @@ export class Player {
    * send message to this player and only this player
    * @param msg
    */
-  public send(msg: string, textColor?: string, backgroundColor?: string, usernameColor?:string): void {
+  public send(msg: string, textColor?: string, backgroundColor?: string, usernameColor?: string): void {
     this._socket.emit("message", msg, textColor, backgroundColor, usernameColor);
   }
   get socket() {
     return this._socket;
   }
-  get startVote(){
+  get startVote() {
     return this._startVote;
   }
-  set startVote(startVote:boolean){
+  set startVote(startVote: boolean) {
     this._startVote = startVote;
   }
-  set color(color:string){
+  set color(color: string) {
     this._color = color;
   }
-  get color(){
+  get color() {
     return this._color;
   }
 }
@@ -409,7 +409,7 @@ export class Server {
           if (player.admin) {
             this._games[player.game].adminReceive(id, msg);
           }
-        }else if(msg[0] == "/" && !this._games[player.game].inPlay && player.startVote == false) {
+        } else if (msg[0] == "/" && !this._games[player.game].inPlay && player.startVote == false) {
           if (msg.slice(0, 6) == "/start") {
             player.startVote = true;
             this._games[player.game].broadcast(player.username + " has voted to start the game immediately by typing \"/start\"");
@@ -564,7 +564,7 @@ export abstract class Game {
   protected abstract update(): void;
   public addPlayer(player: Player) {
     player.color = this.colorPool[0];
-    this.colorPool.splice(0,1);
+    this.colorPool.splice(0, 1);
     player.startVote = false;
     this._players.push(player);
     this._registeredPlayerCount++;
@@ -610,6 +610,7 @@ export abstract class Game {
     }
     this._players = [];
     this._registeredPlayerCount = 0;
+    this.colorPool = PlayerColorArray.slice();
   }
   protected abstract start(): void;
   protected abstract end(): void;
@@ -665,7 +666,7 @@ export abstract class Game {
           player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !yell, !help", undefined, Colors.green);
         }
       }
-      if(msg.slice(0,5) == "!yell" && player.admin == true){
+      if (msg.slice(0, 5) == "!yell" && player.admin == true) {
         this.broadcast("ADMIN:" + msg.slice(5), Colors.brightGreen);
       }
     }
@@ -714,7 +715,7 @@ export class MessageRoom {
     );
     return undefined;
   }
-  public receive(sender: MessageRoomMember | string, msg: string, textColor?: string, backgroundColor?: string, usernameColor?:string) {
+  public receive(sender: MessageRoomMember | string, msg: string, textColor?: string, backgroundColor?: string, usernameColor?: string) {
     //if message room member passed in
     if (sender instanceof MessageRoomMember) {
       if (!sender.muted) {

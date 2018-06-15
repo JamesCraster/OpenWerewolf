@@ -2,7 +2,6 @@
 # Build script, call with option -d before each commit
 # Options:
 # -b builds for release
-# -r runs node and opens firefox tabs
 # -d generates documentation
 
 while [ "$1" != "" ]; do
@@ -32,18 +31,7 @@ while [ "$1" != "" ]; do
       rm -rI release
 
       ;;
-    
-    -r)
 
-      #kill all node instances
-      killall node
-
-      #run application on local host and open firefox (linux specific)
-      url="localhost:8080" 
-      sh -c "node app.js" & sh -c "firefox $url $url $url $url $url $url $url $url $url"
-      
-      ;;
-    
     -d)
 
       #generate documentation

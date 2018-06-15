@@ -81,7 +81,7 @@ class Vigilante extends Role {
   }
 }
 class PlayerData {
-  private _diedThisNight:boolean = false;
+  private _diedThisNight: boolean = false;
   private _alive: boolean = true;
   private _role: Role;
   private _target: string = "";
@@ -135,16 +135,16 @@ class PlayerData {
       this._wolfVotes++;
     }
   }
-  public set diedThisNight(diedThisNight:boolean){
+  public set diedThisNight(diedThisNight: boolean) {
     this._diedThisNight = false;
   }
-  public get diedThisNight(){
+  public get diedThisNight() {
     return this._diedThisNight;
   }
-  public voteFor(target:Player){
+  public voteFor(target: Player) {
     this._vote = target.id;
   }
-  public get vote(){
+  public get vote() {
     return this._vote;
   }
 }
@@ -159,7 +159,7 @@ const ninePlayer: RoleList = new RoleList([
   Roles.townie,
   Roles.townie
 ]);
-const eightPlayer:RoleList = new RoleList([
+const eightPlayer: RoleList = new RoleList([
   Roles.werewolf,
   Roles.werewolf,
   Roles.doctor,
@@ -196,11 +196,10 @@ export class Classic extends Game {
   }
   public start() {
     this.beforeStart();
-    this.broadcast("***NEW GAME***", "#03b603");
     this.broadcastPlayerList();
     let randomDeck: Array<string> = [];
     let roleList = eightPlayer.list;
-    switch(this._players.length){
+    switch (this._players.length) {
       case 8:
         roleList = eightPlayer.list;
         break;
@@ -301,8 +300,8 @@ export class Classic extends Game {
               if (finalTargetPlayer.data.healed) {
                 this._players[i].send(finalTargetPlayer.username + " has died.");
               } else {
-                this._players[i].send(finalTargetPlayer.username + " was healed during the night and so"+
-                " they have survived.");
+                this._players[i].send(finalTargetPlayer.username + " was healed during the night and so" +
+                  " they have survived.");
               }
             } else {
               this._players[i].send("No one, as neither of you voted for a target.");
@@ -353,16 +352,16 @@ export class Classic extends Game {
         }
       }
     }
-    for(let i = 0; i < this._players.length; i++){
+    for (let i = 0; i < this._players.length; i++) {
       this._players[i].data.diedThisNight = false;
     }
     this.day();
   }
-  public day(){
+  public day() {
     this.daychat.broadcast("1 minute of general discussion until the trials begin.");
-    setInterval(this.trialVote,1000);
+    setInterval(this.trialVote, 1000);
   }
-  public trialVote(){
+  public trialVote() {
     this.daychat.broadcast("The trial has begun! The player with the most votes will be put on trial.");
     this.daychat.broadcast("Vote with '/vote', e.g /vote frank casts a vote for frank");
   }
@@ -379,10 +378,10 @@ export class Classic extends Game {
           for (let i = 0; i < this._players.length; i++) {
             if (this._players[i].username == username) {
               exists = true;
-              if(this._players[i].data.alive){
+              if (this._players[i].data.alive) {
                 player.send("Your choice of '" + username + "' has been received");
                 player.data.target = this._players[i].id;
-              }else{
+              } else {
                 player.send("That player is dead, you cannot vote for them.");
               }
             }

@@ -33,6 +33,13 @@ var app = express();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
 
+//create a session cookie
+var session = require("express-session")({
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: true
+});
+
 //create a new server
 var server = new Server();
 server.addGame(new OneDay(server));
@@ -51,15 +58,28 @@ server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
 
+//use session cookie in sockets
+io.use(function (socket: any, next: any) {
+  session(socket.request, socket.request.res, next);
+});
+
+app.use(session);
 
 //serve static content
 app.use(express.static("Client"));
 app.get("/", function (req: any, res: any) {
   res.sendFile(__dirname + "/client.html");
+  console.log(req.session.socketID);
 });
+
+
 
 //handle requests
 io.on("connection", function (socket: Socket) {
+  if (!socket.request.session.socketID) {
+    socket.request.session.socketID = socket.id;
+    socket.request.session.save();
+  }
   let time = 0;
   server.addPlayer(socket);
   socket.on("message", function (msg: string) {
@@ -74,10 +94,11 @@ io.on("connection", function (socket: Socket) {
   socket.on("disconnect", function () {
     server.kick(socket.id);
   });
+  //socket.emit("message", "You are already playing a game somewhere else, so you cannot join this one.");
 });
 
 //listen on port
-var port = 8080;
+var port = 8081;
 http.listen(port, function () {
   console.log("Port is:" + port);
 });

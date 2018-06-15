@@ -84,6 +84,7 @@
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_core_.messageroom.html" class="tsd-kind-icon">Message<wbr>Room</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_core_.messageroommember.html" class="tsd-kind-icon">Message<wbr>Room<wbr>Member</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_core_.player.html" class="tsd-kind-icon">Player</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported"><a href="../classes/_core_.playercontainer.html" class="tsd-kind-icon">Player<wbr>Container</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_core_.rolelist.html" class="tsd-kind-icon">Role<wbr>List</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_core_.server.html" class="tsd-kind-icon">Server</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-external-module"><a href="../classes/_core_.stopwatch.html" class="tsd-kind-icon">Stopwatch</a></li>
@@ -101,6 +102,7 @@
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_.html#playercolorarray" class="tsd-kind-icon">Player<wbr>Color<wbr>Array</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_.html#app" class="tsd-kind-icon">app</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_.html#express" class="tsd-kind-icon">express</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_core_.html#grawlix" class="tsd-kind-icon">grawlix</a></li>
@@ -115,12 +117,22 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Variables</h2>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="playercolorarray" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> Player<wbr>Color<wbr>Array</h3>
+					<div class="tsd-signature tsd-kind-icon">Player<wbr>Color<wbr>Array<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;[Colors.magenta, Colors.lightBlue, Colors.brightYellow, Colors.orange, Colors.usernameRed, Colors.usernameGreen,Colors.darkBlue]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/1f198b4/core.ts#L98">core.ts:98</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="app" class="tsd-anchor"></a>
 					<h3>app</h3>
 					<div class="tsd-signature tsd-kind-icon">app<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;express()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/d352707/core.ts#L29">core.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/1f198b4/core.ts#L29">core.ts:29</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -130,7 +142,7 @@
 					<div class="tsd-signature tsd-kind-icon">express<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;require(&quot;express&quot;)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/d352707/core.ts#L28">core.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/1f198b4/core.ts#L28">core.ts:28</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -140,7 +152,7 @@
 					<div class="tsd-signature tsd-kind-icon">grawlix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;require(&quot;grawlix&quot;)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/d352707/core.ts#L32">core.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/1f198b4/core.ts#L32">core.ts:32</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -150,7 +162,7 @@
 					<div class="tsd-signature tsd-kind-icon">http<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;require(&quot;http&quot;).Server(app)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/d352707/core.ts#L30">core.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/1f198b4/core.ts#L30">core.ts:30</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -160,7 +172,7 @@
 					<div class="tsd-signature tsd-kind-icon">io<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;require(&quot;socket.io&quot;)(http)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/d352707/core.ts#L31">core.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/1f198b4/core.ts#L31">core.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -170,7 +182,7 @@
 					<div class="tsd-signature tsd-kind-icon">password<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"password"</span><span class="tsd-signature-symbol"> =&nbsp;&quot;password&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/d352707/core.ts#L35">core.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/1f198b4/core.ts#L35">core.ts:35</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -184,6 +196,9 @@
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="_games_classic_classic_.html">"<wbr>Games/<wbr>Classic/<wbr>Classic"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_games_demo_demo_.html">"<wbr>Games/<wbr>Demo/demo"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="_games_oneday_oneday_.html">"<wbr>Games/<wbr>One<wbr>Day/one<wbr>Day"</a>
@@ -216,6 +231,9 @@
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="../classes/_core_.player.html" class="tsd-kind-icon">Player</a>
 					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../classes/_core_.playercontainer.html" class="tsd-kind-icon">Player<wbr>Container</a>
+					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-external-module">
 						<a href="../classes/_core_.rolelist.html" class="tsd-kind-icon">Role<wbr>List</a>
 					</li>
@@ -236,6 +254,9 @@
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="../interfaces/_core_.playerdata.html" class="tsd-kind-icon">Player<wbr>Data</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_core_.html#playercolorarray" class="tsd-kind-icon">Player<wbr>Color<wbr>Array</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_core_.html#app" class="tsd-kind-icon">app</a>
