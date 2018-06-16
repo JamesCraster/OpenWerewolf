@@ -18,6 +18,45 @@
 function isClientScrolledDown() {
   return Math.abs($("#inner")[0].scrollTop + $('#inner')[0].clientHeight - $("#inner")[0].scrollHeight) <= 10;
 }
+
+function appendMessage(msg, target, textColor, backgroundColor, usernameColor) {
+  //test if client scrolled down
+  var scrollDown = isClientScrolledDown();
+  if (textColor && backgroundColor) {
+    $(target).append($("<li style='color:" + textColor + ";background-color:" + backgroundColor + "'>"));
+  } else if (textColor) {
+    $(target).append($("<li style='color:" + textColor + "'>"));
+  } else if (backgroundColor) {
+    $(target).append($("<li style='background-color:" + backgroundColor + "'>"));
+  } else {
+    $(target).append($("<li>"));
+  }
+  if (usernameColor) {
+    username = msg.split(":")[0];
+    messageBody = ":" + msg.split(":")[1];
+    $(target + " li:last").append($("<span style='color:" + usernameColor + "'>"));
+    $(target + " li:last span").text(username);
+    $(target + " li:last").append($("<span>"));
+    $(target + " li:last span:last").text(messageBody);
+  } else {
+    $(target + " li:last").text(msg);
+  }
+
+  //only scroll down if the client was scrolled down before the message arrived
+  if (scrollDown && target == "#chatbox") {
+    $("#inner")[0].scrollTop = $("#inner")[0].scrollHeight - $('#inner')[0].clientHeight;
+  }
+}
+
+function removeMessage(msg, target) {
+  $(target + " li").remove(":contains('" + msg + "')");
+}
+
+function lineThroughPlayer(msg) {
+  $("#playerNames li:contains('" + msg + "')").css("color", "grey");
+  $("#playerNames li:contains('" + msg + "')").css("text-decoration", "line-through");
+}
+
 $(function () {
   var socket = io();
 
@@ -32,33 +71,9 @@ $(function () {
   });
 
   socket.on("message", function (msg, textColor, backgroundColor, usernameColor) {
-    //test if client scrolled down
-    var scrollDown = isClientScrolledDown();
-    if (textColor && backgroundColor) {
-      $("#chatbox").append($("<li style='color:" + textColor + ";background-color:" + backgroundColor + "'>"));
-    } else if (textColor) {
-      $("#chatbox").append($("<li style='color:" + textColor + "'>"));
-    } else if (backgroundColor) {
-      $("#chatbox").append($("<li style='background-color:" + backgroundColor + "'>"));
-    } else {
-      $("#chatbox").append($("<li>"));
-    }
-    if(usernameColor){
-      username = msg.split(":")[0];
-      messageBody = ":" + msg.split(":")[1];
-      $("#chatbox li:last").append($("<span style='color:"+usernameColor+"'>"));
-      $("#chatbox li:last span").text(username);
-      $("#chatbox li:last").append($("<span>"));
-      $("#chatbox li:last span:last").text(messageBody);
-    }else{
-      $("#chatbox li:last").text(msg);
-    }
-
-      //only scroll down if the client was scrolled down before the message arrived
-      if (scrollDown) {
-        $("#inner")[0].scrollTop = $("#inner")[0].scrollHeight - $('#inner')[0].clientHeight;
-      }
+    appendMessage(msg, "#chatbox", textColor, backgroundColor, usernameColor);
   });
+
   socket.on("reload", function () {
     location.reload(true);
   });
@@ -70,4 +85,20 @@ $(function () {
   $('document').resize(function () {
 
   })
+  socket.on("rightMessage", function (msg, textColor, backgroundColor) {
+    appendMessage(msg, "#playerNames", textColor, backgroundColor);
+  });
+  socket.on("leftMessage", function (msg, textColor, backgroundColor) {
+    appendMessage(msg, "#roleNames", textColor, backgroundColor);
+  })
+  socket.on("removeRight", function (msg) {
+    console.log("event is fired");
+    removeMessage(msg, "#playerNames");
+  })
+  socket.on("removeLeft", function (msg) {
+    removeMessage(msg, "#roleNames");
+  })
+  socket.on("lineThroughPlayer", function (msg) {
+    lineThroughPlayer(msg);
+  });
 });

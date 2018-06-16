@@ -547,6 +547,17 @@ export class OneDay extends Game {
         roleList = this.sevenPlayer.list;
         break;
     }
+    for (let i = 0; i < this._players.length; i++) {
+      for (let j = 0; j < roleList.length; j++) {
+        if (roleList[j] == Roles.minion || roleList[j] == Roles.werewolf) {
+          this._players[i].leftSend(roleList[j], Colors.brightRed);
+        } else if (roleList[j] == Roles.jester) {
+          this._players[i].leftSend(roleList[j], Colors.brightYellow);
+        } else {
+          this._players[i].leftSend(roleList[j], Colors.brightGreen);
+        }
+      }
+    }
     randomDeck = Utils.shuffle(roleList);
     //list all of the roles in the order in which they wake up
     this.broadcastRoleList(roleList);

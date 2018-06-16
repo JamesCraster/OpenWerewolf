@@ -37,7 +37,7 @@ body {
 
 #inner {
   height: 70%;
-  width: 60%;
+  width: 90%;
   overflow: auto;
   position: relative;
   border: 2px solid #020202;
@@ -45,13 +45,34 @@ body {
 }
 
 #outer {
+  float: left;
   height: 100%;
-  width: 100%;
-  /*display: flex;
-  justify-content: center;
+  width: 60%;
+}
+
+.sideBox {
+  float: left;
+  height: 100%;
+  width: 20%;
+  display: flex;
+  flex-direction: row;
   align-items: center;
-  align-content: stretch;
-  flex-direction: column;*/
+}
+
+.innerSideBox {
+  border: 2px solid black;
+  height: 70%;
+  width: 60%;
+  margin-bottom: 42px;
+  box-sizing: border-box;
+}
+
+#innerRightBox {
+  margin-right: auto;
+}
+
+#innerLeftBox {
+  margin-left: auto;
 }
 
 #chatbox {
@@ -63,8 +84,14 @@ body {
 }
 
 form {
-  width: 60%;
+  width: 90%;
   display: inline-block;
+}
+
+#topLevel {
+  float: left;
+  height: 100%;
+  width: 100%;
 }
 
 #msg {
@@ -103,11 +130,11 @@ form {
 }
 
 li {
+  font-size: 18px;
   background: #23272a;
   padding: 5px 5px;
   color: #cecece;
   word-wrap: break-word;
-
 }
 
 li:nth-child(odd) {
@@ -116,31 +143,40 @@ li:nth-child(odd) {
   word-wrap: break-word;
 }
 
-a{
-  color:#1f76cc;
+a {
+  color: #1f76cc;
 }
 
-@media only screen and (max-device-width: 430px){
-  #inner{
-    height:100%;
-    width:100%;
+@media only screen and (max-device-width: 430px) {
+  #inner {
+    height: 100%;
+    width: 100%;
   }
-  #msg{
-    height:60px;
+  #msg {
+    height: 60px;
   }
-  #submit{
-    height:62px;
+  #submit {
+    height: 62px;
   }
-  #outer{
+  #outer {
     display: flex;
     justify-content: center;
     align-items: center;
     align-content: stretch;
     flex-direction: column;
   }
+  #topLevel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    align-content: stretch;
+    flex-direction: row;
+  }
 }
-@media only screen and (min-device-width:430px){
-  #outer{
+
+@media only screen and (min-device-width:430px) {
+  #outer {
     display: flex;
     justify-content: center;
     align-items: center;

@@ -15,16 +15,26 @@
      "This project includes code from OpenWerewolf." -->
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <!-- IBM Plex Sans google font -->
-    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans" rel="stylesheet">
-    <title>OpenWerewolf</title>
-  </head>
-  <!-- Move scrollbar to bottom on window resize -->
-  <body onresize="$('#inner')[0].scrollTop = $('#inner')[0].scrollHeight;">
-    <!-- Message box -->
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <!-- IBM Plex Sans google font -->
+  <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans" rel="stylesheet">
+  <title>OpenWerewolf</title>
+</head>
+<!-- Move scrollbar to bottom on window resize -->
+
+<body onresize="$('#inner')[0].scrollTop = $('#inner')[0].scrollHeight;">
+  <!-- Message box -->
+  <div id="topLevel">
+    <div id="leftBox" class="sideBox">
+      <div id="innerLeftBox" class="innerSideBox">
+        <ul id="roleNames">
+          <li>Roles:</li>
+        </ul>
+      </div>
+    </div>
     <div id="outer">
       <div id="inner">
         <ul id="chatbox">
@@ -43,8 +53,17 @@
         <input id="submit" type="submit" value="Submit">
       </form>
     </div>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="client.js"></script>
-  </body>
+    <div id="rightBox" class="sideBox">
+      <div id="innerRightBox" class="innerSideBox">
+        <ul id="playerNames">
+          <li>Players:</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="client.js"></script>
+</body>
+
 </html>

@@ -265,6 +265,21 @@ export class Player {
   public send(msg: string, textColor?: string, backgroundColor?: string, usernameColor?: string): void {
     this._socket.emit("message", msg, textColor, backgroundColor, usernameColor);
   }
+  public rightSend(msg: string, textColor?: string, backgroundColor?: string): void {
+    this._socket.emit("rightMessage", msg, textColor, backgroundColor);
+  }
+  public leftSend(msg: string, textColor?: string, backgroundColor?: string): void {
+    this._socket.emit("leftMessage", msg, textColor, backgroundColor)
+  }
+  public removeRight(msg: string) {
+    this._socket.emit("removeRight", msg);
+  }
+  public removeLeft(msg: string) {
+    this._socket.emit("removeLeft", msg);
+  }
+  public lineThroughPlayer(msg: string) {
+    this._socket.emit("lineThroughPlayer", msg);
+  }
   get socket() {
     return this._socket;
   }
@@ -465,6 +480,7 @@ export class Server {
             this._games[player.game].broadcast(
               player.username + " has disconnected"
             );
+            this._games[player.game].lineThroughPlayer(player.username);
             if (!this._games[player.game].inPlay) {
               this._games[player.game].kick(player);
             }
@@ -568,6 +584,12 @@ export abstract class Game {
     player.startVote = false;
     this._players.push(player);
     this._registeredPlayerCount++;
+    for (let i = 0; i < this._players.length; i++) {
+      player.rightSend(this._players[i].username, this._players[i].color);
+    }
+    for (let i = 0; i < this._players.length - 1; i++) {
+      this._players[i].rightSend(player.username, player.color);
+    }
     //If the number of players is between minimum and maximum count, inform them of the wait remaining before game starts
     if (this._players.length > this._minPlayerCount && this._players.length < this._maxPlayerCount) {
       player.send("The game will start in " + (Math.floor((this.startWait - this.startClock.time) / 1000)).toString() + " seconds");
@@ -581,12 +603,16 @@ export abstract class Game {
   }
   public abstract receive(id: string, msg: string): void;
   public kick(player: Player) {
+    for (let i = 0; i < this._players.length; i++) {
+      this._players[i].removeRight(player.username);
+    }
     let index = this._players.indexOf(player);
     if (index != -1) {
       this._registeredPlayerCount--;
       this._players.splice(index, 1);
     }
     this.colorPool.push(player.color);
+    //add code to remove player's name from the sidebar
   }
   protected beforeStart() {
     this._inPlay = true;
@@ -633,6 +659,11 @@ export abstract class Game {
       string += list[i];
     }
     this.broadcast("Roles (in order of when they act): " + string + ".");
+  }
+  public lineThroughPlayer(username: string) {
+    for (let i = 0; i < this._players.length; i++) {
+      this._players[i].lineThroughPlayer(username);
+    }
   }
   //admin commands
   public adminReceive(id: string, msg: string): void {
