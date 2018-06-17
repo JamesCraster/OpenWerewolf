@@ -524,6 +524,7 @@ export class OneDay extends Game {
     //set everyone's vote to blank
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].data.vote = "";
+      this._players[i].setTime((this.length + 0.5) * 60000);
     }
     //print out all players
     this.broadcastPlayerList();
@@ -558,7 +559,10 @@ export class OneDay extends Game {
         }
       }
     }
-    randomDeck = Utils.shuffle(roleList);
+    for (let i = 0; i < 100; i++) {
+      randomDeck = Utils.shuffle(roleList);
+      console.log(randomDeck);
+    }
     //list all of the roles in the order in which they wake up
     this.broadcastRoleList(roleList);
     //mute everyone in the player chat

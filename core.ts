@@ -280,6 +280,9 @@ export class Player {
   public lineThroughPlayer(msg: string) {
     this._socket.emit("lineThroughPlayer", msg);
   }
+  public setTime(time: number) {
+    this._socket.emit("setTime", time);
+  }
   get socket() {
     return this._socket;
   }

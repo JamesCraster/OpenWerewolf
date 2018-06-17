@@ -15,9 +15,41 @@
      been added to OpenWerewolf by me: 
      "This project includes code from OpenWerewolf." 
 */
+var globalNow = 0;
+var globalTime = 0;
+
 function isClientScrolledDown() {
   return Math.abs($("#inner")[0].scrollTop + $('#inner')[0].clientHeight - $("#inner")[0].scrollHeight) <= 10;
 }
+
+function convertTime(duration) {
+  var milliseconds = parseInt((duration % 1000) / 100),
+    seconds = parseInt((duration / 1000) % 60),
+    minutes = parseInt((duration / (1000 * 60)) % 60),
+    hours = parseInt((duration / (1000 * 60 * 60)) % 24);
+
+  hours = (hours < 10) ? "0" + hours : hours;
+  minutes = (minutes < 10) ? "0" + minutes : minutes;
+  seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+  return minutes + ":" + seconds;
+}
+
+function updateTime() {
+  if (globalTime > 0) {
+    globalTime -= Date.now() - globalNow;
+    globalNow = Date.now();
+    if (globalTime < 0) {
+      globalTime = 0;
+    }
+    $($("#roleNames li")[0]).text("Time: " + convertTime(globalTime));
+    if (globalTime <= 30000 && globalTime >= 0) {
+      $($("#roleNames li")[0]).css("color", "#ff1b1b");
+    }
+  }
+}
+
+setInterval(updateTime, 1000);
 
 function appendMessage(msg, target, textColor, backgroundColor, usernameColor) {
   //test if client scrolled down
@@ -49,12 +81,18 @@ function appendMessage(msg, target, textColor, backgroundColor, usernameColor) {
 }
 
 function removeMessage(msg, target) {
-  $(target + " li").remove(":contains('" + msg + "')");
+  $(target + " li").filter(function () {
+    return $(this).text() === msg;
+  }).remove();
 }
 
 function lineThroughPlayer(msg) {
-  $("#playerNames li:contains('" + msg + "')").css("color", "grey");
-  $("#playerNames li:contains('" + msg + "')").css("text-decoration", "line-through");
+  $("#playerNames li").filter(function () {
+    return $(this).text() === msg;
+  }).css("color", "grey");
+  $("#playerNames li").filter(function () {
+    return $(this).text() === msg;
+  }).css("text-decoration", "line-through");
 }
 
 $(function () {
@@ -101,4 +139,13 @@ $(function () {
   socket.on("lineThroughPlayer", function (msg) {
     lineThroughPlayer(msg);
   });
+  socket.on("setTime", function (time) {
+    $($("#roleNames li")[0]).text("Time: " + convertTime(time));
+    globalNow = Date.now();
+    globalTime = time;
+  });
+  //keep connection alive 
+  socket.on("ping", function () {
+    socket.emit("pong");
+  })
 });

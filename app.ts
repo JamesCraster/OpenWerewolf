@@ -72,7 +72,12 @@ app.get("/", function (req: any, res: any) {
   console.log(req.session.socketID);
 });
 
+function heartBeat() {
+  io.emit("ping");
+}
 
+//keep connection alive
+setInterval(heartBeat, 30000);
 
 //handle requests
 io.on("connection", function (socket: Socket) {
