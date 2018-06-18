@@ -2,28 +2,29 @@
 
 import { MessageRoom, Server, Game, Player, Utils, RoleList, Colors, Stopwatch } from "../../core";
 
-export class Demo extends Game{
-    private playerchat:MessageRoom = new MessageRoom();
-    constructor(server:Server){
-        super(server,3,6);
+export class Demo extends Game {
+    //declare new message room
+    private playerchat: MessageRoom = new MessageRoom();
+    constructor(server: Server) {
+        //first argument is minimum player count, second is maximum player count
+        super(server, 3, 6);
     }
-    public start(){
+    public start() {
         this.beforeStart();
     }
-    public end(){
+    public end() {
         this.afterEnd();
     }
-    public update(){
+    public update() {
 
     }
-    public addPlayer(player:Player){
+    public addPlayer(player: Player) {
+        //add player to message room
         this.playerchat.addPlayer(player);
         super.addPlayer(player);
     }
-    public receive(id:string, msg:string){
-        let player = this.getPlayer(id);
-            if(player instanceof Player){
-                this.playerchat.receive(id, msg);
-            }
-        }
+    public receive(player: Player, msg: string) {
+        //direct player's message to message room
+        this.playerchat.receive(player, player.username + ": " + msg);
     }
+}

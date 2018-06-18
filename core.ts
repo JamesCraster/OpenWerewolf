@@ -85,18 +85,23 @@ export enum Colors {
   brightGreen = "#03b603",
   yellow = "#756f00",
   brightYellow = "yellow",
-  magenta = "magenta",
+  magenta = "#c400ff",
   lightBlue = "cyan",
   orange = "orange",
   usernameGreen = "#4bff00",
   usernameRed = "#ff0000",
-  darkBlue = "#007eff"
+  darkBlue = "#007eff",
+  pink = "#ff3f9f",
+  seaGreen = "lightseagreen",
+  white = "white",
+  brown = "#a5542a",
+  darkGreen = "#2aa54c"
 }
 /*
  * Possible player colors in order of when they will be given out.
  */
 const PlayerColorArray: Array<string> = [Colors.magenta, Colors.lightBlue, Colors.brightYellow, Colors.orange, Colors.usernameRed, Colors.usernameGreen,
-Colors.darkBlue];
+Colors.darkBlue, Colors.pink, Colors.brown];
 /** 
  * Contains style data for text.
  */
@@ -315,7 +320,6 @@ export class Server {
   }
   //join waiting players to games
   private joinGame() {
-    //for(var i = 0; i < this._players.length; i++){
     this._players.forEach(player => {
       //if player is registered and waiting to join a game
       if (player.registered && !player.inGame) {
@@ -425,7 +429,9 @@ export class Server {
             player.send('You have been granted administrator access', undefined, Colors.green);
           }
           if (player.admin) {
-            this._games[player.game].adminReceive(id, msg);
+            if (this._games[player.game].isPlayer(id)) {
+              this._games[player.game].adminReceive(player, msg);
+            }
           }
         } else if (msg[0] == "/" && !this._games[player.game].inPlay && player.startVote == false) {
           if (msg.slice(0, 6) == "/start") {
@@ -434,7 +440,9 @@ export class Server {
           }
         } else if (this.validateMessage(msg)) {
           msg = grawlix(msg, { style: "asterix" });
-          this._games[player.game].receive(id, msg);
+          if (this._games[player.game].isPlayer(id)) {
+            this._games[player.game].receive(player, msg);
+          }
         }
       }
     } else {
@@ -549,6 +557,14 @@ export abstract class Game {
     console.log("Error: Game.getPlayer: No player found with given id");
     return undefined;
   }
+  public isPlayer(id: string): boolean {
+    for (var i = 0; i < this._players.length; i++) {
+      if (this._players[i].id == id) {
+        return true;
+      }
+    }
+    return false;
+  }
   private pregameLobbyUpdate() {
     if (!this.inPlay) {
       //if have max number of players, start the game immediately
@@ -604,7 +620,7 @@ export abstract class Game {
       this._players[i].send(msg, textColor, backgroundColor);
     }
   }
-  public abstract receive(id: string, msg: string): void;
+  public abstract receive(player: Player, msg: string): void;
   public kick(player: Player) {
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].removeRight(player.username);
@@ -615,7 +631,6 @@ export abstract class Game {
       this._players.splice(index, 1);
     }
     this.colorPool.push(player.color);
-    //add code to remove player's name from the sidebar
   }
   protected beforeStart() {
     this._inPlay = true;
@@ -631,8 +646,6 @@ export abstract class Game {
     for (let i = 0; i < temporaryPlayerList.length; i++) {
       this._server.kick(temporaryPlayerList[i].id);
     }
-    //console.log("here is the length of the game list " + this._players.length);
-    //console.log("here is the game player array " + this._players);
     this._inPlay = false;
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].inGame = false;
@@ -669,40 +682,37 @@ export abstract class Game {
     }
   }
   //admin commands
-  public adminReceive(id: string, msg: string): void {
-    let player = this.getPlayer(id);
-    if (player instanceof Player) {
-      if (msg[0] == "!" && !this.inPlay && player.admin == true) {
-        if (msg.slice(0, 5) == "!stop") {
-          this.startClock.stop();
-          player.send("Countdown stopped", undefined, Colors.green);
-        } else if (msg.slice(0, 6) == "!start") {
-          if (this._registeredPlayerCount >= this._minPlayerCount) {
-            this.start();
-          } else {
-            player.send("Not enough players to start game", Colors.brightRed);
-          }
-        } else if (msg.slice(0, 7) == "!resume") {
-          this.startClock.start();
-          player.send("Countdown resumed", undefined, Colors.green);
-        } else if (msg.slice(0, 8) == "!restart") {
-          this.startClock.restart();
-          player.send("Countdown restarted", undefined, Colors.green);
-        } else if (msg.slice(0, 5) == "!time") {
-          player.send(this.startClock.time.toString());
-        } else if (msg.slice(0, 5) == "!hold") {
-          player.send("The vote to start has been halted.", undefined, Colors.green);
-          this.holdVote = true;
-        } else if (msg.slice(0, 8) == "!release") {
-          player.send("The vote to start has been resumed", undefined, Colors.green);
-          this.holdVote = false;
-        } else if (msg.slice(0, 5) == "!help") {
-          player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !yell, !help", undefined, Colors.green);
+  public adminReceive(player: Player, msg: string): void {
+    if (msg[0] == "!" && !this.inPlay && player.admin == true) {
+      if (msg.slice(0, 5) == "!stop") {
+        this.startClock.stop();
+        player.send("Countdown stopped", undefined, Colors.green);
+      } else if (msg.slice(0, 6) == "!start") {
+        if (this._registeredPlayerCount >= this._minPlayerCount) {
+          this.start();
+        } else {
+          player.send("Not enough players to start game", Colors.brightRed);
         }
+      } else if (msg.slice(0, 7) == "!resume") {
+        this.startClock.start();
+        player.send("Countdown resumed", undefined, Colors.green);
+      } else if (msg.slice(0, 8) == "!restart") {
+        this.startClock.restart();
+        player.send("Countdown restarted", undefined, Colors.green);
+      } else if (msg.slice(0, 5) == "!time") {
+        player.send(this.startClock.time.toString());
+      } else if (msg.slice(0, 5) == "!hold") {
+        player.send("The vote to start has been halted.", undefined, Colors.green);
+        this.holdVote = true;
+      } else if (msg.slice(0, 8) == "!release") {
+        player.send("The vote to start has been resumed", undefined, Colors.green);
+        this.holdVote = false;
+      } else if (msg.slice(0, 5) == "!help") {
+        player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !yell, !help", undefined, Colors.green);
       }
-      if (msg.slice(0, 5) == "!yell" && player.admin == true) {
-        this.broadcast("ADMIN:" + msg.slice(5), Colors.brightGreen);
-      }
+    }
+    if (msg.slice(0, 5) == "!yell" && player.admin == true) {
+      this.broadcast("ADMIN:" + msg.slice(5), Colors.brightGreen);
     }
   }
 }
@@ -749,25 +759,14 @@ export class MessageRoom {
     );
     return undefined;
   }
-  public receive(sender: MessageRoomMember | string, msg: string, textColor?: string, backgroundColor?: string, usernameColor?: string) {
-    //if message room member passed in
-    if (sender instanceof MessageRoomMember) {
-      if (!sender.muted) {
+  public receive(sender: Player, msg: string, textColor?: string, backgroundColor?: string, usernameColor?: string) {
+    //if id passed in, find the sender within the message room
+    let messageRoomSender = this.getMemberById(sender.id);
+    if (messageRoomSender instanceof MessageRoomMember) {
+      if (!messageRoomSender.muted) {
         for (var i = 0; i < this._members.length; i++) {
           if (!this._members[i].deafened) {
             this._members[i].send(msg, textColor, backgroundColor, usernameColor);
-          }
-        }
-      }
-    } else {
-      //if id passed in, find the sender within the message room
-      let messageRoomSender = this.getMemberById(sender);
-      if (messageRoomSender instanceof MessageRoomMember) {
-        if (!messageRoomSender.muted) {
-          for (var i = 0; i < this._members.length; i++) {
-            if (!this._members[i].deafened) {
-              this._members[i].send(msg, textColor, backgroundColor, usernameColor);
-            }
           }
         }
       }
@@ -783,26 +782,26 @@ export class MessageRoom {
   public addPlayer(player: Player) {
     this._members.push(new MessageRoomMember(player.socket));
   }
-  public mute(id: string) {
-    let member = this.getMemberById(id);
+  public mute(player: Player) {
+    let member = this.getMemberById(player.id);
     if (member instanceof MessageRoomMember) {
       member.mute();
     }
   }
-  public deafen(id: string) {
-    let member = this.getMemberById(id);
+  public deafen(player: Player) {
+    let member = this.getMemberById(player.id);
     if (member instanceof MessageRoomMember) {
       member.deafen();
     }
   }
-  public unmute(id: string) {
-    let member = this.getMemberById(id);
+  public unmute(player: Player) {
+    let member = this.getMemberById(player.id);
     if (member instanceof MessageRoomMember) {
       member.unmute();
     }
   }
-  public undeafen(id: string) {
-    let member = this.getMemberById(id);
+  public undeafen(player: Player) {
+    let member = this.getMemberById(player.id);
     if (member instanceof MessageRoomMember) {
       member.undeafen();
     }

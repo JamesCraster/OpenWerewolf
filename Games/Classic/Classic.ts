@@ -217,7 +217,7 @@ export class Classic extends Game {
           this._players[i].data = new PlayerData(new Werewolf());
           this._players[i].send("You are a werewolf", undefined, Colors.red);
           this.werewolfchat.addPlayer(this._players[i]);
-          this.werewolfchat.mute(this._players[i].id);
+          this.werewolfchat.mute(this._players[i]);
           break;
         case Roles.doctor:
           this._players[i].data = new PlayerData(new Doctor());
@@ -348,7 +348,7 @@ export class Classic extends Game {
       for (let i = 0; i < this._players.length; i++) {
         if (this._players[i].data.diedThisNight) {
           this.daychat.broadcast(this._players[i].username + " has died.");
-          this.daychat.mute(this._players[i].id);
+          this.daychat.mute(this._players[i]);
         }
       }
     }
@@ -359,7 +359,7 @@ export class Classic extends Game {
   }
   public day() {
     this.daychat.broadcast("1 minute of general discussion until the trials begin.");
-    setInterval(this.trialVote, 1000);
+    setTimeout(this.trialVote.bind(this), 1000);
   }
   public trialVote() {
     this.daychat.broadcast("The trial has begun! The player with the most votes will be put on trial.");
@@ -368,33 +368,38 @@ export class Classic extends Game {
   public end() {
     this.afterEnd();
   }
-  public receive(id: string, msg: string) {
-    let player = this.getPlayer(id);
-    if (player instanceof Player) {
-      if (msg[0] == "/") {
-        if (msg.slice(0, 4) == "/act" && this.phase == Phase.night) {
-          let username = msg.slice(4).trim();
-          let exists = false;
-          for (let i = 0; i < this._players.length; i++) {
-            if (this._players[i].username == username) {
-              exists = true;
-              if (this._players[i].data.alive) {
-                player.send("Your choice of '" + username + "' has been received");
-                player.data.target = this._players[i].id;
-              } else {
-                player.send("That player is dead, you cannot vote for them.");
+  public receive(player: Player, msg: string) {
+    if (this.inPlay) {
+      if (player instanceof Player) {
+        if (msg[0] == "/") {
+          if (msg.slice(0, 4) == "/act" && this.phase == Phase.night) {
+            let username = msg.slice(4).trim();
+            let exists = false;
+            for (let i = 0; i < this._players.length; i++) {
+              if (this._players[i].username == username) {
+                exists = true;
+                if (this._players[i].data.alive) {
+                  player.send("Your choice of '" + username + "' has been received");
+                  player.data.target = this._players[i].id;
+                } else {
+                  player.send("That player is dead, you cannot vote for them.");
+                }
               }
             }
+            if (!exists) {
+              player.send("There's no player called '" + username + "'. Try again.");
+            }
           }
-          if (!exists) {
-            player.send("There's no player called '" + username + "'. Try again.");
+        } else {
+          this.daychat.receive(player, player.username + ": " + msg);
+          if (player.data.isRole(Roles.werewolf)) {
+            this.werewolfchat.receive(player, player.username + ": " + msg);
           }
         }
-      } else {
-        this.daychat.receive(player.id, player.username + ": " + msg);
-        if (player.data.isRole(Roles.werewolf)) {
-          this.werewolfchat.receive(player.id, player.username + ": " + msg);
-        }
+      }
+    } else {
+      if (player instanceof Player) {
+        this.daychat.receive(player, player.username + ": " + msg);
       }
     }
   }

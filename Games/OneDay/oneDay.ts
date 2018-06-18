@@ -1007,93 +1007,90 @@ export class OneDay extends Game {
       }
     }
   }
-  public adminReceive(id: string, msg: string): void {
-    let player = this.getPlayer(id);
-    if (player instanceof Player) {
-      if (msg[0] == "!" && player.admin == true) {
-        if (msg.slice(0, 10) == "!roundtime") {
-          player.send(this.length.toString());
-        } else if (msg.slice(0, 7) == "!sround") {
-          this.length = parseInt(msg.slice(8));
-        } else if (msg.slice(0, 5) == "!yell" && player.admin == true) {
-          this.broadcast("ADMIN:" + msg.slice(5), Colors.brightGreen);
-        }
+  public adminReceive(player: Player, msg: string): void {
+    if (msg[0] == "!" && player.admin == true) {
+      if (msg.slice(0, 10) == "!roundtime") {
+        player.send(this.length.toString());
+      } else if (msg.slice(0, 7) == "!sround") {
+        this.length = parseInt(msg.slice(8));
+      } else if (msg.slice(0, 5) == "!yell" && player.admin == true) {
+        this.broadcast("ADMIN:" + msg.slice(5), Colors.brightGreen);
       }
-      if (msg[0] == "!" && !this.inPlay && player.admin == true) {
-        if (msg.slice(0, 5) == "!stop") {
-          this.startClock.stop();
-          player.send("Countdown stopped", undefined, Colors.green);
-        } else if (msg.slice(0, 6) == "!start") {
-          if (this._registeredPlayerCount >= this._minPlayerCount) {
-            this.start();
-          } else {
-            player.send("Not enough players to start game", Colors.brightRed);
-          }
-        } else if (msg.slice(0, 7) == "!resume") {
-          this.startClock.start();
-          player.send("Countdown resumed", undefined, Colors.green);
-        } else if (msg.slice(0, 8) == "!restart") {
-          this.startClock.restart();
-          player.send("Countdown restarted", undefined, Colors.green);
-        } else if (msg.slice(0, 5) == "!time") {
-          player.send(this.startClock.time.toString());
-        } else if (msg.slice(0, 5) == "!hold") {
-          player.send("The vote to start has been halted.", undefined, Colors.green);
-          this.holdVote = true;
-        } else if (msg.slice(0, 8) == "!release") {
-          player.send("The vote to start has been resumed", undefined, Colors.green);
-          this.holdVote = false;
-          //view the rolelist before the game begins
-        } else if (msg.slice(0, 5) == "!show") {
-          if (msg[6] == "3") {
-            player.send(this.threePlayer.toString());
-          } else if (msg[6] == "4") {
-            player.send(this.fourPlayer.toString());
-          } else if (msg[6] == "5") {
-            player.send(this.fivePlayer.toString());
-          } else if (msg[6] == "6") {
-            player.send(this.sixPlayer.toString());
-          } else if (msg[7] == "7") {
-            player.send(this.sevenPlayer.toString());
-          } else {
-            player.send("Error: number of players is missing or incorrect." +
-              " Example usage: !show 5 will show the rolelist for 5 players", Colors.brightRed);
-          }
-          //set the rolelist before the game begins
-        } else if (msg.slice(0, 4) == "!set") {
-          let newlist: Array<string> = [];
-          if (msg[5] == "3") {
-            this.threePlayer.list = this.parseRoleString(msg.slice(7, 7 + 6));
-          } else if (msg[5] == "4") {
-            this.fourPlayer.list = this.parseRoleString(msg.slice(7, 7 + 7));
-          } else if (msg[5] == "5") {
-            this.fivePlayer.list = this.parseRoleString(msg.slice(7, 7 + 8));
-          } else if (msg[5] == "6") {
-            this.sixPlayer.list = this.parseRoleString(msg.slice(7, 7 + 9));
-          } else if (msg[5] == "7") {
-            this.sevenPlayer.list = this.parseRoleString(msg.slice(7, 7 + 10));
-          } else {
-            player.send("Error: number of players is missing or incorrect." +
-              " Example usage: !show 5 will show the rolelist for 5 players", Colors.brightRed);
-          }
-          //reset rolelist to default if there has been a messup
-        } else if (msg.slice(0, 8) == "!default") {
-          console.log(msg[9]);
-          if (msg[9] == "3") {
-            this.threePlayer.list = defaultThreePlayer.list;
-          } else if (msg[9] == "4") {
-            this.fourPlayer.list = defaultFourPlayer.list;
-          } else if (msg[9] == "5") {
-            this.fivePlayer.list = defaultFivePlayer.list;
-          } else if (msg[9] == "6") {
-            this.sixPlayer.list = defaultSixPlayer.list;
-          } else {
-            player.send("Error: number of players is missing or incorrect." +
-              " Example usage: !default 5 will show the rolelist for 5 players", Colors.brightRed);
-          }
-        } else if (msg.slice(0, 5) == "!help") {
-          player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !show, !yell, !help", undefined, Colors.green);
+    }
+    if (msg[0] == "!" && !this.inPlay && player.admin == true) {
+      if (msg.slice(0, 5) == "!stop") {
+        this.startClock.stop();
+        player.send("Countdown stopped", undefined, Colors.green);
+      } else if (msg.slice(0, 6) == "!start") {
+        if (this._registeredPlayerCount >= this._minPlayerCount) {
+          this.start();
+        } else {
+          player.send("Not enough players to start game", Colors.brightRed);
         }
+      } else if (msg.slice(0, 7) == "!resume") {
+        this.startClock.start();
+        player.send("Countdown resumed", undefined, Colors.green);
+      } else if (msg.slice(0, 8) == "!restart") {
+        this.startClock.restart();
+        player.send("Countdown restarted", undefined, Colors.green);
+      } else if (msg.slice(0, 5) == "!time") {
+        player.send(this.startClock.time.toString());
+      } else if (msg.slice(0, 5) == "!hold") {
+        player.send("The vote to start has been halted.", undefined, Colors.green);
+        this.holdVote = true;
+      } else if (msg.slice(0, 8) == "!release") {
+        player.send("The vote to start has been resumed", undefined, Colors.green);
+        this.holdVote = false;
+        //view the rolelist before the game begins
+      } else if (msg.slice(0, 5) == "!show") {
+        if (msg[6] == "3") {
+          player.send(this.threePlayer.toString());
+        } else if (msg[6] == "4") {
+          player.send(this.fourPlayer.toString());
+        } else if (msg[6] == "5") {
+          player.send(this.fivePlayer.toString());
+        } else if (msg[6] == "6") {
+          player.send(this.sixPlayer.toString());
+        } else if (msg[7] == "7") {
+          player.send(this.sevenPlayer.toString());
+        } else {
+          player.send("Error: number of players is missing or incorrect." +
+            " Example usage: !show 5 will show the rolelist for 5 players", Colors.brightRed);
+        }
+        //set the rolelist before the game begins
+      } else if (msg.slice(0, 4) == "!set") {
+        let newlist: Array<string> = [];
+        if (msg[5] == "3") {
+          this.threePlayer.list = this.parseRoleString(msg.slice(7, 7 + 6));
+        } else if (msg[5] == "4") {
+          this.fourPlayer.list = this.parseRoleString(msg.slice(7, 7 + 7));
+        } else if (msg[5] == "5") {
+          this.fivePlayer.list = this.parseRoleString(msg.slice(7, 7 + 8));
+        } else if (msg[5] == "6") {
+          this.sixPlayer.list = this.parseRoleString(msg.slice(7, 7 + 9));
+        } else if (msg[5] == "7") {
+          this.sevenPlayer.list = this.parseRoleString(msg.slice(7, 7 + 10));
+        } else {
+          player.send("Error: number of players is missing or incorrect." +
+            " Example usage: !show 5 will show the rolelist for 5 players", Colors.brightRed);
+        }
+        //reset rolelist to default if there has been a messup
+      } else if (msg.slice(0, 8) == "!default") {
+        console.log(msg[9]);
+        if (msg[9] == "3") {
+          this.threePlayer.list = defaultThreePlayer.list;
+        } else if (msg[9] == "4") {
+          this.fourPlayer.list = defaultFourPlayer.list;
+        } else if (msg[9] == "5") {
+          this.fivePlayer.list = defaultFivePlayer.list;
+        } else if (msg[9] == "6") {
+          this.sixPlayer.list = defaultSixPlayer.list;
+        } else {
+          player.send("Error: number of players is missing or incorrect." +
+            " Example usage: !default 5 will show the rolelist for 5 players", Colors.brightRed);
+        }
+      } else if (msg.slice(0, 5) == "!help") {
+        player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !show, !yell, !help", undefined, Colors.green);
       }
     }
   }
@@ -1156,57 +1153,53 @@ export class OneDay extends Game {
    * @param {string} msg The message the sender sent to the game.
    * @memberof OneDay
    */
-  public receive(id: string, msg: string): void {
-    let player = this.getPlayer(id);
-    if (player instanceof Player) {
-      //receive in-game commands from players if game is running
-      if (msg[0] == "/" && this.inPlay) {
-        if (msg.slice(0, 5) == "/vote") {
-          let username = msg.slice(5).trim();
-          let exists = false;
-          for (let i = 0; i < this._players.length; i++) {
-            if (this._players[i].username == username) {
-              player.send("Your vote for '" + username + "' has been received");
-              player.data.vote = username;
-              exists = true;
-            }
+  public receive(player: Player, msg: string): void {
+    //receive in-game commands from players if game is running
+    if (msg[0] == "/" && this.inPlay) {
+      if (msg.slice(0, 5) == "/vote") {
+        let username = msg.slice(5).trim();
+        let exists = false;
+        for (let i = 0; i < this._players.length; i++) {
+          if (this._players[i].username == username) {
+            player.send("Your vote for '" + username + "' has been received");
+            player.data.vote = username;
+            exists = true;
           }
-          if (!exists) {
-            player.send("There's no player called '" + username + "'. Vote not changed.");
-          }
-        } else if (msg.slice(0, 7) == "/unvote" && player.data.vote != "") {
-          player.send("Your vote for '" + player.data.vote + "' has been cancelled");
-          player.data.vote = "";
-        } else if (msg.slice(0, 7) == "/unvote" && player.data.vote == "") {
-          player.send("You haven't voted for anybody yet, so there is nothing to cancel");
-        } else if (msg.slice(0, 6) == "/rules") {
-          player.send("*** RULES ***", Colors.brightGreen);
-          player.send("Everyone has a role on their card. There are also 3 cards in the middle that no one has.");
-          player.send("During the night each player performs their role.");
-          player.send("Not all these roles will be in the game: check the role list at the start.");
-          player.send("First, the werewolves see who each other are.");
-          player.send("Then the seer looks at two cards in the middle.");
-          player.send("Then the robber swaps their card with someone else's and looks at it.");
-          player.send("Then the transporter swaps two people's cards (possibly including themselves).");
-          player.send("Then the troublemaker swaps two people's cards, excluding themselves.");
-          player.send("Then the drunk swaps their card with one from the middle without seeing it.");
-          player.send("Finally, the insomniac looks at their card to see if it changed.");
-          player.send("The villager does nothing.");
-          player.send("The jester wants to die.");
-          player.send("If you card is swapped you become the role on your new card.");
-          player.send("You may not know that you have been swapped.");
-          player.send("During the day, everyone votes for someone to die.");
-          player.send("If a werewolf dies, the town(everyone except the werewolves and the jester) wins.");
-          player.send("The werewolves win if they survive and the jester doesn't die.");
-          player.send("The jester wins if they die.");
-          player.send("*** END RULES ***", Colors.brightGreen);
-
-        } else {
-          player.send("Error: no such command exists! Commands are /vote /unvote /rules");
         }
+        if (!exists) {
+          player.send("There's no player called '" + username + "'. Vote not changed.");
+        }
+      } else if (msg.slice(0, 7) == "/unvote" && player.data.vote != "") {
+        player.send("Your vote for '" + player.data.vote + "' has been cancelled");
+        player.data.vote = "";
+      } else if (msg.slice(0, 7) == "/unvote" && player.data.vote == "") {
+        player.send("You haven't voted for anybody yet, so there is nothing to cancel");
+      } else if (msg.slice(0, 6) == "/rules") {
+        player.send("*** RULES ***", Colors.brightGreen);
+        player.send("Everyone has a role on their card. There are also 3 cards in the middle that no one has.");
+        player.send("During the night each player performs their role.");
+        player.send("Not all these roles will be in the game: check the role list at the start.");
+        player.send("First, the werewolves see who each other are.");
+        player.send("Then the seer looks at two cards in the middle.");
+        player.send("Then the robber swaps their card with someone else's and looks at it.");
+        player.send("Then the transporter swaps two people's cards (possibly including themselves).");
+        player.send("Then the troublemaker swaps two people's cards, excluding themselves.");
+        player.send("Then the drunk swaps their card with one from the middle without seeing it.");
+        player.send("Finally, the insomniac looks at their card to see if it changed.");
+        player.send("The villager does nothing.");
+        player.send("The jester wants to die.");
+        player.send("If you card is swapped you become the role on your new card.");
+        player.send("You may not know that you have been swapped.");
+        player.send("During the day, everyone votes for someone to die.");
+        player.send("If a werewolf dies, the town(everyone except the werewolves and the jester) wins.");
+        player.send("The werewolves win if they survive and the jester doesn't die.");
+        player.send("The jester wins if they die.");
+        player.send("*** END RULES ***", Colors.brightGreen);
       } else {
-        this.playerchat.receive(player.id, player.username + ": " + msg, undefined, undefined, player.color);
+        player.send("Error: no such command exists! Commands are /vote /unvote /rules");
       }
+    } else {
+      this.playerchat.receive(player, player.username + ": " + msg, undefined, undefined, player.color);
     }
   }
 }

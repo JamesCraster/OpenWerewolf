@@ -16,18 +16,32 @@
      "This project includes code from OpenWerewolf." 
 */
 
+$standard-border: 2px solid #020202;
+$central-flexbox-width: 60%;
+$central-innerbox-width: 90%;
+$central-innerbox-height: 70%;
+$msg-height: 40px;
+$standard-font-size: 18px;
+$small-font-size: 0.8em;
+@mixin standard-flexbox($flex-direction) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: stretch;
+  flex-direction: $flex-direction;
+}
+
 * {
   margin: 0;
-  padding: 0;
+  padding: 0px 0px;
   overflow: hidden;
-  /* IBM Plex Sans from google fonts */
-  font-family: "IBM Plex Sans", sans-serif;
+  color: #cecece;
+  font-family: "IBM Plex Sans", sans-serif; //IBM Plex Sans from Google Fonts
 }
 
 html,
 body {
   height: 100%;
-  margin: 0;
   background: #212121;
 }
 
@@ -36,34 +50,32 @@ body {
 }
 
 #inner {
-  height: 70%;
-  width: 90%;
+  height: $central-innerbox-height;
+  width: $central-innerbox-width;
   overflow: auto;
   position: relative;
-  border: 2px solid #020202;
+  border: $standard-border;
   box-sizing: border-box;
 }
 
 #outer {
   float: left;
   height: 100%;
-  width: 60%;
+  width: $central-flexbox-width;
 }
 
 .sideBox {
   float: left;
   height: 100%;
-  width: 20%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+  width: (100% - $central-flexbox-width)/2;
+  @include standard-flexbox(row);
 }
 
 .innerSideBox {
-  border: 2px solid black;
-  height: 70%;
+  border: $standard-border;
+  height: $central-innerbox-height;
   width: 60%;
-  margin-bottom: 42px;
+  margin-bottom: $msg-height + 2;
   box-sizing: border-box;
 }
 
@@ -77,14 +89,10 @@ body {
 
 #chatbox {
   list-style: none;
-  margin: 0;
-  padding: 0px 0px;
-  font-size: 18px;
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 form {
-  width: 90%;
+  width: $central-innerbox-width;
   display: inline-block;
 }
 
@@ -95,56 +103,51 @@ form {
 }
 
 #msg {
-  font-size: 0.8em;
-  color: #cecece;
+  font-size: $small-font-size;
   width: calc(100% - 95px);
   outline: none;
   background-color: #23272a;
-  border-bottom: 2px solid #020202;
-  border-top: none;
-  border-left: 2px solid #020202;
-  border-right: 2px solid #020202;
-  height: 40px;
+  height: $msg-height;
   padding: 0px 5px;
   float: left;
+  border: {
+    top: none;
+    bottom: $standard-border;
+    left: $standard-border;
+    right: $standard-border;
+  }
 }
 
 #submit {
-  font-size: 0.8em;
+  font-size: $small-font-size;
   width: 81px;
-  height: 42px;
-  padding: 0px 0px;
+  height: $msg-height + 2;
   line-height: 0px;
   border-radius: 0px;
   border: 0px;
   background-color: #0c0c0c;
-  color: #cecece;
-}
-
-#submit:focus {
-  outline: none;
-}
-
-#submit::-moz-focus-inner {
-  border: none;
+  &:focus {
+    outline: none;
+  }
+  &::-moz-focus-inner {
+    border: none;
+  }
 }
 
 li {
-  font-size: 18px;
+  font-size: $standard-font-size;
   background: #23272a;
   padding: 5px 5px;
-  color: #cecece;
   word-wrap: break-word;
-}
-
-li:nth-child(odd) {
-  background: #303030;
-  padding: 5px 5px;
-  word-wrap: break-word;
+  &:nth-child(odd) {
+    background: #303030;
+    padding: 5px 5px;
+    word-wrap: break-word;
+  }
 }
 
 a {
-  color: #1f76cc;
+  color: #268ef5;
 }
 
 @media only screen and (max-device-width: 430px) {
@@ -159,28 +162,15 @@ a {
     height: 62px;
   }
   #outer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    align-content: stretch;
-    flex-direction: column;
+    @include standard-flexbox(column);
   }
   #topLevel {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-    align-content: stretch;
-    flex-direction: row;
+    @include standard-flexbox(row);
   }
 }
 
 @media only screen and (min-device-width:430px) {
   #outer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    align-content: stretch;
-    flex-direction: column;
+    @include standard-flexbox(column);
   }
 }

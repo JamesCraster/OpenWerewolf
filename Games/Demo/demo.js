@@ -3,7 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("../../core");
 class Demo extends core_1.Game {
     constructor(server) {
+        //first argument is minimum player count, second is maximum player count
         super(server, 3, 6);
+        //declare new message room
         this.playerchat = new core_1.MessageRoom();
     }
     start() {
@@ -15,14 +17,13 @@ class Demo extends core_1.Game {
     update() {
     }
     addPlayer(player) {
+        //add player to message room
         this.playerchat.addPlayer(player);
         super.addPlayer(player);
     }
-    receive(id, msg) {
-        let player = this.getPlayer(id);
-        if (player instanceof core_1.Player) {
-            this.playerchat.receive(id, msg);
-        }
+    receive(player, msg) {
+        //direct player's message to message room
+        this.playerchat.receive(player, player.username + ": " + msg);
     }
 }
 exports.Demo = Demo;

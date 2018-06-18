@@ -4,8 +4,12 @@
 /Games/OneDay/*.js
 /Games/Classic/*.js
 /Client/login.js
+
+#Ignore unused html under development
 lobby.html
-login.html
+
+#Ignore css output
+/Client/*.css
 
 #Ignore releases
 release/
@@ -14,3 +18,4 @@ release/
 #Ignore notes
 TODO.txt
 .DS_Store
+Client/main.css.map
