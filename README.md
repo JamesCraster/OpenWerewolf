@@ -1,6 +1,6 @@
 # OpenWerewolf
 
-> A fully-featured online multiplayer mafia game.
+> A fully-featured online multiplayer werewolf game.
 
 ## Play now at http://www.openwerewolf.com/
 
@@ -8,8 +8,8 @@
 * You can run multiple games at once using the lobby system
 * The core is general. Use it to create and host whatever games you want
 * Code is free/open source under the AGPL-3.0
-* Includes spam and profanity filters (can be removed if you want)
-* Documentation has begun
+* Includes spam and profanity filters
+* [Documented](https://jamescraster.github.io/OpenWerewolf/index.html) 
 
 ## Screenshot:
 ![An image of the OpenWerewolf client](https://github.com/JamesCraster/OpenWerewolf/blob/master/croppedScreenshot.png)
@@ -22,72 +22,25 @@ in the Trial, where you'll be voting to kill the werewolves among you. For 3-5 p
 * Classic: A classic game of werewolf lasting multiple nights. Currently under development.
 
 * Mafia execution, Mission games haven't been started yet: maybe you could help write them?
+##Install and run
+Grab the latest [release.](https://github.com/JamesCraster/OpenWerewolf/releases)
+[Install Node.js](https://nodejs.org/en/)
+Unzip it, and run:
+`node app.js`
+
+
 ## Contribute:
-All contributors are welcome. OpenWerewolf is written almost entirely in Typescript and uses nodejs/express/socket.io.
+All contributors are welcome. Read the [guide.](https://github.com/JamesCraster/OpenWerewolf/wiki/Contributing)
 
 ## [Documentation](https://jamescraster.github.io/OpenWerewolf/index.html)
-
 Files are listed to the right.
-
-## Running on a GNU/Linux server
-
-First clone or manually download OpenWerewolf:
-
-```
-$ git clone https://github.com/JamesCraster/OpenWerewolf
-```
-
-Install nodejs if you haven't already:
-
-```
-$ sudo apt-get install nodejs
-```
-
-Then run:
-
-```
-$ cd OpenWerewolf
-$ tsc
-$ node app.js
-Port is:8080
-```
-
-Ensure port 8080 is open:
-
-```
-$ sudo ufw allow 8080/tcp
-```
-
-If playing on the same private network as all other players,
-other players will connect by entering your ip address into their web browser, followed by :8080
-(Eg 172.16.0.0:8080),
-
-```
-$ hostname -I
-```
-
-will give you the ip address that you need.
-
-## Dependencies(already included in the OpenWerewolves repository):
-
-All dependencies are open source.
-
-On the server:
-Required node modules are included in the node_modules folder.
-They are Express and Socket.IO, and all of their dependencies.
-
-On the clientside:
-JQuery has been included in the jquery.js file in /Client.
 
 ## Legal Info:
 Please note that only the source code is licensed under the AGPL-3.0. 
-
 Artwork, music, logos, fonts and text files may be proprietary.
 
 I want to avoid confusion between the OpenWerewolf site that I run and the sites that others may run.
-
 Therefore "OpenWerewolf" is an unregistered trademark belonging to me, James Craster.
-
 I ask that you call forked versions of OpenWerewolf by a different name, and that you call your websites by a different name.
 
 
