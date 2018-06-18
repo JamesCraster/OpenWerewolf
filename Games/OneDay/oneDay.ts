@@ -1007,90 +1007,83 @@ export class OneDay extends Game {
       }
     }
   }
-  public adminReceive(player: Player, msg: string): void {
-    if (msg[0] == "!" && player.admin == true) {
-      if (msg.slice(0, 10) == "!roundtime") {
-        player.send(this.length.toString());
-      } else if (msg.slice(0, 7) == "!sround") {
-        this.length = parseInt(msg.slice(8));
-      } else if (msg.slice(0, 5) == "!yell" && player.admin == true) {
-        this.broadcast("ADMIN:" + msg.slice(5), Colors.brightGreen);
-      }
+  public customAdminReceive(player: Player, msg: string): void {
+    if (Utils.isCommand(msg, "!roundtime")) {
+      player.send(this.length.toString());
+    } else if (Utils.isCommand(msg, "!sround")) {
+      this.length = parseInt(msg.slice(8));
+    } else if (Utils.isCommand(msg, "!yell") && player.admin == true) {
+      this.broadcast("ADMIN:" + msg.slice(5), Colors.brightGreen);
     }
-    if (msg[0] == "!" && !this.inPlay && player.admin == true) {
-      if (msg.slice(0, 5) == "!stop") {
-        this.startClock.stop();
-        player.send("Countdown stopped", undefined, Colors.green);
-      } else if (msg.slice(0, 6) == "!start") {
-        if (this._registeredPlayerCount >= this._minPlayerCount) {
-          this.start();
-        } else {
-          player.send("Not enough players to start game", Colors.brightRed);
-        }
-      } else if (msg.slice(0, 7) == "!resume") {
-        this.startClock.start();
-        player.send("Countdown resumed", undefined, Colors.green);
-      } else if (msg.slice(0, 8) == "!restart") {
-        this.startClock.restart();
-        player.send("Countdown restarted", undefined, Colors.green);
-      } else if (msg.slice(0, 5) == "!time") {
-        player.send(this.startClock.time.toString());
-      } else if (msg.slice(0, 5) == "!hold") {
-        player.send("The vote to start has been halted.", undefined, Colors.green);
-        this.holdVote = true;
-      } else if (msg.slice(0, 8) == "!release") {
-        player.send("The vote to start has been resumed", undefined, Colors.green);
-        this.holdVote = false;
-        //view the rolelist before the game begins
-      } else if (msg.slice(0, 5) == "!show") {
-        if (msg[6] == "3") {
-          player.send(this.threePlayer.toString());
-        } else if (msg[6] == "4") {
-          player.send(this.fourPlayer.toString());
-        } else if (msg[6] == "5") {
-          player.send(this.fivePlayer.toString());
-        } else if (msg[6] == "6") {
-          player.send(this.sixPlayer.toString());
-        } else if (msg[7] == "7") {
-          player.send(this.sevenPlayer.toString());
-        } else {
-          player.send("Error: number of players is missing or incorrect." +
-            " Example usage: !show 5 will show the rolelist for 5 players", Colors.brightRed);
+    if (!this.inPlay) {
+      if (Utils.isCommand(msg, "!show")) {
+        switch (Utils.commandArguments(msg)[0]) {
+          case "3":
+            player.send(this.threePlayer.toString());
+            break;
+          case "4":
+            player.send(this.fourPlayer.toString());
+            break;
+          case "5":
+            player.send(this.fivePlayer.toString());
+            break;
+          case "6":
+            player.send(this.sixPlayer.toString());
+            break;
+          case "7":
+            player.send(this.sevenPlayer.toString());
+            break;
+          default:
+            player.send("Error: number of players is missing or incorrect." +
+              " Example usage: !show 5 will show the rolelist for 5 players", Colors.brightRed);
+            break;
         }
         //set the rolelist before the game begins
-      } else if (msg.slice(0, 4) == "!set") {
+      } else if (Utils.isCommand(msg, "!set")) {
         let newlist: Array<string> = [];
-        if (msg[5] == "3") {
-          this.threePlayer.list = this.parseRoleString(msg.slice(7, 7 + 6));
-        } else if (msg[5] == "4") {
-          this.fourPlayer.list = this.parseRoleString(msg.slice(7, 7 + 7));
-        } else if (msg[5] == "5") {
-          this.fivePlayer.list = this.parseRoleString(msg.slice(7, 7 + 8));
-        } else if (msg[5] == "6") {
-          this.sixPlayer.list = this.parseRoleString(msg.slice(7, 7 + 9));
-        } else if (msg[5] == "7") {
-          this.sevenPlayer.list = this.parseRoleString(msg.slice(7, 7 + 10));
-        } else {
-          player.send("Error: number of players is missing or incorrect." +
-            " Example usage: !show 5 will show the rolelist for 5 players", Colors.brightRed);
+        switch (Utils.commandArguments(msg)[0]) {
+          case "3":
+            this.threePlayer.list = this.parseRoleString(msg.slice(7, 7 + 6));
+            break;
+          case "4":
+            this.fourPlayer.list = this.parseRoleString(msg.slice(7, 7 + 7));
+            break;
+          case "5":
+            this.fivePlayer.list = this.parseRoleString(msg.slice(7, 7 + 8));
+            break;
+          case "6":
+            this.sixPlayer.list = this.parseRoleString(msg.slice(7, 7 + 9));
+            break;
+          case "7":
+            this.sevenPlayer.list = this.parseRoleString(msg.slice(7, 7 + 10));
+            break;
+          default:
+            player.send("Error: number of players is missing or incorrect." +
+              " Example usage: !set 5 ... will set the rolelist for 5 players", Colors.brightRed);
         }
         //reset rolelist to default if there has been a messup
-      } else if (msg.slice(0, 8) == "!default") {
-        console.log(msg[9]);
-        if (msg[9] == "3") {
-          this.threePlayer.list = defaultThreePlayer.list;
-        } else if (msg[9] == "4") {
-          this.fourPlayer.list = defaultFourPlayer.list;
-        } else if (msg[9] == "5") {
-          this.fivePlayer.list = defaultFivePlayer.list;
-        } else if (msg[9] == "6") {
-          this.sixPlayer.list = defaultSixPlayer.list;
-        } else {
-          player.send("Error: number of players is missing or incorrect." +
-            " Example usage: !default 5 will show the rolelist for 5 players", Colors.brightRed);
+      } else if (Utils.isCommand(msg, "!default")) {
+        switch (Utils.commandArguments(msg)[0]) {
+          case "3":
+            this.threePlayer.list = defaultThreePlayer.list;
+            break;
+          case "4":
+            this.fourPlayer.list = defaultFourPlayer.list;
+            break;
+          case "5":
+            this.fivePlayer.list = defaultFivePlayer.list;
+            break;
+          case "6":
+            this.sixPlayer.list = defaultSixPlayer.list;
+            break;
+          default:
+            player.send("Error: number of players is missing or incorrect." +
+              " Example usage: !default 5 will show the rolelist for 5 players", Colors.brightRed);
+            break;
         }
-      } else if (msg.slice(0, 5) == "!help") {
-        player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !show, !yell, !help", undefined, Colors.green);
+      } else if (Utils.isCommand(msg, "!gamehelp")) {
+        player.send("!roundtime !sround !stop, !start, !resume, !restart, !time, !hold," +
+          " !release, !show, !set, !default, !yell, !help", undefined, Colors.green);
       }
     }
   }
@@ -1156,7 +1149,7 @@ export class OneDay extends Game {
   public receive(player: Player, msg: string): void {
     //receive in-game commands from players if game is running
     if (msg[0] == "/" && this.inPlay) {
-      if (msg.slice(0, 5) == "/vote") {
+      if (Utils.isCommand(msg, "/vote")) {
         let username = msg.slice(5).trim();
         let exists = false;
         for (let i = 0; i < this._players.length; i++) {
@@ -1169,12 +1162,12 @@ export class OneDay extends Game {
         if (!exists) {
           player.send("There's no player called '" + username + "'. Vote not changed.");
         }
-      } else if (msg.slice(0, 7) == "/unvote" && player.data.vote != "") {
+      } else if (Utils.isCommand(msg, "/unvote") && player.data.vote != "") {
         player.send("Your vote for '" + player.data.vote + "' has been cancelled");
         player.data.vote = "";
-      } else if (msg.slice(0, 7) == "/unvote" && player.data.vote == "") {
+      } else if (Utils.isCommand(msg, "/unvote") && player.data.vote == "") {
         player.send("You haven't voted for anybody yet, so there is nothing to cancel");
-      } else if (msg.slice(0, 6) == "/rules") {
+      } else if (Utils.isCommand(msg, "/rules")) {
         player.send("*** RULES ***", Colors.brightGreen);
         player.send("Everyone has a role on their card. There are also 3 cards in the middle that no one has.");
         player.send("During the night each player performs their role.");

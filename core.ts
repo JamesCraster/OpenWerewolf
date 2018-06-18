@@ -49,6 +49,21 @@ export class Utils {
     }
     return randomDeck;
   }
+  /**
+   * Returns true if the first word of message is the command, false otherwise
+   */
+  public static isCommand(msg: string, command: string): boolean {
+    return msg.slice(0, command.length) === command;
+  }
+  /**
+   * Returns list of arguments in command in order
+   */
+  public static commandArguments(msg: string): Array<string> {
+    let args = msg.split(" ");
+    //remove first word (which is the command itself)
+    args.splice(0, 1);
+    return args;
+  }
 }
 
 export class RoleList {
@@ -434,7 +449,7 @@ export class Server {
             }
           }
         } else if (msg[0] == "/" && !this._games[player.game].inPlay && player.startVote == false) {
-          if (msg.slice(0, 6) == "/start") {
+          if (Utils.isCommand(msg, "/start")) {
             player.startVote = true;
             this._games[player.game].broadcast(player.username + " has voted to start the game immediately by typing \"/start\"");
           }
@@ -681,38 +696,48 @@ export abstract class Game {
       this._players[i].lineThroughPlayer(username);
     }
   }
+  //to be overridden in child classes as necessary
+  public customAdminReceive(player: Player, msg: string): void { }
   //admin commands
   public adminReceive(player: Player, msg: string): void {
-    if (msg[0] == "!" && !this.inPlay && player.admin == true) {
-      if (msg.slice(0, 5) == "!stop") {
-        this.startClock.stop();
-        player.send("Countdown stopped", undefined, Colors.green);
-      } else if (msg.slice(0, 6) == "!start") {
-        if (this._registeredPlayerCount >= this._minPlayerCount) {
-          this.start();
+    if (player.admin == true && msg[0] == "!") {
+      if (!this.inPlay) {
+        if (Utils.isCommand(msg, "!stop")) {
+          this.startClock.stop();
+          player.send("Countdown stopped", undefined, Colors.green);
+        } else if (Utils.isCommand(msg, "!start")) {
+          if (this._registeredPlayerCount >= this._minPlayerCount) {
+            this.start();
+          } else {
+            player.send("Not enough players to start game", Colors.brightRed);
+          }
+        } else if (Utils.isCommand(msg, "!resume")) {
+          this.startClock.start();
+          player.send("Countdown resumed", undefined, Colors.green);
+        } else if (Utils.isCommand(msg, "!restart")) {
+          this.startClock.restart();
+          player.send("Countdown restarted", undefined, Colors.green);
+        } else if (Utils.isCommand(msg, "!time")) {
+          player.send(this.startClock.time.toString());
+        } else if (Utils.isCommand(msg, "!hold")) {
+          player.send("The vote to start has been halted.", undefined, Colors.green);
+          this.holdVote = true;
+        } else if (Utils.isCommand(msg, "!release")) {
+          player.send("The vote to start has been resumed", undefined, Colors.green);
+          this.holdVote = false;
+        } else if (Utils.isCommand(msg, "!help")) {
+          player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !yell, !help", undefined, Colors.green);
+          player.send("Use !gamehelp for game-specific commands.", undefined, Colors.green);
         } else {
-          player.send("Not enough players to start game", Colors.brightRed);
+          this.customAdminReceive(player, msg);
         }
-      } else if (msg.slice(0, 7) == "!resume") {
-        this.startClock.start();
-        player.send("Countdown resumed", undefined, Colors.green);
-      } else if (msg.slice(0, 8) == "!restart") {
-        this.startClock.restart();
-        player.send("Countdown restarted", undefined, Colors.green);
-      } else if (msg.slice(0, 5) == "!time") {
-        player.send(this.startClock.time.toString());
-      } else if (msg.slice(0, 5) == "!hold") {
-        player.send("The vote to start has been halted.", undefined, Colors.green);
-        this.holdVote = true;
-      } else if (msg.slice(0, 8) == "!release") {
-        player.send("The vote to start has been resumed", undefined, Colors.green);
-        this.holdVote = false;
-      } else if (msg.slice(0, 5) == "!help") {
-        player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !yell, !help", undefined, Colors.green);
+      } else {
+        if (Utils.isCommand(msg, "!yell")) {
+          this.broadcast("ADMIN:" + msg.slice(5), Colors.brightGreen);
+        } else {
+          this.customAdminReceive(player, msg);
+        }
       }
-    }
-    if (msg.slice(0, 5) == "!yell" && player.admin == true) {
-      this.broadcast("ADMIN:" + msg.slice(5), Colors.brightGreen);
     }
   }
 }

@@ -79,6 +79,13 @@
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_app_.html#io" class="tsd-kind-icon">io</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_app_.html#port" class="tsd-kind-icon">port</a></li>
 								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_app_.html#server" class="tsd-kind-icon">server</a></li>
+								<li class="tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported"><a href="_app_.html#session" class="tsd-kind-icon">session</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_app_.html#heartbeat" class="tsd-kind-icon">heart<wbr>Beat</a></li>
 							</ul>
 						</section>
 					</div>
@@ -92,7 +99,7 @@
 					<div class="tsd-signature tsd-kind-icon">app<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;express()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/1f198b4/app.ts#L32">app.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/8aa64a9/app.ts#L32">app.ts:32</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -102,7 +109,7 @@
 					<div class="tsd-signature tsd-kind-icon">express<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;require(&quot;express&quot;)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/1f198b4/app.ts#L31">app.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/8aa64a9/app.ts#L31">app.ts:31</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -112,7 +119,7 @@
 					<div class="tsd-signature tsd-kind-icon">http<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;require(&quot;http&quot;).Server(app)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/1f198b4/app.ts#L33">app.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/8aa64a9/app.ts#L33">app.ts:33</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -122,17 +129,17 @@
 					<div class="tsd-signature tsd-kind-icon">io<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;require(&quot;socket.io&quot;)(http)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/1f198b4/app.ts#L34">app.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/8aa64a9/app.ts#L34">app.ts:34</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="port" class="tsd-anchor"></a>
 					<h3>port</h3>
-					<div class="tsd-signature tsd-kind-icon">port<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;8080</span></div>
+					<div class="tsd-signature tsd-kind-icon">port<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;8081</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/1f198b4/app.ts#L80">app.ts:80</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/8aa64a9/app.ts#L106">app.ts:106</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -142,9 +149,39 @@
 					<div class="tsd-signature tsd-kind-icon">server<span class="tsd-signature-symbol">:</span> <a href="../classes/_core_.server.html" class="tsd-signature-type">Server</a><span class="tsd-signature-symbol"> =&nbsp;new Server()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/1f198b4/app.ts#L37">app.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/8aa64a9/app.ts#L44">app.ts:44</a></li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="session" class="tsd-anchor"></a>
+					<h3>session</h3>
+					<div class="tsd-signature tsd-kind-icon">session<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> =&nbsp;require(&quot;express-session&quot;)({secret: &#x27;secret&#x27;,resave: false,saveUninitialized: true})</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/8aa64a9/app.ts#L37">app.ts:37</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="heartbeat" class="tsd-anchor"></a>
+					<h3>heart<wbr>Beat</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">heart<wbr>Beat<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/8aa64a9/app.ts#L75">app.ts:75</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -190,6 +227,12 @@
 					</li>
 					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_app_.html#server" class="tsd-kind-icon">server</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_app_.html#session" class="tsd-kind-icon">session</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_app_.html#heartbeat" class="tsd-kind-icon">heart<wbr>Beat</a>
 					</li>
 				</ul>
 			</nav>

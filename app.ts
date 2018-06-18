@@ -76,7 +76,7 @@ function heartBeat() {
   io.emit("ping");
 }
 
-//keep connection alive
+//keep connection alive by sending heartbeat
 setInterval(heartBeat, 30000);
 
 //handle requests
