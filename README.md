@@ -12,7 +12,7 @@
 * Documentation has begun
 
 ## Screenshot:
-![An image of the OpenWerewolf client](https://github.com/JamesCraster/OpenWerewolf/blob/master/croppedScreenshot.png)
+![An image of the OpenWerewolf client](https://github.com/JamesCraster/OpenWerewolf/blob/master/Screenshot.png)
 
 ## The Games:
 * OneDay: During the night, your cards are stolen, swapped, carefully inspected and drunkenly taken by accident.
