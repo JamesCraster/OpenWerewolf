@@ -1,0 +1,29 @@
+/*
+    Testing mechanism confirms new seer is random.
+    let leftSum = 0;
+    let rightSum = 0;
+    let middleSum = 0;
+    for (let i = 0; i < 10000; i++) {
+    let combo = Utils.chooseCombination(cardArray, 2);
+    if (combo.indexOf("left") != -1) {
+        leftSum++;
+    }
+    if (combo.indexOf("middle") != -1) {
+        middleSum++;
+    }
+    if (combo.indexOf("right") != -1) {
+        rightSum++;
+    }
+    }
+    console.log(leftSum);
+    console.log(middleSum);
+    console.log(rightSum);
+
+*/
+/*
+     public static random(min: number, max: number): number {
+         return Math.floor(Math.random() * (max - min + 1) + min);
+     } 
+
+     Utils function I haven't used
+*/

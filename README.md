@@ -23,9 +23,9 @@ in the Trial, where you'll be voting to kill the werewolves among you. For 3-5 p
 
 * Mafia execution, Mission games haven't been started yet: maybe you could help write them?
 ##Install and run
-Grab the latest [release.](https://github.com/JamesCraster/OpenWerewolf/releases)
+Grab the latest [release](https://github.com/JamesCraster/OpenWerewolf/releases) (choose OpenWerewolf.zip)
 [Install Node.js](https://nodejs.org/en/)
-Unzip it, and run:
+Unzip OpenWerewolf.zip, and run:
 `node app.js`
 
 

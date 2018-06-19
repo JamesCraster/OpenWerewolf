@@ -42,7 +42,7 @@ var session = require("express-session")({
 
 //create a new server
 var server = new Server();
-server.addGame(new OneDay(server));
+server.addGame(new Classic(server));
 server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));

@@ -64,6 +64,23 @@ export class Utils {
     args.splice(0, 1);
     return args;
   }
+  /**
+   * Returns a random set of elements of size r from listIn, without repetition.
+   */
+  public static chooseCombination<T>(listIn: Array<T>, r: number): Array<T> {
+    let list = listIn.slice();
+    let combination: Array<T> = [];
+    if (list.length < r) {
+      return combination;
+    } else {
+      while (combination.length < r) {
+        let randomvar = Math.floor(Math.random() * list.length);
+        combination.push(list[randomvar]);
+        list.splice(randomvar, 1);
+      }
+      return combination;
+    }
+  }
 }
 
 export class RoleList {
@@ -318,6 +335,9 @@ export class Player {
   get color() {
     return this._color;
   }
+  public equals(otherPlayer: Player): boolean {
+    return this.id == otherPlayer.id;
+  }
 }
 
 export class Server {
@@ -526,14 +546,14 @@ export class Server {
 }
 export abstract class Game {
   protected _players: Array<Player> = [];
-  protected _registeredPlayerCount: number = 0;
-  protected readonly _minPlayerCount: number;
-  protected readonly _maxPlayerCount: number;
-  protected _inPlay: boolean = false;
-  protected readonly _server: Server;
-  protected readonly startClock: Stopwatch = new Stopwatch();
-  protected readonly startWait = 30000;
-  protected holdVote: boolean = false;
+  private _registeredPlayerCount: number = 0;
+  private readonly _minPlayerCount: number;
+  private readonly _maxPlayerCount: number;
+  private _inPlay: boolean = false;
+  private readonly _server: Server;
+  private readonly startClock: Stopwatch = new Stopwatch();
+  private readonly startWait = 30000;
+  private holdVote: boolean = false;
   private colorPool = PlayerColorArray.slice();
 
   public constructor(server: Server, minPlayerCount: number, maxPlayerCount: number) {
