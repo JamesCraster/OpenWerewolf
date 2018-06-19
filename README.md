@@ -9,7 +9,7 @@
 * The core is general. Use it to create and host whatever games you want
 * Code is free/open source under the AGPL-3.0
 * Includes spam and profanity filters
-* [Documented](https://jamescraster.github.io/OpenWerewolf/index.html) 
+* Well documented 
 
 ## Screenshot:
 ![An image of the OpenWerewolf client](https://github.com/JamesCraster/OpenWerewolf/blob/master/Screenshot.png)
@@ -22,11 +22,21 @@ in the Trial, where you'll be voting to kill the werewolves among you. For 3-5 p
 * Classic: A classic game of werewolf lasting multiple nights. Under development.
 
 * Mafia execution, Mission games haven't been started yet: maybe you could help write them?
-##Install and run
-Grab the latest [release](https://github.com/JamesCraster/OpenWerewolf/releases) (choose OpenWerewolf.zip)
-[Install Node.js](https://nodejs.org/en/)
-Unzip OpenWerewolf.zip, and run:
-`node app.js`
+<<<<<<< HEAD
+## Install and run
+* Grab the latest [release](https://github.com/JamesCraster/OpenWerewolf/releases) (choose OpenWerewolf.zip).
+
+* [Install Node.js](https://nodejs.org/en/)  
+
+* Unzip OpenWerewolf.zip, and run: `node app.js`  
+=======
+## Install and run
+* Grab the latest [release](https://github.com/JamesCraster/OpenWerewolf/releases) (choose OpenWerewolf.zip).
+
+* [Install Node.js](https://nodejs.org/en/)  
+
+* Unzip OpenWerewolf.zip, and run: `node app.js`  
+>>>>>>> cd5af30b7bedaf5919006b51bb03e7221193c804
 
 
 ## Contribute:
