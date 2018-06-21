@@ -19,7 +19,7 @@
 It's up to you to piece together the truth (if you're a townie) or bluff your way to victory (if you're an evil, evil werewolf),
 in the Trial, where you'll be voting to kill the werewolves among you. For 3-5 players.
 
-* Classic: A classic game of werewolf lasting multiple nights. Under development.
+* Classic: A classic game of werewolf lasting multiple nights. Finished, currently being polished. 
 
 * Mafia execution, Mission games haven't been started yet: maybe you could help write them?
 ## Install and run

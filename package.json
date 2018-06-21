@@ -4,8 +4,8 @@
   "description": "An open source, online multiplayer mafia game.",
   "main": "index.js",
   "dependencies": {
-    "@types/node": "^9.4.7",
-    "@types/socket.io": "^1.4.32",
+    "@types/node": "^9.6.22",
+    "@types/socket.io": "^1.4.36",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
     "grawlix": "^1.0.6",

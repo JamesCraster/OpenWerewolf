@@ -12,12 +12,6 @@
     GNU Affero General Public License for more details.
     You should have received a copy of the GNU Affero General Public License
     along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>.
-
-    Additional terms under GNU AGPL version 3 section 7:
-    I (James Craster) require the preservation of this specified author attribution 
-    in the Appropriate Legal Notices displayed by works containing material that has 
-    been added to OpenWerewolf by me: 
-    "This project includes code from OpenWerewolf." 
 */
 
 "use strict";
@@ -42,17 +36,6 @@ var session = require("express-session")({
 
 //create a new server
 var server = new Server();
-server.addGame(new Classic(server));
-server.addGame(new OneDay(server));
-server.addGame(new OneDay(server));
-server.addGame(new OneDay(server));
-server.addGame(new OneDay(server));
-server.addGame(new OneDay(server));
-server.addGame(new OneDay(server));
-server.addGame(new OneDay(server));
-server.addGame(new OneDay(server));
-server.addGame(new OneDay(server));
-server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
@@ -71,13 +54,6 @@ app.get("/", function (req: any, res: any) {
   res.sendFile(__dirname + "/client.html");
   console.log(req.session.socketID);
 });
-
-function heartBeat() {
-  io.emit("ping");
-}
-
-//keep connection alive by sending heartbeat
-setInterval(heartBeat, 30000);
 
 //handle requests
 io.on("connection", function (socket: Socket) {

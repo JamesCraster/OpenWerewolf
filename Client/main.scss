@@ -8,12 +8,6 @@
      GNU Affero General Public License for more details.
      You should have received a copy of the GNU Affero General Public License
      along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>
-     
-     Additional terms under GNU AGPL version 3 section 7:
-     I (James Craster) require the preservation of this specified author attribution 
-     in the Appropriate Legal Notices displayed by works containing material that has 
-     been added to OpenWerewolf by me: 
-     "This project includes code from OpenWerewolf." 
 */
 
 $standard-border: 2px solid #020202;
@@ -147,7 +141,55 @@ li {
 }
 
 a {
+  white-space: nowrap;
   color: #268ef5;
+}
+
+#lobby {
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+#container {
+  flex-direction: column;
+  margin: 0px -10px;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+.item {
+  font-size: 1.2em;
+  margin-top: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  border-bottom: 2px solid black;
+  border-top: 2px solid black;
+  border-right: 2px solid black;
+  border-left: 2px solid black;
+  height: 80px;
+  min-width: 150px;
+  padding-left: 5px;
+  padding-top: 5px;
+  background-color: #303030;
+}
+
+#menubar {
+  flex-direction: column;
+  background-color: #1c4b6d;
+  border: 2px solid black;
+  display: block;
+  width: 25%;
+  height: 25px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.menuitem {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  min-width: 50px;
 }
 
 @media only screen and (max-device-width: 430px) {
@@ -161,7 +203,8 @@ a {
   #submit {
     height: 62px;
   }
-  #outer {
+  #outer,
+  #lobby {
     @include standard-flexbox(column);
   }
   #topLevel {
@@ -170,7 +213,8 @@ a {
 }
 
 @media only screen and (min-device-width:430px) {
-  #outer {
+  #outer,
+  #lobby {
     @include standard-flexbox(column);
   }
 }

@@ -8,15 +8,10 @@
      GNU Affero General Public License for more details.
      You should have received a copy of the GNU Affero General Public License
      along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>
-     
-     Additional terms under GNU AGPL version 3 section 7:
-     I (James Craster) require the preservation of this specified author attribution 
-     in the Appropriate Legal Notices displayed by works containing material that has 
-     been added to OpenWerewolf by me: 
-     "This project includes code from OpenWerewolf." 
 */
 var globalNow = 0;
 var globalTime = 0;
+var globalWarn = -1;
 
 function isClientScrolledDown() {
   return Math.abs($("#inner")[0].scrollTop + $('#inner')[0].clientHeight - $("#inner")[0].scrollHeight) <= 10;
@@ -41,11 +36,15 @@ function updateTime() {
     globalNow = Date.now();
     if (globalTime < 0) {
       globalTime = 0;
+      $($("#roleNames li")[0]).css("color", "#cecece");
+      globalWarn = -1;
     }
     $($("#roleNames li")[0]).text("Time: " + convertTime(globalTime));
-    if (globalTime <= 30000 && globalTime >= 0) {
+    if (globalTime <= globalWarn && globalTime >= 0) {
       $($("#roleNames li")[0]).css("color", "#ff1b1b");
     }
+  } else {
+    $($("#roleNames li")[0]).text("Time: " + convertTime(0));
   }
 }
 
@@ -130,7 +129,6 @@ $(function () {
     appendMessage(msg, "#roleNames", textColor, backgroundColor);
   })
   socket.on("removeRight", function (msg) {
-    console.log("event is fired");
     removeMessage(msg, "#playerNames");
   })
   socket.on("removeLeft", function (msg) {
@@ -139,13 +137,65 @@ $(function () {
   socket.on("lineThroughPlayer", function (msg) {
     lineThroughPlayer(msg);
   });
-  socket.on("setTime", function (time) {
+  socket.on("setTime", function (time, warn) {
     $($("#roleNames li")[0]).text("Time: " + convertTime(time));
+    $($("#roleNames li")[0]).css("color", "#cecece");
     globalNow = Date.now();
     globalTime = time;
+    globalWarn = warn;
   });
-  //keep connection alive 
-  socket.on("ping", function () {
-    socket.emit("pong");
-  })
+  socket.on("sendGame", function (name, playerNames, playerColors) {
+    //console.log(playerNames);
+    //console.log(playerColors);
+    //console.log(name);
+    $('#container').append($('<div class="item">'));
+    $('#container div:last').append($('<p>' + name + '</p>'));
+    $('#container div:last').append($('<br>'));
+    $('#container div:last').append($('<p>Players: </p>'));
+    for (i = 0; i < playerNames.length; i++) {
+      if (i == 0) {
+        $('#container div:last p:last').append('<span style="color:' + playerColors[i] + '">' + playerNames[i]);
+      } else {
+        $('#container div:last p:last').append('<span>,')
+        $('#container div:last p:last').append('<span style="color:' + playerColors[i] + '"> ' + playerNames[i]);
+      }
+    }
+    $('.item').click(function () {
+      $('#lobby').hide("slow");
+      $('#topLevel').show("slow");
+      location.hash = 2;
+    });
+  });
+  $('.item').click(function () {
+    $('#lobby').hide("slow");
+    $('#topLevel').show("slow");
+    location.hash = 2;
+  });
+  socket.on("updateGame", function (name, playerNames, playerColors, number) {
+    var div = $('#container div:nth-child(' + number.toString() + ') p:last');
+    div.empty();
+    div.html("Players: ");
+    console.log(playerNames);
+    console.log(playerColors);
+    console.log(name);
+    console.log(number);
+    for (i = 0; i < playerNames.length; i++) {
+      if (i == 0) {
+        div.append('<span style="color:' + playerColors[i] + '">' + playerNames[i]);
+      } else {
+        div.append('<span>,')
+        div.append('<span style="color:' + playerColors[i] + '"> ' + playerNames[i]);
+      }
+    }
+  });
+  window.onhashchange = function () {
+    if (location.hash.length > 0) {
+      $('#lobby').hide("slow");
+      $('#topLevel').show("slow");
+    } else {
+      $('#lobby').hide();
+      $('#topLevel').hide("slow");
+      $('#lobby').show("slow");
+    }
+  }
 });

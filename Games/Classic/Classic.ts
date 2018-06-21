@@ -1,6 +1,5 @@
 /* 
-    Copyright (C) 2017 James V. Craster  
-
+    Copyright (C) 2017 James V. Craster
     This file is part of OpenWerewolf.  
     OpenWerewolf is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published
@@ -11,12 +10,6 @@
     GNU Affero General Public License for more details.
     You should have received a copy of the GNU Affero General Public License
     along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>.
-    
-    Additional terms under GNU AGPL version 3 section 7:
-    I (James Craster) require the preservation of this specified author attribution 
-    in the Appropriate Legal Notices displayed by works containing material that has 
-    been added to OpenWerewolf by me: 
-    "This project includes code from OpenWerewolf." 
 */
 
 "use strict";
@@ -191,6 +184,15 @@ const eightPlayer: RoleList = new RoleList([
   Roles.townie,
   Roles.townie,
 ])
+const sevenPlayer: RoleList = new RoleList([
+  Roles.werewolf,
+  Roles.werewolf,
+  Roles.doctor,
+  Roles.vigilante,
+  Roles.cop,
+  Roles.townie,
+  Roles.townie
+])
 export class Classic extends Game {
   private ended: boolean = false;
   private phase: string = Phase.day;
@@ -203,7 +205,7 @@ export class Classic extends Game {
   private tallyInterval: any;
 
   constructor(server: Server) {
-    super(server, 9, 9);
+    super(server, 7, 9);
     setInterval(this.update.bind(this), 500);
   }
 
@@ -220,12 +222,14 @@ export class Classic extends Game {
       }
     }
     if (townWin) {
-      this.daychat.broadcast("The werewolves have won!", undefined, Colors.red);
+      this.daychat.broadcast("The town have won!", undefined, Colors.red);
       this.ended = true;
+      this.daychat.unmuteAll();
       setTimeout(this.end.bind(this), 30 * 1000);
     } else if (werewolfWin) {
-      this.daychat.broadcast("The town has won!", undefined, Colors.green);
+      this.daychat.broadcast("The werewolves have won!", undefined, Colors.green);
       this.ended = true;
+      this.daychat.unmuteAll();
       setTimeout(this.end.bind(this), 30 * 1000);
     }
   }
@@ -240,6 +244,9 @@ export class Classic extends Game {
     let randomDeck: Array<string> = [];
     let roleList = eightPlayer.list;
     switch (this._players.length) {
+      case 7:
+        roleList = sevenPlayer.list;
+        break;
       case 8:
         roleList = eightPlayer.list;
         break;
@@ -248,6 +255,15 @@ export class Classic extends Game {
         break;
     }
     this.broadcastRoleList(roleList);
+    for (let i = 0; i < this._players.length; i++) {
+      for (let j = 0; j < roleList.length; j++) {
+        if (roleList[j] == Roles.werewolf) {
+          this._players[i].leftSend(roleList[j], Colors.brightRed);
+        } else {
+          this._players[i].leftSend(roleList[j], Colors.brightGreen);
+        }
+      }
+    }
     randomDeck = Utils.shuffle(roleList);
     this.daychat.muteAll();
     //hand out roles

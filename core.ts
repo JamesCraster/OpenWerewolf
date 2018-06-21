@@ -275,6 +275,24 @@ export class Player {
   get username() {
     return this._username;
   }
+  public sendGame(name: string, players: Array<Player>) {
+    let playerNames: Array<string> = [];
+    let playerColors: Array<string> = [];
+    for (let i = 0; i < players.length; i++) {
+      playerColors.push(players[i].color);
+      playerNames.push(players[i].username);
+    }
+    this.socket.emit("sendGame", name, playerNames, playerColors);
+  };
+  public updateGame(name: string, players: Array<Player>, number: number) {
+    let playerNames: Array<string> = [];
+    let playerColors: Array<string> = [];
+    for (let i = 0; i < players.length; i++) {
+      playerColors.push(players[i].color);
+      playerNames.push(players[i].username);
+    }
+    this.socket.emit("updateGame", name, playerNames, playerColors, number + 1);
+  }
   public verifyAsAdmin(msg: string): boolean {
     if (msg == "!" + password) {
       this._admin = true;
@@ -349,6 +367,17 @@ export class Server {
     this._games = [];
     //call joinGame() every 50 ms to join waiting players to games that need them
     setInterval(this.joinGame.bind(this), 50);
+    //This is responsible for bad bug...
+    setInterval(this.updateLobbyInterface.bind(this), 10000);
+  }
+  public updateLobbyInterface() {
+    for (let i = 0; i < this._players.length; i++) {
+      for (let j = 0; j < this._games.length; j++) {
+        this._players[i].updateGame("Game " + (j + 1).toString(),
+          this._games[j].players, j);
+      }
+    }
+
   }
   public addGame(game: Game) {
     this._games.push(game);
@@ -440,6 +469,10 @@ export class Server {
   }
   public addPlayer(socket: Socket) {
     this._players.push(new Player(socket));
+    for (let i = 0; i < this._games.length; i++) {
+      this._players[this._players.length - 1].sendGame("Game " + (i + 1).toString(),
+        this._games[i].players);
+    }
     console.log("Player length on add: " + this._players.length);
   }
   private register(player: Player, msg: string) {
@@ -562,6 +595,9 @@ export abstract class Game {
     this._maxPlayerCount = maxPlayerCount;
     setInterval(this.pregameLobbyUpdate.bind(this), 500);
     setInterval(this.update.bind(this), 500);
+  }
+  get players() {
+    return this._players;
   }
   get inPlay() {
     return this._inPlay;

@@ -4,6 +4,7 @@
 /Games/OneDay/*.js
 /Games/Classic/*.js
 /Client/login.js
+Games/Demo/demo.js
 
 #Ignore unused html under development
 lobby.html
@@ -19,3 +20,4 @@ release/
 TODO.txt
 .DS_Store
 Client/main.css.map
+

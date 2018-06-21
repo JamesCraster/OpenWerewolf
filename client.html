@@ -7,12 +7,7 @@
      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
      GNU Affero General Public License for more details.
      You should have received a copy of the GNU Affero General Public License
-     along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>.
-     Additional terms under GNU AGPL version 3 section 7:
-     I (James Craster) require the preservation of this specified author attribution 
-     in the Appropriate Legal Notices displayed by works containing material that has 
-     been added to OpenWerewolf by me: 
-     "This project includes code from OpenWerewolf." -->
+     along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>.-->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,8 +21,19 @@
 <!-- Move scrollbar to bottom on window resize -->
 
 <body onresize="$('#inner')[0].scrollTop = $('#inner')[0].scrollHeight;">
-  <!-- Message box -->
-  <div id="topLevel">
+  <div id="lobby">
+    <p style="font-size: 2em; margin-bottom: 2%">OpenWerewolf</p>
+    <!--<div id="menubar">
+      <div class="menuitem">
+        <p>New Game</p>
+        <p></p>
+      </div>
+    </div>-->
+    <div id="container" style="border:3px solid black;display:block;width: 75%;height:75%;margin-left:auto;margin-right:auto;">
+    </div>
+  </div>
+
+  <div id="topLevel" style="display:none;">
     <div id="leftBox" class="sideBox">
       <div id="innerLeftBox" class="innerSideBox">
         <ul id="roleNames">
@@ -39,9 +45,11 @@
     <div id="outer">
       <div id="inner">
         <ul id="chatbox">
-          <li>OpenWerewolf (C) 2017 James Craster</li>
+          <li> OpenWerewolf (C) 2017 James Craster</li>
           <li>
             <a href="https://github.com/JamesCraster/OpenWerewolf" target="_blank">Github</a>
+            <!--<a style="padding-left:20px" href="https://github.com/JamesCraster/OpenWerewolf/releases" target="_blank">Releases</a>-->
+            <!--<a style="padding-left:20px" href="https://github.com/JamesCraster/OpenWerewolf/blob/master/LICENSE" target="_blank">License</a>-->
           </li>
           <li>Welcome to OpenWerewolf.
             <b>Please type in a nickname you'd like to use.</b>
