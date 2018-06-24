@@ -212,9 +212,9 @@ export class Classic extends Game {
   public winCondition() {
     let townWin = true;
     let werewolfWin = true;
-    for (let i = 0; i < this._players.length; i++) {
-      if (this._players[i].data.alive) {
-        if (this._players[i].data.isRole(Roles.werewolf)) {
+    for (let i = 0; i < this.players.length; i++) {
+      if (this.players[i].data.alive) {
+        if (this.players[i].data.isRole(Roles.werewolf)) {
           townWin = false;
         } else {
           werewolfWin = false;
@@ -243,7 +243,7 @@ export class Classic extends Game {
     this.broadcastPlayerList();
     let randomDeck: Array<string> = [];
     let roleList = eightPlayer.list;
-    switch (this._players.length) {
+    switch (this.players.length) {
       case 7:
         roleList = sevenPlayer.list;
         break;
@@ -255,12 +255,12 @@ export class Classic extends Game {
         break;
     }
     this.broadcastRoleList(roleList);
-    for (let i = 0; i < this._players.length; i++) {
+    for (let i = 0; i < this.players.length; i++) {
       for (let j = 0; j < roleList.length; j++) {
         if (roleList[j] == Roles.werewolf) {
-          this._players[i].leftSend(roleList[j], Colors.brightRed);
+          this.players[i].leftSend(roleList[j], Colors.brightRed);
         } else {
-          this._players[i].leftSend(roleList[j], Colors.brightGreen);
+          this.players[i].leftSend(roleList[j], Colors.brightGreen);
         }
       }
     }
@@ -270,26 +270,26 @@ export class Classic extends Game {
     for (let i = 0; i < randomDeck.length; i++) {
       switch (randomDeck[i]) {
         case Roles.werewolf:
-          this._players[i].data = new PlayerData(new Werewolf());
-          this._players[i].send("You are a werewolf", undefined, Colors.red);
-          this.werewolfchat.addPlayer(this._players[i]);
-          this.werewolfchat.mute(this._players[i]);
+          this.players[i].data = new PlayerData(new Werewolf());
+          this.players[i].send("You are a werewolf", undefined, Colors.red);
+          this.werewolfchat.addPlayer(this.players[i]);
+          this.werewolfchat.mute(this.players[i]);
           break;
         case Roles.doctor:
-          this._players[i].data = new PlayerData(new Doctor());
-          this._players[i].send("You are a doctor", undefined, Colors.green);
+          this.players[i].data = new PlayerData(new Doctor());
+          this.players[i].send("You are a doctor", undefined, Colors.green);
           break;
         case Roles.townie:
-          this._players[i].data = new PlayerData(new Townie());
-          this._players[i].send("You are a townie", undefined, Colors.green);
+          this.players[i].data = new PlayerData(new Townie());
+          this.players[i].send("You are a townie", undefined, Colors.green);
           break;
         case Roles.cop:
-          this._players[i].data = new PlayerData(new Cop());
-          this._players[i].send("You are a cop", undefined, Colors.green);
+          this.players[i].data = new PlayerData(new Cop());
+          this.players[i].send("You are a cop", undefined, Colors.green);
           break;
         case Roles.vigilante:
-          this._players[i].data = new PlayerData(new Vigilante());
-          this._players[i].send("You are a vigilante", undefined, Colors.green);
+          this.players[i].data = new PlayerData(new Vigilante());
+          this.players[i].send("You are a vigilante", undefined, Colors.green);
           break;
       }
     }
@@ -299,9 +299,9 @@ export class Classic extends Game {
     this.werewolfchat.unmuteAll();
     this.werewolfchat.broadcast("This is the werewolf chat, you can talk to other wolves now in secret.");
     let werewolfList: Array<string> = [];
-    for (let i = 0; i < this._players.length; i++) {
-      if (this._players[i].data.isRole(Roles.werewolf)) {
-        werewolfList.push(this._players[i].username);
+    for (let i = 0; i < this.players.length; i++) {
+      if (this.players[i].data.isRole(Roles.werewolf)) {
+        werewolfList.push(this.players[i].username);
       }
     }
     let werewolfString = "The werewolves are : ";
@@ -325,9 +325,9 @@ export class Classic extends Game {
     this.werewolfchat.unmuteAll();
     this.werewolfchat.broadcast("This is the werewolf chat, you can talk to other wolves now in secret.");
     let werewolfList: Array<string> = [];
-    for (let i = 0; i < this._players.length; i++) {
-      if (this._players[i].data.isRole(Roles.werewolf)) {
-        werewolfList.push(this._players[i].username);
+    for (let i = 0; i < this.players.length; i++) {
+      if (this.players[i].data.isRole(Roles.werewolf)) {
+        werewolfList.push(this.players[i].username);
       }
     }
     let werewolfString = "The werewolves are : ";
@@ -345,9 +345,9 @@ export class Classic extends Game {
   }
   public nightResolution() {
 
-    for (let i = 0; i < this._players.length; i++) {
-      if (this._players[i].data.isRole(Roles.doctor)) {
-        let targetPlayer = this.getPlayer(this._players[i].data.target);
+    for (let i = 0; i < this.players.length; i++) {
+      if (this.players[i].data.isRole(Roles.doctor)) {
+        let targetPlayer = this.getPlayer(this.players[i].data.target);
         if (targetPlayer != undefined) {
           targetPlayer.data.healed = true;
         }
@@ -356,9 +356,9 @@ export class Classic extends Game {
     //calculate the plurality target of the wolves
     let maxVotes = 0;
     let finalTargetPlayer: undefined | Player = undefined;
-    for (let i = 0; i < this._players.length; i++) {
-      if (this._players[i].data.isRole(Roles.werewolf)) {
-        let targetPlayer = this.getPlayer(this._players[i].data.target);
+    for (let i = 0; i < this.players.length; i++) {
+      if (this.players[i].data.isRole(Roles.werewolf)) {
+        let targetPlayer = this.getPlayer(this.players[i].data.target);
         if (targetPlayer != undefined) {
           targetPlayer.data.incrementWolfVote();
           if (targetPlayer.data.wolfVotes >= maxVotes) {
@@ -368,38 +368,38 @@ export class Classic extends Game {
         }
       }
     }
-    for (let i = 0; i < this._players.length; i++) {
-      let targetPlayer = this.getPlayer(this._players[i].data.target);
+    for (let i = 0; i < this.players.length; i++) {
+      let targetPlayer = this.getPlayer(this.players[i].data.target);
       if (targetPlayer != undefined) {
-        switch (this._players[i].data.roleName) {
+        switch (this.players[i].data.roleName) {
           case Roles.werewolf:
             //tell the wolves who the target is
-            this._players[i].send("Your target is: ");
+            this.players[i].send("Your target is: ");
             if (finalTargetPlayer != undefined) {
-              this._players[i].send(finalTargetPlayer.username)
-              this._players[i].send("You attack your target.");
+              this.players[i].send(finalTargetPlayer.username)
+              this.players[i].send("You attack your target.");
               if (finalTargetPlayer.data.healed) {
-                this._players[i].send(finalTargetPlayer.username + " was healed during the night and so" +
+                this.players[i].send(finalTargetPlayer.username + " was healed during the night and so" +
                   " they have survived.");
               } else {
-                this._players[i].send(finalTargetPlayer.username + " has died.");
+                this.players[i].send(finalTargetPlayer.username + " has died.");
                 finalTargetPlayer.data.kill();
               }
             } else {
-              this._players[i].send("No one, as neither of you voted for a target.");
+              this.players[i].send("No one, as neither of you voted for a target.");
             }
             //tell the wolves if target is healed
             break;
           case Roles.cop:
-            this._players[i].send("You investigated your target:");
-            this._players[i].send(targetPlayer.username + " is a " + targetPlayer.data.alignment + ".");
+            this.players[i].send("You investigated your target:");
+            this.players[i].send(targetPlayer.username + " is a " + targetPlayer.data.alignment + ".");
             break;
           case Roles.vigilante:
-            this._players[i].send("You shoot your target.");
+            this.players[i].send("You shoot your target.");
             if (targetPlayer.data.healed) {
-              this._players[i].send(targetPlayer.username + " was healed, and so has survived your attack.");
+              this.players[i].send(targetPlayer.username + " was healed, and so has survived your attack.");
             } else {
-              this._players[i].send(targetPlayer.username + " has died.");
+              this.players[i].send(targetPlayer.username + " has died.");
               targetPlayer.data.kill();
             }
             break;
@@ -408,23 +408,23 @@ export class Classic extends Game {
     }
     let deaths: number = 0;
     //Notify the dead that they have died
-    for (let i = 0; i < this._players.length; i++) {
-      if (this._players[i].data.diedThisNight) {
-        this._players[i].send("You have been killed!", undefined, Colors.red);
+    for (let i = 0; i < this.players.length; i++) {
+      if (this.players[i].data.diedThisNight) {
+        this.players[i].send("You have been killed!", undefined, Colors.red);
         deaths++;
       }
     }
     //Reset each player's action
-    for (let i = 0; i < this._players.length; i++) {
-      this._players[i].data.resetAfterNight();
+    for (let i = 0; i < this.players.length; i++) {
+      this.players[i].data.resetAfterNight();
     }
     this.werewolfchat.muteAll();
     this.phase = Phase.day;
     this.daychat.broadcast("Dawn has broken.", undefined, Colors.yellow);
     this.daychat.unmuteAll();
-    for (let i = 0; i < this._players.length; i++) {
-      if (!this._players[i].data.alive) {
-        this.daychat.mute(this._players[i]);
+    for (let i = 0; i < this.players.length; i++) {
+      if (!this.players[i].data.alive) {
+        this.daychat.mute(this.players[i]);
       }
     }
     //Notify the living that the dead have died
@@ -432,15 +432,15 @@ export class Classic extends Game {
     if (deaths == 0) {
       this.daychat.broadcast("Nobody died.");
     } else {
-      for (let i = 0; i < this._players.length; i++) {
-        if (this._players[i].data.diedThisNight) {
-          this.daychat.broadcast(this._players[i].username + " has died.");
-          this.daychat.mute(this._players[i]);
+      for (let i = 0; i < this.players.length; i++) {
+        if (this.players[i].data.diedThisNight) {
+          this.daychat.broadcast(this.players[i].username + " has died.");
+          this.daychat.mute(this.players[i]);
         }
       }
     }
-    for (let i = 0; i < this._players.length; i++) {
-      this._players[i].data.diedThisNight = false;
+    for (let i = 0; i < this.players.length; i++) {
+      this.players[i].data.diedThisNight = false;
     }
     this.day();
   }
@@ -468,19 +468,19 @@ export class Classic extends Game {
       let count = 0;
       let defendant = 0;
       let aliveCount = 0;
-      for (let i = 0; i < this._players.length; i++) {
-        if (this._players[i].data.alive) {
+      for (let i = 0; i < this.players.length; i++) {
+        if (this.players[i].data.alive) {
           aliveCount++;
         }
       }
       let beginTrial: boolean = false;
-      for (let i = 0; i < this._players.length; i++) {
+      for (let i = 0; i < this.players.length; i++) {
         count = 0;
         if (beginTrial) {
           break;
         }
-        for (let j = 0; j < this._players.length; j++) {
-          if (this._players[j].data.vote == this._players[i].id) {
+        for (let j = 0; j < this.players.length; j++) {
+          if (this.players[j].data.vote == this.players[i].id) {
             count++;
           }
           if (count > Math.floor(aliveCount / 2)) {
@@ -504,10 +504,10 @@ export class Classic extends Game {
   public defenseSpeech(defendant: number) {
     if (!this.ended) {
       this.trial = Trial.ended;
-      this.daychat.broadcast(this._players[defendant].username + " is on trial.");
+      this.daychat.broadcast(this.players[defendant].username + " is on trial.");
       this.daychat.broadcast("The accused can defend themselves for 20 seconds.");
       this.daychat.muteAll();
-      this.daychat.unmute(this._players[defendant]);
+      this.daychat.unmute(this.players[defendant]);
       setTimeout(this.finalVote.bind(this), 20 * 1000, defendant);
     }
   }
@@ -526,26 +526,26 @@ export class Classic extends Game {
     if (!this.ended) {
       let innocentCount = 0;
       let guiltyCount = 0;
-      for (let i = 0; i < this._players.length; i++) {
-        if (this._players[i].data.finalVote == finalVote.guilty) {
-          this.daychat.broadcast(this._players[i].username + " voted guilty");
+      for (let i = 0; i < this.players.length; i++) {
+        if (this.players[i].data.finalVote == finalVote.guilty) {
+          this.daychat.broadcast(this.players[i].username + " voted guilty");
           guiltyCount++;
         }
-        if (this._players[i].data.finalVote == finalVote.innocent) {
-          this.daychat.broadcast(this._players[i].username + " voted innocent");
+        if (this.players[i].data.finalVote == finalVote.innocent) {
+          this.daychat.broadcast(this.players[i].username + " voted innocent");
           innocentCount++;
         }
       }
       if (guiltyCount > innocentCount) {
-        this._players[defendant].data.kill();
-        this._players[defendant].data.diedThisNight = false;
-        this.daychat.broadcast(this._players[defendant].username + " has died.");
+        this.players[defendant].data.kill();
+        this.players[defendant].data.diedThisNight = false;
+        this.daychat.broadcast(this.players[defendant].username + " has died.");
       } else {
-        this.daychat.broadcast(this._players[defendant].username + " has been acquitted");
+        this.daychat.broadcast(this.players[defendant].username + " has been acquitted");
       }
       this.trial = Trial.ended;
-      for (let i = 0; i < this._players.length; i++) {
-        this._players[i].data.resetAfterTrial();
+      for (let i = 0; i < this.players.length; i++) {
+        this.players[i].data.resetAfterTrial();
       }
       setTimeout(this.night.bind(this), 15 * 1000);
     }
@@ -570,12 +570,12 @@ export class Classic extends Game {
           if (Utils.isCommand(msg, "/act") && this.phase == Phase.night) {
             let username = msg.slice(4).trim();
             let exists = false;
-            for (let i = 0; i < this._players.length; i++) {
-              if (this._players[i].username == username) {
+            for (let i = 0; i < this.players.length; i++) {
+              if (this.players[i].username == username) {
                 exists = true;
-                if (this._players[i].data.alive) {
+                if (this.players[i].data.alive) {
                   player.send("Your choice of '" + username + "' has been received.");
-                  player.data.target = this._players[i].id;
+                  player.data.target = this.players[i].id;
                 } else {
                   player.send("That player is dead, you cannot vote for them.");
                 }
@@ -587,11 +587,11 @@ export class Classic extends Game {
           } else if (Utils.isCommand(msg, "/vote") && this.trial == Trial.nominate) {
             let username = Utils.commandArguments(msg)[0];
             let exists = false;
-            for (let i = 0; i < this._players.length; i++) {
-              if (this._players[i].username == username) {
+            for (let i = 0; i < this.players.length; i++) {
+              if (this.players[i].username == username) {
                 exists = true;
-                if (this._players[i].data.alive) {
-                  player.data.voteFor(this._players[i]);
+                if (this.players[i].data.alive) {
+                  player.data.voteFor(this.players[i]);
                   player.send("Your choice of '" + username + "' has been received.")
                   this.daychat.broadcast(player.username + " voted for '" + username + "'.");
                 } else {

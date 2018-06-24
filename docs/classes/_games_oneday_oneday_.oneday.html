@@ -38,8 +38,6 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -92,10 +90,9 @@
 								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="_games_oneday_oneday_.oneday.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-private-protected">
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_games_oneday_oneday_.oneday.html#_players" class="tsd-kind-icon">_players</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_games_oneday_oneday_.oneday.html#fiveplayer" class="tsd-kind-icon">five<wbr>Player</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_games_oneday_oneday_.oneday.html#fourplayer" class="tsd-kind-icon">four<wbr>Player</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_games_oneday_oneday_.oneday.html#leftcard" class="tsd-kind-icon">left<wbr>Card</a></li>
@@ -119,7 +116,10 @@
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_games_oneday_oneday_.oneday.html#inplay" class="tsd-kind-icon">in<wbr>Play</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_games_oneday_oneday_.oneday.html#minimumplayersneeded" class="tsd-kind-icon">minimum<wbr>Players<wbr>Needed</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_games_oneday_oneday_.oneday.html#playercount" class="tsd-kind-icon">player<wbr>Count</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_games_oneday_oneday_.oneday.html#playernamecolorpairs" class="tsd-kind-icon">player<wbr>Name<wbr>Color<wbr>Pairs</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_games_oneday_oneday_.oneday.html#players" class="tsd-kind-icon">players</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_games_oneday_oneday_.oneday.html#playersneeded" class="tsd-kind-icon">players<wbr>Needed</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_games_oneday_oneday_.oneday.html#startwait" class="tsd-kind-icon">start<wbr>Wait</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -145,6 +145,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_games_oneday_oneday_.oneday.html#nightactions" class="tsd-kind-icon">night<wbr>Actions</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_games_oneday_oneday_.oneday.html#parserolestring" class="tsd-kind-icon">parse<wbr>Role<wbr>String</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_games_oneday_oneday_.oneday.html#receive" class="tsd-kind-icon">receive</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_games_oneday_oneday_.oneday.html#setalltime" class="tsd-kind-icon">set<wbr>All<wbr>Time</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected"><a href="_games_oneday_oneday_.oneday.html#start" class="tsd-kind-icon">start</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected"><a href="_games_oneday_oneday_.oneday.html#update" class="tsd-kind-icon">update</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="_games_oneday_oneday_.oneday.html#winresolution" class="tsd-kind-icon">win<wbr>Resolution</a></li>
@@ -166,7 +167,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L259">Games/OneDay/oneDay.ts:259</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L253">Games/OneDay/oneDay.ts:253</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -180,26 +181,15 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-private-protected">
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-					<a name="_players" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _players</h3>
-					<div class="tsd-signature tsd-kind-icon">_players<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_core_.player.html" class="tsd-signature-type">Player</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#_players">_players</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L548">core.ts:548</a></li>
-						</ul>
-					</aside>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="fiveplayer" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> five<wbr>Player</h3>
 					<div class="tsd-signature tsd-kind-icon">five<wbr>Player<span class="tsd-signature-symbol">:</span> <a href="_core_.rolelist.html" class="tsd-signature-type">RoleList</a><span class="tsd-signature-symbol"> =&nbsp;new RoleList(defaultFivePlayer.list)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L257">Games/OneDay/oneDay.ts:257</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L251">Games/OneDay/oneDay.ts:251</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -209,7 +199,7 @@
 					<div class="tsd-signature tsd-kind-icon">four<wbr>Player<span class="tsd-signature-symbol">:</span> <a href="_core_.rolelist.html" class="tsd-signature-type">RoleList</a><span class="tsd-signature-symbol"> =&nbsp;new RoleList(defaultFourPlayer.list)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L256">Games/OneDay/oneDay.ts:256</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L250">Games/OneDay/oneDay.ts:250</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -219,7 +209,7 @@
 					<div class="tsd-signature tsd-kind-icon">left<wbr>Card<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L246">Games/OneDay/oneDay.ts:246</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L240">Games/OneDay/oneDay.ts:240</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -229,7 +219,7 @@
 					<div class="tsd-signature tsd-kind-icon">length<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;10</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L251">Games/OneDay/oneDay.ts:251</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L245">Games/OneDay/oneDay.ts:245</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -239,7 +229,7 @@
 					<div class="tsd-signature tsd-kind-icon">middle<wbr>Card<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L247">Games/OneDay/oneDay.ts:247</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L241">Games/OneDay/oneDay.ts:241</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -249,7 +239,7 @@
 					<div class="tsd-signature tsd-kind-icon">minutes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;1</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L250">Games/OneDay/oneDay.ts:250</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L244">Games/OneDay/oneDay.ts:244</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -259,7 +249,7 @@
 					<div class="tsd-signature tsd-kind-icon">playerchat<span class="tsd-signature-symbol">:</span> <a href="_core_.messageroom.html" class="tsd-signature-type">MessageRoom</a><span class="tsd-signature-symbol"> =&nbsp;new MessageRoom()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L245">Games/OneDay/oneDay.ts:245</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L239">Games/OneDay/oneDay.ts:239</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -269,7 +259,7 @@
 					<div class="tsd-signature tsd-kind-icon">right<wbr>Card<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;&quot;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L248">Games/OneDay/oneDay.ts:248</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L242">Games/OneDay/oneDay.ts:242</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -279,7 +269,7 @@
 					<div class="tsd-signature tsd-kind-icon">seven<wbr>Player<span class="tsd-signature-symbol">:</span> <a href="_core_.rolelist.html" class="tsd-signature-type">RoleList</a><span class="tsd-signature-symbol"> =&nbsp;new RoleList(defaultSevenPlayer.list)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L259">Games/OneDay/oneDay.ts:259</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L253">Games/OneDay/oneDay.ts:253</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -289,7 +279,7 @@
 					<div class="tsd-signature tsd-kind-icon">six<wbr>Player<span class="tsd-signature-symbol">:</span> <a href="_core_.rolelist.html" class="tsd-signature-type">RoleList</a><span class="tsd-signature-symbol"> =&nbsp;new RoleList(defaultSixPlayer.list)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L258">Games/OneDay/oneDay.ts:258</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L252">Games/OneDay/oneDay.ts:252</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -299,7 +289,7 @@
 					<div class="tsd-signature tsd-kind-icon">three<wbr>Player<span class="tsd-signature-symbol">:</span> <a href="_core_.rolelist.html" class="tsd-signature-type">RoleList</a><span class="tsd-signature-symbol"> =&nbsp;new RoleList(defaultThreePlayer.list)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L255">Games/OneDay/oneDay.ts:255</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L249">Games/OneDay/oneDay.ts:249</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -309,7 +299,7 @@
 					<div class="tsd-signature tsd-kind-icon">time<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L249">Games/OneDay/oneDay.ts:249</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L243">Games/OneDay/oneDay.ts:243</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -319,7 +309,7 @@
 					<div class="tsd-signature tsd-kind-icon">trial<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L252">Games/OneDay/oneDay.ts:252</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L246">Games/OneDay/oneDay.ts:246</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -329,7 +319,7 @@
 					<div class="tsd-signature tsd-kind-icon">won<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L253">Games/OneDay/oneDay.ts:253</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L247">Games/OneDay/oneDay.ts:247</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -339,7 +329,7 @@
 					<div class="tsd-signature tsd-kind-icon">won<wbr>Early<wbr>Time<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L254">Games/OneDay/oneDay.ts:254</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L248">Games/OneDay/oneDay.ts:248</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -357,7 +347,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#inplay">inPlay</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L566">core.ts:566</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L576">core.ts:576</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -375,7 +365,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#minimumplayersneeded">minimumPlayersNeeded</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L572">core.ts:572</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L582">core.ts:582</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -393,10 +383,46 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#playercount">playerCount</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L569">core.ts:569</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L579">core.ts:579</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<a name="playernamecolorpairs" class="tsd-anchor"></a>
+					<h3>player<wbr>Name<wbr>Color<wbr>Pairs</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> playerNameColorPairs<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_core_.namecolorpair.html" class="tsd-signature-type">nameColorPair</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#playernamecolorpairs">playerNameColorPairs</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L561">core.ts:561</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_core_.namecolorpair.html" class="tsd-signature-type">nameColorPair</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="players" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> players</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> players<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_core_.player.html" class="tsd-signature-type">Player</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#players">players</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L570">core.ts:570</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="_core_.player.html" class="tsd-signature-type">Player</a><span class="tsd-signature-symbol">[]</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -411,7 +437,25 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#playersneeded">playersNeeded</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L579">core.ts:579</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L589">core.ts:589</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<a name="startwait" class="tsd-anchor"></a>
+					<h3>start<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> startWait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#startwait">startWait</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L573">core.ts:573</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -432,7 +476,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#addplayer">addPlayer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L294">Games/OneDay/oneDay.ts:294</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L288">Games/OneDay/oneDay.ts:288</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -456,7 +500,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#adminreceive">adminReceive</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L722">core.ts:722</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L738">core.ts:738</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -483,7 +527,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#afterend">afterEnd</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L674">core.ts:674</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L690">core.ts:690</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -501,7 +545,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#beforestart">beforeStart</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L670">core.ts:670</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L686">core.ts:686</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -519,7 +563,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#broadcast">broadcast</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L653">core.ts:653</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L669">core.ts:669</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -549,7 +593,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#broadcastplayerlist">broadcastPlayerList</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L694">core.ts:694</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L710">core.ts:710</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -567,7 +611,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#broadcastrolelist">broadcastRoleList</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L704">core.ts:704</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L720">core.ts:720</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -591,7 +635,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#customadminreceive">customAdminReceive</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L843">Games/OneDay/oneDay.ts:843</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L837">Games/OneDay/oneDay.ts:837</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -618,7 +662,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#end">end</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L411">Games/OneDay/oneDay.ts:411</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L405">Games/OneDay/oneDay.ts:405</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -635,7 +679,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L425">Games/OneDay/oneDay.ts:425</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L419">Games/OneDay/oneDay.ts:419</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -653,7 +697,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#getplayer">getPlayer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L586">core.ts:586</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L596">core.ts:596</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -679,7 +723,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L264">Games/OneDay/oneDay.ts:264</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L258">Games/OneDay/oneDay.ts:258</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -702,7 +746,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L274">Games/OneDay/oneDay.ts:274</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L268">Games/OneDay/oneDay.ts:268</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -728,7 +772,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L284">Games/OneDay/oneDay.ts:284</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L278">Games/OneDay/oneDay.ts:278</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -752,7 +796,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#isplayer">isPlayer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L595">core.ts:595</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L605">core.ts:605</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -776,7 +820,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#kick">kick</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L659">core.ts:659</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L675">core.ts:675</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -800,7 +844,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#linethroughplayer">lineThroughPlayer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L714">core.ts:714</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L730">core.ts:730</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -823,7 +867,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L552">Games/OneDay/oneDay.ts:552</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L546">Games/OneDay/oneDay.ts:546</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -840,7 +884,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L925">Games/OneDay/oneDay.ts:925</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L919">Games/OneDay/oneDay.ts:919</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -864,7 +908,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#receive">receive</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L982">Games/OneDay/oneDay.ts:982</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L976">Games/OneDay/oneDay.ts:976</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -893,6 +937,33 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="setalltime" class="tsd-anchor"></a>
+					<h3>set<wbr>All<wbr>Time</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>All<wbr>Time<span class="tsd-signature-symbol">(</span>time<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, warnTime<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#setalltime">setAllTime</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L613">core.ts:613</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>time: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>warnTime: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
 					<a name="start" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> start</h3>
@@ -904,7 +975,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#start">start</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L439">Games/OneDay/oneDay.ts:439</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L433">Games/OneDay/oneDay.ts:433</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -922,7 +993,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#update">update</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L366">Games/OneDay/oneDay.ts:366</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L360">Games/OneDay/oneDay.ts:360</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -939,7 +1010,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/OneDay/oneDay.ts#L301">Games/OneDay/oneDay.ts:301</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/OneDay/oneDay.ts#L295">Games/OneDay/oneDay.ts:295</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -983,9 +1054,6 @@
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_games_oneday_oneday_.oneday.html#constructor" class="tsd-kind-icon">constructor</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-								<a href="_games_oneday_oneday_.oneday.html#_players" class="tsd-kind-icon">_players</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_games_oneday_oneday_.oneday.html#fiveplayer" class="tsd-kind-icon">five<wbr>Player</a>
@@ -1042,7 +1110,16 @@
 								<a href="_games_oneday_oneday_.oneday.html#playercount" class="tsd-kind-icon">player<wbr>Count</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+								<a href="_games_oneday_oneday_.oneday.html#playernamecolorpairs" class="tsd-kind-icon">player<wbr>Name<wbr>Color<wbr>Pairs</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="_games_oneday_oneday_.oneday.html#players" class="tsd-kind-icon">players</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
 								<a href="_games_oneday_oneday_.oneday.html#playersneeded" class="tsd-kind-icon">players<wbr>Needed</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+								<a href="_games_oneday_oneday_.oneday.html#startwait" class="tsd-kind-icon">start<wbr>Wait</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_games_oneday_oneday_.oneday.html#addplayer" class="tsd-kind-icon">add<wbr>Player</a>
@@ -1103,6 +1180,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_games_oneday_oneday_.oneday.html#receive" class="tsd-kind-icon">receive</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="_games_oneday_oneday_.oneday.html#setalltime" class="tsd-kind-icon">set<wbr>All<wbr>Time</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
 								<a href="_games_oneday_oneday_.oneday.html#start" class="tsd-kind-icon">start</a>

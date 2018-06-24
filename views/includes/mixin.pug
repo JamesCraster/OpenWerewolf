@@ -21,7 +21,6 @@ mixin game(name, players, inPlay)
         p Players:  
             - var n = 0;
             - while(n < players.length){
-                - console.log(players[n].color);
                 - if(n != 0){
                 span(style="color:#cecece") , 
                 span(style="color:" + players[n].color)= players[n].username

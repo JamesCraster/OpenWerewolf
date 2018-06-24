@@ -128,47 +128,7 @@ export enum Colors {
  */
 const PlayerColorArray: Array<string> = [Colors.magenta, Colors.lightBlue, Colors.brightYellow, Colors.orange, Colors.usernameRed, Colors.usernameGreen,
 Colors.darkBlue, Colors.pink, Colors.brown];
-/** 
- * Contains style data for text.
- */
-export class Style {
-  private readonly _backgroundColor: string | undefined;
-  private readonly _textColor: string | undefined;
-  private readonly _bold: boolean | undefined;
-  private readonly _underlined: boolean | undefined;
 
-  constructor(textColor?: string, backgroundColor?: string, bold?: boolean, underlined?: boolean) {
-    this._textColor = textColor;
-    this._backgroundColor = backgroundColor;
-    this._bold = bold;
-    this._underlined = underlined;
-  }
-}
-/**
- * @abstract
- * Directs the client to apply the passed in style data to some text by a logical rule.
- */
-export abstract class StyleRule {
-  private readonly _style: Style;
-  constructor(textColor?: string, backgroundColor?: string, bold?: boolean, underlined?: boolean) {
-    this._style = new Style(textColor, backgroundColor, bold, underlined);
-  }
-}
-/**
- * Directs client to apply passed in style data to a given keyword in some text.
- */
-export class MatchRule extends StyleRule {
-  private readonly _keyword: string;
-
-  constructor(keyword: string, textColor?: string, backgroundColor?: string, bold?: boolean, underlined?: boolean) {
-    super(textColor, backgroundColor, bold, underlined);
-    this._keyword = keyword;
-  }
-
-  get keyword() {
-    return this._keyword;
-  }
-}
 export class Stopwatch {
   private _time: number = Date.now();
   private _storedElapsed: number = 0;
@@ -215,7 +175,10 @@ abstract class PlayerContainer {
     return this._player;
   }
 }
-
+interface nameColorPair {
+  username: string,
+  color: string
+}
 export class Player {
   //true if the player has a username
   private _registered: boolean = false;
@@ -269,21 +232,12 @@ export class Player {
   get username() {
     return this._username;
   }
-  public sendGame(name: string, players: Array<Player>) {
+  public updateGame(name: string, playerNameColorPairs: Array<nameColorPair>, number: number, inPlay: boolean) {
     let playerNames: Array<string> = [];
     let playerColors: Array<string> = [];
-    for (let i = 0; i < players.length; i++) {
-      playerColors.push(players[i].color);
-      playerNames.push(players[i].username);
-    }
-    this.socket.emit("sendGame", name, playerNames, playerColors);
-  };
-  public updateGame(name: string, players: Array<Player>, number: number, inPlay: boolean) {
-    let playerNames: Array<string> = [];
-    let playerColors: Array<string> = [];
-    for (let i = 0; i < players.length; i++) {
-      playerColors.push(players[i].color);
-      playerNames.push(players[i].username);
+    for (let i = 0; i < playerNameColorPairs.length; i++) {
+      playerColors.push(playerNameColorPairs[i].color);
+      playerNames.push(playerNameColorPairs[i].username);
     }
     this.socket.emit("updateGame", name, playerNames, playerColors, number + 1, inPlay);
   }
@@ -329,8 +283,8 @@ export class Player {
   public lineThroughPlayer(msg: string) {
     this._socket.emit("lineThroughPlayer", msg);
   }
-  public setTime(time: number) {
-    this._socket.emit("setTime", time);
+  public setTime(time: number, warn: number) {
+    this._socket.emit("setTime", time, warn);
   }
   get socket() {
     return this._socket;
@@ -368,7 +322,7 @@ export class Server {
     for (let i = 0; i < this._players.length; i++) {
       for (let j = 0; j < this._games.length; j++) {
         this._players[i].updateGame("Game " + (j + 1).toString(),
-          this._games[j].players, j, this._games[j].inPlay);
+          this._games[j].playerNameColorPairs, j, this._games[j].inPlay);
       }
     }
 
@@ -424,6 +378,7 @@ export class Server {
               //if just hit the minimum number of players
             } else if (this._games[j].minimumPlayersNeeded == 0) {
               player.send("The game will start in 30 seconds. Type \"/start\" to start the game now");
+              this._games[j].setAllTime(this._games[j].startWait, 10000);
             }
             break;
           }
@@ -585,14 +540,14 @@ export class Server {
   }
 }
 export abstract class Game {
-  protected _players: Array<Player> = [];
+  private _players: Array<Player> = [];
   private _registeredPlayerCount: number = 0;
   private readonly _minPlayerCount: number;
   private readonly _maxPlayerCount: number;
   private _inPlay: boolean = false;
   private readonly _server: Server;
   private readonly startClock: Stopwatch = new Stopwatch();
-  private readonly startWait = 30000;
+  private readonly _startWait = 30000;
   private holdVote: boolean = false;
   private colorPool = PlayerColorArray.slice();
 
@@ -603,17 +558,20 @@ export abstract class Game {
     setInterval(this.pregameLobbyUpdate.bind(this), 500);
     setInterval(this.update.bind(this), 500);
   }
-  get playerNameColorPairs() {
+  get playerNameColorPairs(): Array<nameColorPair> {
     let playerNameColorPairs = [];
     console.log(this._players.length);
     for (let i = 0; i < this._players.length; i++) {
-      playerNameColorPairs.push({ username: this._players[i].username, color: this._players[i].color });
+      playerNameColorPairs.push(<nameColorPair>{ username: this._players[i].username, color: this._players[i].color });
     }
     console.log(playerNameColorPairs);
     return playerNameColorPairs;
   }
-  get players() {
+  protected get players() {
     return this._players;
+  }
+  get startWait() {
+    return this._startWait;
   }
   get inPlay() {
     return this._inPlay;
@@ -651,6 +609,11 @@ export abstract class Game {
       }
     }
     return false;
+  }
+  public setAllTime(time: number, warnTime: number) {
+    for (let i = 0; i < this._players.length; i++) {
+      this._players[i].setTime(time, warnTime);
+    }
   }
   private pregameLobbyUpdate() {
     if (!this.inPlay) {
@@ -700,6 +663,7 @@ export abstract class Game {
     if (this._players.length > this._minPlayerCount && this._players.length < this._maxPlayerCount) {
       player.send("The game will start in " + (Math.floor((this.startWait - this.startClock.time) / 1000)).toString() + " seconds");
       player.send("Type \"/start\" to start the game immediately");
+      player.setTime(this.startWait - this.startClock.time, 10000);
     }
   }
   public broadcast(msg: string, textColor?: string, backgroundColor?: string) {

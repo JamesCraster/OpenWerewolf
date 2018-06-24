@@ -6,6 +6,9 @@
 /Client/login.js
 Games/Demo/demo.js
 
+#Ignore node_modules
+node_modules
+
 #Ignore unused html under development
 lobby.html
 

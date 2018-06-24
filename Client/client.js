@@ -146,30 +146,6 @@ $(function () {
     globalTime = time;
     globalWarn = warn;
   });
-  socket.on("sendGame", function (name, playerNames, playerColors) {
-    //console.log(playerNames);
-    //console.log(playerColors);
-    //console.log(name);
-    $('#container').append($('<div class="item">'));
-    var lastContainerDiv = $('#container div:last');
-    lastContainerDiv.append($('<p>' + name + '</p>'));
-    lastContainerDiv.append($('<br>'));
-    lastContainerDiv.append($('<p>Players: </p>'));
-    var lastContainerDivLastP = $('#container div:last p:last');
-    for (i = 0; i < playerNames.length; i++) {
-      if (i == 0) {
-        lastContainerDivLastP.append('<span style="color:' + playerColors[i] + '">' + playerNames[i]);
-      } else {
-        lastContainerDivLastP.append('<span>,')
-        lastContainerDivLastP.append('<span style="color:' + playerColors[i] + '"> ' + playerNames[i]);
-      }
-    }
-    $('.item').click(function () {
-      $('#lobby').hide("slow");
-      $('#topLevel').show("slow");
-      location.hash = 2;
-    });
-  });
   $('.item').click(function () {
     $('#lobby').hide("slow");
     $('#topLevel').show("slow");
@@ -184,10 +160,6 @@ $(function () {
     var div = $('#container div:nth-child(' + number.toString() + ') p:last');
     div.empty();
     div.html("Players: ");
-    console.log(playerNames);
-    console.log(playerColors);
-    console.log(name);
-    console.log(number);
     for (i = 0; i < playerNames.length; i++) {
       if (i == 0) {
         div.append('<span style="color:' + playerColors[i] + '">' + playerNames[i]);

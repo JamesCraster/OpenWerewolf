@@ -38,8 +38,6 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
 							<input type="checkbox" id="tsd-filter-only-exported" />
 							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
@@ -92,10 +90,9 @@
 								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="_games_demo_demo_.demo.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-private-protected">
+						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_games_demo_demo_.demo.html#_players" class="tsd-kind-icon">_players</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_games_demo_demo_.demo.html#playerchat" class="tsd-kind-icon">playerchat</a></li>
 							</ul>
 						</section>
@@ -105,7 +102,10 @@
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_games_demo_demo_.demo.html#inplay" class="tsd-kind-icon">in<wbr>Play</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_games_demo_demo_.demo.html#minimumplayersneeded" class="tsd-kind-icon">minimum<wbr>Players<wbr>Needed</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_games_demo_demo_.demo.html#playercount" class="tsd-kind-icon">player<wbr>Count</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_games_demo_demo_.demo.html#playernamecolorpairs" class="tsd-kind-icon">player<wbr>Name<wbr>Color<wbr>Pairs</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="_games_demo_demo_.demo.html#players" class="tsd-kind-icon">players</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_games_demo_demo_.demo.html#playersneeded" class="tsd-kind-icon">players<wbr>Needed</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="_games_demo_demo_.demo.html#startwait" class="tsd-kind-icon">start<wbr>Wait</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -125,6 +125,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_games_demo_demo_.demo.html#kick" class="tsd-kind-icon">kick</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_games_demo_demo_.demo.html#linethroughplayer" class="tsd-kind-icon">line<wbr>Through<wbr>Player</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_games_demo_demo_.demo.html#receive" class="tsd-kind-icon">receive</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="_games_demo_demo_.demo.html#setalltime" class="tsd-kind-icon">set<wbr>All<wbr>Time</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_games_demo_demo_.demo.html#start" class="tsd-kind-icon">start</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="_games_demo_demo_.demo.html#update" class="tsd-kind-icon">update</a></li>
 							</ul>
@@ -145,7 +146,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/Demo/demo.ts#L7">Games/Demo/demo.ts:7</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/Demo/demo.ts#L20">Games/Demo/demo.ts:20</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -159,26 +160,15 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-private-protected">
+			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-					<a name="_players" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _players</h3>
-					<div class="tsd-signature tsd-kind-icon">_players<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_core_.player.html" class="tsd-signature-type">Player</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#_players">_players</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L548">core.ts:548</a></li>
-						</ul>
-					</aside>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="playerchat" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> playerchat</h3>
 					<div class="tsd-signature tsd-kind-icon">playerchat<span class="tsd-signature-symbol">:</span> <a href="_core_.messageroom.html" class="tsd-signature-type">MessageRoom</a><span class="tsd-signature-symbol"> =&nbsp;new MessageRoom()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/Demo/demo.ts#L7">Games/Demo/demo.ts:7</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/Demo/demo.ts#L20">Games/Demo/demo.ts:20</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -196,7 +186,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#inplay">inPlay</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L566">core.ts:566</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L576">core.ts:576</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
@@ -214,7 +204,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#minimumplayersneeded">minimumPlayersNeeded</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L572">core.ts:572</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L582">core.ts:582</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -232,10 +222,46 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#playercount">playerCount</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L569">core.ts:569</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L579">core.ts:579</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<a name="playernamecolorpairs" class="tsd-anchor"></a>
+					<h3>player<wbr>Name<wbr>Color<wbr>Pairs</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> playerNameColorPairs<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_core_.namecolorpair.html" class="tsd-signature-type">nameColorPair</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#playernamecolorpairs">playerNameColorPairs</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L561">core.ts:561</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_core_.namecolorpair.html" class="tsd-signature-type">nameColorPair</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="players" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> players</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> players<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_core_.player.html" class="tsd-signature-type">Player</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#players">players</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L570">core.ts:570</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="_core_.player.html" class="tsd-signature-type">Player</a><span class="tsd-signature-symbol">[]</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -250,7 +276,25 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#playersneeded">playersNeeded</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L579">core.ts:579</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L589">core.ts:589</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+					<a name="startwait" class="tsd-anchor"></a>
+					<h3>start<wbr>Wait</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> startWait<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#startwait">startWait</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L573">core.ts:573</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -271,7 +315,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#addplayer">addPlayer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/Demo/demo.ts#L21">Games/Demo/demo.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/Demo/demo.ts#L34">Games/Demo/demo.ts:34</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -295,7 +339,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#adminreceive">adminReceive</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L722">core.ts:722</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L738">core.ts:738</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -322,7 +366,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#afterend">afterEnd</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L674">core.ts:674</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L690">core.ts:690</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -340,7 +384,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#beforestart">beforeStart</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L670">core.ts:670</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L686">core.ts:686</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -358,7 +402,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#broadcast">broadcast</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L653">core.ts:653</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L669">core.ts:669</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -388,7 +432,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#broadcastplayerlist">broadcastPlayerList</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L694">core.ts:694</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L710">core.ts:710</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -406,7 +450,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#broadcastrolelist">broadcastRoleList</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L704">core.ts:704</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L720">core.ts:720</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -430,7 +474,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#customadminreceive">customAdminReceive</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L720">core.ts:720</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L736">core.ts:736</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -457,7 +501,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#end">end</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/Demo/demo.ts#L15">Games/Demo/demo.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/Demo/demo.ts#L28">Games/Demo/demo.ts:28</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -475,7 +519,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#getplayer">getPlayer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L586">core.ts:586</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L596">core.ts:596</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -502,7 +546,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#isplayer">isPlayer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L595">core.ts:595</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L605">core.ts:605</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -526,7 +570,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#kick">kick</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L659">core.ts:659</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L675">core.ts:675</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -550,7 +594,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#linethroughplayer">lineThroughPlayer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/core.ts#L714">core.ts:714</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L730">core.ts:730</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -574,7 +618,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#receive">receive</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/Demo/demo.ts#L26">Games/Demo/demo.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/Demo/demo.ts#L39">Games/Demo/demo.ts:39</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -584,6 +628,33 @@
 								</li>
 								<li>
 									<h5>msg: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+					<a name="setalltime" class="tsd-anchor"></a>
+					<h3>set<wbr>All<wbr>Time</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>All<wbr>Time<span class="tsd-signature-symbol">(</span>time<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, warnTime<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#setalltime">setAllTime</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L613">core.ts:613</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>time: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>warnTime: <span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -601,7 +672,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#start">start</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/Demo/demo.ts#L12">Games/Demo/demo.ts:12</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/Demo/demo.ts#L25">Games/Demo/demo.ts:25</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -619,7 +690,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="_core_.game.html">Game</a>.<a href="_core_.game.html#update">update</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/3c2591e/Games/Demo/demo.ts#L18">Games/Demo/demo.ts:18</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/Games/Demo/demo.ts#L31">Games/Demo/demo.ts:31</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -661,9 +732,6 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_games_demo_demo_.demo.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-								<a href="_games_demo_demo_.demo.html#_players" class="tsd-kind-icon">_players</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_games_demo_demo_.demo.html#playerchat" class="tsd-kind-icon">playerchat</a>
 							</li>
@@ -677,7 +745,16 @@
 								<a href="_games_demo_demo_.demo.html#playercount" class="tsd-kind-icon">player<wbr>Count</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+								<a href="_games_demo_demo_.demo.html#playernamecolorpairs" class="tsd-kind-icon">player<wbr>Name<wbr>Color<wbr>Pairs</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="_games_demo_demo_.demo.html#players" class="tsd-kind-icon">players</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
 								<a href="_games_demo_demo_.demo.html#playersneeded" class="tsd-kind-icon">players<wbr>Needed</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
+								<a href="_games_demo_demo_.demo.html#startwait" class="tsd-kind-icon">start<wbr>Wait</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_games_demo_demo_.demo.html#addplayer" class="tsd-kind-icon">add<wbr>Player</a>
@@ -720,6 +797,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_games_demo_demo_.demo.html#receive" class="tsd-kind-icon">receive</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+								<a href="_games_demo_demo_.demo.html#setalltime" class="tsd-kind-icon">set<wbr>All<wbr>Time</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="_games_demo_demo_.demo.html#start" class="tsd-kind-icon">start</a>

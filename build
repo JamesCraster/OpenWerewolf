@@ -6,8 +6,11 @@
 
 while [ "$1" != "" ]; do
   case $1 in 
-    -b) 
+    -r) 
       
+      #delete release folder
+      rm -rI release
+
       #compile typescript and sass
       tsc
       sass Client/main.scss Client/main.css
@@ -22,29 +25,26 @@ while [ "$1" != "" ]; do
       #copy over all necessary files
       cp app.js release
       cp core.js release
-      cp client.html release
       cp LICENSE release
       cp README.md release
       cp package-lock.json release
       cp package.json release
       cp -r node_modules release
+      cp -r views release
       
-      #minify javascript, css and html on clientside
+      #minify javascript and css on clientside
       uglifyjs --compress --comments '/license/' -- Client/client.js > release/Client/client.js
+      cleancss -o release/Client/main.css Client/main.css
 
-      cp Client/main.css release/Client
       cp Games/OneDay/oneDay.js release/Games/OneDay
       cp Games/Classic/classic.js release/Games/Classic
-
-      #delete release folder
-      rm -rI release
 
       ;;
 
     -d)
 
       #generate documentation
-      typedoc --out docs ../OpenWerewolf --target es6 --theme default --readme none
+      typedoc --out docs --excludeExternals --externalPattern "**/node_modules/**" --ignoreCompilerErrors ../OpenWerewolf --target es6 --theme default --readme none
 
       #add .nojekyll to docs folder so that github pages accepts urls with underscores
       touch docs/.nojekyll
