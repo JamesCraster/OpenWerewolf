@@ -1,0 +1,47 @@
+//
+     Copyright (C) 2017 James V. Craster. This file is part of OpenWerewolf. 
+     OpenWerewolf is free software: you can redistribute it and/or modify
+     it under the terms of the GNU Affero General Public License as published
+     by the Free Software Foundation, version 3 of the License.
+     OpenWerewolf is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU Affero General Public License for more details.
+     You should have received a copy of the GNU Affero General Public License
+     along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>.
+
+//Parameters passed in by express:
+//numberOfGames : number of games ran by the server.
+//players : 2D array of player name / player color pairs.
+//gameNames : array of names of games.
+//gameInPlay : array of booleans, true if nth game in play, false otherwise
+
+doctype html
+include includes/mixin.pug
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        link(rel="stylesheet" type="text/css" href="main.css")
+        // IBM Plex Sans google font
+        link(href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans" rel="stylesheet")
+        title OpenWerewolf
+    
+    // Move scrollbar to bottom on window resize 
+    body(onresize="$('#inner')[0].scrollTop = $('#inner')[0].scrollHeight;")
+        div(id="lobby")
+            p(style="font-size: 2em; margin-bottom: 2%") OpenWerewolf
+            div(id="container" style="border:3px solid black;display:block;width: 75%;height:75%;margin-left:auto;margin-right:auto;")
+                - var n = 0;
+                - while(n < numberOfGames){
+                    +game(gameNames[n], players[n], gameInPlay[n])
+                    - n += 1;
+                - }
+
+        div(id="topLevel" style="display:none;")
+            include includes/game.pug
+        
+    script(src="/socket.io/socket.io.js")
+    script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
+    script(src="client.js")
+        
+        

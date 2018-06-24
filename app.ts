@@ -50,9 +50,19 @@ app.use(session);
 
 //serve static content
 app.use(express.static("Client"));
+app.set('view engine', 'pug');
 app.get("/", function (req: any, res: any) {
-  res.sendFile(__dirname + "/client.html");
-  console.log(req.session.socketID);
+  let gameNames = [];
+  for (let i = 0; i < server.numberOfGames; i++) {
+    gameNames.push("Game " + (i + 1).toString());
+  }
+  //add logic with pug to generate correct lobby
+  res.render('client', {
+    numberOfGames: server.numberOfGames,
+    gameNames: gameNames,
+    players: server.playerNameColorPairs,
+    gameInPlay: server.inPlayArray
+  });
 });
 
 //handle requests

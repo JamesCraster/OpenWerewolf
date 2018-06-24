@@ -12,6 +12,8 @@
 var globalNow = 0;
 var globalTime = 0;
 var globalWarn = -1;
+var isSafari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
+  navigator.userAgent && !navigator.userAgent.match('CriOS');
 
 function isClientScrolledDown() {
   return Math.abs($("#inner")[0].scrollTop + $('#inner')[0].clientHeight - $("#inner")[0].scrollHeight) <= 10;
@@ -149,15 +151,17 @@ $(function () {
     //console.log(playerColors);
     //console.log(name);
     $('#container').append($('<div class="item">'));
-    $('#container div:last').append($('<p>' + name + '</p>'));
-    $('#container div:last').append($('<br>'));
-    $('#container div:last').append($('<p>Players: </p>'));
+    var lastContainerDiv = $('#container div:last');
+    lastContainerDiv.append($('<p>' + name + '</p>'));
+    lastContainerDiv.append($('<br>'));
+    lastContainerDiv.append($('<p>Players: </p>'));
+    var lastContainerDivLastP = $('#container div:last p:last');
     for (i = 0; i < playerNames.length; i++) {
       if (i == 0) {
-        $('#container div:last p:last').append('<span style="color:' + playerColors[i] + '">' + playerNames[i]);
+        lastContainerDivLastP.append('<span style="color:' + playerColors[i] + '">' + playerNames[i]);
       } else {
-        $('#container div:last p:last').append('<span>,')
-        $('#container div:last p:last').append('<span style="color:' + playerColors[i] + '"> ' + playerNames[i]);
+        lastContainerDivLastP.append('<span>,')
+        lastContainerDivLastP.append('<span style="color:' + playerColors[i] + '"> ' + playerNames[i]);
       }
     }
     $('.item').click(function () {
@@ -171,7 +175,12 @@ $(function () {
     $('#topLevel').show("slow");
     location.hash = 2;
   });
-  socket.on("updateGame", function (name, playerNames, playerColors, number) {
+  socket.on("updateGame", function (name, playerNames, playerColors, number, inPlay) {
+    if (inPlay) {
+      $('#container div:nth-child(' + number.toString() + ') p:first').html(name + " [IN PLAY]");
+    } else {
+      $('#container div:nth-child(' + number.toString() + ') p:first').html(name + " [OPEN]");
+    }
     var div = $('#container div:nth-child(' + number.toString() + ') p:last');
     div.empty();
     div.html("Players: ");
@@ -192,10 +201,17 @@ $(function () {
     if (location.hash.length > 0) {
       $('#lobby').hide("slow");
       $('#topLevel').show("slow");
+      $('#msg').focus();
     } else {
-      $('#lobby').hide();
-      $('#topLevel').hide("slow");
-      $('#lobby').show("slow");
+      //On safari, transitions create ugly flashing, so they have been removed
+      if (isSafari) {
+        $('#topLevel').hide();
+        $('#lobby').show();
+        //on chrome/firefox, transitions are fine and so are kept.
+      } else {
+        $('#topLevel').hide("slow");
+        $('#lobby').show("slow");
+      }
     }
   }
 });

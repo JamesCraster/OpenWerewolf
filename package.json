@@ -9,6 +9,7 @@
     "express": "^4.16.3",
     "express-session": "^1.15.6",
     "grawlix": "^1.0.6",
+    "pug": "^2.0.3",
     "socket.io": "^2.0.4"
   },
   "devDependencies": {},

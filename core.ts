@@ -12,12 +12,6 @@
     GNU Affero General Public License for more details.
     You should have received a copy of the GNU Affero General Public License
     along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>.
-    
-    Additional terms under GNU AGPL version 3 section 7:
-    I (James Craster) require the preservation of this specified author attribution 
-    in the Appropriate Legal Notices displayed by works containing material that has 
-    been added to OpenWerewolf by me: 
-    "This project includes code from OpenWerewolf." 
 */
 
 "use strict";
@@ -284,14 +278,14 @@ export class Player {
     }
     this.socket.emit("sendGame", name, playerNames, playerColors);
   };
-  public updateGame(name: string, players: Array<Player>, number: number) {
+  public updateGame(name: string, players: Array<Player>, number: number, inPlay: boolean) {
     let playerNames: Array<string> = [];
     let playerColors: Array<string> = [];
     for (let i = 0; i < players.length; i++) {
       playerColors.push(players[i].color);
       playerNames.push(players[i].username);
     }
-    this.socket.emit("updateGame", name, playerNames, playerColors, number + 1);
+    this.socket.emit("updateGame", name, playerNames, playerColors, number + 1, inPlay);
   }
   public verifyAsAdmin(msg: string): boolean {
     if (msg == "!" + password) {
@@ -374,10 +368,27 @@ export class Server {
     for (let i = 0; i < this._players.length; i++) {
       for (let j = 0; j < this._games.length; j++) {
         this._players[i].updateGame("Game " + (j + 1).toString(),
-          this._games[j].players, j);
+          this._games[j].players, j, this._games[j].inPlay);
       }
     }
 
+  }
+  public get inPlayArray() {
+    let inPlayArray = [];
+    for (let i = 0; i < this._games.length; i++) {
+      inPlayArray.push(this._games[i].inPlay);
+    }
+    return inPlayArray;
+  }
+  public get numberOfGames() {
+    return this._games.length;
+  }
+  public get playerNameColorPairs() {
+    let playerNameColorPairs = [];
+    for (let i = 0; i < this._games.length; i++) {
+      playerNameColorPairs.push(this._games[i].playerNameColorPairs);
+    }
+    return playerNameColorPairs;
   }
   public addGame(game: Game) {
     this._games.push(game);
@@ -469,10 +480,6 @@ export class Server {
   }
   public addPlayer(socket: Socket) {
     this._players.push(new Player(socket));
-    for (let i = 0; i < this._games.length; i++) {
-      this._players[this._players.length - 1].sendGame("Game " + (i + 1).toString(),
-        this._games[i].players);
-    }
     console.log("Player length on add: " + this._players.length);
   }
   private register(player: Player, msg: string) {
@@ -595,6 +602,15 @@ export abstract class Game {
     this._maxPlayerCount = maxPlayerCount;
     setInterval(this.pregameLobbyUpdate.bind(this), 500);
     setInterval(this.update.bind(this), 500);
+  }
+  get playerNameColorPairs() {
+    let playerNameColorPairs = [];
+    console.log(this._players.length);
+    for (let i = 0; i < this._players.length; i++) {
+      playerNameColorPairs.push({ username: this._players[i].username, color: this._players[i].color });
+    }
+    console.log(playerNameColorPairs);
+    return playerNameColorPairs;
   }
   get players() {
     return this._players;
