@@ -194,7 +194,15 @@ export class Player {
   private _admin: boolean = false;
   private _startVote: boolean = false;
   private _color: string = "";
+  private _gameClickedLast: number = 0;
+  private _observer: boolean = false;
 
+  set gameClickedLast(game: number) {
+    this._gameClickedLast = game;
+  }
+  get gameClickedLast() {
+    return this._gameClickedLast;
+  }
   public constructor(socket: Socket) {
     this._socket = socket;
     this._username = "randomuser";
@@ -204,6 +212,9 @@ export class Player {
   }
   public disconnect() {
     this._disconnected = true;
+  }
+  public giveObserverStatus() {
+    this._observer = true;
   }
   get game() {
     return this._game;
@@ -325,7 +336,19 @@ export class Server {
           this._games[j].playerNameColorPairs, j, this._games[j].inPlay);
       }
     }
-
+  }
+  public gameClick(id: string, game: number) {
+    let player = this.getPlayer(id);
+    if (player) {
+      player.gameClickedLast = game;
+    }
+  }
+  public get gameTypes() {
+    let gameTypes = [];
+    for (let i = 0; i < this.numberOfGames; i++) {
+      gameTypes.push(this._games[i].gameType);
+    }
+    return gameTypes;
   }
   public get inPlayArray() {
     let inPlayArray = [];
@@ -352,42 +375,36 @@ export class Server {
     this._players.forEach(player => {
       //if player is registered and waiting to join a game
       if (player.registered && !player.inGame) {
-        for (var j = 0; j < this._games.length; j++) {
-          //if game needs a player
-          if (this._games[j].playersNeeded > 0) {
-            player.inGame = true;
-            player.game = j;
-            player.send(
-              "Hi, " +
-              player.username +
-              "! You have joined Game " +
-              (j + 1).toString() +
-              "."
-            );
-            this._games[j].broadcast(player.username + " has joined the game");
-            player.send("There are " + (this._games[j].playerCount + 1).toString() + " players in this game");
-            if (this._games[j].minimumPlayersNeeded - 1 > 0) {
-              this._games[j].broadcast("The game will begin when at least " + (this._games[j].minimumPlayersNeeded - 1).toString() + " more players have joined");
-              //if just hit the minimum number of players
-            } else if (this._games[j].minimumPlayersNeeded - 1 == 0) {
-              this._games[j].broadcast("The game will start in 30 seconds. Type \"/start\" to start the game now");
-            }
-            this._games[j].addPlayer(player);
-            if (this._games[j].minimumPlayersNeeded > 0) {
-              player.send("The game will begin when at least " + (this._games[j].minimumPlayersNeeded).toString() + " more players have joined");
-              //if just hit the minimum number of players
-            } else if (this._games[j].minimumPlayersNeeded == 0) {
-              player.send("The game will start in 30 seconds. Type \"/start\" to start the game now");
-              this._games[j].setAllTime(this._games[j].startWait, 10000);
-            }
-            break;
-          }
-        }
-        //otherwise (there must be a better way, instead of spamming the chat full!)
-        if (player.inGame == false) {
+        //if game needs a player
+        let j = player.gameClickedLast;
+        if (this._games[j].playersNeeded > 0) {
+          player.inGame = true;
+          player.game = j;
           player.send(
-            "All Games are currently full. Games only last 5 minutes, so there should be one available very soon!"
+            "Hi, " +
+            player.username +
+            "! You have joined Game " +
+            (j + 1).toString() +
+            "."
           );
+          this._games[j].broadcast(player.username + " has joined the game");
+          player.send("There are " + (this._games[j].playerCount + 1).toString() + " players in this game");
+          if (this._games[j].minimumPlayersNeeded - 1 > 0) {
+            this._games[j].broadcast("The game will begin when at least " + (this._games[j].minimumPlayersNeeded - 1).toString() + " more players have joined");
+            //if just hit the minimum number of players
+          } else if (this._games[j].minimumPlayersNeeded - 1 == 0) {
+            this._games[j].broadcast("The game will start in 30 seconds. Type \"/start\" to start the game now");
+          }
+          this._games[j].addPlayer(player);
+          if (this._games[j].minimumPlayersNeeded > 0) {
+            player.send("The game will begin when at least " + (this._games[j].minimumPlayersNeeded).toString() + " more players have joined");
+            //if just hit the minimum number of players
+          } else if (this._games[j].minimumPlayersNeeded == 0) {
+            player.send("The game will start in 30 seconds. Type \"/start\" to start the game now");
+            this._games[j].setAllTime(this._games[j].startWait, 10000);
+          }
+        } else {
+          player.send("This game is has already started, please join another.");
         }
       }
     });
@@ -453,25 +470,27 @@ export class Server {
       if (!player.registered) {
         this.register(player, msg);
       } else {
-        //if trying to sign in as admin 
-        if (msg.slice(0, 1) == "!") {
-          if (player.verifyAsAdmin(msg)) {
-            player.send('You have been granted administrator access', undefined, Colors.green);
-          }
-          if (player.admin) {
-            if (this._games[player.game].isPlayer(id)) {
-              this._games[player.game].adminReceive(player, msg);
+        if (player.inGame) {
+          //if trying to sign in as admin 
+          if (msg.slice(0, 1) == "!") {
+            if (player.verifyAsAdmin(msg)) {
+              player.send('You have been granted administrator access', undefined, Colors.green);
             }
-          }
-        } else if (msg[0] == "/" && !this._games[player.game].inPlay && player.startVote == false) {
-          if (Utils.isCommand(msg, "/start")) {
-            player.startVote = true;
-            this._games[player.game].broadcast(player.username + " has voted to start the game immediately by typing \"/start\"");
-          }
-        } else if (this.validateMessage(msg)) {
-          msg = grawlix(msg, { style: "asterix" });
-          if (this._games[player.game].isPlayer(id)) {
-            this._games[player.game].receive(player, msg);
+            if (player.admin) {
+              if (this._games[player.game].isPlayer(id)) {
+                this._games[player.game].adminReceive(player, msg);
+              }
+            }
+          } else if (msg[0] == "/" && !this._games[player.game].inPlay && player.startVote == false) {
+            if (Utils.isCommand(msg, "/start")) {
+              player.startVote = true;
+              this._games[player.game].broadcast(player.username + " has voted to start the game immediately by typing \"/start\"");
+            }
+          } else if (this.validateMessage(msg)) {
+            msg = grawlix(msg, { style: "asterix" });
+            if (this._games[player.game].isPlayer(id)) {
+              this._games[player.game].receive(player, msg);
+            }
           }
         }
       }
@@ -550,22 +569,24 @@ export abstract class Game {
   private readonly _startWait = 30000;
   private holdVote: boolean = false;
   private colorPool = PlayerColorArray.slice();
-
-  public constructor(server: Server, minPlayerCount: number, maxPlayerCount: number) {
+  private _gameType: string;
+  public constructor(server: Server, minPlayerCount: number, maxPlayerCount: number, gameType: string) {
     this._server = server;
     this._minPlayerCount = minPlayerCount;
     this._maxPlayerCount = maxPlayerCount;
+    this._gameType = gameType;
     setInterval(this.pregameLobbyUpdate.bind(this), 500);
     setInterval(this.update.bind(this), 500);
   }
   get playerNameColorPairs(): Array<nameColorPair> {
     let playerNameColorPairs = [];
-    console.log(this._players.length);
     for (let i = 0; i < this._players.length; i++) {
       playerNameColorPairs.push(<nameColorPair>{ username: this._players[i].username, color: this._players[i].color });
     }
-    console.log(playerNameColorPairs);
     return playerNameColorPairs;
+  }
+  public get gameType() {
+    return this._gameType;
   }
   protected get players() {
     return this._players;
@@ -785,8 +806,18 @@ export abstract class Game {
 export class MessageRoomMember extends Player {
   private _muted: boolean = false;
   private _deafened: boolean = false;
+  private _permanentlyMuted: boolean = false;
+  private _permanentlyDeafened: boolean = false;
   constructor(socket: Socket) {
     super(socket);
+  }
+  public permanentlyMute() {
+    this._permanentlyMuted = true;
+    this._muted = true;
+  }
+  public permanentlyDeafen() {
+    this._permanentlyDeafened = true;
+    this._deafened = true;
   }
   public get muted(): boolean {
     return this._muted;
@@ -798,13 +829,17 @@ export class MessageRoomMember extends Player {
     this._muted = true;
   }
   public unmute() {
-    this._muted = false;
+    if (!this._permanentlyMuted) {
+      this._muted = false;
+    }
   }
   public deafen() {
     this._deafened = true;
   }
   public undeafen() {
-    this._deafened = false;
+    if (!this._permanentlyDeafened) {
+      this._deafened = false;
+    }
   }
 }
 export class MessageRoom {

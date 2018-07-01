@@ -20,7 +20,7 @@ export class Demo extends Game {
     private playerchat: MessageRoom = new MessageRoom();
     constructor(server: Server) {
         //first argument is minimum player count, second is maximum player count
-        super(server, 3, 6);
+        super(server, 3, 6, "Demo");
     }
     public start() {
         this.beforeStart();

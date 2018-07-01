@@ -150,16 +150,18 @@ $(function () {
     $('#lobby').hide("slow");
     $('#topLevel').show("slow");
     location.hash = 2;
+    socket.emit("gameClick", $(this).attr('number'));
   });
   socket.on("updateGame", function (name, playerNames, playerColors, number, inPlay) {
     if (inPlay) {
-      $('#container div:nth-child(' + number.toString() + ') p:first').html(name + " [IN PLAY]");
+      $('#container div:nth-child(' + number.toString() + ') p:first span:first').html(name);
+      $('#container div:nth-child(' + number.toString() + ') p:first span:last').html("[IN PLAY]");
     } else {
-      $('#container div:nth-child(' + number.toString() + ') p:first').html(name + " [OPEN]");
+      $('#container div:nth-child(' + number.toString() + ') p:first span:first').html(name);
+      $('#container div:nth-child(' + number.toString() + ') p:first span:last').html("[OPEN]");
     }
-    var div = $('#container div:nth-child(' + number.toString() + ') p:last');
+    var div = $('#container div:nth-child(' + number.toString() + ') p:last span:first');
     div.empty();
-    div.html("Players: ");
     for (i = 0; i < playerNames.length; i++) {
       if (i == 0) {
         div.append('<span style="color:' + playerColors[i] + '">' + playerNames[i]);

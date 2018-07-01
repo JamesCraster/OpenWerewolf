@@ -15,6 +15,7 @@
 //players : 2D array of player name / player color pairs.
 //gameNames : array of names of games.
 //gameInPlay : array of booleans, true if nth game in play, false otherwise
+//gameTypes : array of strings, each correspoding to a game title
 
 doctype html
 include includes/mixin.pug
@@ -33,7 +34,7 @@ html(lang="en")
             div(id="container" style="border:3px solid black;display:block;width: 75%;height:75%;margin-left:auto;margin-right:auto;")
                 - var n = 0;
                 - while(n < numberOfGames){
-                    +game(gameNames[n], players[n], gameInPlay[n])
+                    +game(n, gameNames[n], players[n], gameInPlay[n], gameTypes[n])
                     - n += 1;
                 - }
 

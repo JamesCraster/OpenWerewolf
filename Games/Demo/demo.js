@@ -17,7 +17,7 @@ const core_1 = require("../../core");
 class Demo extends core_1.Game {
     constructor(server) {
         //first argument is minimum player count, second is maximum player count
-        super(server, 3, 6);
+        super(server, 3, 6, "Demo");
         //declare new message room
         this.playerchat = new core_1.MessageRoom();
     }

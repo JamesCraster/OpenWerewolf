@@ -40,6 +40,7 @@ server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
+server.addGame(new OneDay(server));
 
 //use session cookie in sockets
 io.use(function (socket: any, next: any) {
@@ -61,7 +62,8 @@ app.get("/", function (req: any, res: any) {
     numberOfGames: server.numberOfGames,
     gameNames: gameNames,
     players: server.playerNameColorPairs,
-    gameInPlay: server.inPlayArray
+    gameInPlay: server.inPlayArray,
+    gameTypes: server.gameTypes
   });
 });
 
@@ -84,6 +86,13 @@ io.on("connection", function (socket: Socket) {
   });
   socket.on("disconnect", function () {
     server.kick(socket.id);
+  });
+  socket.on("gameClick", function (gameNumber) {
+    if (!isNaN(gameNumber)) {
+      if (parseInt(gameNumber) != NaN) {
+        server.gameClick(socket.id, parseInt(gameNumber));
+      }
+    }
   });
   //socket.emit("message", "You are already playing a game somewhere else, so you cannot join this one.");
 });

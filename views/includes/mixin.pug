@@ -10,22 +10,28 @@
      You should have received a copy of the GNU Affero General Public License
      along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>.
      
-mixin game(name, players, inPlay)
-    div(class="item")
+mixin game(gameNumber, name, players, inPlay, gameType)
+    div(class="item" number=gameNumber name=name)
         - if(inPlay){
-        p= name + " [IN PLAY]"
+        p
+            span(style="float:left; padding-right:5px")= name
+            span(class="inPlay" style="float:right; padding-right:5px")= "[IN PLAY]"
         - }else{
-        p= name + " [OPEN]"
+        p 
+            span(style="float:left; padding-right:5px")= name
+            span(class="inPlay" style="float:right; padding-right:5px;")= "[OPEN]"
         - }
         br
         p Players:  
-            - var n = 0;
-            - while(n < players.length){
-                - if(n != 0){
-                span(style="color:#cecece") , 
-                span(style="color:" + players[n].color)= players[n].username
-                - }else{
-                span(style="color:" + players[n].color)= players[n].username
-                - }
-                - n+=1;
-            -}
+            span
+                - var n = 0;
+                - while(n < players.length){
+                    - if(n != 0){
+                    span(style="color:#cecece") , 
+                    span(style="color:" + players[n].color)= players[n].username
+                    - }else{
+                    span(style="color:" + players[n].color)= players[n].username
+                    - }
+                    - n+=1;
+                -}
+            span(style="float:right; padding-right:5px")= gameType

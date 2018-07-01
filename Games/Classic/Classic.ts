@@ -205,7 +205,7 @@ export class Classic extends Game {
   private tallyInterval: any;
 
   constructor(server: Server) {
-    super(server, 7, 9);
+    super(server, 7, 9, "Classic");
     setInterval(this.update.bind(this), 500);
   }
 
