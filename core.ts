@@ -235,6 +235,7 @@ export class Player {
     return this._registered;
   }
   public register() {
+    this._socket.emit('registered');
     this._registered = true;
   }
   public setUsername(username: string) {
@@ -294,6 +295,15 @@ export class Player {
   public lineThroughPlayer(msg: string) {
     this._socket.emit("lineThroughPlayer", msg);
   }
+  public removeListingFromLobby(username: string, game: number) {
+    this._socket.emit("removePlayerFromLobbyList", username, game);
+  }
+  public addListingToLobby(username: string, color: string, game: number) {
+    this._socket.emit("addPlayerToLobbyList", username, color, game);
+  }
+  public markGameStatusInLobby(game: number, status: string) {
+    this._socket.emit("markGameStatusInLobby", game, status);
+  }
   public setTime(time: number, warn: number) {
     this._socket.emit("setTime", time, warn);
   }
@@ -326,16 +336,6 @@ export class Server {
     this._games = [];
     //call joinGame() every 50 ms to join waiting players to games that need them
     setInterval(this.joinGame.bind(this), 50);
-    //This is responsible for bad bug...
-    setInterval(this.updateLobbyInterface.bind(this), 10000);
-  }
-  public updateLobbyInterface() {
-    for (let i = 0; i < this._players.length; i++) {
-      for (let j = 0; j < this._games.length; j++) {
-        this._players[i].updateGame("Game " + (j + 1).toString(),
-          this._games[j].playerNameColorPairs, j, this._games[j].inPlay);
-      }
-    }
   }
   public gameClick(id: string, game: number) {
     let player = this.getPlayer(id);
@@ -369,12 +369,13 @@ export class Server {
   }
   public addGame(game: Game) {
     this._games.push(game);
+    game.index = this._games.length - 1;
   }
   //join waiting players to games
   private joinGame() {
     this._players.forEach(player => {
       //if player is registered and waiting to join a game
-      if (player.registered && !player.inGame) {
+      if (player.registered && !player.inGame && player.gameClickedLast >= 0 && player.gameClickedLast < this._games.length) {
         //if game needs a player
         let j = player.gameClickedLast;
         if (this._games[j].playersNeeded > 0) {
@@ -403,8 +404,6 @@ export class Server {
             player.send("The game will start in 30 seconds. Type \"/start\" to start the game now");
             this._games[j].setAllTime(this._games[j].startWait, 10000);
           }
-        } else {
-          player.send("This game is has already started, please join another.");
         }
       }
     });
@@ -455,6 +454,12 @@ export class Server {
     console.log("Player length on add: " + this._players.length);
   }
   private register(player: Player, msg: string) {
+    if (player.gameClickedLast >= 0 && player.gameClickedLast < this._games.length) {
+      if (this._games[player.gameClickedLast].playersNeeded == 0) {
+        player.send("This game is has already started, please join a different one.");
+        return;
+      }
+    }
     //get rid of spaces in name and make lowercase
     msg = Server.cleanUpUsername(msg);
 
@@ -523,7 +528,33 @@ export class Server {
       return true;
     }
   }
-
+  public markGameStatusInLobby(game: number, status: string) {
+    for (let i = 0; i < this._players.length; i++) {
+      this._players[i].markGameStatusInLobby(game, status);
+    }
+  }
+  public listPlayerInLobby(username: string, color: string, game: number) {
+    for (let i = 0; i < this._players.length; i++) {
+      this._players[i].addListingToLobby(username, color, game);
+      //if the player is viewing the game, add joiner to their right bar
+      if (this._players[i].game == game) {
+        this._players[i].rightSend(username, color);
+      } else if (!this._players[i].registered && this._players[i].gameClickedLast == game) {
+        this._players[i].rightSend(username, color);
+      }
+    }
+  }
+  public unlistPlayerInLobby(username: string, game: number) {
+    for (let i = 0; i < this._players.length; i++) {
+      this._players[i].removeListingFromLobby(username, game);
+      //if the player is viewing the game, remove leaver from their right bar
+      if (this._players[i].game == game) {
+        this._players[i].removeRight(username);
+      } else if (!this._players[i].registered && this._players[i].gameClickedLast == game) {
+        this._players[i].removeRight(username);
+      }
+    }
+  }
   public kick(id: string): void {
     var player = this.getPlayer(id);
     if (player instanceof Player) {
@@ -570,6 +601,8 @@ export abstract class Game {
   private holdVote: boolean = false;
   private colorPool = PlayerColorArray.slice();
   private _gameType: string;
+  private _resetStartTime: boolean = false;
+  private _index: number = -1;
   public constructor(server: Server, minPlayerCount: number, maxPlayerCount: number, gameType: string) {
     this._server = server;
     this._minPlayerCount = minPlayerCount;
@@ -577,6 +610,12 @@ export abstract class Game {
     this._gameType = gameType;
     setInterval(this.pregameLobbyUpdate.bind(this), 500);
     setInterval(this.update.bind(this), 500);
+  }
+  public set index(index: number) {
+    this._index = index;
+  }
+  public get index() {
+    return this._index;
   }
   get playerNameColorPairs(): Array<nameColorPair> {
     let playerNameColorPairs = [];
@@ -643,6 +682,7 @@ export abstract class Game {
         this.start();
         //if have minimum number of players
       } else if (this._registeredPlayerCount >= this._minPlayerCount) {
+        this._resetStartTime = true;
         //if startClock has been ticking for startWait time, start:
         if (this.startClock.time > this.startWait) {
           this.start();
@@ -664,6 +704,11 @@ export abstract class Game {
       } else {
         this.startClock.restart();
         this.startClock.start();
+        if (this._resetStartTime) {
+          this.setAllTime(0, 0);
+          console.log("restarted");
+          this._resetStartTime = false;
+        }
       }
     }
   }
@@ -674,12 +719,8 @@ export abstract class Game {
     player.startVote = false;
     this._players.push(player);
     this._registeredPlayerCount++;
-    for (let i = 0; i < this._players.length; i++) {
-      player.rightSend(this._players[i].username, this._players[i].color);
-    }
-    for (let i = 0; i < this._players.length - 1; i++) {
-      this._players[i].rightSend(player.username, player.color);
-    }
+    this._server.listPlayerInLobby(player.username, player.color, this._index);
+
     //If the number of players is between minimum and maximum count, inform them of the wait remaining before game starts
     if (this._players.length > this._minPlayerCount && this._players.length < this._maxPlayerCount) {
       player.send("The game will start in " + (Math.floor((this.startWait - this.startClock.time) / 1000)).toString() + " seconds");
@@ -694,9 +735,7 @@ export abstract class Game {
   }
   public abstract receive(player: Player, msg: string): void;
   public kick(player: Player) {
-    for (let i = 0; i < this._players.length; i++) {
-      this._players[i].removeRight(player.username);
-    }
+    this._server.unlistPlayerInLobby(player.username, this._index);
     let index = this._players.indexOf(player);
     if (index != -1) {
       this._registeredPlayerCount--;
@@ -706,6 +745,7 @@ export abstract class Game {
   }
   protected beforeStart() {
     this._inPlay = true;
+    this._server.markGameStatusInLobby(this._index, "[IN PLAY]");
     this.broadcast("*** NEW GAME ***", Colors.brightGreen);
   }
   protected afterEnd() {
@@ -725,6 +765,7 @@ export abstract class Game {
     this._players = [];
     this._registeredPlayerCount = 0;
     this.colorPool = PlayerColorArray.slice();
+    this._server.markGameStatusInLobby(this._index, "[OPEN]");
   }
   protected abstract start(): void;
   protected abstract end(): void;

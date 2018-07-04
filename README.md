@@ -16,8 +16,8 @@
 
 ## The Games:
 * OneDay: During the night, your cards are stolen, swapped, carefully inspected and drunkenly taken by accident.
-It's up to you to piece together the truth (if you're a townie) or bluff your way to victory (if you're an evil, evil werewolf),
-in the Trial, where you'll be voting to kill the werewolves among you. For 3-5 players.
+It's up to you to piece together the truth (if you're a townie) or bluff your way to victory (if you're an evil werewolf),
+in the Trial, where you'll be voting to kill the werewolves among you. For 3-7 players.
 
 * Classic: A classic game of werewolf lasting multiple nights. Finished, currently being polished. 
 

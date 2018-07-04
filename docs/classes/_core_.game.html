@@ -99,11 +99,14 @@
 						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.game.html#_gametype" class="tsd-kind-icon">_game<wbr>Type</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.game.html#_inplay" class="tsd-kind-icon">_in<wbr>Play</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.game.html#_index" class="tsd-kind-icon">_index</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.game.html#_maxplayercount" class="tsd-kind-icon">_max<wbr>Player<wbr>Count</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.game.html#_minplayercount" class="tsd-kind-icon">_min<wbr>Player<wbr>Count</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.game.html#_players" class="tsd-kind-icon">_players</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.game.html#_registeredplayercount" class="tsd-kind-icon">_registered<wbr>Player<wbr>Count</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.game.html#_resetstarttime" class="tsd-kind-icon">_reset<wbr>Start<wbr>Time</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.game.html#_server" class="tsd-kind-icon">_server</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.game.html#_startwait" class="tsd-kind-icon">_start<wbr>Wait</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.game.html#colorpool" class="tsd-kind-icon">color<wbr>Pool</a></li>
@@ -114,7 +117,9 @@
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_core_.game.html#gametype" class="tsd-kind-icon">game<wbr>Type</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_core_.game.html#inplay" class="tsd-kind-icon">in<wbr>Play</a></li>
+								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="_core_.game.html#index" class="tsd-kind-icon">index</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_core_.game.html#minimumplayersneeded" class="tsd-kind-icon">minimum<wbr>Players<wbr>Needed</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_core_.game.html#playercount" class="tsd-kind-icon">player<wbr>Count</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_core_.game.html#playernamecolorpairs" class="tsd-kind-icon">player<wbr>Name<wbr>Color<wbr>Pairs</a></li>
@@ -155,13 +160,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Game<span class="tsd-signature-symbol">(</span>server<span class="tsd-signature-symbol">: </span><a href="_core_.server.html" class="tsd-signature-type">Server</a>, minPlayerCount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, maxPlayerCount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_core_.game.html" class="tsd-signature-type">Game</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Game<span class="tsd-signature-symbol">(</span>server<span class="tsd-signature-symbol">: </span><a href="_core_.server.html" class="tsd-signature-type">Server</a>, minPlayerCount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, maxPlayerCount<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, gameType<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_core_.game.html" class="tsd-signature-type">Game</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L552">core.ts:552</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L605">core.ts:605</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -175,6 +180,9 @@
 								<li>
 									<h5>maxPlayerCount: <span class="tsd-signature-type">number</span></h5>
 								</li>
+								<li>
+									<h5>gameType: <span class="tsd-signature-type">string</span></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="_core_.game.html" class="tsd-signature-type">Game</a></h4>
 						</li>
@@ -184,12 +192,32 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_gametype" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _game<wbr>Type</h3>
+					<div class="tsd-signature tsd-kind-icon">_game<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L603">core.ts:603</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="_inplay" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _in<wbr>Play</h3>
 					<div class="tsd-signature tsd-kind-icon">_in<wbr>Play<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L547">core.ts:547</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L597">core.ts:597</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_index" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _index</h3>
+					<div class="tsd-signature tsd-kind-icon">_index<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;-1</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L605">core.ts:605</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -199,7 +227,7 @@
 					<div class="tsd-signature tsd-kind-icon">_max<wbr>Player<wbr>Count<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L546">core.ts:546</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L596">core.ts:596</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -209,7 +237,7 @@
 					<div class="tsd-signature tsd-kind-icon">_min<wbr>Player<wbr>Count<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L545">core.ts:545</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L595">core.ts:595</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -219,7 +247,7 @@
 					<div class="tsd-signature tsd-kind-icon">_players<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="_core_.player.html" class="tsd-signature-type">Player</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L543">core.ts:543</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L593">core.ts:593</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -229,7 +257,17 @@
 					<div class="tsd-signature tsd-kind-icon">_registered<wbr>Player<wbr>Count<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L544">core.ts:544</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L594">core.ts:594</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="_resetstarttime" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _reset<wbr>Start<wbr>Time</h3>
+					<div class="tsd-signature tsd-kind-icon">_reset<wbr>Start<wbr>Time<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L604">core.ts:604</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -239,7 +277,7 @@
 					<div class="tsd-signature tsd-kind-icon">_server<span class="tsd-signature-symbol">:</span> <a href="_core_.server.html" class="tsd-signature-type">Server</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L548">core.ts:548</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L598">core.ts:598</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -249,7 +287,7 @@
 					<div class="tsd-signature tsd-kind-icon">_start<wbr>Wait<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">30000</span><span class="tsd-signature-symbol"> =&nbsp;30000</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L550">core.ts:550</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L600">core.ts:600</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -259,7 +297,7 @@
 					<div class="tsd-signature tsd-kind-icon">color<wbr>Pool<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> =&nbsp;PlayerColorArray.slice()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L552">core.ts:552</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L602">core.ts:602</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -269,7 +307,7 @@
 					<div class="tsd-signature tsd-kind-icon">hold<wbr>Vote<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L551">core.ts:551</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L601">core.ts:601</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -279,13 +317,30 @@
 					<div class="tsd-signature tsd-kind-icon">start<wbr>Clock<span class="tsd-signature-symbol">:</span> <a href="_core_.stopwatch.html" class="tsd-signature-type">Stopwatch</a><span class="tsd-signature-symbol"> =&nbsp;new Stopwatch()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L549">core.ts:549</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L599">core.ts:599</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="gametype" class="tsd-anchor"></a>
+					<h3>game<wbr>Type</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> gameType<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L627">core.ts:627</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
 					<a name="inplay" class="tsd-anchor"></a>
 					<h3>in<wbr>Play</h3>
@@ -296,10 +351,42 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L576">core.ts:576</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L636">core.ts:636</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class">
+					<a name="index" class="tsd-anchor"></a>
+					<h3>index</h3>
+					<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> index<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">set</span> index<span class="tsd-signature-symbol">(</span>index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L617">core.ts:617</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L614">core.ts:614</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>index: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -313,7 +400,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L582">core.ts:582</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L642">core.ts:642</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -330,7 +417,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L579">core.ts:579</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L639">core.ts:639</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -347,7 +434,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L561">core.ts:561</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L620">core.ts:620</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_core_.namecolorpair.html" class="tsd-signature-type">nameColorPair</a><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -364,7 +451,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L570">core.ts:570</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L630">core.ts:630</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="_core_.player.html" class="tsd-signature-type">Player</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -381,7 +468,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L589">core.ts:589</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L649">core.ts:649</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -398,7 +485,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L573">core.ts:573</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L633">core.ts:633</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -418,7 +505,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L650">core.ts:650</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L716">core.ts:716</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -441,7 +528,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L738">core.ts:738</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L800">core.ts:800</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -467,7 +554,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L690">core.ts:690</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L751">core.ts:751</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -484,7 +571,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L686">core.ts:686</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L746">core.ts:746</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -501,7 +588,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L669">core.ts:669</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L731">core.ts:731</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -530,7 +617,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L710">core.ts:710</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L772">core.ts:772</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -547,7 +634,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L720">core.ts:720</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L782">core.ts:782</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -570,7 +657,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L736">core.ts:736</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L798">core.ts:798</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -596,7 +683,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L709">core.ts:709</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L771">core.ts:771</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -613,7 +700,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L596">core.ts:596</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L656">core.ts:656</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -639,7 +726,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L605">core.ts:605</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L665">core.ts:665</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -662,7 +749,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L675">core.ts:675</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L737">core.ts:737</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -685,7 +772,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L730">core.ts:730</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L792">core.ts:792</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -708,7 +795,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L618">core.ts:618</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L678">core.ts:678</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -725,7 +812,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L674">core.ts:674</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L736">core.ts:736</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -751,7 +838,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L613">core.ts:613</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L673">core.ts:673</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -777,7 +864,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L708">core.ts:708</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L770">core.ts:770</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -794,7 +881,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/da38024/core.ts#L649">core.ts:649</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L715">core.ts:715</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -840,7 +927,13 @@
 								<a href="_core_.game.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_core_.game.html#_gametype" class="tsd-kind-icon">_game<wbr>Type</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_core_.game.html#_inplay" class="tsd-kind-icon">_in<wbr>Play</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_core_.game.html#_index" class="tsd-kind-icon">_index</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_core_.game.html#_maxplayercount" class="tsd-kind-icon">_max<wbr>Player<wbr>Count</a>
@@ -853,6 +946,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_core_.game.html#_registeredplayercount" class="tsd-kind-icon">_registered<wbr>Player<wbr>Count</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="_core_.game.html#_resetstarttime" class="tsd-kind-icon">_reset<wbr>Start<wbr>Time</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="_core_.game.html#_server" class="tsd-kind-icon">_server</a>
@@ -870,7 +966,13 @@
 								<a href="_core_.game.html#startclock" class="tsd-kind-icon">start<wbr>Clock</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="_core_.game.html#gametype" class="tsd-kind-icon">game<wbr>Type</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="_core_.game.html#inplay" class="tsd-kind-icon">in<wbr>Play</a>
+							</li>
+							<li class=" tsd-kind-accessor tsd-parent-kind-class">
+								<a href="_core_.game.html#index" class="tsd-kind-icon">index</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="_core_.game.html#minimumplayersneeded" class="tsd-kind-icon">minimum<wbr>Players<wbr>Needed</a>

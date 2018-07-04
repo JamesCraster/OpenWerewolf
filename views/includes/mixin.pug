@@ -28,9 +28,9 @@ mixin game(gameNumber, name, players, inPlay, gameType)
                 - while(n < players.length){
                     - if(n != 0){
                     span(style="color:#cecece") , 
-                    span(style="color:" + players[n].color)= players[n].username
+                    span(class="username" style="color:" + players[n].color)= players[n].username
                     - }else{
-                    span(style="color:" + players[n].color)= players[n].username
+                    span(class="username" style="color:" + players[n].color)= players[n].username
                     - }
                     - n+=1;
                 -}

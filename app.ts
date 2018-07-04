@@ -94,7 +94,6 @@ io.on("connection", function (socket: Socket) {
       }
     }
   });
-  //socket.emit("message", "You are already playing a game somewhere else, so you cannot join this one.");
 });
 
 //listen on port

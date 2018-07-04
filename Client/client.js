@@ -14,6 +14,7 @@ var globalTime = 0;
 var globalWarn = -1;
 var isSafari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
   navigator.userAgent && !navigator.userAgent.match('CriOS');
+var registered = false;
 
 function isClientScrolledDown() {
   return Math.abs($("#inner")[0].scrollTop + $('#inner')[0].clientHeight - $("#inner")[0].scrollHeight) <= 10;
@@ -97,6 +98,9 @@ function lineThroughPlayer(msg) {
 }
 
 $(function () {
+  if (window.location.hash == "#2") {
+    //transitionToGame();
+  }
   var socket = io();
 
   $("form").submit(function () {
@@ -116,7 +120,9 @@ $(function () {
   socket.on("reload", function () {
     location.reload(true);
   });
-  socket.on("registered", function () {});
+  socket.on("registered", function () {
+    registered = true;
+  });
   socket.on("clear", function () {
     $('ul').clear();
   })
@@ -147,9 +153,20 @@ $(function () {
     globalWarn = warn;
   });
   $('.item').click(function () {
-    $('#lobby').hide("slow");
-    $('#topLevel').show("slow");
+    if (registered) {
+      transitionToGame();
+    } else {
+      transitionToGame($(this).attr('name'));
+    }
     location.hash = 2;
+    if (!registered) {
+      $('#playerNames').empty();
+      $('#playerNames').append("<li>Players:</li>")
+      var usernameList = $(".item[number=" + $(this).attr('number') + "] .username");
+      for (i = 0; i < usernameList.length; i++) {
+        appendMessage($(usernameList[i]).text(), "#playerNames", $(usernameList[i]).css('color'));
+      }
+    }
     socket.emit("gameClick", $(this).attr('number'));
   });
   socket.on("updateGame", function (name, playerNames, playerColors, number, inPlay) {
@@ -164,28 +181,80 @@ $(function () {
     div.empty();
     for (i = 0; i < playerNames.length; i++) {
       if (i == 0) {
-        div.append('<span style="color:' + playerColors[i] + '">' + playerNames[i]);
+        div.append('<span class="username" style="color:' + playerColors[i] + '">' + playerNames[i]);
       } else {
         div.append('<span>,')
-        div.append('<span style="color:' + playerColors[i] + '"> ' + playerNames[i]);
+        div.append('<span class="username" style="color:' + playerColors[i] + '"> ' + playerNames[i]);
       }
+    }
+  });
+  //removes player from lobby list
+  socket.on("removePlayerFromLobbyList", function (name, game) {
+    console.log(name);
+    console.log(game);
+    var spanList = $('#container div:nth-child(' + (game + 1).toString() + ') p:last span:first span');
+    console.log(spanList);
+    for (i = 0; i < spanList.length; i++) {
+      if ($(spanList[i]).text() == name || $(spanList[i]).text() == " " + name) {
+        //remove the separating comma if it exists 
+        if (i != spanList.length) {
+          $(spanList[i + 1]).remove();
+        }
+        if (i == 2 && spanList.length == 3) {
+          $(spanList[1]).remove();
+        }
+        $(spanList[i]).remove();
+        break;
+      }
+    }
+  });
+  socket.on("addPlayerToLobbyList", function (name, color, game) {
+    var div = $('#container div:nth-child(' + (game + 1).toString() + ') p:last span:first');
+    var spanList = $('#container div:nth-child(' + (game + 1).toString() + ') p:last .username');
+    if (spanList.length == 0) {
+      div.append('<span class="username" style="color:' + color + '">' + name);
+    } else {
+      div.append('<span>,')
+      div.append('<span class="username" style="color:' + color + '"> ' + name);
+    }
+  });
+  socket.on("markGameStatusInLobby", function (game, status) {
+    $('#container div:nth-child(' + (game + 1).toString() + ') p:first span:last').html(status);
+    if (status == "[OPEN]") {
+      //clear out the player list as the game has ended
+      $('#container div:nth-child(' + (game + 1).toString() + ') p:last span:first').empty();
     }
   });
   window.onhashchange = function () {
     if (location.hash.length > 0) {
-      $('#lobby').hide("slow");
-      $('#topLevel').show("slow");
-      $('#msg').focus();
+      transitionToGame();
     } else {
-      //On safari, transitions create ugly flashing, so they have been removed
-      if (isSafari) {
-        $('#topLevel').hide();
-        $('#lobby').show();
-        //on chrome/firefox, transitions are fine and so are kept.
-      } else {
-        $('#topLevel').hide("slow");
-        $('#lobby').show("slow");
-      }
+      transitionToLobby();
     }
   }
 });
+
+function transitionToGame(gameName) {
+  if (isSafari) {
+    //get rid of animations
+    $('#lobby').hide();
+    $('#topLevel').show();
+  } else {
+    $('#lobby').hide("slow");
+    $('#topLevel').show("slow");
+  }
+  if (gameName) {
+    $('#name').text(gameName);
+  }
+  $('#msg').focus();
+}
+
+function transitionToLobby() {
+  if (isSafari) {
+    $('#topLevel').hide();
+    $('#lobby').show();
+  } else {
+    $('#topLevel').hide("slow");
+    $('#lobby').show("slow");
+  }
+}
