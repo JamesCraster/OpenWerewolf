@@ -5,11 +5,11 @@
 ## Play now at http://www.openwerewolf.com/
 
 ## Features:
-* You can run multiple games at once using the lobby system
-* The core is general. Use it to create and host whatever games you want
-* Code is free/open source under the AGPL-3.0
-* Includes spam and profanity filters
-* Well documented 
+* You can run multiple games at once using the lobby system.
+* The core engine is general. Use it to build and host whatever games you want.
+* The games are open source under the copyleft AGPL-3.0.
+* The core engine and client are open source under Apache-2.0 so can be used commercially.
+* Includes spam and profanity filters 
 
 ## Screenshot:
 ![An image of the OpenWerewolf client](https://github.com/JamesCraster/OpenWerewolf/blob/master/Screenshot.png)

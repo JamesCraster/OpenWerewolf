@@ -1,17 +1,14 @@
-/* 
-    OpenWerewolf, an online mafia game.
-    Copyright (C) 2017 James V. Craster  
-    
-    This file is part of OpenWerewolf. 
-    OpenWerewolf is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, version 3 of the License.
-    OpenWerewolf is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>.
+/*
+  Copyright 2017 James V. Craster
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
 */
 
 "use strict";
@@ -27,6 +24,7 @@ var app = express();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
 
+var myArgs = process.argv.slice(2);
 //create a session cookie
 var session = require("express-session")({
   secret: 'secret',
@@ -36,6 +34,10 @@ var session = require("express-session")({
 
 //create a new server
 var server = new Server();
+if (myArgs[0] == "debug") {
+  server.setDebug();
+  console.log("debug mode active");
+}
 server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
@@ -74,7 +76,7 @@ io.on("connection", function (socket: Socket) {
     socket.request.session.save();
   }
   let time = 0;
-  server.addPlayer(socket);
+  server.addPlayer(socket, socket.request.session.socketID);
   socket.on("message", function (msg: string) {
     if (Date.now() - time < 500) {
       socket.emit("message", "Please do not spam the chat");

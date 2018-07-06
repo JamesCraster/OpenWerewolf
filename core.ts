@@ -1,17 +1,14 @@
-/* 
-    OpenWerewolf, an online mafia game.
-    Copyright (C) 2017 James V. Craster  
-
-    This file is part of OpenWerewolf. 
-    OpenWerewolf is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published
-    by the Free Software Foundation, version 3 of the License.
-    OpenWerewolf is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
-    You should have received a copy of the GNU Affero General Public License
-    along with OpenWerewolf.  If not, see <http://www.gnu.org/licenses/>.
+/*
+  Copyright 2017 James V. Craster
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
 */
 
 "use strict";
@@ -166,15 +163,6 @@ interface PlayerData {
   [key: string]: any;
 }
 
-abstract class PlayerContainer {
-  private _player: Player;
-  constructor(player: Player) {
-    this._player = player;
-  }
-  get player(): Player {
-    return this._player;
-  }
-}
 interface nameColorPair {
   username: string,
   color: string
@@ -195,26 +183,34 @@ export class Player {
   private _startVote: boolean = false;
   private _color: string = "";
   private _gameClickedLast: number = 0;
-  private _observer: boolean = false;
+  private _session: string = "";
+  private _cannotRegister: boolean = false;
 
+  public banFromRegistering(): void {
+    this._cannotRegister = true;
+  }
+  get cannotRegister() {
+    return this._cannotRegister;
+  }
   set gameClickedLast(game: number) {
     this._gameClickedLast = game;
   }
   get gameClickedLast() {
     return this._gameClickedLast;
   }
-  public constructor(socket: Socket) {
+  public constructor(socket: Socket, session: string) {
     this._socket = socket;
     this._username = "randomuser";
+    this._session = session;
+  }
+  get session() {
+    return this._session;
   }
   get disconnected() {
     return this._disconnected;
   }
   public disconnect() {
     this._disconnected = true;
-  }
-  public giveObserverStatus() {
-    this._observer = true;
   }
   get game() {
     return this._game;
@@ -331,11 +327,15 @@ export class Server {
   private _players: Array<Player> = [];
   private _games: Array<Game> = [];
   private _registeredPlayerCount: number = 0;
+  private _debugMode: boolean = false;
   public constructor() {
     this._registeredPlayerCount = 0;
     this._games = [];
     //call joinGame() every 50 ms to join waiting players to games that need them
     setInterval(this.joinGame.bind(this), 50);
+  }
+  public setDebug() {
+    this._debugMode = true;
   }
   public gameClick(id: string, game: number) {
     let player = this.getPlayer(id);
@@ -449,11 +449,38 @@ export class Server {
       io.emit("message", msg);
     }
   }
-  public addPlayer(socket: Socket) {
-    this._players.push(new Player(socket));
+  public addPlayer(socket: Socket, session: string) {
+    let newPlayer = new Player(socket, session);
+    if (!this._debugMode) {
+      for (let i = 0; i < this._players.length; i++) {
+        if (this._players[i].inGame && this._players[i].session == session) {
+          socket.emit("message", "You're already playing a game in a different tab, so you cannot join this one.", undefined, Colors.red);
+          newPlayer.banFromRegistering();
+        }
+      }
+    }
+    this._players.push(newPlayer);
+    //update the games for the player as they have been absent for about 2 seconds, if they were reloading.
+    for (let j = 0; j < this._games.length; j++) {
+      this._players[this._players.length - 1].updateGame("Game " + (j + 1).toString(),
+        this._games[j].playerNameColorPairs, j, this._games[j].inPlay);
+    }
     console.log("Player length on add: " + this._players.length);
+
   }
   private register(player: Player, msg: string) {
+    if (!this._debugMode) {
+      if (player.cannotRegister) {
+        return;
+      }
+      for (let i = 0; i < this._players.length; i++) {
+        if (this._players[i].inGame && this._players[i].session == player.session) {
+          player.send("You're already playing a game in a different tab, so you cannot join this one.", undefined, Colors.red);
+          player.banFromRegistering();
+          return;
+        }
+      }
+    }
     if (player.gameClickedLast >= 0 && player.gameClickedLast < this._games.length) {
       if (this._games[player.gameClickedLast].playersNeeded == 0) {
         player.send("This game is has already started, please join a different one.");
@@ -849,8 +876,8 @@ export class MessageRoomMember extends Player {
   private _deafened: boolean = false;
   private _permanentlyMuted: boolean = false;
   private _permanentlyDeafened: boolean = false;
-  constructor(socket: Socket) {
-    super(socket);
+  constructor(socket: Socket, session: string) {
+    super(socket, session);
   }
   public permanentlyMute() {
     this._permanentlyMuted = true;
@@ -917,7 +944,7 @@ export class MessageRoom {
     }
   }
   public addPlayer(player: Player) {
-    this._members.push(new MessageRoomMember(player.socket));
+    this._members.push(new MessageRoomMember(player.socket, player.session));
   }
   public mute(player: Player) {
     let member = this.getMemberById(player.id);
