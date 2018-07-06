@@ -22,5 +22,10 @@ release/
 #Ignore notes
 TODO.txt
 .DS_Store
-Client/main.css.map
 
+Core/app.js
+Core/core.js
+Core/app.js
+Games/Demo/demo.js
+Core/core.js
+Games/Demo/demo.js
