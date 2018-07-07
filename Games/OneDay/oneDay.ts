@@ -382,7 +382,7 @@ export class OneDay extends Game {
       //notify players of time left every minute
       if (Date.now() - this.time > this.minutes * 1000 * 60 && this.minutes != this.length && !this.won) {
         this.playerchat.broadcast(this.length - this.minutes + " minutes remain until the trial. You can vote at any time using \"/vote username\"");
-        this.minutes += 1;
+        this.minutes += 2;
       }
       //end game
       if (Date.now() - this.time > this.length * 60 * 1000 + 70 * 1000) {
@@ -437,8 +437,6 @@ export class OneDay extends Game {
     for (let i = 0; i < this.players.length; i++) {
       this.players[i].data.vote = "";
     }
-    //print out all players
-    this.broadcastPlayerList();
     //shuffle the deck and hand out roles to players
     let roleList: Array<string> = [];
     let randomDeck: Array<string> = [];
@@ -471,39 +469,46 @@ export class OneDay extends Game {
       }
     }
     randomDeck = Utils.shuffle(roleList);
-    //list all of the roles in the order in which they wake up
-    this.broadcastRoleList(roleList);
     //mute everyone in the player chat
     this.playerchat.muteAll();
     this.playerchat.broadcast(
-      "If your card is swapped, you become the role on your new card. You don't wake up again.",
+      "If your card is swapped, you become the role on your new card. You don't act again.",
     );
     this.playerchat.broadcast(
-      "Your card may be swapped by someone without you realising.",
+      "Your card may be swapped without you realising.",
     );
     this.playerchat.broadcast(
       "There are 3 cards in the center that no-one has, one left, one middle, one right."
     )
+    this.playerchat.broadcast(
+      this.length + " minutes remain. You can secretly vote to kill someone at any time by typing \"/vote username\"," +
+      " e.g \"/vote frank\" secretly casts a vote for frank. Undo your vote " +
+      " by typing \"/unvote\". If everyone votes, the game ends early.",
+    );
+    this.playerchat.broadcast(
+      "In the trial, if a werewolf is killed, the town team win. If no werewolves are killed, the werewolves win. If the " +
+      "jester is killed, the jester wins, and everyone else loses."
+    );
     //for debugging purposes, you can choose the deck:
     //randomDeck = [Roles.seer, Roles.werewolf, Roles.transporter, Roles.werewolf, Roles.villager, Roles.transporter];
     for (let i = 0; i < this.players.length; i++) {
       if (randomDeck[i] == Roles.werewolf || randomDeck[i] == Roles.minion) {
         this.players[i].send(
-          "You look at your card. You are a " + randomDeck[i] + ".", undefined, Colors.red
+          "ROLE: You are a " + randomDeck[i] + ".", undefined, Colors.red
         );
         this.players[i].send(
           "AIM: You want all the werewolves to survive the trial.", undefined, Colors.red
         );
       } else if (randomDeck[i] == Roles.jester) {
         this.players[i].send(
-          "You look at your card. You are a " + randomDeck[i] + ".", undefined, Colors.yellow
+          "ROLE: You are a " + randomDeck[i] + ".", undefined, Colors.yellow
         );
         this.players[i].send(
           "AIM: You want to die in the trial", undefined, Colors.yellow
         );
       } else {
         this.players[i].send(
-          "You look at your card. You are a " + randomDeck[i] + ".", undefined, Colors.green
+          "ROLE: You are a " + randomDeck[i] + ".", undefined, Colors.green
         );
         this.players[i].send(
           "AIM: You want a werewolf to die in the trial.", undefined, Colors.green
@@ -521,26 +526,19 @@ export class OneDay extends Game {
     this.leftCard = randomDeck[randomDeck.length - 1];
     this.middleCard = randomDeck[randomDeck.length - 2];
     this.rightCard = randomDeck[randomDeck.length - 3];
-    //perform night actions
+
+    this.playerchat.broadcast(
+      "Read the full rules by typing \"/rules\".",
+
+    );
+    this.playerchat.broadcast("*** YOUR ACTION ***", Colors.brightGreen);
+    //perform player actions
     this.nightActions();
     //unmute and everyone in the player chat
     this.playerchat.unmuteAll();
-    this.playerchat.broadcast(
-      this.length + " minutes remain until trial. You can secretly vote to kill someone at any time by typing \"/vote username\"," +
-      " for example, \"/vote frank\" secretly casts a hidden vote for frank. You can undo your vote at any time" +
-      " by typing \"/unvote\". If everyone has voted, the game will end early.",
-    );
-    this.playerchat.broadcast(
-      "If a werewolf is killed in the trial, the town team win. If no werewolves are killed in the trial, the werewolves win. If the " +
-      "jester (if there is one) is killed in the trial, the jester wins, and everyone else loses. The minion is on the werewolves' team " +
-      "but can die without consequences."
-    );
-    this.playerchat.broadcast(
-      "You can secretly read the rules at any time by typing \"/rules\".",
-
-    );
     //start timer
     this.time = Date.now();
+    this.playerchat.broadcast("*** DISCUSSION ***", Colors.brightGreen);
   }
 
   private nightActions(): void {
@@ -604,6 +602,7 @@ export class OneDay extends Game {
         temporaryArray = this.players.slice();
         temporaryArray.splice(i, 1);
         let masons = this.getPlayersWithInitialRoleInArray(temporaryArray, Roles.mason);
+        this.players[i].send("You see if there are other masons.");
         if (masons.length == 2) {
           this.players[i].send("There are three masons.");
           this.players[i].send(
@@ -625,7 +624,7 @@ export class OneDay extends Game {
         //tell the minion who the werewolves are
         case Roles.minion:
           werewolves = this.getPlayersWithInitialRole(Roles.werewolf);
-          this.players[i].send("You wake up to see if there are any werewolves.");
+          this.players[i].send("You look to see if there are any werewolves.");
           if (werewolves.length == 0) {
             this.players[i].send("There are no werewolves.");
           } else if (werewolves.length == 1) {
@@ -644,13 +643,14 @@ export class OneDay extends Game {
           temporaryArray = this.players.slice();
           temporaryArray.splice(i, 1);
           werewolves = this.getPlayersWithInitialRoleInArray(temporaryArray, Roles.werewolf);
+          this.players[i].send("You look to see if there are other wolves.");
           if (werewolves.length == 2) {
             this.players[i].send("There are three werewolves.");
             this.players[i].send(
               "Your werewolf partners are " + werewolves[0].username + " and " + werewolves[1].username + "."
             )
             this.players[i].send(
-              "Tommorrow, try not to be suspicious! You must all pretend to be something else."
+              "Try not to be suspicious! You must all pretend to be something else."
             );
           } else if (werewolves.length == 1) {
             this.players[i].send("There are two werewolves.");
@@ -658,18 +658,19 @@ export class OneDay extends Game {
               "Your werewolf partner is '" + werewolves[0].username + "'."
             );
             this.players[i].send(
-              "Tommorrow, try not to be suspicious! You and your partner must pretend to be something else."
+              "Try not to be suspicious! You and your partner must pretend to be something else."
             );
           } else {
             this.players[i].send("You are the only werewolf.");
             this.players[i].send(
-              "Tommorrow, try not to be suspicious! Pretend to be something else."
+              "Try not to be suspicious! Pretend to be something else."
             );
           }
           break;
         //swap the robber's card with someone elses and tell them their new card
         case Roles.robber:
           let randomPlayer = this.getRandomPlayerExcludingPlayer(i);
+          this.players[i].send("You swap your card with someone else's.");
           this.players[i].send(
             "You swapped your card with '" +
             randomPlayer.username +
@@ -695,7 +696,7 @@ export class OneDay extends Game {
           );
           if (randomPlayer.data.role == Roles.werewolf) {
             this.players[i].send(
-              "Tomorrow, try not to be suspicious! Pretend that you are not a werewolf."
+              "Try not to be suspicious! Pretend you're not a werewolf."
             );
           }
           this.players[i].data.role = randomPlayer.data.role;
@@ -733,7 +734,7 @@ export class OneDay extends Game {
         case Roles.jester:
           this.players[i].send("You are the jester, so you do nothing.");
           this.players[i].send(
-            "Tomorrow, you want to be killed in the trial. Act as suspiciously as possible!"
+            "You want to be killed in the trial. Act as suspiciously as possible!"
           );
           break;
       }
@@ -828,7 +829,7 @@ export class OneDay extends Game {
         }
         if (this.players[i].data.role == Roles.werewolf) {
           this.players[i].send(
-            "Tomorrow, try not to be suspicious! Pretend that you are not a werewolf."
+            "Try not to be suspicious! Pretend that you are not a werewolf."
           );
         }
       }

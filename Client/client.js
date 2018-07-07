@@ -17,16 +17,17 @@ var globalWarn = -1;
 var isSafari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
   navigator.userAgent && !navigator.userAgent.match('CriOS');
 var registered = false;
+var notificationSound = new Audio("162464__kastenfrosch__message.mp3");
+notificationSound.volume = 0.6;
 
 function isClientScrolledDown() {
   return Math.abs($("#inner")[0].scrollTop + $('#inner')[0].clientHeight - $("#inner")[0].scrollHeight) <= 10;
 }
 
 function convertTime(duration) {
-  var milliseconds = parseInt((duration % 1000) / 100),
-    seconds = parseInt((duration / 1000) % 60),
-    minutes = parseInt((duration / (1000 * 60)) % 60),
-    hours = parseInt((duration / (1000 * 60 * 60)) % 24);
+  seconds = parseInt((duration / 1000) % 60);
+  minutes = parseInt((duration / (1000 * 60)) % 60);
+  hours = parseInt((duration / (1000 * 60 * 60)) % 24);
 
   hours = (hours < 10) ? "0" + hours : hours;
   minutes = (minutes < 10) ? "0" + minutes : minutes;
@@ -128,7 +129,12 @@ $(function () {
   socket.on("clear", function () {
     $('ul').clear();
   })
-
+  socket.on("setTitle", function (title) {
+    $(document).attr('title', title);
+  });
+  socket.on("notify", function () {
+    notificationSound.play();
+  });
   $('document').resize(function () {
 
   })

@@ -198,6 +198,9 @@ export class Player {
   get gameClickedLast() {
     return this._gameClickedLast;
   }
+  public notify() {
+    this._socket.emit("notify");
+  }
   public constructor(socket: Socket, session: string) {
     this._socket = socket;
     this._username = "randomuser";
@@ -226,6 +229,9 @@ export class Player {
   }
   set inGame(isInGame: boolean) {
     this._inGame = isInGame;
+  }
+  set title(title: string) {
+    this._socket.emit('setTitle', title);
   }
   get registered() {
     return this._registered;
@@ -442,12 +448,6 @@ export class Server {
       return false;
     }
     return true;
-  }
-  //send message to all players on the server
-  private static broadcast(msg: string) {
-    if (msg.trim() != "") {
-      io.emit("message", msg);
-    }
   }
   public addPlayer(socket: Socket, session: string) {
     let newPlayer = new Player(socket, session);
@@ -702,18 +702,24 @@ export abstract class Game {
       this._players[i].setTime(time, warnTime);
     }
   }
+  private setAllTitle(title: string) {
+    for (let i = 0; i < this._players.length; i++) {
+      this._players[i].title = title;
+    }
+  }
   private pregameLobbyUpdate() {
     if (!this.inPlay) {
       //if have max number of players, start the game immediately
       if (this._registeredPlayerCount >= this._maxPlayerCount) {
         this.start();
+        this.setAllTitle("OpenWerewolf:In play");
         //if have minimum number of players
       } else if (this._registeredPlayerCount >= this._minPlayerCount) {
         this._resetStartTime = true;
         //if startClock has been ticking for startWait time, start:
         if (this.startClock.time > this.startWait) {
           this.start();
-
+          this.setAllTitle("OpenWerewolf: In play");
           //if a majority has typed /start, start:
         } else if (!this.holdVote) {
           let voteCount = 0;
@@ -724,6 +730,9 @@ export abstract class Game {
           }
           if (voteCount >= this._players.length / 2) {
             this.start();
+            this.setAllTitle("OpenWerewolf: In play");
+          } else {
+            this.setAllTitle("Starting...");
           }
         }
         //TODO: if everyone has typed /wait, wait a further 30 seconds up to a limit of 3 minutes:
@@ -735,6 +744,7 @@ export abstract class Game {
           this.setAllTime(0, 0);
           console.log("restarted");
           this._resetStartTime = false;
+          this.setAllTitle("OpenWerewolf (" + this._players.length + ")");
         }
       }
     }
@@ -745,6 +755,7 @@ export abstract class Game {
     this.colorPool.splice(0, 1);
     player.startVote = false;
     this._players.push(player);
+    this.setAllTitle("OpenWerewolf (" + this._players.length + ")");
     this._registeredPlayerCount++;
     this._server.listPlayerInLobby(player.username, player.color, this._index);
 
@@ -769,8 +780,12 @@ export abstract class Game {
       this._players.splice(index, 1);
     }
     this.colorPool.push(player.color);
+    this.setAllTitle("OpenWerewolf (" + this._players.length + ")");
   }
   protected beforeStart() {
+    for (let i = 0; i < this._players.length; i++) {
+      this._players[i].notify();
+    }
     this._inPlay = true;
     this._server.markGameStatusInLobby(this._index, "[IN PLAY]");
     this.broadcast("*** NEW GAME ***", Colors.brightGreen);
