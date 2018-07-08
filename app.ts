@@ -23,10 +23,29 @@ var express = require("express");
 var app = express();
 var http = require("http").Server(app);
 var io = require("socket.io")(http);
+var expressSession = require("express-session");
+var RedisStore = require("connect-redis")(expressSession);
+var redis = require('redis-server');
+const redisServer = new redis(6379);
+redisServer.open(((err: string) => {
 
+}));
+
+//var redis = require('redis');
+//var client = redis.createClient();
+/*client.flushdb(function (err: any, succeeded: any) {
+  console.log(succeeded);
+});
+client.rpush('frameworks', 'angularjs', 'backbone', function (err: any, reply: any) {
+  console.log(reply);
+});
+client.lrange('frameworks', 0, 0, function (err: any, reply: any) {
+  console.log(reply[0]);
+});*/
 var myArgs = process.argv.slice(2);
 //create a session cookie
-var session = require("express-session")({
+var session = expressSession({
+  store: new RedisStore({ host: 'localhost', port: 6379 }),
   secret: 'secret',
   resave: false,
   saveUninitialized: true

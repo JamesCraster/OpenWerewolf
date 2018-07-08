@@ -52,7 +52,9 @@ while [ "$1" != "" ]; do
       cp Client/*.mp3 release/Client
 
       cp Games/OneDay/oneDay.js release/Games/OneDay
+      cp Games/OneDay/LICENSE release/Games/OneDay
       cp Games/Classic/classic.js release/Games/Classic
+      cp Games/Classic/LICENSE relase/Games/Classic
 
       ;;
 

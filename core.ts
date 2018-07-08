@@ -23,7 +23,7 @@ var io = require("socket.io")(http);
 var grawlix = require("grawlix");
 
 //set this to what the admin password should be
-const password = "password";
+const password = "goat";
 
 export class Utils {
   /**
