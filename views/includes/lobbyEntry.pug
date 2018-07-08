@@ -10,16 +10,16 @@
     See the License for the specific language governing permissions and
     limitations under the License.
      
-mixin game(gameNumber, name, players, inPlay, gameType)
+mixin lobbyEntry(gameNumber, name, players, inPlay, gameType)
     div(class="item" number=gameNumber name=name)
         - if(inPlay){
         p
-            span(style="float:left; padding-right:5px")= name
-            span(class="inPlay" style="float:right; padding-right:5px")= "[IN PLAY]"
+            span(class="gameName")= name
+            span(class="inPlay")= "[IN PLAY]"
         - }else{
         p 
-            span(style="float:left; padding-right:5px")= name
-            span(class="inPlay" style="float:right; padding-right:5px;")= "[OPEN]"
+            span(class="gameName")= name
+            span(class="inPlay")= "[OPEN]"
         - }
         br
         p Players:  
@@ -34,4 +34,4 @@ mixin game(gameNumber, name, players, inPlay, gameType)
                     - }
                     - n+=1;
                 -}
-            span(style="float:right; padding-right:5px")= gameType
+            span(id="gameType")= gameType

@@ -30,3 +30,7 @@ Games/Demo/demo.js
 Core/core.js
 Games/Demo/demo.js
 dump.rdb
+Core/player.js
+Core/server.js
+Core/utils.js
+Core/game.js

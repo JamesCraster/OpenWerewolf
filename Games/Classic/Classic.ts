@@ -13,9 +13,7 @@
 */
 
 "use strict";
-
-import { MessageRoom, Colors, Server, Game, Player, Utils, Stopwatch, RoleList } from "../../core";
-import { exists } from "fs";
+import { MessageRoom, Game, Server, Player, Utils, RoleList, Colors, Stopwatch } from "../../Core/core";
 
 enum Phase {
   day = "day",

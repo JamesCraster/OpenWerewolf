@@ -101,9 +101,6 @@ function lineThroughPlayer(msg) {
 }
 
 $(function () {
-  if (window.location.hash == "#2") {
-    //transitionToGame();
-  }
   var socket = io();
 
   $("form").submit(function () {
@@ -201,10 +198,7 @@ $(function () {
   });
   //removes player from lobby list
   socket.on("removePlayerFromLobbyList", function (name, game) {
-    console.log(name);
-    console.log(game);
     var spanList = $('#container div:nth-child(' + (game + 1).toString() + ') p:last span:first span');
-    console.log(spanList);
     for (i = 0; i < spanList.length; i++) {
       if ($(spanList[i]).text() == name || $(spanList[i]).text() == " " + name) {
         //remove the separating comma if it exists 
@@ -255,7 +249,7 @@ function transitionToGame(gameName) {
     $('#topLevel').show("slow");
   }
   if (gameName) {
-    $('#name').text(gameName);
+    $('#mainGameName').text(gameName);
   }
   $('#msg').focus();
 }

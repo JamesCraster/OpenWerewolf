@@ -61,11 +61,7 @@
     // "experimentalDecorators": true,        /* Enables experimental support for ES7 decorators. */
     // "emitDecoratorMetadata": true,         /* Enables experimental support for emitting type metadata for decorators. */
   },
-  "files": [
-    "app.ts",
-    "core.ts",
-    "Games/OneDay/oneDay.ts",
-    "Games/Classic/Classic.ts",
-    "Games/Demo/demo.ts"
+  "include": [
+    "**/*"
   ]
 }

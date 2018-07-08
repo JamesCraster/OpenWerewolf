@@ -13,12 +13,13 @@
 
 "use strict";
 
-import { Server } from "./core";
+import { Server } from "./Core/server";
 import { Socket } from "./node_modules/@types/socket.io";
 import { OneDay } from "./Games/OneDay/oneDay";
 import { Classic } from "./Games/Classic/Classic";
 import { Demo } from "./Games/Demo/demo";
 
+process.env.NODE_ENV = 'production';
 var express = require("express");
 var app = express();
 var http = require("http").Server(app);
@@ -27,29 +28,9 @@ var expressSession = require("express-session");
 var RedisStore = require("connect-redis")(expressSession);
 var redis = require('redis-server');
 const redisServer = new redis(6379);
-redisServer.open(((err: string) => {
+redisServer.open(((err: string) => { }));
 
-}));
-
-//var redis = require('redis');
-//var client = redis.createClient();
-/*client.flushdb(function (err: any, succeeded: any) {
-  console.log(succeeded);
-});
-client.rpush('frameworks', 'angularjs', 'backbone', function (err: any, reply: any) {
-  console.log(reply);
-});
-client.lrange('frameworks', 0, 0, function (err: any, reply: any) {
-  console.log(reply[0]);
-});*/
 var myArgs = process.argv.slice(2);
-//create a session cookie
-var session = expressSession({
-  store: new RedisStore({ host: 'localhost', port: 6379 }),
-  secret: 'secret',
-  resave: false,
-  saveUninitialized: true
-});
 
 //create a new server
 var server = new Server();
@@ -57,11 +38,20 @@ if (myArgs[0] == "debug") {
   server.setDebug();
   console.log("debug mode active");
 }
+
 server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
+
+//create a session cookie
+var session = expressSession({
+  store: new RedisStore({ host: 'localhost', port: 6379 }),
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: true
+});
 
 //use session cookie in sockets
 io.use(function (socket: any, next: any) {
@@ -79,7 +69,7 @@ app.get("/", function (req: any, res: any) {
     gameNames.push("Game " + (i + 1).toString());
   }
   //add logic with pug to generate correct lobby
-  res.render('client', {
+  res.render('index', {
     numberOfGames: server.numberOfGames,
     gameNames: gameNames,
     players: server.playerNameColorPairs,
@@ -90,6 +80,7 @@ app.get("/", function (req: any, res: any) {
 
 //handle requests
 io.on("connection", function (socket: Socket) {
+  //set the session unless it is already set
   if (!socket.request.session.socketID) {
     socket.request.session.socketID = socket.id;
     socket.request.session.save();
@@ -97,6 +88,7 @@ io.on("connection", function (socket: Socket) {
   let time = 0;
   server.addPlayer(socket, socket.request.session.socketID);
   socket.on("message", function (msg: string) {
+    //filter for spam(consecutive messages within 1/2 a second)
     if (Date.now() - time < 500) {
       socket.emit("message", "Please do not spam the chat");
       time = Date.now();

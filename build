@@ -61,7 +61,7 @@ while [ "$1" != "" ]; do
     -d)
 
       #generate documentation
-      typedoc --out docs --excludeExternals --externalPattern "**/node_modules/**" --ignoreCompilerErrors ../OpenWerewolf --target es6 --theme default --readme none
+      typedoc --out docs --mode 'file' --excludeExternals --externalPattern "**/node_modules/**" --ignoreCompilerErrors ../OpenWerewolf/Core --target es6 --theme default --readme none
 
       #add .nojekyll to docs folder so that github pages accepts urls with underscores
       touch docs/.nojekyll

@@ -18,6 +18,7 @@ $central-innerbox-height: 70%;
 $msg-height: 40px;
 $standard-font-size: 18px;
 $small-font-size: 0.8em;
+$inner-div-margin-bottom: 105px;
 @mixin standard-flexbox($flex-direction) {
   display: flex;
   justify-content: center;
@@ -70,7 +71,7 @@ body {
   border: $standard-border;
   height: $central-innerbox-height;
   width: 60%;
-  margin-bottom: $msg-height + 2 + 105;
+  margin-bottom: $msg-height + 2 + $inner-div-margin-bottom;
   box-sizing: border-box;
   overflow-y: auto;
 }
@@ -115,7 +116,7 @@ form {
 }
 
 #submit {
-  margin-bottom: 105px;
+  margin-bottom: $inner-div-margin-bottom;
   font-size: $small-font-size;
   width: 81px;
   height: $msg-height + 2;
@@ -163,6 +164,12 @@ a {
   margin: 0px -10px;
   overflow-y: auto;
   overflow-x: hidden;
+  border: 3px solid black;
+  display: block;
+  width: 75%;
+  height: 75%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .item {
@@ -199,6 +206,45 @@ a {
   min-width: 50px;
 }
 
+#mainTitle {
+  font-size: 2em;
+  margin-bottom: 2%
+}
+
+#topLevel {
+  display: none;
+}
+
+#gameStatus {
+  float: right;
+  padding-right: 5px
+}
+
+#gameType {
+  float: right;
+  padding-right: 5px;
+}
+
+.gameName {
+  float: left;
+  padding-right: 5px
+}
+
+.inPlay {
+  float: right;
+  padding-right: 5px;
+}
+
+#mainGameName {
+  margin-top: 30px;
+  margin-left: 8%;
+  font-size: 1.6em;
+}
+
+.menulink {
+  padding-left: 15px;
+}
+
 @media only screen and (max-device-width: 430px) {
   #inner {
     height: 100%;
@@ -212,6 +258,9 @@ a {
     font-size: 18px;
   }
   .sideBox {
+    display: none;
+  }
+  #name {
     display: none;
   }
   #outer,

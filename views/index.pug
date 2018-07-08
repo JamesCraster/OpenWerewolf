@@ -18,32 +18,30 @@
 //gameTypes : array of strings, each correspoding to a game title
 
 doctype html
-include includes/mixin.pug
+include includes/lobbyEntry.pug
 html(lang="en")
     head
         meta(charset="UTF-8")
         link(rel="stylesheet" type="text/css" href="main.css")
         // IBM Plex Sans google font
         link(href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans" rel="stylesheet")
-        //link(rel="icon" type="image/png" href="favicon.png")  
         title OpenWerewolf
     
     // Move scrollbar to bottom on window resize 
     body(onresize="$('#inner')[0].scrollTop = $('#inner')[0].scrollHeight;")
         div(id="lobby")
-            p(style="font-size: 2em; margin-bottom: 2%") OpenWerewolf
-            div(id="container" style="border:3px solid black;display:block;width: 75%;height:75%;margin-left:auto;margin-right:auto;")
+            p(id="mainTitle") OpenWerewolf
+            div(id="container")
                 - var n = 0;
                 - while(n < numberOfGames){
-                    +game(n, gameNames[n], players[n], gameInPlay[n], gameTypes[n])
+                    +lobbyEntry(n, gameNames[n], players[n], gameInPlay[n], gameTypes[n])
                     - n += 1;
                 - }
 
-        div(id="topLevel" style="display:none;")
+        div(id="topLevel")
             include includes/game.pug
     
     script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js")
-    //script(src="/socket.io/socket.io.js")
     script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
     script(src="client.js")
         

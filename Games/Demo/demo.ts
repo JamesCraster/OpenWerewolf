@@ -12,7 +12,7 @@
 */
 "use strict";
 
-import { MessageRoom, Server, Game, Player, Utils, RoleList, Colors, Stopwatch } from "../../core";
+import { MessageRoom, Game, Server, Player, Utils, RoleList, Colors, Stopwatch } from "../../Core/core";
 
 export class Demo extends Game {
     //declare new message room

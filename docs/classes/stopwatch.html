@@ -54,10 +54,7 @@
 					<a href="../index.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_core_.html">&quot;core&quot;</a>
-				</li>
-				<li>
-					<a href="_core_.stopwatch.html">Stopwatch</a>
+					<a href="stopwatch.html">Stopwatch</a>
 				</li>
 			</ul>
 			<h1>Class Stopwatch</h1>
@@ -82,23 +79,23 @@
 						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.stopwatch.html#_running" class="tsd-kind-icon">_running</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.stopwatch.html#_storedelapsed" class="tsd-kind-icon">_stored<wbr>Elapsed</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="_core_.stopwatch.html#_time" class="tsd-kind-icon">_time</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="stopwatch.html#_running" class="tsd-kind-icon">_running</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="stopwatch.html#_storedelapsed" class="tsd-kind-icon">_stored<wbr>Elapsed</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="stopwatch.html#_time" class="tsd-kind-icon">_time</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="_core_.stopwatch.html#time" class="tsd-kind-icon">time</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="stopwatch.html#time" class="tsd-kind-icon">time</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_.stopwatch.html#restart" class="tsd-kind-icon">restart</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_.stopwatch.html#start" class="tsd-kind-icon">start</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="_core_.stopwatch.html#stop" class="tsd-kind-icon">stop</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="stopwatch.html#restart" class="tsd-kind-icon">restart</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="stopwatch.html#start" class="tsd-kind-icon">start</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="stopwatch.html#stop" class="tsd-kind-icon">stop</a></li>
 							</ul>
 						</section>
 					</div>
@@ -112,7 +109,7 @@
 					<div class="tsd-signature tsd-kind-icon">_running<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L135">core.ts:135</a></li>
+							<li>Defined in utils.ts:22</li>
 						</ul>
 					</aside>
 				</section>
@@ -122,7 +119,7 @@
 					<div class="tsd-signature tsd-kind-icon">_stored<wbr>Elapsed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;0</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L134">core.ts:134</a></li>
+							<li>Defined in utils.ts:21</li>
 						</ul>
 					</aside>
 				</section>
@@ -132,7 +129,7 @@
 					<div class="tsd-signature tsd-kind-icon">_time<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> =&nbsp;Date.now()</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L133">core.ts:133</a></li>
+							<li>Defined in utils.ts:20</li>
 						</ul>
 					</aside>
 				</section>
@@ -149,7 +146,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L141">core.ts:141</a></li>
+									<li>Defined in utils.ts:31</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -169,9 +166,15 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L137">core.ts:137</a></li>
+									<li>Defined in utils.ts:27</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Restarts the timer, but does not affect whether it is running or not.
+									If the timer is stopped, it will remain so after restart is called.</p>
+								</div>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
@@ -186,7 +189,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L156">core.ts:156</a></li>
+									<li>Defined in utils.ts:46</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -203,7 +206,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/a4bc6dc/core.ts#L148">core.ts:148</a></li>
+									<li>Defined in utils.ts:38</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -218,108 +221,78 @@
 					<li class="globals  ">
 						<a href="../index.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_games_classic_classic_.html">"<wbr>Games/<wbr>Classic/<wbr>Classic"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_games_demo_demo_.html">"<wbr>Games/<wbr>Demo/demo"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_games_oneday_oneday_.html">"<wbr>Games/<wbr>One<wbr>Day/one<wbr>Day"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_app_.html">"app"</a>
-					</li>
-					<li class="current tsd-kind-external-module">
-						<a href="../modules/_core_.html">"core"</a>
-					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum tsd-parent-kind-external-module">
-						<a href="../enums/_core_.colors.html" class="tsd-kind-icon">Colors</a>
+					<li class=" tsd-kind-enum">
+						<a href="../enums/colors.html" class="tsd-kind-icon">Colors</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.game.html" class="tsd-kind-icon">Game</a>
+					<li class=" tsd-kind-class">
+						<a href="game.html" class="tsd-kind-icon">Game</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.messageroom.html" class="tsd-kind-icon">Message<wbr>Room</a>
+					<li class=" tsd-kind-class">
+						<a href="messageroom.html" class="tsd-kind-icon">Message<wbr>Room</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.messageroommember.html" class="tsd-kind-icon">Message<wbr>Room<wbr>Member</a>
+					<li class=" tsd-kind-class tsd-is-not-exported">
+						<a href="messageroommember.html" class="tsd-kind-icon">Message<wbr>Room<wbr>Member</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.player.html" class="tsd-kind-icon">Player</a>
+					<li class=" tsd-kind-class">
+						<a href="player.html" class="tsd-kind-icon">Player</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_core_.playercontainer.html" class="tsd-kind-icon">Player<wbr>Container</a>
+					<li class=" tsd-kind-class">
+						<a href="rolelist.html" class="tsd-kind-icon">Role<wbr>List</a>
 					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.rolelist.html" class="tsd-kind-icon">Role<wbr>List</a>
-					</li>
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.server.html" class="tsd-kind-icon">Server</a>
+					<li class=" tsd-kind-class">
+						<a href="server.html" class="tsd-kind-icon">Server</a>
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.stopwatch.html" class="tsd-kind-icon">Stopwatch</a>
+					<li class="current tsd-kind-class">
+						<a href="stopwatch.html" class="tsd-kind-icon">Stopwatch</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="_core_.stopwatch.html#_running" class="tsd-kind-icon">_running</a>
+								<a href="stopwatch.html#_running" class="tsd-kind-icon">_running</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="_core_.stopwatch.html#_storedelapsed" class="tsd-kind-icon">_stored<wbr>Elapsed</a>
+								<a href="stopwatch.html#_storedelapsed" class="tsd-kind-icon">_stored<wbr>Elapsed</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
-								<a href="_core_.stopwatch.html#_time" class="tsd-kind-icon">_time</a>
+								<a href="stopwatch.html#_time" class="tsd-kind-icon">_time</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="_core_.stopwatch.html#time" class="tsd-kind-icon">time</a>
+								<a href="stopwatch.html#time" class="tsd-kind-icon">time</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_core_.stopwatch.html#restart" class="tsd-kind-icon">restart</a>
+								<a href="stopwatch.html#restart" class="tsd-kind-icon">restart</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_core_.stopwatch.html#start" class="tsd-kind-icon">start</a>
+								<a href="stopwatch.html#start" class="tsd-kind-icon">start</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="_core_.stopwatch.html#stop" class="tsd-kind-icon">stop</a>
+								<a href="stopwatch.html#stop" class="tsd-kind-icon">stop</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module">
-						<a href="_core_.utils.html" class="tsd-kind-icon">Utils</a>
+					<li class=" tsd-kind-class">
+						<a href="utils.html" class="tsd-kind-icon">Utils</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/_core_.playerdata.html" class="tsd-kind-icon">Player<wbr>Data</a>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/namecolorpair.html" class="tsd-kind-icon">Name<wbr>Color<wbr>Pair</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../interfaces/_core_.namecolorpair.html" class="tsd-kind-icon">name<wbr>Color<wbr>Pair</a>
+					<li class=" tsd-kind-interface tsd-is-not-exported">
+						<a href="../interfaces/playerdata.html" class="tsd-kind-icon">Player<wbr>Data</a>
 					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_core_.html#playercolorarray" class="tsd-kind-icon">Player<wbr>Color<wbr>Array</a>
+					<li class=" tsd-kind-variable">
+						<a href="../index.html#playercolorarray" class="tsd-kind-icon">Player<wbr>Color<wbr>Array</a>
 					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_core_.html#app" class="tsd-kind-icon">app</a>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../index.html#grawlix" class="tsd-kind-icon">grawlix</a>
 					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_core_.html#express" class="tsd-kind-icon">express</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_core_.html#grawlix" class="tsd-kind-icon">grawlix</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_core_.html#http" class="tsd-kind-icon">http</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_core_.html#io" class="tsd-kind-icon">io</a>
-					</li>
-					<li class=" tsd-kind-variable tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_core_.html#password" class="tsd-kind-icon">password</a>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../index.html#password" class="tsd-kind-icon">password</a>
 					</li>
 				</ul>
 			</nav>

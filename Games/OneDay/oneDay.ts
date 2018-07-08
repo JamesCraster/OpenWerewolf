@@ -13,10 +13,7 @@
     along with OpenWerewolf:OneDay.  If not, see <http://www.gnu.org/licenses/>.
 */
 "use strict";
-
-import { MessageRoom, Server, Game, Player, Utils, RoleList, Colors, Stopwatch } from "../../core";
-import { Socket } from "../.././node_modules/@types/socket.io";
-
+import { MessageRoom, Game, Server, Player, Utils, RoleList, Colors, Stopwatch } from "../../Core/core";
 enum Roles {
   /** 
    * The evil role, there may be two in the game. They wake up and see each other
