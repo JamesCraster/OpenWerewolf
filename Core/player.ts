@@ -64,8 +64,8 @@ export class Player {
     /**
      * Causes the client to emit a notification sound 
      */
-    public notify() {
-        this._socket.emit("notify");
+    public sound(sound: string) {
+        this._socket.emit("sound", sound);
     }
     get session() {
         return this._session;

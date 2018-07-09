@@ -19,6 +19,10 @@ var isSafari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
 var registered = false;
 var notificationSound = new Audio("162464__kastenfrosch__message.mp3");
 notificationSound.volume = 0.6;
+var newPlayerSound = new Audio("162476__kastenfrosch__gotitem.mp3");
+newPlayerSound.volume = 0.2;
+var lostPlayerSound = new Audio("162465__kastenfrosch__lostitem.mp3");
+lostPlayerSound.volume = 0.2;
 
 function isClientScrolledDown() {
   return Math.abs($("#inner")[0].scrollTop + $('#inner')[0].clientHeight - $("#inner")[0].scrollHeight) <= 10;
@@ -131,6 +135,15 @@ $(function () {
   });
   socket.on("notify", function () {
     notificationSound.play();
+  });
+  socket.on("sound", function (sound) {
+    if (sound == "NEWGAME") {
+      notificationSound.play();
+    } else if (sound == "NEWPLAYER") {
+      newPlayerSound.play();
+    } else if (sound == "LOSTPLAYER") {
+      lostPlayerSound.play();
+    }
   });
   $('document').resize(function () {
 

@@ -45,6 +45,7 @@ while [ "$1" != "" ]; do
       cp package.json release
       cp -r node_modules release
       cp -r views release
+      cp -r Core release
       
       #minify javascript and css on clientside
       uglifyjs --compress --comments '/license/' -- Client/client.js > release/Client/client.js

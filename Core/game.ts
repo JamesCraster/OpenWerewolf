@@ -16,7 +16,7 @@
 import { Socket } from "../node_modules/@types/socket.io";
 import { Server } from "./server"
 import { Player } from "./player"
-import { Colors, NameColorPair, Stopwatch, PlayerColorArray, Utils } from "./Utils"
+import { Colors, NameColorPair, Stopwatch, PlayerColorArray, Utils } from "./utils"
 
 export abstract class Game {
   private _players: Array<Player> = [];
@@ -153,6 +153,9 @@ export abstract class Game {
   }
   protected abstract update(): void;
   public addPlayer(player: Player) {
+    for (let i = 0; i < this._players.length; i++) {
+      this._players[i].sound("NEWPLAYER");
+    }
     player.color = this.colorPool[0];
     this.colorPool.splice(0, 1);
     player.startVote = false;
@@ -175,6 +178,9 @@ export abstract class Game {
   }
   public abstract receive(player: Player, msg: string): void;
   public kick(player: Player) {
+    for (let i = 0; i < this._players.length; i++) {
+      this._players[i].sound("LOSTPLAYER");
+    }
     this._server.unlistPlayerInLobby(player.username, this._index);
     let index = this._players.indexOf(player);
     if (index != -1) {
@@ -186,7 +192,7 @@ export abstract class Game {
   }
   protected beforeStart() {
     for (let i = 0; i < this._players.length; i++) {
-      this._players[i].notify();
+      this._players[i].sound("NEWGAME");
     }
     this._inPlay = true;
     this._server.markGameStatusInLobby(this._index, "[IN PLAY]");

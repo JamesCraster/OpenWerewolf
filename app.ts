@@ -28,6 +28,7 @@ var expressSession = require("express-session");
 var RedisStore = require("connect-redis")(expressSession);
 var redis = require('redis-server');
 const redisServer = new redis(6379);
+var sql = require('mysql');
 redisServer.open(((err: string) => { }));
 
 var myArgs = process.argv.slice(2);

@@ -2,7 +2,7 @@
 
 > A fully-featured online multiplayer werewolf game.
 
-## Play now at http://www.openwerewolf.com/
+## Play now at https://www.openwerewolf.com/
 
 ## Features:
 * You can run multiple games at once using the lobby system.

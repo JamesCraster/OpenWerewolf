@@ -10,6 +10,7 @@
     "express": "^4.16.3",
     "express-session": "^1.15.6",
     "grawlix": "^1.0.6",
+    "mysql": "^2.15.0",
     "pug": "^2.0.3",
     "redis": "^2.8.0",
     "redis-server": "^1.2.2",
