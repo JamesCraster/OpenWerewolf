@@ -89,14 +89,19 @@ io.on("connection", function (socket: Socket) {
   let time = 0;
   server.addPlayer(socket, socket.request.session.socketID);
   socket.on("message", function (msg: string) {
-    //filter for spam(consecutive messages within 1/2 a second)
-    if (Date.now() - time < 500) {
-      socket.emit("message", "Please do not spam the chat");
-      time = Date.now();
-    } else {
-      time = Date.now();
-      server.receive(socket.id, msg);
+    if(typeof msg === 'string'){
+      //filter for spam(consecutive messages within 1/2 a second)
+      if (Date.now() - time < 500) {
+        socket.emit("message", "Please do not spam the chat");
+        time = Date.now();
+      } else {
+        time = Date.now();
+        server.receive(socket.id, msg);
+      }
     }
+  });
+  socket.on('leaveGame', function(){
+    server.leaveGame(socket.id);
   });
   socket.on("disconnect", function () {
     server.kick(socket.id);

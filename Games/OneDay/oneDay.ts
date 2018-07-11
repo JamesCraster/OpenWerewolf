@@ -250,6 +250,7 @@ export class OneDay extends Game {
   private sevenPlayer: RoleList = new RoleList(defaultSevenPlayer.list);
   public constructor(server: Server) {
     super(server, 3, 7, "OneDay");
+    super.addMessageRoom(this.playerchat);
   }
 
   private getPlayersWithInitialRole(role: string) {

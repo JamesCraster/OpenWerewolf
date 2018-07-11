@@ -38,7 +38,7 @@ export class Player {
     private _startVote: boolean = false;
     //username color
     private _color: string = "";
-    private _gameClickedLast: number = 0;
+    private _gameClickedLast: number = -1;
     private _session: string = "";
     //true if already playing in another tab
     private _cannotRegister: boolean = false;
@@ -48,7 +48,16 @@ export class Player {
         this._username = "randomuser";
         this._session = session;
     }
-
+    public resetAfterGame():void{
+        this._registered = false;
+        this._inGame = false;
+        this._username = "randomuser";
+        this.data = {};
+        this._game = -1;
+        this._startVote = false;
+        this._color = "";
+        this._gameClickedLast = -1;
+    }
     public banFromRegistering(): void {
         this._cannotRegister = true;
     }

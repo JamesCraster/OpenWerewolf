@@ -14,11 +14,12 @@
 var globalNow = 0;
 var globalTime = 0;
 var globalWarn = -1;
+var inGame = false;
 var isSafari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
   navigator.userAgent && !navigator.userAgent.match('CriOS');
 var registered = false;
 var notificationSound = new Audio("162464__kastenfrosch__message.mp3");
-notificationSound.volume = 0.6;
+notificationSound.volume = 0.4;
 var newPlayerSound = new Audio("162476__kastenfrosch__gotitem.mp3");
 newPlayerSound.volume = 0.2;
 var lostPlayerSound = new Audio("162465__kastenfrosch__lostitem.mp3");
@@ -103,7 +104,26 @@ function lineThroughPlayer(msg) {
     return $(this).text() === msg;
   }).css("text-decoration", "line-through");
 }
-
+function restart(){
+  transitionToLobby();
+  inGame = false;
+  registered = false;
+  globalNow = 0;
+  globalTime = 0;
+  globalWarn = -1;
+  $('#playerNames').empty();
+  $('#playerNames').append('<li>Players:</li>');
+  $('#roleNames').empty();
+  $('#roleNames').append('<li>Time: 00:00</li>');
+  $('#roleNames').append('<li>Roles:</li>');
+  $('#chatbox').empty();
+  $('#chatbox').append('<li>OpenWerewolf (C) 2017 James Craster</li>');
+  $('#chatbox').append('<li><a href="https://github.com/JamesCraster/OpenWerewolf" target="_blank"> Github</a>'+
+                       '<a class="menulink" href="https://discord.gg/AYmr9vc" target="_blank">Discord</a>');
+  $('#chatbox').append('<li>Welcome to OpenWerewolf. <b> Please type in a nickname you\'d like to use.</b></li>');
+  $('#leaveGame').css('background-color', "#4c4c4c");
+  $('#leaveGame').off('click');
+}
 $(function () {
   var socket = io();
 
@@ -121,11 +141,20 @@ $(function () {
     appendMessage(msg, "#chatbox", textColor, backgroundColor, usernameColor);
   });
 
-  socket.on("reload", function () {
-    location.reload(true);
+  socket.on("restart", function () {
+    restart();
   });
   socket.on("registered", function () {
     registered = true;
+    $('#leaveGame').css('background-color', "#3f0082");
+    $('#leaveGame').click(function(){
+      if(!inGame){
+        transitionToLobby();
+        socket.emit('leaveGame');
+        restart();
+      }
+    });
+
   });
   socket.on("clear", function () {
     $('ul').clear();
@@ -136,6 +165,11 @@ $(function () {
   socket.on("notify", function () {
     notificationSound.play();
   });
+  socket.on("newGame", function(){
+    $('#leaveGame').css('background-color', "#4c4c4c");
+    inGame = true;
+    $('#leaveGame').off('click');
+  })
   socket.on("sound", function (sound) {
     if (sound == "NEWGAME") {
       notificationSound.play();
@@ -215,11 +249,11 @@ $(function () {
     for (i = 0; i < spanList.length; i++) {
       if ($(spanList[i]).text() == name || $(spanList[i]).text() == " " + name) {
         //remove the separating comma if it exists 
-        if (i != spanList.length) {
+        if (i != spanList.length-1) {
           $(spanList[i + 1]).remove();
         }
-        if (i == 2 && spanList.length == 3) {
-          $(spanList[1]).remove();
+        if (i == spanList.length-1 && i > 0) {
+          $(spanList[i - 1]).remove();
         }
         $(spanList[i]).remove();
         break;

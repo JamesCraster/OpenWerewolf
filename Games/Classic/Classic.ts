@@ -205,6 +205,8 @@ export class Classic extends Game {
   constructor(server: Server) {
     super(server, 7, 9, "Classic");
     setInterval(this.update.bind(this), 500);
+    super.addMessageRoom(this.daychat);
+    super.addMessageRoom(this.werewolfchat);
   }
 
   public winCondition() {
