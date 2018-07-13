@@ -32,7 +32,7 @@ var sql = require('mysql');
 redisServer.open(((err: string) => { }));
 
 var myArgs = process.argv.slice(2);
-
+export const DEBUGMODE = myArgs[0];
 //create a new server
 var server = new Server();
 if (myArgs[0] == "debug") {
@@ -89,7 +89,7 @@ io.on("connection", function (socket: Socket) {
   let time = 0;
   server.addPlayer(socket, socket.request.session.socketID);
   socket.on("message", function (msg: string) {
-    if(typeof msg === 'string'){
+    if (typeof msg === 'string') {
       //filter for spam(consecutive messages within 1/2 a second)
       if (Date.now() - time < 500) {
         socket.emit("message", "Please do not spam the chat");
@@ -100,7 +100,7 @@ io.on("connection", function (socket: Socket) {
       }
     }
   });
-  socket.on('leaveGame', function(){
+  socket.on('leaveGame', function () {
     server.leaveGame(socket.id);
   });
   socket.on("disconnect", function () {

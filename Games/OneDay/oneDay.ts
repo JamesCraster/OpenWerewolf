@@ -242,7 +242,6 @@ export class OneDay extends Game {
   private length: number = 10;
   private trial: boolean = false;
   private won: boolean = false;
-  private wonEarlyTime = 0;
   private threePlayer: RoleList = new RoleList(defaultThreePlayer.list);
   private fourPlayer: RoleList = new RoleList(defaultFourPlayer.list);
   private fivePlayer: RoleList = new RoleList(defaultFivePlayer.list);
@@ -367,30 +366,15 @@ export class OneDay extends Game {
         this.playerchat.broadcast("Everyone has voted, so the game has ended.");
         this.winResolution();
         this.won = true;
-        //set timer so that in 40 seconds the game ends
-        this.wonEarlyTime = Date.now();
-      }
-      //if players voted early, kick everyone after 40 seconds 
-      if (this.won == true && this.wonEarlyTime != 0 && Date.now() - this.wonEarlyTime > 40 * 1000) {
-        this.playerchat.broadcast("The game has ended.");
-        //redirect players and reset
         this.end();
-        console.log("Game ended.");
       }
       //notify players of time left every minute
       if (Date.now() - this.time > this.minutes * 1000 * 60 && this.minutes != this.length && !this.won) {
         this.playerchat.broadcast(this.length - this.minutes + " minutes remain until the trial. You can vote at any time using \"/vote username\"");
         this.minutes += 2;
-      }
-      //end game
-      if (Date.now() - this.time > this.length * 60 * 1000 + 70 * 1000) {
-        this.playerchat.broadcast("The game has ended.");
-        //redirect and reset
-        this.end();
-        console.log("Game ended.");
-        //do win resolution 40 seconds before game ends
       } else if (Date.now() - this.time > this.length * 60 * 1000 + 30 * 1000 && !this.won) {
         this.winResolution();
+        this.end();
         this.won = true;
         //notify players of last 30 seconds
       } else if (Date.now() - this.time > this.length * 60 * 1000 && !this.trial && !this.won) {
@@ -402,7 +386,6 @@ export class OneDay extends Game {
 
   protected end() {
     //reset inital conditions
-    this.playerchat = new MessageRoom();
     this.leftCard = "";
     this.middleCard = "";
     this.rightCard = "";
@@ -410,7 +393,6 @@ export class OneDay extends Game {
     this.minutes = 1;
     this.trial = false;
     this.won = false;
-    this.wonEarlyTime = 0;
     this.afterEnd();
   }
   //returns true if everyone voted
@@ -1019,6 +1001,7 @@ export class OneDay extends Game {
       }
     } else {
       this.playerchat.receive(player, player.username + ": " + msg, undefined, undefined, player.color);
+      this.endChat.receive(player, player.username + ": " + msg, undefined, undefined, player.color);
     }
   }
 }

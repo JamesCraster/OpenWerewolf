@@ -104,7 +104,8 @@ function lineThroughPlayer(msg) {
     return $(this).text() === msg;
   }).css("text-decoration", "line-through");
 }
-function restart(){
+
+function restart() {
   transitionToLobby();
   inGame = false;
   registered = false;
@@ -118,8 +119,8 @@ function restart(){
   $('#roleNames').append('<li>Roles:</li>');
   $('#chatbox').empty();
   $('#chatbox').append('<li>OpenWerewolf (C) 2017 James Craster</li>');
-  $('#chatbox').append('<li><a href="https://github.com/JamesCraster/OpenWerewolf" target="_blank"> Github</a>'+
-                       '<a class="menulink" href="https://discord.gg/AYmr9vc" target="_blank">Discord</a>');
+  $('#chatbox').append('<li><a href="https://github.com/JamesCraster/OpenWerewolf" target="_blank"> Github</a>' +
+    '<a class="menulink" href="https://discord.gg/AYmr9vc" target="_blank">Discord</a>');
   $('#chatbox').append('<li>Welcome to OpenWerewolf. <b> Please type in a nickname you\'d like to use.</b></li>');
   $('#leaveGame').css('background-color', "#4c4c4c");
   $('#leaveGame').off('click');
@@ -147,8 +148,8 @@ $(function () {
   socket.on("registered", function () {
     registered = true;
     $('#leaveGame').css('background-color', "#3f0082");
-    $('#leaveGame').click(function(){
-      if(!inGame){
+    $('#leaveGame').click(function () {
+      if (!inGame) {
         transitionToLobby();
         socket.emit('leaveGame');
         restart();
@@ -165,7 +166,7 @@ $(function () {
   socket.on("notify", function () {
     notificationSound.play();
   });
-  socket.on("newGame", function(){
+  socket.on("newGame", function () {
     $('#leaveGame').css('background-color', "#4c4c4c");
     inGame = true;
     $('#leaveGame').off('click');
@@ -249,10 +250,10 @@ $(function () {
     for (i = 0; i < spanList.length; i++) {
       if ($(spanList[i]).text() == name || $(spanList[i]).text() == " " + name) {
         //remove the separating comma if it exists 
-        if (i != spanList.length-1) {
+        if (i != spanList.length - 1) {
           $(spanList[i + 1]).remove();
         }
-        if (i == spanList.length-1 && i > 0) {
+        if (i == spanList.length - 1 && i > 0) {
           $(spanList[i - 1]).remove();
         }
         $(spanList[i]).remove();
@@ -284,6 +285,12 @@ $(function () {
       transitionToLobby();
     }
   }
+  $(window).resize(function () {
+    $('#inner')[0].scrollTop = $('#inner')[0].scrollHeight;
+  });
+  $('#msg').focusout(function () {
+    setTimeout($('#msg').focus(), 30);
+  });
 });
 
 function transitionToGame(gameName) {

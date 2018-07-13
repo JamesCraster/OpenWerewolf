@@ -67,12 +67,12 @@ export class Server {
         this._games.push(game);
         game.index = this._games.length - 1;
     }
-    public leaveGame(id:string){
+    public leaveGame(id: string) {
         let player = this.getPlayer(id);
-        if(player instanceof Player){
-            if(player.registered && player.inGame){
-                if(player.game >= 0 && player.game < this._games.length){
-                    if(this._games[player.game].inPlay == false){
+        if (player instanceof Player) {
+            if (player.registered && player.inGame) {
+                if (player.game >= 0 && player.game < this._games.length) {
+                    if (this._games[player.game].inPlay == false) {
                         this._games[player.game].kick(player);
                         player.resetAfterGame();
                     }
@@ -189,7 +189,7 @@ export class Server {
                 return;
             }
         }
-        if(player.gameClickedLast >= 0 && player.gameClickedLast < this._games.length){
+        if (player.gameClickedLast >= 0 && player.gameClickedLast < this._games.length) {
             //get rid of spaces in name and make lowercase
             msg = Server.cleanUpUsername(msg);
 

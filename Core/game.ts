@@ -17,23 +17,30 @@ import { Socket } from "../node_modules/@types/socket.io";
 import { Server } from "./server"
 import { Player } from "./player"
 import { Colors, NameColorPair, Stopwatch, PlayerColorArray, Utils } from "./utils"
+import { DEBUGMODE } from "../app";
 
 export abstract class Game {
-  private _messageRooms:Array<MessageRoom> = [];
+  protected endChat: MessageRoom = new MessageRoom();
+  private endTime: number = 30000;
+  private _messageRooms: Array<MessageRoom> = [];
   private _players: Array<Player> = [];
   private _registeredPlayerCount: number = 0;
   private readonly _minPlayerCount: number;
   private readonly _maxPlayerCount: number;
+  //true until the point where players are all kicked (so includes end chat phase)
   private _inPlay: boolean = false;
   private readonly _server: Server;
   private readonly startClock: Stopwatch = new Stopwatch();
-  private readonly _startWait = 10000;
+  private _startWait = 30000;
   private holdVote: boolean = false;
   private colorPool = PlayerColorArray.slice();
   private _gameType: string;
   private _resetStartTime: boolean = false;
   private _index: number = -1;
   public constructor(server: Server, minPlayerCount: number, maxPlayerCount: number, gameType: string) {
+    if (DEBUGMODE) {
+      this._startWait = 10000;
+    }
     this._server = server;
     this._minPlayerCount = minPlayerCount;
     this._maxPlayerCount = maxPlayerCount;
@@ -154,6 +161,8 @@ export abstract class Game {
   }
   protected abstract update(): void;
   public addPlayer(player: Player) {
+    this.endChat.addPlayer(player);
+    this.endChat.muteAll();
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].sound("NEWPLAYER");
     }
@@ -179,8 +188,9 @@ export abstract class Game {
   }
   public abstract receive(player: Player, msg: string): void;
   public kick(player: Player) {
-    for(let i = 0; i < this._messageRooms.length; i++){
+    for (let i = 0; i < this._messageRooms.length; i++) {
       this._messageRooms[i].removePlayer(player);
+      this.endChat.removePlayer(player);
     }
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].sound("LOSTPLAYER");
@@ -206,26 +216,32 @@ export abstract class Game {
     this.broadcast("*** NEW GAME ***", Colors.brightGreen);
   }
   protected afterEnd() {
-    //emit event that causes players to reload
-    for (let i = 0; i < this._players.length; i++) {
-      this._players[i].emit("restart");
+    for (let i = 0; i < this._messageRooms.length; i++) {
+      for (let j = 0; j < this._players.length; j++) {
+        console.log("active " + this._players[j].username);
+        this._messageRooms[i].removePlayer(this._players[j]);
+      }
     }
-    //make sure all players are kicked from the server
-    //let temporaryPlayerList = this._players.slice();
-    //for (let i = 0; i < temporaryPlayerList.length; i++) {
-      //this._server.kick(temporaryPlayerList[i].id);
-    //}
-    this._inPlay = false;
-    for (let i = 0; i < this._players.length; i++) {
-      this._players[i].resetAfterGame();
-    }
-    this._players = [];
-    this._messageRooms = [];
-    this._registeredPlayerCount = 0;
-    this.colorPool = PlayerColorArray.slice();
-    this._server.markGameStatusInLobby(this._index, "[OPEN]");
+    this.endChat.unmuteAll();
+    this.setAllTime(this.endTime, 10000);
+    setTimeout(() => {
+      this.setAllTitle("OpenWerewolf");
+      //emit event that causes players to restart the client
+      for (let i = 0; i < this._players.length; i++) {
+        this._players[i].emit("restart");
+      }
+      this._inPlay = false;
+      for (let i = 0; i < this._players.length; i++) {
+        this._players[i].resetAfterGame();
+        this.endChat.removePlayer(this._players[i]);
+      }
+      this._players = [];
+      this._registeredPlayerCount = 0;
+      this.colorPool = PlayerColorArray.slice();
+      this._server.markGameStatusInLobby(this._index, "[OPEN]");
+    }, this.endTime);
   }
-  protected addMessageRoom(room:MessageRoom){
+  protected addMessageRoom(room: MessageRoom) {
     this._messageRooms.push(room);
   }
   protected abstract start(): void;
@@ -380,11 +396,11 @@ export class MessageRoom {
   public addPlayer(player: Player) {
     this._members.push(new MessageRoomMember(player.socket, player.session));
   }
-  public removePlayer(player:Player){
+  public removePlayer(player: Player) {
     let member = this.getMemberById(player.id);
-    if(member instanceof MessageRoomMember){
+    if (member instanceof MessageRoomMember) {
       let indexOf = this._members.indexOf(member);
-      if(indexOf != -1){
+      if (indexOf != -1) {
         this._members.splice(indexOf, 1);
       }
     }
