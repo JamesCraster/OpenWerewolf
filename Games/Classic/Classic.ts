@@ -205,6 +205,8 @@ export class Classic extends Game {
   constructor(server: Server) {
     super(server, 7, 9, "Classic");
     setInterval(this.update.bind(this), 500);
+    super.addMessageRoom(this.daychat);
+    super.addMessageRoom(this.werewolfchat);
   }
 
   public winCondition() {
@@ -557,13 +559,12 @@ export class Classic extends Game {
     this.stopWatch = new Stopwatch();
     this.dayClock = new Stopwatch();
     this.nightClock = new Stopwatch();
-    this.daychat = new MessageRoom();
-    this.werewolfchat = new MessageRoom();
     this.afterEnd();
   }
   public receive(player: Player, msg: string) {
+    this.endChat.receive(player, player.username + ": " + msg, undefined, undefined, player.color);
     if (this.inPlay) {
-      if (player instanceof Player && player.data.alive) {
+      if (player.data.alive) {
         if (msg[0] == "/") {
           if (Utils.isCommand(msg, "/act") && this.phase == Phase.night) {
             let username = msg.slice(4).trim();
@@ -612,9 +613,7 @@ export class Classic extends Game {
         }
       }
     } else {
-      if (player instanceof Player) {
-        this.daychat.receive(player, player.username + ": " + msg, undefined, undefined, player.color);
-      }
+      this.daychat.receive(player, player.username + ": " + msg, undefined, undefined, player.color);
     }
   }
   public addPlayer(player: Player) {

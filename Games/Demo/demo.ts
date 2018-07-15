@@ -20,6 +20,8 @@ export class Demo extends Game {
     constructor(server: Server) {
         //first argument is minimum player count, second is maximum player count
         super(server, 3, 6, "Demo");
+        //add new message room to the game
+        super.addMessageRoom(this.playerchat);
     }
     public start() {
         this.beforeStart();
@@ -38,5 +40,7 @@ export class Demo extends Game {
     public receive(player: Player, msg: string) {
         //direct player's message to message room
         this.playerchat.receive(player, player.username + ": " + msg);
+        //direct player's message to the end chat (for when the game is over)
+        this.endChat.receive(player, player.username + ": " + msg);
     }
 }

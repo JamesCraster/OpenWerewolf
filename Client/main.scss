@@ -52,6 +52,13 @@ body {
   position: relative;
   border: $standard-border;
   box-sizing: border-box;
+
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+      -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
 }
 
 #outer {
@@ -130,6 +137,28 @@ form {
   &::-moz-focus-inner {
     border: none;
   }
+}
+
+#leaveGame{
+  font-size: 17px;
+  width: 12%;
+  min-width: 112px;
+  height: 42px;
+  line-height: 0px;
+  border-radius: 0px;
+  border: $standard-border;
+  background-color: #4c4c4c;
+  &:hover{
+    //background-color:#661cb1;
+  }
+  &:focus {
+    outline: none;
+  }
+  &::-moz-focus-inner {
+    border: none;
+  }
+  float: right;
+  margin-right:8%;
 }
 
 li {

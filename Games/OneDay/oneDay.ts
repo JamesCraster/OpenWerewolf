@@ -14,6 +14,7 @@
 */
 "use strict";
 import { MessageRoom, Game, Server, Player, Utils, RoleList, Colors, Stopwatch } from "../../Core/core";
+import { lstat } from "fs";
 enum Roles {
   /** 
    * The evil role, there may be two in the game. They wake up and see each other
@@ -107,7 +108,7 @@ enum Roles {
    */
   doppleganger = "doppleganger",
   /*
-   * Has no alignment, just wants to avoid being hung.
+   * Has no alignment, just wants to avoid being hanged.
    */
   survivor = "survivor",
   /**
@@ -179,7 +180,11 @@ class Role{
   private readonly wakesWithMasons:boolean;
 }
 */
-
+enum Alignment {
+  werewolf = "werewolf",
+  town = "town",
+  jester = "jester"
+}
 const defaultThreePlayer: RoleList = new RoleList([
   Roles.werewolf,
   Roles.werewolf,
@@ -242,7 +247,6 @@ export class OneDay extends Game {
   private length: number = 10;
   private trial: boolean = false;
   private won: boolean = false;
-  private wonEarlyTime = 0;
   private threePlayer: RoleList = new RoleList(defaultThreePlayer.list);
   private fourPlayer: RoleList = new RoleList(defaultFourPlayer.list);
   private fivePlayer: RoleList = new RoleList(defaultFivePlayer.list);
@@ -250,6 +254,7 @@ export class OneDay extends Game {
   private sevenPlayer: RoleList = new RoleList(defaultSevenPlayer.list);
   public constructor(server: Server) {
     super(server, 3, 7, "OneDay");
+    super.addMessageRoom(this.playerchat);
   }
 
   private getPlayersWithInitialRole(role: string) {
@@ -285,11 +290,18 @@ export class OneDay extends Game {
   public addPlayer(player: Player) {
     super.addPlayer(player);
     player.data.voteCount = 0;
+    player.data.hanged = false;
     this.playerchat.addPlayer(player);
   }
 
 
   private winResolution() {
+
+    //if no players are around, stop here
+    if (this.players.length == 0) {
+      return;
+    }
+
     //tally up all the votes
     for (let i = 0; i < this.players.length; i++) {
       if (this.players[i].data.vote != "") {
@@ -301,23 +313,62 @@ export class OneDay extends Game {
         }
       }
     }
-    //pick the player with the most votes and call them the loser
-    let maxVoteCount = 0;
-    //if no players are around, stop here
-    if (this.players.length == 0) {
-      return;
-    }
-    let loser = this.players[0];
+    let noMoreThanOne = true;
     for (let i = 0; i < this.players.length; i++) {
-      if (this.players[i].data.voteCount > maxVoteCount) {
-        maxVoteCount = this.players[i].data.voteCount;
-        loser = this.players[i];
+      if (this.players[i].data.voteCount > 1) {
+        noMoreThanOne = false;
+      }
+    }
+    let winningTeam = "";
+    let losers: Array<Player> = [];
+    if (noMoreThanOne) {
+      this.playerchat.broadcast("No-one was hanged.");
+      let noWolves = true;
+      for (let i = 0; i < this.players.length; i++) {
+        if (this.players[i].data.role == Roles.werewolf || this.players[i].data.role == Roles.minion) {
+          noWolves = false;
+        }
+      }
+      if (noWolves) {
+        winningTeam = Alignment.town;
+      } else {
+        winningTeam = Alignment.werewolf;
+      }
+    } else {
+      //pick the player with the most votes and call them the loser
+      let maxVoteCount = 0;
+      let losers = [];
+      for (let i = 0; i < this.players.length; i++) {
+        if (this.players[i].data.voteCount > maxVoteCount) {
+          maxVoteCount = this.players[i].data.voteCount;
+        }
+      }
+      for (let i = 0; i < this.players.length; i++) {
+        if (this.players[i].data.voteCount == maxVoteCount) {
+          losers.push(this.players[i]);
+          this.players[i].data.hanged = true;
+        }
+      }
+      for (let i = 0; i < losers.length; i++) {
+        this.playerchat.broadcast(losers[i].username + " has been hanged.");
+        this.playerchat.broadcast(losers[i].username + " was a " + losers[i].data.role + ".");
+      }
+      for (let i = 0; i < losers.length; i++) {
+        if (losers[i].data.role == Roles.jester) {
+          winningTeam = Alignment.jester;
+        }
+      }
+      for (let i = 0; i < losers.length; i++) {
+        if (losers[i].data.role == Roles.werewolf && winningTeam == "") {
+          winningTeam = Alignment.town;
+        }
+      }
+      if (winningTeam == "") {
+        winningTeam = Alignment.werewolf;
       }
     }
 
-    this.playerchat.broadcast(loser.username + " has been hung.");
-    this.playerchat.broadcast(loser.username + " was a " + loser.data.role + ".");
-    if (loser.data.role == Roles.werewolf) {
+    if (winningTeam == Alignment.town) {
       this.playerchat.broadcast("The town has won! Everyone else loses.", undefined, Colors.green);
       for (let i = 0; i < this.players.length; i++) {
         if (this.players[i].data.role != Roles.jester && this.players[i].data.role != Roles.werewolf
@@ -327,19 +378,19 @@ export class OneDay extends Game {
           this.players[i].send("*** YOU LOSE! ***", Colors.brightRed);
         }
       }
-    } else if (loser.data.role == Roles.jester) {
-      this.playerchat.broadcast("The jester has won! Everyone else loses.", undefined, Colors.yellow);
+    } else if (winningTeam == Alignment.werewolf) {
+      this.playerchat.broadcast("The werewolves have won! Everyone else loses.", undefined, Colors.red);
       for (let i = 0; i < this.players.length; i++) {
-        if (this.players[i] == loser) {
+        if (this.players[i].data.role == Roles.werewolf || this.players[i].data.role == Roles.minion) {
           this.players[i].send("*** YOU WIN! ***", Colors.brightGreen);
         } else {
           this.players[i].send("*** YOU LOSE! ***", Colors.brightRed);
         }
       }
-    } else {
-      this.playerchat.broadcast("The werewolves have won! Everyone else loses.", undefined, Colors.red);
+    } else if (winningTeam == Alignment.jester) {
+      this.playerchat.broadcast("The jester has won! Everyone else loses.", undefined, Colors.yellow);
       for (let i = 0; i < this.players.length; i++) {
-        if (this.players[i].data.role == Roles.werewolf || this.players[i].data.role == Roles.minion) {
+        if (this.players[i].data.role == Roles.jester && this.players[i].data.hanged == true) {
           this.players[i].send("*** YOU WIN! ***", Colors.brightGreen);
         } else {
           this.players[i].send("*** YOU LOSE! ***", Colors.brightRed);
@@ -366,30 +417,15 @@ export class OneDay extends Game {
         this.playerchat.broadcast("Everyone has voted, so the game has ended.");
         this.winResolution();
         this.won = true;
-        //set timer so that in 40 seconds the game ends
-        this.wonEarlyTime = Date.now();
-      }
-      //if players voted early, kick everyone after 40 seconds 
-      if (this.won == true && this.wonEarlyTime != 0 && Date.now() - this.wonEarlyTime > 40 * 1000) {
-        this.playerchat.broadcast("The game has ended.");
-        //redirect players and reset
         this.end();
-        console.log("Game ended.");
       }
       //notify players of time left every minute
       if (Date.now() - this.time > this.minutes * 1000 * 60 && this.minutes != this.length && !this.won) {
         this.playerchat.broadcast(this.length - this.minutes + " minutes remain until the trial. You can vote at any time using \"/vote username\"");
         this.minutes += 2;
-      }
-      //end game
-      if (Date.now() - this.time > this.length * 60 * 1000 + 70 * 1000) {
-        this.playerchat.broadcast("The game has ended.");
-        //redirect and reset
-        this.end();
-        console.log("Game ended.");
-        //do win resolution 40 seconds before game ends
       } else if (Date.now() - this.time > this.length * 60 * 1000 + 30 * 1000 && !this.won) {
         this.winResolution();
+        this.end();
         this.won = true;
         //notify players of last 30 seconds
       } else if (Date.now() - this.time > this.length * 60 * 1000 && !this.trial && !this.won) {
@@ -401,7 +437,6 @@ export class OneDay extends Game {
 
   protected end() {
     //reset inital conditions
-    this.playerchat = new MessageRoom();
     this.leftCard = "";
     this.middleCard = "";
     this.rightCard = "";
@@ -409,7 +444,6 @@ export class OneDay extends Game {
     this.minutes = 1;
     this.trial = false;
     this.won = false;
-    this.wonEarlyTime = 0;
     this.afterEnd();
   }
   //returns true if everyone voted
@@ -1018,6 +1052,7 @@ export class OneDay extends Game {
       }
     } else {
       this.playerchat.receive(player, player.username + ": " + msg, undefined, undefined, player.color);
+      this.endChat.receive(player, player.username + ": " + msg, undefined, undefined, player.color);
     }
   }
 }

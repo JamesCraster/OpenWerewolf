@@ -67,6 +67,19 @@ export class Server {
         this._games.push(game);
         game.index = this._games.length - 1;
     }
+    public leaveGame(id: string) {
+        let player = this.getPlayer(id);
+        if (player instanceof Player) {
+            if (player.registered && player.inGame) {
+                if (player.game >= 0 && player.game < this._games.length) {
+                    if (this._games[player.game].inPlay == false || this._games[player.game].inEndChat) {
+                        this._games[player.game].kick(player);
+                        player.resetAfterGame();
+                    }
+                }
+            }
+        }
+    }
     //join waiting players to games
     private joinGame() {
         this._players.forEach(player => {
@@ -176,13 +189,15 @@ export class Server {
                 return;
             }
         }
-        //get rid of spaces in name and make lowercase
-        msg = Server.cleanUpUsername(msg);
+        if (player.gameClickedLast >= 0 && player.gameClickedLast < this._games.length) {
+            //get rid of spaces in name and make lowercase
+            msg = Server.cleanUpUsername(msg);
 
-        if (this.validateUsername(player, msg)) {
-            player.register();
-            player.setUsername(msg);
-            this._registeredPlayerCount++;
+            if (this.validateUsername(player, msg)) {
+                player.register();
+                player.setUsername(msg);
+                this._registeredPlayerCount++;
+            }
         }
     }
     public receive(id: string, msg: string) {
@@ -284,9 +299,6 @@ export class Server {
                 if (player.registered && this._registeredPlayerCount > 0) {
                     this._registeredPlayerCount--;
                     if (player.inGame) {
-                        this._games[player.game].broadcast(
-                            player.username + " has disconnected"
-                        );
                         this._games[player.game].lineThroughPlayer(player.username);
                         if (!this._games[player.game].inPlay) {
                             this._games[player.game].kick(player);

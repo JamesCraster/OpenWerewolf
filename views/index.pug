@@ -22,14 +22,14 @@ include includes/lobbyEntry.pug
 html(lang="en")
     head
         meta(charset="UTF-8")
-        meta(name="description" content="An online multiplayer werewolf game that's 100% open-source.")
+        meta(name="description" content="The online multiplayer werewolf game that's 100% open-source.")
         link(rel="stylesheet" type="text/css" href="main.css")
         // IBM Plex Sans google font
         link(href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans" rel="stylesheet")
         title OpenWerewolf
     
     // Move scrollbar to bottom on window resize 
-    body(onresize="$('#inner')[0].scrollTop = $('#inner')[0].scrollHeight;")
+    body
         div(id="lobby")
             p(id="mainTitle") OpenWerewolf
             div(id="container")
