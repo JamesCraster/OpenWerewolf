@@ -37,10 +37,6 @@ All contributors are welcome. Read the [guide.](https://github.com/JamesCraster/
 Files are listed to the right.
 
 ## Legal Info:
-All of the source code is free/open source.
-Some of the code files are licensed under AGPL-3.0. Some of the code files are licensed under Apache-2.0.
-Every file states which license it is under.
-By contributing to this repository, you agree that your contributions to any particular file are licensed under the same license that that file had directly before your contribution was included, i.e contributions to AGPL-3.0 files are under AGPL-3.0, and contributions to Apache-2.0 files are under Apache-2.0.
 Artwork, music, logos and fonts may be proprietary.
 
 I want to avoid confusion between the OpenWerewolf site that I run and the sites that others may run.
