@@ -1,5 +1,5 @@
 /*
-  Copyright 2017 James V. Craster
+  Copyright 2017-2018 James V. Craster
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -125,28 +125,28 @@ export class Server {
         var letters = /^[A-Za-z]+$/;
         for (var i = 0; i < this._players.length; i++) {
             if (this._players[i].username == username) {
-                player.send(
-                    "Invalid username: This username has already been taken by someone"
+                player.registrationError(
+                    "This username has already been taken by someone"
                 );
                 return false;
             }
         }
         if (username.length == 0) {
-            player.send("Invalid username: Cannot be 0 letters long");
+            player.registrationError("Cannot be 0 letters long");
             return false;
         }
         if (username.length > 10) {
-            player.send("Invalid username: Must be no more than 10 letters long");
+            player.registrationError("Must be no more than 10 letters long");
             return false;
         }
         if (!letters.test(username)) {
-            player.send(
-                "Invalid username: Must only contain letters (no numbers or punctuation)"
+            player.registrationError(
+                "Must only contain letters (no numbers or punctuation)"
             );
             return false;
         }
         if (grawlix.isObscene(username)) {
-            player.send("Invalid username: Usernames can't contain profanity");
+            player.registrationError("Usernames can't contain profanity");
             return false;
         }
         return true;
@@ -155,7 +155,7 @@ export class Server {
         let newPlayer = new Player(socket, session);
         if (!this._debugMode) {
             for (let i = 0; i < this._players.length; i++) {
-                if (this._players[i].inGame && this._players[i].session == session) {
+                if (this._players[i].registered && this._players[i].session == session) {
                     socket.emit("message", "You're already playing a game in a different tab, so you cannot join this one.", undefined, Colors.red);
                     newPlayer.banFromRegistering();
                 }
@@ -173,6 +173,7 @@ export class Server {
     private register(player: Player, msg: string) {
         if (!this._debugMode) {
             if (player.cannotRegister) {
+                player.registrationError("You're already playing in a different tab, so you can't join again.");
                 return;
             }
             for (let i = 0; i < this._players.length; i++) {
@@ -189,16 +190,16 @@ export class Server {
                 return;
             }
         }
-        if (player.gameClickedLast >= 0 && player.gameClickedLast < this._games.length) {
-            //get rid of spaces in name and make lowercase
-            msg = Server.cleanUpUsername(msg);
+        //if (player.gameClickedLast >= 0 && player.gameClickedLast < this._games.length) {
+        //get rid of spaces in name and make lowercase
+        msg = Server.cleanUpUsername(msg);
 
-            if (this.validateUsername(player, msg)) {
-                player.register();
-                player.setUsername(msg);
-                this._registeredPlayerCount++;
-            }
+        if (this.validateUsername(player, msg)) {
+            player.register();
+            player.setUsername(msg);
+            this._registeredPlayerCount++;
         }
+        //}
     }
     public receive(id: string, msg: string) {
         let player = this.getPlayer(id);
@@ -270,7 +271,7 @@ export class Server {
             //if the player is viewing the game, add joiner to their right bar
             if (this._players[i].game == game) {
                 this._players[i].rightSend(username, color);
-            } else if (!this._players[i].registered && this._players[i].gameClickedLast == game) {
+            } else if (!this._players[i].inGame && this._players[i].gameClickedLast == game) {
                 this._players[i].rightSend(username, color);
             }
         }
@@ -281,7 +282,7 @@ export class Server {
             //if the player is viewing the game, remove leaver from their right bar
             if (this._players[i].game == game) {
                 this._players[i].removeRight(username);
-            } else if (!this._players[i].registered && this._players[i].gameClickedLast == game) {
+            } else if (!this._players[i].inGame && this._players[i].gameClickedLast == game) {
                 this._players[i].removeRight(username);
             }
         }
@@ -299,9 +300,13 @@ export class Server {
                 if (player.registered && this._registeredPlayerCount > 0) {
                     this._registeredPlayerCount--;
                     if (player.inGame) {
-                        this._games[player.game].lineThroughPlayer(player.username);
+                        this._games[player.game].lineThroughPlayer(player.username, "grey");
                         if (!this._games[player.game].inPlay) {
                             this._games[player.game].kick(player);
+                            console.log("active")
+                        } else {
+                            this._games[player.game].broadcast(player.username + " has disconnected.");
+                            this._games[player.game].disconnect(player);
                         }
                         player.disconnect();
                     }

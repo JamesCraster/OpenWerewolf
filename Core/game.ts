@@ -1,5 +1,5 @@
 /*
-  Copyright 2017 James V. Craster
+  Copyright 2017-2018 James V. Craster
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -121,6 +121,11 @@ export abstract class Game {
       this._players[i].title = title;
     }
   }
+  public markAsDead(name: string) {
+    for (let i = 0; i < this.players.length; i++) {
+      this.players[i].markAsDead(name);
+    }
+  }
   private pregameLobbyUpdate() {
     if (!this.inPlay) {
       //if have max number of players, start the game immediately
@@ -191,7 +196,9 @@ export abstract class Game {
     }
   }
   public abstract receive(player: Player, msg: string): void;
+  public abstract disconnect(player: Player): void;
   public kick(player: Player) {
+    //this function fails
     for (let i = 0; i < this._messageRooms.length; i++) {
       this._messageRooms[i].removePlayer(player);
       this.endChat.removePlayer(player);
@@ -275,9 +282,9 @@ export abstract class Game {
     }
     this.broadcast("Roles (in order of when they act): " + string + ".");
   }
-  public lineThroughPlayer(username: string) {
+  public lineThroughPlayer(username: string, color: string) {
     for (let i = 0; i < this._players.length; i++) {
-      this._players[i].lineThroughPlayer(username);
+      this._players[i].lineThroughPlayer(username, color);
     }
   }
   //to be overridden in child classes as necessary

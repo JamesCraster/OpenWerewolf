@@ -1,5 +1,5 @@
 /* 
-    Copyright (C) 2017 James V. Craster  
+    Copyright (C) 2017-2018 James V. Craster  
 
     This file is part of OpenWerewolf:OneDay.  
     OpenWerewolf:OneDay is free software: you can redistribute it and/or modify
@@ -235,6 +235,19 @@ const defaultSevenPlayer: RoleList = new RoleList([
   Roles.jester,
   Roles.villager
 ]);
+const defaultEightPlayer: RoleList = new RoleList([
+  Roles.doppleganger,
+  Roles.werewolf,
+  Roles.werewolf,
+  Roles.seer,
+  Roles.robber,
+  Roles.troublemaker,
+  Roles.drunk,
+  Roles.mason,
+  Roles.mason,
+  Roles.jester,
+  Roles.minion
+])
 
 export class OneDay extends Game {
   //define new message room
@@ -252,8 +265,9 @@ export class OneDay extends Game {
   private fivePlayer: RoleList = new RoleList(defaultFivePlayer.list);
   private sixPlayer: RoleList = new RoleList(defaultSixPlayer.list);
   private sevenPlayer: RoleList = new RoleList(defaultSevenPlayer.list);
+  private eightPlayer: RoleList = new RoleList(defaultEightPlayer.list);
   public constructor(server: Server) {
-    super(server, 3, 7, "OneDay");
+    super(server, 3, 8, "OneDay");
     super.addMessageRoom(this.playerchat);
   }
 
@@ -486,6 +500,9 @@ export class OneDay extends Game {
         break;
       case 7:
         roleList = this.sevenPlayer.list;
+        break;
+      case 8:
+        roleList = this.eightPlayer.list;
         break;
     }
     for (let i = 0; i < this.players.length; i++) {
@@ -892,6 +909,9 @@ export class OneDay extends Game {
           case "7":
             player.send(this.sevenPlayer.toString());
             break;
+          case "8":
+            player.send(this.eightPlayer.toString());
+            break;
           default:
             player.send("Error: number of players is missing or incorrect." +
               " Example usage: !show 5 will show the rolelist for 5 players", Colors.brightRed);
@@ -916,6 +936,9 @@ export class OneDay extends Game {
           case "7":
             this.sevenPlayer.list = this.parseRoleString(msg.slice(7, 7 + 10));
             break;
+          case "8":
+            this.eightPlayer.list = this.parseRoleString(msg.slice(7, 7 + 11));
+            break;
           default:
             player.send("Error: number of players is missing or incorrect." +
               " Example usage: !set 5 ... will set the rolelist for 5 players", Colors.brightRed);
@@ -934,6 +957,12 @@ export class OneDay extends Game {
             break;
           case "6":
             this.sixPlayer.list = defaultSixPlayer.list;
+            break;
+          case "7":
+            this.sevenPlayer.list = defaultSevenPlayer.list;
+            break;
+          case "8":
+            this.eightPlayer.list = defaultEightPlayer.list;
             break;
           default:
             player.send("Error: number of players is missing or incorrect." +
@@ -1054,5 +1083,8 @@ export class OneDay extends Game {
       this.playerchat.receive(player, player.username + ": " + msg, undefined, undefined, player.color);
       this.endChat.receive(player, player.username + ": " + msg, undefined, undefined, player.color);
     }
+  }
+  public disconnect() {
+
   }
 }

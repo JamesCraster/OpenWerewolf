@@ -1,5 +1,5 @@
 /*
-  Copyright 2017 James V. Craster
+  Copyright 2017-2018 James V. Craster
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -48,10 +48,8 @@ export class Player {
         this._username = "randomuser";
         this._session = session;
     }
-    public resetAfterGame():void{
-        this._registered = false;
+    public resetAfterGame(): void {
         this._inGame = false;
-        this._username = "randomuser";
         this.data = {};
         this._game = -1;
         this._startVote = false;
@@ -169,10 +167,12 @@ export class Player {
     public removeLeft(msg: string) {
         this._socket.emit("removeLeft", msg);
     }
-    public lineThroughPlayer(msg: string) {
-        this._socket.emit("lineThroughPlayer", msg);
+    public lineThroughPlayer(msg: string, color: string) {
+        this._socket.emit("lineThroughPlayer", msg, color);
     }
-
+    public markAsDead(msg: string) {
+        this._socket.emit("markAsDead", msg);
+    }
     /**
      * Removes another player's username from the lobby
      * E.g the other player has left.
@@ -208,5 +208,8 @@ export class Player {
     }
     public equals(otherPlayer: Player): boolean {
         return this.id == otherPlayer.id;
+    }
+    public registrationError(message: string) {
+        this._socket.emit('registrationError', message)
     }
 }

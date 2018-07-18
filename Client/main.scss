@@ -1,5 +1,5 @@
 /*!
-  Copyright 2017 James V. Craster
+  Copyright 2017-2018 James V. Craster
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -52,13 +52,12 @@ body {
   position: relative;
   border: $standard-border;
   box-sizing: border-box;
-
   -webkit-touch-callout: none;
-    -webkit-user-select: none;
-      -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 #outer {
@@ -139,7 +138,7 @@ form {
   }
 }
 
-#leaveGame{
+#leaveGame {
   font-size: 17px;
   width: 12%;
   min-width: 112px;
@@ -148,7 +147,7 @@ form {
   border-radius: 0px;
   border: $standard-border;
   background-color: #4c4c4c;
-  &:hover{
+  &:hover {
     //background-color:#661cb1;
   }
   &:focus {
@@ -292,7 +291,9 @@ a {
   #name {
     display: none;
   }
-  #outer,
+  #outer {
+    @include standard-flexbox(column);
+  }
   #lobby {
     @include standard-flexbox(column);
   }

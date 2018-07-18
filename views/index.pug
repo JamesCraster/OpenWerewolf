@@ -1,5 +1,5 @@
 //
-    Copyright 2017 James V. Craster
+    Copyright 2017-2018 James V. Craster
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
@@ -30,15 +30,18 @@ html(lang="en")
     
     // Move scrollbar to bottom on window resize 
     body
-        div(id="lobby")
-            p(id="mainTitle") OpenWerewolf
-            div(id="container")
-                - var n = 0;
-                - while(n < numberOfGames){
-                    +lobbyEntry(n, gameNames[n], players[n], gameInPlay[n], gameTypes[n])
-                    - n += 1;
-                - }
-
+        div(id="landingPage")
+            a(href="https://discord.gg/AYmr9vc" target="_blank")
+                img(src="Discord-Logo+Wordmark-Color.svg" style="display:inline; padding-left:5px; padding-top:5px; height:64px")
+            div(id="landingPageCenter" style=style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;")
+                p(style="font-size:4.12em; margin-top:11%;") OpenWerewolf
+                div(id="errors" style="height:50px")
+                form(id="registerForm" action="" style="margin-top:1%;")
+                    input(id="registerBox" autocomplete="off" maxlength="10"  placeholder="Enter a nickname..." type="text" style="border:2px solid #cecece; width:10%; font-size:18px; min-width:200px; height:35px; outline:none; padding: 0px 5px; background-color: #23272a" autofocus)
+                    input(id="registerButton" type="submit" value="Submit" style= "border-radius: 3px; background-color: whitesmoke; color: gray; border: 0; font-size:18px; height: 39px; margin-left: 15px; width: 81px; outline:none")
+            p(style="min-width:500px; font-size:0.9em; color:#a5a5a5; position:absolute; top:calc(100% - 30px); padding-left:10px") OpenWerewolf (C) 2017-2018 James Craster. No warranty. License: 
+                a(style="color:#237bd2" href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank") AGPLv3
+        include includes/lobby.pug
         div(id="topLevel")
             include includes/game.pug
     

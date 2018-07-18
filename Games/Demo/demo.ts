@@ -1,5 +1,5 @@
 /*
-  Copyright 2017 James V. Craster
+  Copyright 2017-2018 James V. Craster
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -42,5 +42,8 @@ export class Demo extends Game {
         this.playerchat.receive(player, player.username + ": " + msg);
         //direct player's message to the end chat (for when the game is over)
         this.endChat.receive(player, player.username + ": " + msg);
+    }
+    public disconnect() {
+
     }
 }

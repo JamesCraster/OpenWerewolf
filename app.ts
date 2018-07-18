@@ -1,5 +1,5 @@
 /*
-  Copyright 2017 James V. Craster
+  Copyright 2017-2018 James V. Craster
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
@@ -19,7 +19,14 @@ import { OneDay } from "./Games/OneDay/oneDay";
 import { Classic } from "./Games/Classic/Classic";
 import { Demo } from "./Games/Demo/demo";
 
-process.env.NODE_ENV = 'production';
+var myArgs = process.argv.slice(2);
+export const DEBUGMODE = myArgs[0];
+if (DEBUGMODE) {
+  process.env.NODE_ENV = 'development';
+} else {
+  process.env.NODE_ENV = 'production';
+}
+
 var express = require("express");
 var app = express();
 var http = require("http").Server(app);
@@ -31,8 +38,7 @@ const redisServer = new redis(6379);
 var sql = require('mysql');
 redisServer.open(((err: string) => { }));
 
-var myArgs = process.argv.slice(2);
-export const DEBUGMODE = myArgs[0];
+
 //create a new server
 var server = new Server();
 if (myArgs[0] == "debug") {
@@ -40,11 +46,13 @@ if (myArgs[0] == "debug") {
   console.log("debug mode active");
 }
 
+
 server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
 server.addGame(new OneDay(server));
-server.addGame(new OneDay(server));
-server.addGame(new OneDay(server));
+server.addGame(new Classic(server));
+server.addGame(new Classic(server));
+server.addGame(new Classic(server));
 
 //create a session cookie
 var session = expressSession({
