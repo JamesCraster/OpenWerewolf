@@ -20,7 +20,7 @@
 
 while [ "$1" != "" ]; do
   case $1 in 
-    -r) 
+    -b) 
       
       #delete release folder
       rm -rI release
@@ -30,22 +30,21 @@ while [ "$1" != "" ]; do
       sass Client/main.scss Client/main.css
       
       #create release folder
-      mkdir release
-      mkdir release/Client
-      mkdir release/Games
-      mkdir release/Games/Classic
-      mkdir release/Games/OneDay
+      mkdir -p release/Core
+      mkdir -p release/Client
+      mkdir -p release/Games/{Classic,OneDay}
+
 
       #copy over all necessary files
       cp app.js release
-      cp core.js release
+      cp Core/core.js release
       cp LICENSE release
       cp README.md release
       cp package-lock.json release
       cp package.json release
       cp -r node_modules release
       cp -r views release
-      cp -r Core release
+      cp -r Core/*js release/Core
       
       #minify javascript and css on clientside
       uglifyjs --compress --comments '/license/' -- Client/client.js > release/Client/client.js
@@ -54,7 +53,7 @@ while [ "$1" != "" ]; do
 
       cp Games/OneDay/oneDay.js release/Games/OneDay
       cp Games/OneDay/LICENSE release/Games/OneDay
-      cp Games/Classic/classic.js release/Games/Classic
+      cp Games/Classic/Classic.js release/Games/Classic
       cp Games/Classic/LICENSE relase/Games/Classic
 
       ;;
