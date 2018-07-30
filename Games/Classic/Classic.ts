@@ -218,8 +218,8 @@ export class Classic extends Game {
   private mafiachat: MessageRoom = new MessageRoom();
   private tallyInterval: any;
 
-  constructor(server: Server) {
-    super(server, 7, 9, "Classic");
+  constructor(server: Server, name: string, uid: string) {
+    super(server, 7, 9, "Classic", name, uid);
     setInterval(this.update.bind(this), 500);
     super.addMessageRoom(this.daychat);
     super.addMessageRoom(this.mafiachat);

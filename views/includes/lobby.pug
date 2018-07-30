@@ -9,12 +9,53 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-div(id="lobbyContainer" style="display:none; width:100%; height:100%;")
-    div(id="lobby")
-        p(id="mainTitle") OpenWerewolf
-        div(id="container")
-            - var n = 0;
-            - while(n < numberOfGames){
-                +lobbyEntry(n, gameNames[n], players[n], gameInPlay[n], gameTypes[n])
-                - n += 1;
-            - }
+    
+div(id="lobbyContainer" style="display:none; width:100%; height:100%; overflow:hidden;")
+    div(class="ui inverted menu" style="margin-bottom:0px;")
+        div(class="ui inverted menu" style="margin-right:auto")
+            div(class="header item") OpenWerewolf
+            a(class="item" href="/") Home
+            a(class="item" href="https://discord.gg/AYmr9vc" target="_blank") Discord
+
+        div(class="ui inverted menu" style="margin:auto")
+            a(class="item" id="filterAll") All
+            a(class="item" id="filterBeginner") Beginner
+            a(class="item" id="filterRanked") Ranked
+            div(class="ui inverted compact menu")
+                    div(class="ui simple dropdown item") Mode
+                        i(class="dropdown icon")
+                        div(class="ui inverted menu")
+                            div(class="item" id="filterOneDay") OneDay
+                            div(class="item" id="filterClassic") Classic    
+
+        div(class="inverted right menu")
+            include loggedInRightMenu.pug
+    div(id="lobby" style="height:calc(100% - 48px);")
+        div(id="container" style="margin-top:40px;")
+            div(style="text-align:center;")
+                button(id="newGameButton" class="blue ui button" type="submit" style="width:40%") New Game
+            div(id="lobbyItemList")
+                - var n = numberOfGames - 1;
+                - while(n >= 0){
+                    +lobbyEntry(n, gameNames[n], players[n], gameInPlay[n], gameTypes[n], uids[n])
+                    - n -= 1;
+                - }
+            br
+            br
+            br
+            p(style="visibility:hidden") End of lobby marker
+        div(id="lobbyRightBar" style="width:35%; height:calc(100%)")
+            div(id="lobbyTitleContainer" style="background-color:#303030; border-top:2px solid black; border-bottom:2px solid black")
+                h2(class="ui header" style="color:#cecece; padding-left:5px; padding-top:5px;") Lobby
+            div(id="lobbyListContainer" style="height:calc(45% - 35px);")
+                ul(id="lobbyList" style="list-style:none; padding-left:10px; padding-top:5px; color:#cecece; font-size:16px;")
+
+
+            div(id="lobbyChatTitleContainer" style="background-color:#303030; border-top:2px solid black; border-bottom:2px solid black")
+                h2(class="ui header" style="color:#cecece; padding-left:5px; padding-top:5px;") Chat
+            div(id="lobbyChatListContainer" style="height:calc(55% - 95px);overflow:auto;border-bottom:2px solid black;border-radius:none;")
+                ul(id="lobbyChatList" style="justfy-self:start;")
+            form(id="lobbyChatForm" action="")
+                input(id="lobbyChatInput" autocomplete="off" placeholder="Type here" style="color:#cecece; width:200px; border:2px solid black; padding-left:5px; background-color:inherit; margin-left:auto; margin-right:auto; display:block;margin-top:15px;height:30px;outline:none;")
+                
+

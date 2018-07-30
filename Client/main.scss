@@ -17,7 +17,7 @@ $central-innerbox-width: 90%;
 $central-innerbox-height: 70%;
 $msg-height: 40px;
 $standard-font-size: 18px;
-$small-font-size: 0.8em;
+$small-font-size: 0.9em;
 $inner-div-margin-bottom: 105px;
 @mixin standard-flexbox($flex-direction) {
   display: flex;
@@ -30,9 +30,8 @@ $inner-div-margin-bottom: 105px;
 * {
   margin: 0;
   padding: 0px 0px;
-  overflow: hidden;
-  color: #cecece;
   font-family: "IBM Plex Sans", sans-serif; //IBM Plex Sans from Google Fonts
+  line-height: normal;
 }
 
 html,
@@ -43,6 +42,45 @@ body {
 
 #header {
   height: 100%;
+}
+
+#discordLogo {
+  display: inline;
+  padding-left: 5px;
+  padding-top: 5px;
+  height: 64px;
+}
+
+#errors {
+  height: 50px
+}
+
+#landingPageCenter {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 12%;
+}
+
+#registerForm {
+  margin-top: 1%;
+}
+
+#copyrightNotice {
+  min-width: 500px;
+  font-size: 0.9em;
+  color: #a5a5a5;
+  position: fixed;
+  bottom: 8px;
+  left: 10px;
+}
+
+#registrationPageTitle {
+  font-size: 5em;
+  margin-bottom: 20px;
+  color: #cecece;
 }
 
 #inner {
@@ -76,6 +114,7 @@ body {
 .innerSideBox {
   border: $standard-border;
   height: $central-innerbox-height;
+  border-radius: 3px;
   width: 60%;
   margin-bottom: $msg-height + 2 + $inner-div-margin-bottom;
   box-sizing: border-box;
@@ -94,7 +133,7 @@ body {
   list-style: none;
 }
 
-form {
+#msgForm {
   width: $central-innerbox-width;
   display: inline-block;
 }
@@ -106,11 +145,12 @@ form {
 }
 
 #msg {
+  color: #cecece;
   font-size: $small-font-size;
-  width: calc(100% - 95px);
+  width: calc(100% - 81px);
   outline: none;
   background-color: #23272a;
-  height: $msg-height;
+  height: $msg-height + 2;
   padding: 0px 5px;
   float: left;
   border: {
@@ -130,6 +170,7 @@ form {
   border-radius: 0px;
   border: 0px;
   background-color: #0c0c0c;
+  color: #cecece;
   &:focus {
     outline: none;
   }
@@ -138,8 +179,8 @@ form {
   }
 }
 
-#leaveGame {
-  font-size: 17px;
+/*#leaveGame {
+  font-size: 16px;
   width: 12%;
   min-width: 112px;
   height: 42px;
@@ -158,11 +199,12 @@ form {
   }
   float: right;
   margin-right:8%;
-}
+}*/
 
-li {
+.gameli {
   font-size: $standard-font-size;
   background: #23272a;
+  color: #cecece;
   padding: 5px 5px;
   word-wrap: break-word;
   &:nth-child(odd) {
@@ -188,33 +230,58 @@ a {
 }
 
 #container {
+  color: #cecece;
   flex-direction: column;
-  margin: 0px -10px;
+  margin: 0px 0px;
   overflow-y: auto;
-  overflow-x: hidden;
-  border: 3px solid black;
-  display: block;
-  width: 75%;
-  height: 75%;
-  margin-left: auto;
+  overflow-x: hidden; //border: 3px solid black;
+  width: 65%;
+  height: 100%;
+  margin-left: 10px;
   margin-right: auto;
+  margin-bottom: 0px;
 }
 
-.item {
+#lobbyRightBar {
+  width: 35%;
+  border-left: $standard-border;
+  border-right: $standard-border;
+  border-bottom: $standard-border;
+}
+
+.lobbyItemHeader {
+  overflow: auto;
+  background-color: #1b1c1d;
+  padding-left: 5px;
+  padding-top: 5px;
+  border-bottom: 2px solid #0d0d0e;
+}
+
+.lobbyItemBody {
+  padding-left: 5px;
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+}
+
+.lobbyItem {
   font-size: 1.2em;
-  margin-top: 10px;
-  margin-left: 10px;
-  margin-right: 10px;
-  margin-bottom: 10px;
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 30px;
   border-bottom: 2px solid black;
   border-top: 2px solid black;
   border-right: 2px solid black;
   border-left: 2px solid black;
-  height: 80px;
+  height: 95px;
   min-width: 150px;
-  padding-left: 5px;
-  padding-top: 5px;
+  padding-left: 0px;
+  padding-top: 0px;
   background-color: #303030;
+  width: 95%;
+  border-radius: 3px;
+  position: relative;
 }
 
 #menubar {
@@ -235,7 +302,7 @@ a {
 }
 
 #mainTitle {
-  font-size: 2em;
+  font-size: 2.24em;
   margin-bottom: 2%
 }
 
@@ -264,9 +331,9 @@ a {
 }
 
 #mainGameName {
-  margin-top: 30px;
-  margin-left: 8%;
-  font-size: 1.6em;
+  margin-top: 0;
+  margin-left: 0;
+  font-size: 1rem;
 }
 
 .menulink {
@@ -295,7 +362,7 @@ a {
     @include standard-flexbox(column);
   }
   #lobby {
-    @include standard-flexbox(column);
+    @include standard-flexbox(row);
   }
   #topLevel {
     @include standard-flexbox(row);
@@ -307,6 +374,6 @@ a {
     @include standard-flexbox(column);
   }
   #lobby {
-    @include standard-flexbox(column);
+    @include standard-flexbox(row);
   }
 }

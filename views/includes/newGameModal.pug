@@ -1,0 +1,42 @@
+//
+    Copyright 2017-2018 James V. Craster
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+        http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    
+div(id="newGameModal" class="ui modal column segment transition")
+    div(class="header") New Game
+    p(id="addNewGameAdditionalError" style="color:red")
+    form(action="" id="newGameForm" class="ui form" style="text-align:center")
+        div(class="field")
+            div(class="ui input")
+                input(id="newGameFormName" name="gameName" type="text" placeholder="Game name" maxlength="20" autocomplete="off")
+        div(class="field")
+            div(class="ui toggle checkbox")
+                input(id="newGameFormRanked" name="gameType" type="checkbox")
+                label Ranked (signed-in players only)
+        div(class="field")
+            div(class="ui form")
+                div(class="inline fields" style="text-align:right;")
+                    label Game mode:
+                    div(class="field")
+                        div(class="ui radio checkbox")
+                            input(type="radio" name="type" checked="checked" value="Classic")
+                            label Classic
+                    div(class="field")
+                        div(class="ui radio checkbox")
+                            input(type="radio" name="type" value="OneDay")
+                            label OneDay
+        
+        div(class="ui error message")
+        br
+        br
+        button(id="newGameModalCreateButton" class="ui blue button") Create Game 
+    
+        

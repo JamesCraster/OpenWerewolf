@@ -16,6 +16,9 @@
 //gameNames : array of names of games.
 //gameInPlay : array of booleans, true if nth game in play, false otherwise
 //gameTypes : array of strings, each correspoding to a game title
+//loggedIn : boolean, true if the player is logged in, false otherwise
+//username: the username of the logged in player
+//uids : the unique ids of the games
 
 doctype html
 include includes/lobbyEntry.pug
@@ -23,30 +26,63 @@ html(lang="en")
     head
         meta(charset="UTF-8")
         meta(name="description" content="The online multiplayer werewolf game that's 100% open-source.")
+        link(rel="icon" href="icon.png")
         link(rel="stylesheet" type="text/css" href="main.css")
+        link(rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css")
+        link(rel="stylesheet" type="text/css" href="simplebar.min.css")
+        
         // IBM Plex Sans google font
         link(href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans" rel="stylesheet")
         title OpenWerewolf
     
     // Move scrollbar to bottom on window resize 
     body
+        //need to add hidden attr to all of these...
+        include includes/register.pug
+        include includes/login.pug
+        include includes/leaveGameModal.pug
+        include includes/newGameModal.pug
         div(id="landingPage")
-            a(href="https://discord.gg/AYmr9vc" target="_blank")
-                img(src="Discord-Logo+Wordmark-Color.svg" style="display:inline; padding-left:5px; padding-top:5px; height:64px")
-            div(id="landingPageCenter" style=style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;")
-                p(style="font-size:4.12em; margin-top:11%;") OpenWerewolf
-                div(id="errors" style="height:50px")
-                form(id="registerForm" action="" style="margin-top:1%;")
-                    input(id="registerBox" autocomplete="off" maxlength="10"  placeholder="Enter a nickname..." type="text" style="border:2px solid #cecece; width:10%; font-size:18px; min-width:200px; height:35px; outline:none; padding: 0px 5px; background-color: #23272a" autofocus)
-                    input(id="registerButton" type="submit" value="Submit" style= "border-radius: 3px; background-color: whitesmoke; color: gray; border: 0; font-size:18px; height: 39px; margin-left: 15px; width: 81px; outline:none")
-            p(style="min-width:500px; font-size:0.9em; color:#a5a5a5; position:absolute; top:calc(100% - 30px); padding-left:10px") OpenWerewolf (C) 2017-2018 James Craster. No warranty. License: 
+            div(class="ui inverted menu")
+                div(class="header item") OpenWerewolf
+                a(class="item" href="/about" target="_blank") About
+                a(class="item" href="https://www.github.com/JamesCraster/OpenWerewolf" target="_blank") Github
+                a(class="item" href="https://discord.gg/AYmr9vc" target="_blank") Discord
+                div(class="ui inverted right menu")
+                    include includes/loggedInRightMenu.pug
+                    
+            div(id="landingPageCenter")
+                p(id="registrationPageTitle") OpenWerewolf
+                div(id="errors")
+                form(id="registerForm" action="" class="messageForm")
+                    div(class="ui action input")
+                        input(type="text" id="registerBox" autocomplete="off" maxlength="10"  placeholder="Enter a nickname..." autofocus)
+                        button(id="registerButton" class="ui inverted button") Submit
+            
+            //p(id="copyrightNotice") OpenWerewolf (C) 2017-2018 James Craster. No warranty. License: 
                 a(style="color:#237bd2" href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank") AGPLv3
+            p(id="copyrightNotice")
+                a(href="/imprint") Copyright and attribution
+        
         include includes/lobby.pug
-        div(id="topLevel")
+        div(id="topLevel" style="overflow:hidden;")
             include includes/game.pug
+        
+        
     
     script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js")
     script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
+    script(src="semantic/dist/semantic.min.js")
+    script(src="simplebar.min.js")
+    script(crossorigin src="https://unpkg.com/react@16/umd/react.development.js")
+    script(crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js")
+    script(src="components.js")
     script(src="client.js")
-        
-        
+    script
+        |$('.newAccountButton').click(function(){$("#registerModal").modal('show');});        
+        |$('.loginButton').click(function(){$('#loginModal').modal("show");});
+        |$('#newGameButton').click(function(){$('#newGameModal').modal("show");});
+        | new SimpleBar($('#container')[0]);
+        | new SimpleBar($('#lobbyListContainer')[0]);
+        |$('#container .simplebar-content').css('overflow-x', 'hidden');
+        | 

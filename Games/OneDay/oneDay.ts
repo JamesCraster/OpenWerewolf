@@ -266,8 +266,8 @@ export class OneDay extends Game {
   private sixPlayer: RoleList = new RoleList(defaultSixPlayer.list);
   private sevenPlayer: RoleList = new RoleList(defaultSevenPlayer.list);
   private eightPlayer: RoleList = new RoleList(defaultEightPlayer.list);
-  public constructor(server: Server) {
-    super(server, 3, 8, "OneDay");
+  public constructor(server: Server, name: string, uid: string) {
+    super(server, 3, 8, "OneDay", name, uid);
     super.addMessageRoom(this.playerchat);
   }
 
@@ -1080,6 +1080,7 @@ export class OneDay extends Game {
         player.send("Error: no such command exists! Commands are /vote /unvote /rules");
       }
     } else {
+      console.log('received by player chat');
       this.playerchat.receive(player, player.username + ": " + msg, undefined, undefined, player.color);
       this.endChat.receive(player, player.username + ": " + msg, undefined, undefined, player.color);
     }

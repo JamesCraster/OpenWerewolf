@@ -10,19 +10,19 @@
     See the License for the specific language governing permissions and
     limitations under the License.
      
-mixin lobbyEntry(gameNumber, name, players, inPlay, gameType)
-    div(class="item" number=gameNumber name=name inPlay="false")
-        - if(inPlay){
-        p
-            span(class="gameName")= name
-            span(class="inPlay")= "[IN PLAY]"
-        - }else{
-        p 
-            span(class="gameName")= name
-            span(class="inPlay")= "[OPEN]"
-        - }
-        br
-        p Players:  
+mixin lobbyEntry(gameNumber, name, players, inPlay, gameType, uid)
+    div(class="lobbyItem" uid=uid number=gameNumber name=name inPlay="false" ranked="false" style="padding-bottom:5px;position:relative;")
+        div(class="lobbyItemHeader")
+            - if(inPlay){
+            p
+                span(class="gameName")= name
+                span(class="inPlay")= "IN PLAY"
+            - }else{
+            p 
+                span(class="gameName")= name
+                span(class="inPlay")= "OPEN"
+            - }
+        p(class="lobbyItemBody") Players:  
             span
                 - var n = 0;
                 - while(n < players.length){

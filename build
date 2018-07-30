@@ -48,14 +48,22 @@ while [ "$1" != "" ]; do
       cp -r Core release
       
       #minify javascript and css on clientside
-      uglifyjs --compress --comments '/license/' -- Client/client.js > release/Client/client.js
+      #uglifyjs --compress --comments '/license/' -- Client/client.js > release/Client/client.js
       cleancss -o release/Client/main.css Client/main.css
       cp Client/*.mp3 release/Client
+      cp Client/components.js release/Client/components.js
+      cp Client/icon.png release/Client/icon.png
+      cp Client/simplebar.min.js release/Client/simplebar.min.js
+      cp Client/client.js release/Client/client.js
+      cp Client/simplebar.min.css release/Client/simplebar.min.css
 
       cp Games/OneDay/oneDay.js release/Games/OneDay
       cp Games/OneDay/LICENSE release/Games/OneDay
-      cp Games/Classic/classic.js release/Games/Classic
+      cp Games/Classic/Classic.js release/Games/Classic
       cp Games/Classic/LICENSE relase/Games/Classic
+      cp -r semantic release/semantic
+
+      zip -r release.zip release
 
       ;;
 

@@ -36,27 +36,32 @@ export abstract class Game {
   private colorPool = PlayerColorArray.slice();
   private _gameType: string;
   private _resetStartTime: boolean = false;
-  private _index: number = -1;
   private _inEndChat: boolean = false;
-  public constructor(server: Server, minPlayerCount: number, maxPlayerCount: number, gameType: string) {
+  private _name: string;
+  private _uid: string;
+  private idleTime: number = 60000 * 5
+  private idleTimer: Stopwatch = new Stopwatch();
+  public constructor(server: Server, minPlayerCount: number, maxPlayerCount: number, gameType: string, name: string, uid: string) {
     if (DEBUGMODE) {
       this._startWait = 10000;
     }
+    this._uid = uid;
     this._server = server;
     this._minPlayerCount = minPlayerCount;
     this._maxPlayerCount = maxPlayerCount;
     this._gameType = gameType;
+    this._name = name;
     setInterval(this.pregameLobbyUpdate.bind(this), 500);
     setInterval(this.update.bind(this), 500);
+  }
+  public get name() {
+    return this._name;
   }
   public get inEndChat() {
     return this._inEndChat;
   }
-  public set index(index: number) {
-    this._index = index;
-  }
-  public get index() {
-    return this._index;
+  public get uid() {
+    return this._uid;
   }
   get playerNameColorPairs(): Array<NameColorPair> {
     let playerNameColorPairs = [];
@@ -128,6 +133,14 @@ export abstract class Game {
   }
   private pregameLobbyUpdate() {
     if (!this.inPlay) {
+      if (this._players.length != 0) {
+        this.idleTimer.restart();
+        this.idleTimer.stop();
+      } else if (this.idleTimer.time > this.idleTime) {
+        this._server.removeGame(this);
+      } else {
+        this.idleTimer.start();
+      }
       //if have max number of players, start the game immediately
       if (this._registeredPlayerCount >= this._maxPlayerCount) {
         this.start();
@@ -181,7 +194,7 @@ export abstract class Game {
     this._players.push(player);
     this.setAllTitle("OpenWerewolf (" + this._players.length + ")");
     this._registeredPlayerCount++;
-    this._server.listPlayerInLobby(player.username, player.color, this._index);
+    this._server.listPlayerInLobby(player.username, player.color, this);
 
     //If the number of players is between minimum and maximum count, inform them of the wait remaining before game starts
     if (this._players.length > this._minPlayerCount && this._players.length < this._maxPlayerCount) {
@@ -206,7 +219,7 @@ export abstract class Game {
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].sound("LOSTPLAYER");
     }
-    this._server.unlistPlayerInLobby(player.username, this._index);
+    this._server.unlistPlayerInLobby(player.username, this);
     let index = this._players.indexOf(player);
     if (index != -1) {
       this._registeredPlayerCount--;
@@ -223,7 +236,7 @@ export abstract class Game {
       this._players[i].emit('newGame');
     }
     this._inPlay = true;
-    this._server.markGameStatusInLobby(this._index, "[IN PLAY]");
+    this._server.markGameStatusInLobby(this, "IN PLAY");
     this.broadcast("*** NEW GAME ***", Colors.brightGreen);
   }
   protected afterEnd() {
@@ -253,8 +266,9 @@ export abstract class Game {
       this._players = [];
       this._registeredPlayerCount = 0;
       this.colorPool = PlayerColorArray.slice();
-      this._server.markGameStatusInLobby(this._index, "[OPEN]");
+      this._server.markGameStatusInLobby(this, "OPEN");
       this._inEndChat = false;
+      this._server.removeGame(this);
     }, this.endTime);
   }
   protected addMessageRoom(room: MessageRoom) {
@@ -337,13 +351,14 @@ export abstract class Game {
  * Adds 'muted' and 'deafened' properties to Player so that it can be used in a MessageRoom.      
  * Each MessageRoom will have a different MessageRoomMember for the same Player.
  */
-class MessageRoomMember extends Player {
+class MessageRoomMember {
   private _muted: boolean = false;
   private _deafened: boolean = false;
   private _permanentlyMuted: boolean = false;
   private _permanentlyDeafened: boolean = false;
-  constructor(socket: Socket, session: string) {
-    super(socket, session);
+  private _member: Player;
+  constructor(member: Player) {
+    this._member = member;
   }
   public permanentlyMute() {
     this._permanentlyMuted = true;
@@ -375,6 +390,12 @@ class MessageRoomMember extends Player {
       this._deafened = false;
     }
   }
+  get id() {
+    return this._member.id;
+  }
+  public send(message: string, textColor?: string, backgroundColor?: string, usernameColor?: string) {
+    this._member.send(message, textColor, backgroundColor, usernameColor);
+  }
 }
 export class MessageRoom {
   private _members: Array<MessageRoomMember> = [];
@@ -397,6 +418,7 @@ export class MessageRoom {
         for (var i = 0; i < this._members.length; i++) {
           if (!this._members[i].deafened) {
             this._members[i].send(msg, textColor, backgroundColor, usernameColor);
+            //console.log("message sent to: " + this._members[i].username);
           }
         }
       }
@@ -410,7 +432,7 @@ export class MessageRoom {
     }
   }
   public addPlayer(player: Player) {
-    this._members.push(new MessageRoomMember(player.socket, player.session));
+    this._members.push(new MessageRoomMember(player));
   }
   public removePlayer(player: Player) {
     let member = this.getMemberById(player.id);
