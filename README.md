@@ -4,8 +4,9 @@
 
 ## Play now at https://www.openwerewolf.com/
 
-## Screenshot:
+## Screenshots:
 ![An image of the OpenWerewolf client](https://github.com/JamesCraster/OpenWerewolf/blob/master/Screenshot.png)
+![An image of the OpenWerewolf lobby](https://github.com/JamesCraster/OpenWerewolf/blob/master/Screen%20Shot%202018-08-20%20at%2021.19.07.png)
 
 ## Features:
 * You can run multiple games at once using the lobby system.
@@ -42,7 +43,7 @@ Please head over to [OpenWerewolf-Core](https://github.com/JamesCraster/OpenWere
 
 Please **do not** contribute directly to this repo. This is because the core engine has to remain Apache-2.0, so lives in its own repo. 
 
-There's a [guide](https://github.com/JamesCraster/OpenWerewolf/wiki/Contributing) to make contributing easier.
+There's a [guide](https://github.com/JamesCraster/OpenWerewolf/wiki/Contributing) to help make contributing easier.
 
 ## [Documentation](https://jamescraster.github.io/OpenWerewolf-Releases/index.html)
 
