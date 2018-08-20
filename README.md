@@ -37,13 +37,11 @@ in the Trial, where you'll be voting to kill the werewolves among you. For 3-7 p
 ```
 
 ## Contribute:
-All contributors are welcome.
+All contributors are welcome. There's a [guide](https://github.com/JamesCraster/OpenWerewolf/wiki/Contributing) to help make contributing easier.
 
 Please head over to [OpenWerewolf-Core](https://github.com/JamesCraster/OpenWerewolf-Core) or [OpenWerewolf-Games](https://github.com/JamesCraster/OpenWerewolf-Games) and contribute there.
 
-Please **do not** contribute directly to this repo. This is because the core engine has to remain Apache-2.0, so lives in its own repo. 
-
-There's a [guide](https://github.com/JamesCraster/OpenWerewolf/wiki/Contributing) to help make contributing easier.
+Please **do not** contribute directly to this repo. (This is because the core engine has to remain Apache-2.0, so lives in its own repo.)
 
 ## [Documentation](https://jamescraster.github.io/OpenWerewolf-Releases/index.html)
 
