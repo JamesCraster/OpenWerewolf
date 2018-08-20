@@ -30,18 +30,19 @@ in the Trial, where you'll be voting to kill the werewolves among you. For 3-7 p
 
 * Unzip OpenWerewolf.zip, and run: 
 
-```npm install
+```
+   npm install
    node app.js
 ```
 
 ## Contribute:
 All contributors are welcome.
 
-Head over to [OpenWerewolf-Core](https://github.com/JamesCraster/OpenWerewolf-Core) or [OpenWerewolf-Games](https://github.com/JamesCraster/OpenWerewolf-Games) and contribute there.
+Please head over to [OpenWerewolf-Core](https://github.com/JamesCraster/OpenWerewolf-Core) or [OpenWerewolf-Games](https://github.com/JamesCraster/OpenWerewolf-Games) and contribute there.
 
 Please **do not** contribute directly to this repo. This is because the core engine has to remain Apache-2.0, so lives in its own repo. 
 
-Read the [guide.](https://github.com/JamesCraster/OpenWerewolf/wiki/Contributing)
+There's a [guide](https://github.com/JamesCraster/OpenWerewolf/wiki/Contributing) to make contributing easier.
 
 ## [Documentation](https://jamescraster.github.io/OpenWerewolf-Releases/index.html)
 
