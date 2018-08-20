@@ -13,10 +13,13 @@
 div(id="leaveGameModal" class="ui modal column segment transition")
     div(class="header") Leaving a game during play
     p(style="color:red") Warning: Leaving an ongoing game too often is a bannable offence. This has been recorded.
-    div(class="ui checkbox")
-            input(type="checkbox")
-            label I understand and wish to proceed
-    br
-    br
-    button(class="ui red button") Leave game 
+    form(id='leaveGameForm' class='ui form')
+        div(class="field")
+            div(class="ui checkbox")
+                input(type="checkbox" name="confirmation")
+                label I understand and want to continue
+        div(class="ui error message")
+        br
+        br
+        button(class="ui red button") Leave game 
         

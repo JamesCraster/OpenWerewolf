@@ -36,7 +36,7 @@ html(lang="en")
         title OpenWerewolf
     
     // Move scrollbar to bottom on window resize 
-    body
+    body(style='overflow-y:hidden;')
         //need to add hidden attr to all of these...
         include includes/register.pug
         include includes/login.pug
@@ -52,7 +52,9 @@ html(lang="en")
                     include includes/loggedInRightMenu.pug
                     
             div(id="landingPageCenter")
-                p(id="registrationPageTitle") OpenWerewolf
+                //p(id="registrationPageTitle") OpenWerewolf
+                img(src="assets/greylogo.png")
+                h3(style="color:#cecece; font-style:italic; margin-top:20px;") A classic game of lies and deception
                 div(id="errors")
                 form(id="registerForm" action="" class="messageForm")
                     div(class="ui action input")
@@ -69,7 +71,8 @@ html(lang="en")
             include includes/game.pug
         
         
-    
+    script(src='webfontloader.js')
+    script(src="pixi.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js")
     script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
     script(src="semantic/dist/semantic.min.js")
@@ -78,6 +81,7 @@ html(lang="en")
     script(crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js")
     script(src="components.js")
     script(src="client.js")
+    script(src="pixicanvas.js")
     script
         |$('.newAccountButton').click(function(){$("#registerModal").modal('show');});        
         |$('.loginButton').click(function(){$('#loginModal').modal("show");});

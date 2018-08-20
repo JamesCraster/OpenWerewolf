@@ -17,7 +17,7 @@ class LobbyItem extends React.Component {
         return React.createElement(
             "div",
             { className: "lobbyItem", name: this.props.name,
-                inplay: "false", ranked: this.props.ranked, uid: this.props.uid },
+                inplay: "false", type: this.props.type, ranked: this.props.ranked, uid: this.props.uid },
             React.createElement(
                 "div",
                 { className: "lobbyItemHeader" },

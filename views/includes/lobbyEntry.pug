@@ -11,7 +11,7 @@
     limitations under the License.
      
 mixin lobbyEntry(gameNumber, name, players, inPlay, gameType, uid)
-    div(class="lobbyItem" uid=uid number=gameNumber name=name inPlay="false" ranked="false" style="padding-bottom:5px;position:relative;")
+    div(class="lobbyItem" type=gameType uid=uid number=gameNumber name=name inPlay="false" ranked="false" style="padding-bottom:5px;position:relative;")
         div(class="lobbyItemHeader")
             - if(inPlay){
             p
@@ -34,4 +34,4 @@ mixin lobbyEntry(gameNumber, name, players, inPlay, gameType, uid)
                     - }
                     - n+=1;
                 -}
-            span(id="gameType")= gameType
+            span(id="gameType" class="gameType")= gameType

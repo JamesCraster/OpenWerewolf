@@ -19,7 +19,7 @@ import { OneDay } from "./Games/OneDay/oneDay";
 import { Classic } from "./Games/Classic/Classic";
 import { Demo } from "./Games/Demo/demo";
 
-var myArgs = process.argv.slice(2);
+const myArgs = process.argv.slice(2);
 export const DEBUGMODE = myArgs[0];
 if (DEBUGMODE) {
   process.env.NODE_ENV = 'development';
@@ -27,24 +27,25 @@ if (DEBUGMODE) {
   process.env.NODE_ENV = 'production';
 }
 
-var express = require("express");
-var app = express();
-var http = require("http").Server(app);
-var io = require("socket.io")(http);
-var expressSession = require("express-session");
-var RedisStore = require("connect-redis")(expressSession);
-var redis = require('redis-server');
+const express = require("express");
+const app = express();
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
+const expressSession = require("express-session");
+const RedisStore = require("connect-redis")(expressSession);
+const redis = require('redis-server');
 const redisServer = new redis(6379);
-var grawlix = require('grawlix');
-var mysql = require('mysql');
-var bcrypt = require('bcrypt');
-var saltNumber = 10;
-var uGameid = 0;
-var uPlayerid = 0;
+const grawlix = require('grawlix');
+const mysql = require('mysql');
+const bcrypt = require('bcrypt');
+const saltNumber = 10;
+
+let uGameid = 0;
+let uPlayerid = 0;
 
 redisServer.open(((err: string) => { }));
 
-var con = mysql.createConnection({
+const con = mysql.createConnection({
   host: "localhost",
   user: "jcraster",
   password: "password",
@@ -57,14 +58,14 @@ con.connect(function (err: any) {
 });
 
 //create a new server
-var server = new Server();
+let server = new Server();
 if (myArgs[0] == "debug") {
   server.setDebug();
   console.log("debug mode active");
 }
 
 //create a session cookie
-var session = expressSession({
+let session = expressSession({
   store: new RedisStore({ host: 'localhost', port: 6379 }),
   secret: 'sakhasdjhasdkjhadkjahsd',
   resave: false,
@@ -119,12 +120,12 @@ app.get("/", function (req: any, res: any) {
 app.post("/register", function (req: any, res: any) {
   let status = "success";
   //run validation
-  var letters = /^[A-Za-z]+$/;
+  let letters = /^[A-Za-z]+$/;
   if (typeof req.body.username == 'string' || req.body.username instanceof String) {
     if (req.body.username.length > 0 && req.body.username.length <= 10) {
       if (letters.test(req.body.username)) {
         if (!grawlix.isObscene(req.body.username)) {
-          var sql = "SELECT username FROM USERS where username=" + mysql.escape(req.body.username);
+          let sql = "SELECT username FROM USERS where username=" + mysql.escape(req.body.username);
           con.query(sql, function (err: any, results: any) {
             if (results.length == 0) {
               if (typeof req.body.email == 'string' || req.body.email instanceof String) {
@@ -151,7 +152,7 @@ app.post("/register", function (req: any, res: any) {
               if (status == "success") {
                 bcrypt.genSalt(saltNumber, function (err: any, salt: any) {
                   bcrypt.hash(req.body.password, salt, function (err: any, hash: any) {
-                    var sql = "INSERT INTO USERS VALUES (" + mysql.escape(req.body.username) + "," + mysql.escape(req.body.email) + "," +
+                    let sql = "INSERT INTO USERS VALUES (" + mysql.escape(req.body.username) + "," + mysql.escape(req.body.email) + "," +
                       mysql.escape(hash) + "," + mysql.escape(salt) + ")";
                     con.query(sql, function (err: any, result: any) {
                       if (err) throw err;
@@ -183,7 +184,7 @@ app.post("/register", function (req: any, res: any) {
 app.post("/login", function (req: any, res: any) {
   let status = "failure";
   if (typeof req.body.username == 'string' && typeof req.body.password == 'string') {
-    var sql = "SELECT encrypted_password FROM USERS WHERE username=" + mysql.escape(req.body.username);
+    let sql = "SELECT encrypted_password FROM USERS WHERE username=" + mysql.escape(req.body.username);
     con.query(sql, function (err: any, result: any) {
       if (result.length != 0) {
         bcrypt.compare(req.body.password, result[0].encrypted_password, function (err: any, comparisonResult: any) {
@@ -236,6 +237,7 @@ app.post("/newGame", function (req: any, res: any) {
   }
   res.send('{"result":' + JSON.stringify(result) + '}');
 });
+app.get("*.png", function () { });
 app.get("*", function (req: any, res: any) {
   res.render("404");
 });
@@ -257,7 +259,9 @@ io.on("connection", function (socket: Socket) {
   if (oldPlayerId != undefined) {
     thisPlayerId = oldPlayerId;
   }
-
+  socket.on('reloadClient', function () {
+    server.reloadClient(thisPlayerId);
+  });
   socket.on("message", function (msg: string) {
     if (typeof msg === 'string') {
       //filter for spam(consecutive messages within 1/2 a second)
@@ -297,7 +301,7 @@ io.on("connection", function (socket: Socket) {
 });
 
 //listen on port
-var port = 8081;
+let port = 8081;
 http.listen(port, function () {
   console.log("Port is:" + port);
 });

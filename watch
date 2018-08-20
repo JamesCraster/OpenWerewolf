@@ -1,0 +1,3 @@
+tsc --watch &
+babel --presets react --watch Client/src  --out-dir Client &
+sass --watch Client/main.scss:Client/main.css &

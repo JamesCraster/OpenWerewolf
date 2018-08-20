@@ -43,7 +43,4 @@ export class Demo extends Game {
         //direct player's message to the end chat (for when the game is over)
         this.endChat.receive(player, player.username + ": " + msg);
     }
-    public disconnect() {
-
-    }
 }

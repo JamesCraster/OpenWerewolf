@@ -27,6 +27,11 @@ $inner-div-margin-bottom: 105px;
   flex-direction: $flex-direction;
 }
 
+@font-face {
+  font-family: Mercutio;
+  src: url('mercutio_basic.ttf') format('truetype');
+}
+
 * {
   margin: 0;
   padding: 0px 0px;
@@ -48,7 +53,6 @@ body {
   display: inline;
   padding-left: 5px;
   padding-top: 5px;
-  height: 64px;
 }
 
 #errors {
@@ -61,7 +65,7 @@ body {
   justify-content: center;
   align-items: center;
   text-align: center;
-  margin-top: 12%;
+  margin-top: 8%;
 }
 
 #registerForm {
@@ -86,7 +90,7 @@ body {
 #inner {
   height: $central-innerbox-height;
   width: $central-innerbox-width;
-  overflow: auto;
+  overflow-x: hidden;
   position: relative;
   border: $standard-border;
   box-sizing: border-box;
@@ -115,10 +119,12 @@ body {
   border: $standard-border;
   height: $central-innerbox-height;
   border-radius: 3px;
-  width: 60%;
+  width: 90%;
+  margin-top: 20px;
   margin-bottom: $msg-height + 2 + $inner-div-margin-bottom;
   box-sizing: border-box;
   overflow-y: auto;
+  background-color: #212121;
 }
 
 #innerRightBox {
@@ -179,28 +185,6 @@ body {
   }
 }
 
-/*#leaveGame {
-  font-size: 16px;
-  width: 12%;
-  min-width: 112px;
-  height: 42px;
-  line-height: 0px;
-  border-radius: 0px;
-  border: $standard-border;
-  background-color: #4c4c4c;
-  &:hover {
-    //background-color:#661cb1;
-  }
-  &:focus {
-    outline: none;
-  }
-  &::-moz-focus-inner {
-    border: none;
-  }
-  float: right;
-  margin-right:8%;
-}*/
-
 .gameli {
   font-size: $standard-font-size;
   background: #23272a;
@@ -234,7 +218,7 @@ a {
   flex-direction: column;
   margin: 0px 0px;
   overflow-y: auto;
-  overflow-x: hidden; //border: 3px solid black;
+  overflow-x: hidden;
   width: 65%;
   height: 100%;
   margin-left: 10px;
@@ -371,7 +355,12 @@ a {
 
 @media only screen and (min-device-width:430px) {
   #outer {
-    @include standard-flexbox(column);
+    //@include standard-flexbox(column);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    align-content: stretch;
+    flex-direction: column;
   }
   #lobby {
     @include standard-flexbox(row);

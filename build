@@ -22,12 +22,12 @@ while [ "$1" != "" ]; do
   case $1 in 
     -r) 
       
-      #delete release folder
-      rm -rI release
+      #make sure to delete any existing release folder first!
 
-      #compile typescript and sass
+      #compile typescript, sass and jsx
       tsc
       sass Client/main.scss Client/main.css
+      babel --presets react Client/src  --out-dir Client
       
       #create release folder
       mkdir release
@@ -38,7 +38,6 @@ while [ "$1" != "" ]; do
 
       #copy over all necessary files
       cp app.js release
-      cp core.js release
       cp LICENSE release
       cp README.md release
       cp package-lock.json release
@@ -47,20 +46,25 @@ while [ "$1" != "" ]; do
       cp -r views release
       cp -r Core release
       
-      #minify javascript and css on clientside
-      #uglifyjs --compress --comments '/license/' -- Client/client.js > release/Client/client.js
-      cleancss -o release/Client/main.css Client/main.css
+      #minify css on clientside
+      #cleancss -o release/Client/main.css Client/main.css
       cp Client/*.mp3 release/Client
+      cp Client/main.css release/Client/main.css
       cp Client/components.js release/Client/components.js
       cp Client/icon.png release/Client/icon.png
       cp Client/simplebar.min.js release/Client/simplebar.min.js
       cp Client/client.js release/Client/client.js
       cp Client/simplebar.min.css release/Client/simplebar.min.css
+      cp -r Client/assets release/Client/assets
+      cp Client/mercutio_basic.ttf release/Client/mercutio_basic.ttf
+      cp Client/pixi.min.js release/Client/pixi.min.js
+      cp Client/webfontloader.js release/Client/webfontloader.js
+      cp Client/pixicanvas.js release/Client/pixicanvas.js
 
       cp Games/OneDay/oneDay.js release/Games/OneDay
       cp Games/OneDay/LICENSE release/Games/OneDay
       cp Games/Classic/Classic.js release/Games/Classic
-      cp Games/Classic/LICENSE relase/Games/Classic
+      cp Games/Classic/LICENSE release/Games/Classic
       cp -r semantic release/semantic
 
       zip -r release.zip release

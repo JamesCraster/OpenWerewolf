@@ -21,7 +21,7 @@ import { DEBUGMODE } from "../app";
 
 export abstract class Game {
   protected endChat: MessageRoom = new MessageRoom();
-  private endTime: number = 30000;
+  protected endTime: number = 30000;
   private _messageRooms: Array<MessageRoom> = [];
   private _players: Array<Player> = [];
   private _registeredPlayerCount: number = 0;
@@ -100,7 +100,7 @@ export abstract class Game {
     }
   }
   public getPlayer(id: string): Player | undefined {
-    for (var i = 0; i < this._players.length; i++) {
+    for (let i = 0; i < this._players.length; i++) {
       if (this._players[i].id == id) {
         return this._players[i];
       }
@@ -109,7 +109,7 @@ export abstract class Game {
     return undefined;
   }
   public isPlayer(id: string): boolean {
-    for (var i = 0; i < this._players.length; i++) {
+    for (let i = 0; i < this._players.length; i++) {
       if (this._players[i].id == id) {
         return true;
       }
@@ -189,6 +189,7 @@ export abstract class Game {
       this._players[i].sound("NEWPLAYER");
     }
     player.color = this.colorPool[0];
+    player.headerSend([{ text: 'Welcome, ', color: Colors.white }, { text: player.username, color: player.color }]);
     this.colorPool.splice(0, 1);
     player.startVote = false;
     this._players.push(player);
@@ -204,12 +205,14 @@ export abstract class Game {
     }
   }
   public broadcast(msg: string, textColor?: string, backgroundColor?: string) {
-    for (var i = 0; i < this._players.length; i++) {
+    for (let i = 0; i < this._players.length; i++) {
       this._players[i].send(msg, textColor, backgroundColor);
     }
   }
   public abstract receive(player: Player, msg: string): void;
-  public abstract disconnect(player: Player): void;
+  public disconnect(player: Player): void {
+    this.lineThroughPlayer(player.username, "grey");
+  };
   public kick(player: Player) {
     //this function fails
     for (let i = 0; i < this._messageRooms.length; i++) {
@@ -230,6 +233,11 @@ export abstract class Game {
     player.title = "OpenWerewolf";
     this.broadcast(player.username + " has disconnected");
   }
+  protected headerBroadcast(array: Array<{ text: string, color: string }>) {
+    for (let i = 0; i < this._players.length; i++) {
+      this._players[i].headerSend(array);
+    }
+  }
   protected beforeStart() {
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].sound("NEWGAME");
@@ -238,6 +246,7 @@ export abstract class Game {
     this._inPlay = true;
     this._server.markGameStatusInLobby(this, "IN PLAY");
     this.broadcast("*** NEW GAME ***", Colors.brightGreen);
+    this.headerBroadcast([{ text: '*** NEW GAME ***', color: Colors.brightGreen }]);
   }
   protected afterEnd() {
     for (let i = 0; i < this._messageRooms.length; i++) {
@@ -400,7 +409,7 @@ class MessageRoomMember {
 export class MessageRoom {
   private _members: Array<MessageRoomMember> = [];
   public getMemberById(id: string): MessageRoomMember | undefined {
-    for (var i = 0; i < this._members.length; i++) {
+    for (let i = 0; i < this._members.length; i++) {
       if (this._members[i].id == id) {
         return this._members[i];
       }
@@ -415,7 +424,7 @@ export class MessageRoom {
     let messageRoomSender = this.getMemberById(sender.id);
     if (messageRoomSender instanceof MessageRoomMember) {
       if (!messageRoomSender.muted) {
-        for (var i = 0; i < this._members.length; i++) {
+        for (let i = 0; i < this._members.length; i++) {
           if (!this._members[i].deafened) {
             this._members[i].send(msg, textColor, backgroundColor, usernameColor);
             //console.log("message sent to: " + this._members[i].username);
@@ -425,7 +434,7 @@ export class MessageRoom {
     }
   }
   public broadcast(msg: string, textColor?: string, backgroundColor?: string) {
-    for (var i = 0; i < this._members.length; i++) {
+    for (let i = 0; i < this._members.length; i++) {
       if (!this._members[i].deafened) {
         this._members[i].send(msg, textColor, backgroundColor);
       }

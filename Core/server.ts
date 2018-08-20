@@ -17,7 +17,8 @@ import { Socket } from "../node_modules/@types/socket.io";
 import { Player, Message } from './player';
 import { Game } from './game';
 import { Utils, Colors } from './utils'
-var grawlix = require("grawlix");
+import { thisExpression } from "../node_modules/@types/babel-types";
+const grawlix = require("grawlix");
 
 export class Server {
     private _players: Array<Player> = [];
@@ -30,6 +31,14 @@ export class Server {
         this._games = [];
         //join waiting players to games that need them
         setInterval(this.joinGame.bind(this), 50);
+    }
+    public reloadClient(id: string) {
+        console.log('reloadClient');
+        let player = this.getPlayer(id);
+        if (player instanceof Player) {
+            player.reloadClient();
+            console.log('called reload');
+        }
     }
     get games() {
         return this._games;
@@ -106,6 +115,16 @@ export class Server {
                     if (player.game.inPlay == false || player.game.inEndChat) {
                         player.game.kick(player);
                         player.resetAfterGame();
+                    } else if (player.game.inPlay) {
+                        //if game is in play, disconnect the player from the client
+                        //without destroying its data (its role etc.)
+                        player.disconnect();
+                        player.game.disconnect(player);
+                        let index = this._players.indexOf(player);
+                        if (index != -1) {
+                            this._players.splice(index, 1)[0];
+                        }
+                        player.reloadClient();
                     }
                 }
             }
@@ -124,12 +143,12 @@ export class Server {
                         player.send(
                             "Hi, " +
                             player.username +
-                            "! You have joined Game " +
-                            (j + 1).toString() +
-                            "."
+                            "! You have joined '" +
+                            player.game.name +
+                            "'."
                         );
                         this._games[j].broadcast(player.username + " has joined the game");
-                        player.send("There are " + (this._games[j].playerCount + 1).toString() + " players in this game");
+                        //player.send("There are " + (this._games[j].playerCount + 1).toString() + " players in this game");
                         if (this._games[j].minimumPlayersNeeded - 1 > 0) {
                             this._games[j].broadcast("The game will begin when at least " + (this._games[j].minimumPlayersNeeded - 1).toString() + " more players have joined");
                             //if just hit the minimum number of players
@@ -155,8 +174,8 @@ export class Server {
         return username;
     }
     private validateUsername(player: Player, username: string) {
-        var letters = /^[A-Za-z]+$/;
-        for (var i = 0; i < this._players.length; i++) {
+        let letters = /^[A-Za-z]+$/;
+        for (let i = 0; i < this._players.length; i++) {
             if (this._players[i].username == username) {
                 player.registrationError(
                     "This username has already been taken by someone"
@@ -207,11 +226,16 @@ export class Server {
                         if (!this._players[i].inGame) {
                             socket.emit('transitionToLobby');
                         } else if (game != undefined) {
-                            socket.emit('transitionToGame', game.name, game.uid);
+                            socket.emit('transitionToGame', game.name, game.uid, game.inPlay);
+                            //send stored messages to the central and left boxes
                             for (let j = 0; j < this._players[i].cache.length; j++) {
                                 socket.emit("message", this._players[i].cache[j].message,
                                     this._players[i].cache[j].textColor, this._players[i].cache[j].backgroundColor,
                                     this._players[i].cache[j].usernameColor);
+                            }
+                            for (let j = 0; j < this._players[i].leftCache.length; j++) {
+                                socket.emit('leftMessage', this._players[i].leftCache[j].message,
+                                    this._players[i].leftCache[j].textColor, this._players[i].leftCache[j].backgroundColor);
                             }
                         }
                         //send the client the correct time
@@ -271,8 +295,8 @@ export class Server {
                     player.addPlayerToLobbyList(this._players[i].username);
                 }
             }
-            player.register();
             player.setUsername(msg);
+            player.register();
             this._registeredPlayerCount++;
             for (let i = 0; i < this._players.length; i++) {
                 this._players[i].addPlayerToLobbyList(player.username);
@@ -329,7 +353,7 @@ export class Server {
 
     }
     public isPlayer(id: string): boolean {
-        for (var i = 0; i < this._players.length; i++) {
+        for (let i = 0; i < this._players.length; i++) {
             if (this._players[i].id == id) {
                 return true;
             }
@@ -337,7 +361,7 @@ export class Server {
         return false;
     }
     public getPlayer(id: string): Player | undefined {
-        for (var i = 0; i < this._players.length; i++) {
+        for (let i = 0; i < this._players.length; i++) {
             if (this._players[i].id == id) {
                 return this._players[i];
             }
@@ -387,11 +411,11 @@ export class Server {
         }
     }
     public kick(id: string): void {
-        var player = this.getPlayer(id);
+        let player = this.getPlayer(id);
         if (player instanceof Player) {
             //if player has no sockets (i.e no one is connected to this player)
             if (player.socketCount == 0) {
-                var index = this._players.indexOf(player);
+                let index = this._players.indexOf(player);
                 if (index !== -1) {
                     //if the player isn't in a game in play, remove them
                     if (!player.inGame || !player.registered) {

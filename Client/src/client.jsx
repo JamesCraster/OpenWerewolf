@@ -10,56 +10,167 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
+"use strict";
 
-var globalNow = 0;
-var globalTime = 0;
-var globalWarn = -1;
-var gameClicked = false;
-var waitingForGame = false;
-var inGame = false;
-var registered = false;
-var notificationSound = new Audio("162464__kastenfrosch__message.mp3");
+class States {
+  static get NOTASSIGNEDGAME() {
+    return "NOT ASSIGNED GAME";
+  }
+  static get INGAMEWAITING() {
+    return "IN GAME WAITING";
+  }
+  static get INGAMEPLAYING() {
+    return "IN GAME PLAYING";
+  }
+  static get GAMEENDED() {
+    return "GAME ENDED";
+  }
+}
+class LeaveGameButton {
+  constructor() {
+    this.action = this.inPlayClick;
+  }
+  setinPlayClick() {
+    $('#leaveGame').off('click');
+    this.action = function () {
+      $('#leaveGameModal').modal('show');
+    }
+    $('#leaveGame').click(this.action);
+  }
+  setNotInPlayClick() {
+    $('#leaveGame').off('click');
+    this.action = function () {
+      console.log(user.inGame);
+      if (!user.inGame) {
+        transitionFromGameToLobby();
+        user.socket.emit('leaveGame');
+        user.restart();
+      }
+    }
+    $('#leaveGame').click(this.action);
+  }
+}
+let leaveGameButton = new LeaveGameButton();
+
+class User {
+  constructor() {
+    this._state = States.NOTASSIGNEDGAME;
+    this.socket = io();
+    this.now = 0;
+    this.time = 0;
+    this.warn = -1;
+    this.gameClicked = false;
+    this.registered = false;
+    setInterval(this.updateTime.bind(this), 1000);
+  }
+  get inGame() {
+    return this.state == States.INGAMEPLAYING;
+  }
+  isState(state) {
+    return this.state == state;
+  }
+  set state(inputState) {
+    if (inputState == States.INGAMEPLAYING) {
+      leaveGameButton.setinPlayClick();
+    }
+    this._state = inputState;
+  }
+  get state() {
+    return this._state;
+  }
+  restart() {
+    transitionFromGameToLobby();
+    this.state = States.NOTASSIGNEDGAME;
+    this.registered = false;
+    this.now = 0;
+    this.time = 0;
+    this.warn = -1;
+    $('#playerNames').empty();
+    $('#playerNames').append('<li class="gameli">Players:</li>');
+    $('#roleNames').empty();
+    $('#gameClock').text('Time: 00:00');
+    $('#roleNames').append('<li class="gameli">Roles:</li>');
+    $('#chatbox').empty();
+    $('#leaveGame').off('click');
+    leaveGameButton.setNotInPlayClick();
+  }
+  convertTime(duration) {
+    let seconds = parseInt((duration / 1000) % 60);
+    let minutes = parseInt((duration / (1000 * 60)) % 60);
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    seconds = (seconds < 10) ? "0" + seconds : seconds;
+    return minutes + ":" + seconds;
+  }
+  updateTime() {
+    if (this.time > 0) {
+      this.time -= Date.now() - user.now;
+      this.now = Date.now();
+      if (this.time < 0) {
+        this.time = 0;
+        $('#gameClock').css("color", "#cecece");
+        this.warn = -1;
+      }
+      $('#gameClock').text("Time: " + this.convertTime(user.time));
+      if (this.time <= this.warn && this.time >= 0) {
+        $('#gameClock').css("color", "#ff1b1b");
+      }
+    } else {
+      $('#gameClock').text("Time: " + this.convertTime(0));
+    }
+  }
+  register() {
+    this.registered = true;
+  }
+}
+
+function lobbyItemClick(item) {
+  user.gameClicked = true;
+  if (user.isState(States.NOTASSIGNEDGAME)) {
+    transitionFromLobbyToGame($(item).attr('name'));
+  } else {
+    transitionFromLobbyToGame();
+  }
+  location.hash = 3;
+  if ($(item).attr('inPlay') == "false") {
+    if (user.isState(States.NOTASSIGNEDGAME)) {
+      $('#chatbox').empty();
+      $('#playerNames').empty();
+      removeAllPlayers();
+      $('#playerNames').append("<li class='gameli'>Players:</li>")
+      let usernameList = $(".lobbyItem[uid=" + $(item).attr('uid') + "] .username");
+      for (let i = 0; i < usernameList.length; i++) {
+        appendMessage($(usernameList[i]).text(), "#playerNames", $(usernameList[i]).css('color'));
+        addPlayer($(usernameList[i]).text(), '#FFFFFF');
+      }
+      user.socket.emit("gameClick", $(item).attr('uid'));
+      user.state = States.INGAMEWAITING;
+    }
+  } else {
+    if (user.isState(States.NOTASSIGNEDGAME)) {
+      $('#playerNames').empty();
+      removeAllPlayers();
+      $('#playerNames').append("<li class='gameli'>Players:</li>")
+      let usernameList = $(".lobbyItem[uid=" + $(item).attr('uid') + "] .username");
+      for (let i = 0; i < usernameList.length; i++) {
+        appendMessage($(usernameList[i]).text(), "#playerNames", $(usernameList[i]).css('color'));
+        addPlayer($(usernameList[i]).text(), '#FFFFFF');
+      }
+      appendMessage("This game has already started, please join a different one.", '#chatbox', undefined, "#950d0d");
+    }
+  }
+}
+
+let user = new User();
+
+let notificationSound = new Audio("162464__kastenfrosch__message.mp3");
 notificationSound.volume = 0.4;
-var newPlayerSound = new Audio("162476__kastenfrosch__gotitem.mp3");
+let newPlayerSound = new Audio("162476__kastenfrosch__gotitem.mp3");
 newPlayerSound.volume = 0.2;
-var lostPlayerSound = new Audio("162465__kastenfrosch__lostitem.mp3");
+let lostPlayerSound = new Audio("162465__kastenfrosch__lostitem.mp3");
 lostPlayerSound.volume = 0.2;
-
-var socket = io();
 
 function isClientScrolledDown() {
   return Math.abs($("#inner")[0].scrollTop + $('#inner')[0].clientHeight - $("#inner")[0].scrollHeight) <= 10;
-}
-
-function convertTime(duration) {
-  seconds = parseInt((duration / 1000) % 60);
-  minutes = parseInt((duration / (1000 * 60)) % 60);
-  hours = parseInt((duration / (1000 * 60 * 60)) % 24);
-
-  hours = (hours < 10) ? "0" + hours : hours;
-  minutes = (minutes < 10) ? "0" + minutes : minutes;
-  seconds = (seconds < 10) ? "0" + seconds : seconds;
-
-  return minutes + ":" + seconds;
-}
-
-function updateTime() {
-  console.log(globalTime);
-  if (globalTime > 0) {
-    globalTime -= Date.now() - globalNow;
-    globalNow = Date.now();
-    if (globalTime < 0) {
-      globalTime = 0;
-      $($("#roleNames li")[0]).css("color", "#cecece");
-      globalWarn = -1;
-    }
-    $($("#roleNames li")[0]).text("Time: " + convertTime(globalTime));
-    if (globalTime <= globalWarn && globalTime >= 0) {
-      $($("#roleNames li")[0]).css("color", "#ff1b1b");
-    }
-  } else {
-    $($("#roleNames li")[0]).text("Time: " + convertTime(0));
-  }
 }
 
 function addPlayerToLobbyList(username) {
@@ -71,11 +182,10 @@ function removePlayerFromLobbyList(username) {
     return $(this).text() === username;
   }).remove();
 }
-setInterval(updateTime, 1000);
 
 function appendMessage(msg, target, textColor, backgroundColor, usernameColor) {
   //test if client scrolled down
-  var scrollDown = isClientScrolledDown();
+  let scrollDown = isClientScrolledDown();
   if (textColor && backgroundColor) {
     $(target).append($("<li class='gameli' style='color:" + textColor + ";background-color:" + backgroundColor + "'>"));
   } else if (textColor) {
@@ -86,8 +196,8 @@ function appendMessage(msg, target, textColor, backgroundColor, usernameColor) {
     $(target).append($("<li class='gameli'>"));
   }
   if (usernameColor) {
-    username = msg.split(":")[0];
-    messageBody = ":" + msg.split(":")[1];
+    let username = msg.split(":")[0];
+    let messageBody = ":" + msg.split(":")[1];
     $(target + " li:last").append($("<span style='color:" + usernameColor + "'>"));
     $(target + " li:last span").text(username);
     $(target + " li:last").append($("<span>"));
@@ -116,46 +226,46 @@ function lineThroughPlayer(msg, color) {
     return $(this).text() === msg;
   }).css("text-decoration", "line-through");
 }
-var lobbyChatListContainerSimpleBar = new SimpleBar($('#lobbyChatListContainer')[0]);
 
-function restart() {
-  transitionFromGameToLobby();
-  inGame = false;
-  waitingForGame = false;
-  registered = false;
-  globalNow = 0;
-  globalTime = 0;
-  globalWarn = -1;
-  $('#playerNames').empty();
-  $('#playerNames').append('<li class="gameli">Players:</li>');
-  $('#roleNames').empty();
-  $('#roleNames').append('<li class="gameli">Time: 00:00</li>');
-  $('#roleNames').append('<li class="gameli">Roles:</li>');
-  $('#chatbox').empty();
-  $('#leaveGame').off('click');
-  $('#leaveGame').click(function () {
-    if (!inGame) {
-      transitionFromGameToLobby();
-      socket.emit('leaveGame');
-      restart();
+let lobbyChatListContainerSimpleBar = new SimpleBar($('#lobbyChatListContainer')[0]);
+
+$(function () {
+  //filtering lobby entries
+  $('#filterAll').click(function () {
+    if ($('.lobbyItem:visible').length == 0) {
+      $('.lobbyItem').fadeIn('fast');
+    } else {
+      $('.lobbyItem:visible').fadeOut('fast', function () {
+        $('.lobbyItem').fadeIn('fast');
+      });
     }
   });
-}
-$(function () {
+  $('#filterOneDay').click(function () {
+    if ($('.lobbyItem:visible').length == 0) {
+      $('.lobbyItem').fadeIn('fast');
+    } else {
+      $(".lobbyItem:visible").fadeOut('fast', function () {
+        $(".lobbyItem[type='OneDay']").fadeIn('fast');
+      });
+    }
+  })
+  $('#filterClassic').click(function () {
+    if ($('.lobbyItem:visible').length == 0) {
+      $('.lobbyItem').fadeIn('fast');
+    } else {
+      $(".lobbyItem:visible").fadeOut('fast', function () {
+        $(".lobbyItem[type='Classic']").fadeIn('fast');
+      });
+    }
+  })
   if ($('#lobbyItemList .lobbyItem').length == 0) {
     ReactDOM.render(<p id="emptyLobbyItemPrompt" style={{ textAlign: 'center', marginTop: '20px', fontStyle: 'italic', fontSize: '1.1em' }}>Create a new game to play</p>, $('#lobbyItemList')[0]);
   }
   $('#registerBox').focus();
-  $('#leaveGame').off('click');
-  $('#leaveGame').click(function () {
-    if (!inGame) {
-      transitionFromGameToLobby();
-      restart();
-    }
-  });
+  leaveGameButton.setNotInPlayClick();
   $('#lobbyChatForm').submit(() => {
     console.log('active');
-    socket.emit('lobbyMessage', $('#lobbyChatInput').val());
+    user.socket.emit('lobbyMessage', $('#lobbyChatInput').val());
     $('#lobbyChatInput').val('');
     return false;
   });
@@ -196,7 +306,6 @@ $(function () {
         if (data.result == "success") {
           //prevent multiple submissions
           $('#newGameModal').modal('hide', function () {
-            console.log('hidden');
             $('#newGameModalCreateButton').removeClass('disabled');
             newGameFormOngoing = false;
             $('#newGameForm').removeClass('loading');
@@ -300,6 +409,7 @@ $(function () {
         console.log(data);
         //if result is not success, the input was not valid
         if (data.result == "success") {
+          user.socket.emit('reloadClient');
           location.reload();
         } else {
           $('#addNewUserDimmer').dimmer('hide');
@@ -330,6 +440,7 @@ $(function () {
       contentType: 'application/json',
       success: function (data) {
         if (data.result == "success") {
+          user.socket.emit('reloadClient');
           location.reload();
         } else {
           console.log('fail received');
@@ -352,6 +463,7 @@ $(function () {
       dataType: 'json',
       contentType: 'application/json',
       success: function (data) {
+        user.socket.emit('reloadClient');
         location.reload();
       }
     });
@@ -361,109 +473,99 @@ $(function () {
     if ($("#msg").val() == "") {
       return false;
     }
-    socket.emit("message", $("#msg").val());
+    user.socket.emit("message", $("#msg").val());
     $("#msg").val("");
     return false;
   });
 
-  socket.on("transitionToLobby", function () {
+  $('#leaveGameForm').form({
+    fields: {
+      confirmation: {
+        identifier: 'confirmation',
+        rules: [{
+          type: 'checked',
+          prompt: 'You must confirm by ticking the box'
+        }]
+      }
+    }
+  })
+
+  user.socket.on("reloadClient", function () {
+    console.log('client receipt');
+    if (document.hidden) {
+      location.reload();
+    }
+  })
+
+  $('#leaveGameForm').submit(function () {
+    user.socket.emit('leaveGame');
+  })
+  user.socket.on("transitionToLobby", function () {
     transitionFromLandingToLobby();
   })
-  socket.on("transitionToGame", function (name, uid) {
-    transitionFromLandingToGame(name, uid);
+  user.socket.on("transitionToGame", function (name, uid, inPlay) {
+    transitionFromLandingToGame(name, uid, inPlay);
   })
-  socket.on("message", function (msg, textColor, backgroundColor, usernameColor) {
+  user.socket.on("message", function (msg, textColor, backgroundColor, usernameColor) {
     appendMessage(msg, "#chatbox", textColor, backgroundColor, usernameColor);
   });
-
-  socket.on("restart", function () {
-    restart();
+  user.socket.on("headerTextMessage", function (standardArray) {
+    let out = [];
+    for (let i = 0; i < standardArray.length; i++) {
+      console.log(standardArray[i].color);
+      out.push(new StandardMainText(standardArray[i].text, standardArray[i].color))
+    }
+    if (mainText) {
+      mainText.clear();
+      mainText.create(out);
+      mainText.fadeOut(2500);
+    }
+  })
+  user.socket.on("restart", function () {
+    user.restart();
   });
-  socket.on("registered", function () {
+  user.socket.on("registered", function (username) {
     transitionFromLandingToLobby();
-    registered = true;
-    $('#leaveGame').off('click');
-    $('#leaveGame').click(function () {
-      if (!inGame) {
-        transitionFromGameToLobby();
-        socket.emit('leaveGame');
-        restart();
-      }
-    });
+    user.register();
+    user.username = username;
+    leaveGameButton.setNotInPlayClick();
   });
-  socket.on("clear", function () {
+  user.socket.on("clear", function () {
     $('ul').clear();
   })
-  socket.on("setTitle", function (title) {
+  user.socket.on("setTitle", function (title) {
     $(document).attr('title', title);
   });
-  socket.on("notify", function () {
+  user.socket.on("notify", function () {
     notificationSound.play();
   });
-  socket.on('removeGameFromLobby', function (uid) {
+  user.socket.on('removeGameFromLobby', function (uid) {
     $('#container .lobbyItem[uid=' + uid + ']').remove();
     if ($('#lobbyItemList .lobbyItem').length == 0) {
       ReactDOM.render(<p id="emptyLobbyItemPrompt" style={{ textAlign: 'center', marginTop: '20px', fontStyle: 'italic', fontSize: '1.1em' }}>Create a new game to play</p>, $('#lobbyItemList')[0]);
     }
   });
-  socket.on("addNewGameToLobby", function (name, type, uid) {
+  user.socket.on("addNewGameToLobby", function (name, type, uid) {
     $('#emptyLobbyItemPrompt').css('display', 'none');
-    var div = document.createElement('div');
+    let div = document.createElement('div');
     div.className = "lobbyItemReactContainer"
     $('#container .simplebar-content #lobbyItemList').prepend(div);
     ReactDOM.render(< LobbyItem name={name} type={type} uid={uid} ranked='false' />,
       $('#container .simplebar-content .lobbyItemReactContainer:first')[0]);
     $('.lobbyItem').off('click');
     $('.lobbyItem').click(function () {
-      gameClicked = true;
-      if (!waitingForGame) {
-        transitionFromLobbyToGame($(this).attr('name'));
-      } else {
-        transitionFromLobbyToGame();
-      }
-      location.hash = 3;
-      if ($(this).attr('inPlay') == "false") {
-        if (!waitingForGame) {
-          $('#chatbox').empty();
-          $('#playerNames').empty();
-          $('#playerNames').append("<li class='gameli'>Players:</li>")
-          var usernameList = $(".lobbyItem[uid=" + $(this).attr('uid') + "] .username");
-          for (i = 0; i < usernameList.length; i++) {
-            appendMessage($(usernameList[i]).text(), "#playerNames", $(usernameList[i]).css('color'));
-          }
-          socket.emit("gameClick", $(this).attr('uid'));
-          waitingForGame = true;
-        }
-      } else {
-        if (!waitingForGame) {
-          $('#playerNames').empty();
-          $('#playerNames').append("<li class='gameli'>Players:</li>")
-          var usernameList = $(".lobbyItem[uid=" + $(this).attr('uid') + "] .username");
-          for (i = 0; i < usernameList.length; i++) {
-            appendMessage($(usernameList[i]).text(), "#playerNames", $(usernameList[i]).css('color'));
-          }
-          appendMessage("This game has already started, please join a different one.", '#chatbox', undefined, "#950d0d");
-        }
-      }
+      lobbyItemClick(this);
     });
   });
-  socket.on("newGame", function () {
-    inGame = true;
-    $('#leaveGame').off('click');
-    $('#leaveGame').click(function () {
-      $('#leaveGameModal').modal('show');
-    });;
+  user.socket.on("newGame", function () {
+    user.state = States.INGAMEPLAYING;
   })
-  socket.on("endChat", function () {
+  user.socket.on("endChat", function () {
     console.log('active');
-    $('#leaveGame').off('click');
-    $('#leaveGame').click(function () {
-      transitionFromGameToLobby();
-      socket.emit('leaveGame');
-      restart();
-    });
+    user.state = States.GAMEENDED;
+    leaveGameButton.setNotInPlayClick();
   });
-  socket.on("sound", function (sound) {
+  user.socket.on("sound", function (sound) {
     if (sound == "NEWGAME") {
       notificationSound.play();
     } else if (sound == "NEWPLAYER") {
@@ -472,13 +574,13 @@ $(function () {
       lostPlayerSound.play();
     }
   });
-  socket.on("registrationError", function (error) {
+  user.socket.on("registrationError", function (error) {
     $('<p style="color:red;font-size:18px;margin-top:15px;">Invalid: ' + error + '</p>').hide().appendTo('#errors').fadeIn(100);
   });
   $('document').resize(function () {
 
   })
-  socket.on("lobbyMessage", function (msg, textColor, backgroundColor) {
+  user.socket.on("lobbyMessage", function (msg, textColor, backgroundColor) {
     appendMessage(msg, "#lobbyChatList", textColor, undefined, '#cecece');
     if (Math.abs(lobbyChatListContainerSimpleBar.getScrollElement().scrollTop +
       lobbyChatListContainerSimpleBar.getScrollElement().clientHeight -
@@ -486,88 +588,59 @@ $(function () {
       lobbyChatListContainerSimpleBar.getScrollElement().scrollTop = lobbyChatListContainerSimpleBar.getScrollElement().scrollHeight;
     }
   });
-  socket.on("rightMessage", function (msg, textColor, backgroundColor) {
+  user.socket.on("rightMessage", function (msg, textColor, backgroundColor) {
     appendMessage(msg, "#playerNames", textColor, backgroundColor);
+    addPlayer(msg, '#FFFFFF');
   });
-  socket.on("leftMessage", function (msg, textColor, backgroundColor) {
+  user.socket.on("leftMessage", function (msg, textColor, backgroundColor) {
     appendMessage(msg, "#roleNames", textColor, backgroundColor);
   });
-  socket.on("removeRight", function (msg) {
+  user.socket.on("removeRight", function (msg) {
     removeMessage(msg, "#playerNames");
     removeMessage(" " + msg, '#playerNames');
     console.log("active: " + msg);
+    removePlayer(msg);
+    removePlayer(" " + msg);
   });
-  socket.on("removeLeft", function (msg) {
+  user.socket.on("removeLeft", function (msg) {
     removeMessage(msg, "#roleNames");
   });
-  socket.on("lineThroughPlayer", function (msg, color) {
+  user.socket.on("lineThroughPlayer", function (msg, color) {
     lineThroughPlayer(msg, color);
     lineThroughPlayer(" " + msg, color);
   });
-  socket.on("markAsDead", function (msg) {
+  user.socket.on("markAsDead", function (msg) {
     markAsDead(msg);
     markAsDead(" " + msg);
   });
-  socket.on("reconnect", function () {
+  user.socket.on("reconnect", function () {
     console.log("disconnected and then reconnected");
   });
-  socket.on("setTime", function (time, warn) {
+  user.socket.on("setTime", function (time, warn) {
     if (time > 0) {
-      $($("#roleNames li")[0]).text("Time: " + convertTime(time));
+      $('#gameClock').text("Time: " + user.convertTime(time));
     }
-    $($("#roleNames li")[0]).css("color", "#cecece");
-    globalNow = Date.now();
-    globalTime = time;
-    globalWarn = warn;
+    $('#gameClock').css("color", "#cecece");
+    user.now = Date.now();
+    user.time = time;
+    user.warn = warn;
   });
   $('.lobbyItem').off('click');
   $('.lobbyItem').click(function () {
-    console.log('active');
-    gameClicked = true;
-    if (!waitingForGame) {
-      transitionFromLobbyToGame($(this).attr('name'));
-    } else {
-      transitionFromLobbyToGame();
-    }
-    location.hash = 3;
-    if ($(this).attr('inPlay') == "false") {
-      if (!waitingForGame) {
-        $('#chatbox').empty();
-        $('#playerNames').empty();
-        $('#playerNames').append("<li class='gameli'>Players:</li>")
-        var usernameList = $(".lobbyItem[uid=" + $(this).attr('uid') + "] .username");
-        for (i = 0; i < usernameList.length; i++) {
-          appendMessage($(usernameList[i]).text(), "#playerNames", $(usernameList[i]).css('color'));
-        }
-        socket.emit("gameClick", $(this).attr('uid'));
-        waitingForGame = true;
-      }
-    } else {
-      if (!waitingForGame) {
-        $('#playerNames').empty();
-        $('#playerNames').append("<li class='gameli'>Players:</li>")
-        var usernameList = $(".lobbyItem[uid=" + $(this).attr('uid') + "] .username");
-        for (i = 0; i < usernameList.length; i++) {
-          appendMessage($(usernameList[i]).text(), "#playerNames", $(usernameList[i]).css('color'));
-        }
-        appendMessage("This game has already started, please join a different one.", '#chatbox', undefined, "#950d0d");
-      }
-    }
+    lobbyItemClick(this);
   });
 
-  socket.on("updateGame", function (name, playerNames, playerColors, number, inPlay) {
+  user.socket.on("updateGame", function (name, playerNames, playerColors, number, inPlay) {
     if (inPlay) {
-      //$('#container div:nth-child(' + number.toString() + ') p:first span:first').html(name);
       $('#container div[uid=' + number.toString() + '] p:first span:last').html("IN PLAY");
       $('#container div[uid=' + number.toString() + ']').attr('inPlay', "true");
     } else {
-      //$('#container div:nth-child(' + number.toString() + ') p:first span:first').html(name);
       $('#container div[uid=' + number.toString() + '] p:first span:last').html("OPEN");
       $('#container div[uid=' + number.toString() + ']').attr('inPlay', "false");
     }
-    var div = $('#container div[uid=' + number.toString() + '] p:last span:first');
+    let div = $('#container div[uid=' + number.toString() + '] p:last span:first');
     div.empty();
-    for (i = 0; i < playerNames.length; i++) {
+    for (let i = 0; i < playerNames.length; i++) {
       if (i == 0) {
         div.append('<span class="username" style="color:' + playerColors[i] + '">' + playerNames[i]);
       } else {
@@ -576,16 +649,16 @@ $(function () {
       }
     }
   });
-  socket.on('addPlayerToLobbyList', function (username) {
+  user.socket.on('addPlayerToLobbyList', function (username) {
     addPlayerToLobbyList(username);
   });
-  socket.on('removePlayerFromLobbyList', function (username) {
+  user.socket.on('removePlayerFromLobbyList', function (username) {
     removePlayerFromLobbyList(username);
   })
   //removes player from game list
-  socket.on("removePlayerFromGameList", function (name, game) {
-    var spanList = $('#container div[uid=' + game + '] p:last span:first span');
-    for (i = 0; i < spanList.length; i++) {
+  user.socket.on("removePlayerFromGameList", function (name, game) {
+    let spanList = $('#container div[uid=' + game + '] p:last span:first span');
+    for (let i = 0; i < spanList.length; i++) {
       if ($(spanList[i]).text() == name || $(spanList[i]).text() == " " + name) {
         //remove the separating comma if it exists 
         if (i != spanList.length - 1) {
@@ -599,9 +672,9 @@ $(function () {
       }
     }
   });
-  socket.on("addPlayerToGameList", function (name, color, game) {
-    var div = $('#container div[uid=' + game + '] p:last span:first');
-    var spanList = $('#container div[uid=' + game + '] p:last .username');
+  user.socket.on("addPlayerToGameList", function (name, color, game) {
+    let div = $('#container div[uid=' + game + '] p:last span:first');
+    let spanList = $('#container div[uid=' + game + '] p:last .username');
     if (spanList.length == 0) {
       div.append('<span class="username" style="color:' + color + '">' + name);
     } else {
@@ -609,9 +682,7 @@ $(function () {
       div.append('<span class="username" style="color:' + color + '"> ' + name);
     }
   });
-  socket.on("markGameStatusInLobby", function (game, status) {
-    console.log(game);
-    console.log(status);
+  user.socket.on("markGameStatusInLobby", function (game, status) {
     if (status == "OPEN") {
       $('#container div[uid=' + game + ']').attr('inplay', 'false');
     } else if (status == "IN PLAY") {
@@ -626,24 +697,24 @@ $(function () {
   window.onhashchange = function () {
     if (location.hash == "") {
       this.location.hash = 2;
-    } else if (location.hash == "#3" && gameClicked) {
+    } else if (location.hash == "#3" && user.gameClicked) {
       transitionFromLobbyToGame();
     } else if (location.hash == "#2") {
-      if (!waitingForGame) {
-        restart();
+      if (!user.isState(States.INGAMEWAITING)) {
+        user.restart();
       } else {
         transitionFromGameToLobby();
       }
     }
   }
-  $(window).resize(function () {
-    $('#inner')[0].scrollTop = $('#inner')[0].scrollHeight;
-  });
+  //$(window).resize(function () {
+  //$('#inner')[0].scrollTop = $('#inner')[0].scrollHeight;
+  //});
 
   $('#registerForm').submit(function () {
     if ($("#registerBox").val() != "") {
       $('#errors').empty();
-      socket.emit("message", $("#registerBox").val());
+      user.socket.emit("message", $("#registerBox").val());
       $("#registerBox").val("");
     }
   })
@@ -664,25 +735,42 @@ function transitionFromLandingToLobby() {
 }
 //only use when the player has created a new tab
 //and should connect to the game they were previously in
-function transitionFromLandingToGame(gameName, uid) {
+function transitionFromLandingToGame(gameName, uid, inGame) {
+  console.log(inGame);
   $('#landingPage').fadeOut('fast', function () {
     $('#playerNames').empty();
     $('#playerNames').append("<li class='gameli'>Players:</li>")
-    var usernameList = $(".lobbyItem[uid=" + uid + "] .username");
-    for (i = 0; i < usernameList.length; i++) {
+    let usernameList = $(".lobbyItem[uid=" + uid + "] .username");
+    for (let i = 0; i < usernameList.length; i++) {
       appendMessage($(usernameList[i]).text(), "#playerNames", $(usernameList[i]).css('color'));
+      addPlayer($(usernameList[i]).text(), '#FFFFFF');
     }
-    gameClicked = true;
-    waitingForGame = true;
-    registered = true;
-    $('#topLevel').fadeIn(200);
-    if (gameName) {
-      $('#mainGameName').text(gameName);
+    user.gameClicked = true;
+    if (inGame) {
+      user.state = States.INGAMEPLAYING;
+      user.register();
+      $('#topLevel').fadeIn(200);
+      if (gameName) {
+        $('#mainGameName').text(gameName);
+        resize();
+      }
+      //scroll down the game chatbox
+      $("#inner")[0].scrollTop = $("#inner")[0].scrollHeight - $('#inner')[0].clientHeight;
+      $('#topLevel')[0].scrollTop = 0;
+      $('#msg').focus();
+    } else {
+      user.state = States.INGAMEWAITING;
+      user.register();
+      $('#topLevel').fadeIn(200);
+      if (gameName) {
+        $('#mainGameName').text(gameName);
+        resize();
+      }
+      //scroll down the game chatbox
+      $("#inner")[0].scrollTop = $("#inner")[0].scrollHeight - $('#inner')[0].clientHeight;
+      $('#topLevel')[0].scrollTop = 0;
+      $('#msg').focus();
     }
-    //scroll down the game chatbox
-    $("#inner")[0].scrollTop = $("#inner")[0].scrollHeight - $('#inner')[0].clientHeight;
-    $('#topLevel')[0].scrollTop = 0;
-    $('#msg').focus();
   });
 }
 
@@ -690,6 +778,7 @@ function transitionFromLobbyToGame(gameName) {
   $('#landingPage').fadeOut('fast', function () {
     $('#lobbyContainer').fadeOut(200, function () {
       $('#topLevel').fadeIn(200);
+      resize();
     });
     if (gameName) {
       $('#mainGameName').text(gameName);

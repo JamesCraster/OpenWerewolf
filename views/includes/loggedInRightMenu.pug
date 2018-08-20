@@ -11,7 +11,7 @@
     limitations under the License.
     
 - if(loggedIn){
-    div(class="header item")= "Hello, " + username  
+    div(class="header item loggedInWelcome" id="loggedInWelcome")= "Hello, " + username  
     div(class="item")
         button(class="ui inverted blue button logoutButton") Logout
 -}else{
