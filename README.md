@@ -4,15 +4,15 @@
 
 ## Play now at https://www.openwerewolf.com/
 
+## Screenshot:
+![An image of the OpenWerewolf client](https://github.com/JamesCraster/OpenWerewolf/blob/master/Screenshot.png)
+
 ## Features:
 * You can run multiple games at once using the lobby system.
 * The core engine is general. Use it to build and host whatever games you want.
 * The games are open source under AGPL-3.0.
 * The core engine and client are open source under Apache-2.0 so can be used commercially.
 * Includes spam and profanity filters.
-
-## Screenshot:
-![An image of the OpenWerewolf client](https://github.com/JamesCraster/OpenWerewolf/blob/master/Screenshot.png)
 
 ## The Games:
 * OneDay: During the night, your cards are stolen, swapped, carefully inspected and drunkenly taken by accident.
@@ -22,26 +22,34 @@ in the Trial, where you'll be voting to kill the werewolves among you. For 3-7 p
 * Classic: A classic game of werewolf lasting multiple nights. Featuring werewolves, doctors, cops and vigilantes.
 
 * Mafia execution, Mission games haven't been started yet: maybe you could help write them?
+
 ## Install and run
 * Grab the latest [release](https://github.com/JamesCraster/OpenWerewolf/releases) (choose OpenWerewolf.zip).
 
 * [Install Node.js](https://nodejs.org/en/)  
 
-* Unzip OpenWerewolf.zip, and run: `node app.js`  
+* Unzip OpenWerewolf.zip, and run: 
 
+```npm install
+   node app.js
+```
 
 ## Contribute:
-All contributors are welcome. Read the [guide.](https://github.com/JamesCraster/OpenWerewolf/wiki/Contributing)
+All contributors are welcome.
+
+Head over to [OpenWerewolf-Core](https://github.com/JamesCraster/OpenWerewolf-Core) or [OpenWerewolf-Games](https://github.com/JamesCraster/OpenWerewolf-Games) and contribute there.
+
+Please **do not** contribute directly to this repo. This is because the core engine has to remain Apache-2.0, so lives in its own repo. 
+
+Read the [guide.](https://github.com/JamesCraster/OpenWerewolf/wiki/Contributing)
 
 ## [Documentation](https://jamescraster.github.io/OpenWerewolf-Releases/index.html)
-Files are listed to the right.
 
 ## Legal Info:
-Artwork, music, logos and fonts may be proprietary.
 
 I want to avoid confusion between the OpenWerewolf site that I run and the sites that others may run.
 Therefore "OpenWerewolf" is an unregistered trademark belonging to me, James Craster.
-I ask that you call forked versions of OpenWerewolf by a different name, and that you call your websites by a different name.
+I ask that you call your websites by a different name.
 
 
 
