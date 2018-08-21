@@ -36,3 +36,5 @@ Core/utils.js
 Core/game.js
 Client/google2d9c2c2f48980e51.html
 deploy
+app.js.map
+*.js.map

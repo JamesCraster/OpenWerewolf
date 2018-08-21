@@ -10,7 +10,7 @@
 
 ## Features:
 * You can run multiple games at once using the lobby system.
-* The core engine is general. Use it to build and host whatever games you want.
+* The core engine is general. Use it to build and host whatever games you want. Edit the config file to add new game modes.
 * The core engine and client are open source under Apache-2.0 so can be used commercially.
 * Includes spam and profanity filters.
 
