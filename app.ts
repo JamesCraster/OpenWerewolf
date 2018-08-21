@@ -13,11 +13,20 @@
 
 "use strict";
 
+//import config from JSON
+const fs = require('fs');
+const config = JSON.parse(fs.readFileSync('openwerewolf.json', 'utf-8'));
+let configGameList: any = [];
+
+//dynamically import game classes and add their constructors to configGameList
+for (let i = 0; i < config.games.length; i++) {
+  import(config.games[i].location).then((module) => {
+    configGameList.push({ constructor: module[config.games[i].name], name: config.games[i].name });
+  }).catch((e) => { console.log('Non-critical error, a game is missing:'); console.log(e); });
+}
+
 import { Server } from "./Core/server";
 import { Socket } from "./node_modules/@types/socket.io";
-import { OneDay } from "./Games/OneDay/oneDay";
-import { Classic } from "./Games/Classic/Classic";
-import { Demo } from "./Games/Demo/demo";
 
 const myArgs = process.argv.slice(2);
 export const DEBUGMODE = myArgs[0];
@@ -100,12 +109,12 @@ app.get("/", function (req: any, res: any) {
   for (let i = 0; i < server.games.length; i++) {
     uids.push(server.games[i].uid);
   }
-  console.log(server.numberOfGames);
-  console.log(gameNames);
-  console.log(server.playerNameColorPairs);
-  console.log(server.inPlayArray);
-  console.log(server.gameTypes);
+
   //add logic with pug to generate correct lobby
+  let gameCheckboxesArray: Array<string> = [];
+  for (let i = 0; i < configGameList.length; i++) {
+    gameCheckboxesArray.push(configGameList[i].name);
+  }
   res.render('index', {
     numberOfGames: server.numberOfGames,
     gameNames: gameNames,
@@ -114,7 +123,8 @@ app.get("/", function (req: any, res: any) {
     gameTypes: server.gameTypes,
     loggedIn: req.session.loggedIn,
     username: req.session.username,
-    uids: uids
+    uids: uids,
+    gameCheckboxesArray: gameCheckboxesArray
   });
 });
 app.post("/register", function (req: any, res: any) {
@@ -226,12 +236,13 @@ app.post("/newGame", function (req: any, res: any) {
       }
     }
     if (result == 'success') {
-      if (req.body.type == 'OneDay') {
-        uGameid++;
-        server.addGame(new OneDay(server, req.body.name, uGameid.toString()));
-      } else if (req.body.type == 'Classic') {
-        uGameid++;
-        server.addGame(new Classic(server, req.body.name, uGameid.toString()));
+      for (let i = 0; i < config.games.length; i++) {
+        if (config.games[i].name == req.body.type) {
+          //increase unique game id (used on frontend to distinguish between games)
+          uGameid++;
+          server.addGame(new configGameList[i].constructor(server, req.body.name, uGameid.toString()));
+          break;
+        }
       }
     }
   }

@@ -5,8 +5,8 @@
 ## Play now at https://www.openwerewolf.com/
 
 ## Screenshots:
-![An image of the OpenWerewolf client](https://github.com/JamesCraster/OpenWerewolf/blob/master/Screenshot.png)
-![An image of the OpenWerewolf lobby](https://github.com/JamesCraster/OpenWerewolf/blob/master/Screen%20Shot%202018-08-20%20at%2021.19.07.png)
+![An image of the OpenWerewolf client](https://github.com/JamesCraster/OpenWerewolf/blob/master/Screenshots/Screenshot.png)
+![An image of the OpenWerewolf lobby](https://github.com/JamesCraster/OpenWerewolf/blob/master/Screenshots/Screen%20Shot%202018-08-20%20at%2021.19.07.png)
 
 ## Features:
 * You can run multiple games at once using the lobby system.

@@ -25,14 +25,20 @@ div(id="newGameModal" class="ui modal column segment transition")
             div(class="ui form")
                 div(class="inline fields" style="text-align:right;")
                     label Game mode:
+                    - for(let i = 0; i < gameCheckboxesArray.length; i++){
                     div(class="field")
                         div(class="ui radio checkbox")
-                            input(type="radio" name="type" checked="checked" value="Classic")
-                            label Classic
-                    div(class="field")
+                            -if(i == 0){
+                                input(type="radio" name="type" checked = "checked" value= gameCheckboxesArray[i])
+                            -}else{
+                                input(type="radio" name="type" value= gameCheckboxesArray[i])
+                            -}
+                            label= gameCheckboxesArray[i]
+                    //div(class="field")
                         div(class="ui radio checkbox")
                             input(type="radio" name="type" value="OneDay")
                             label OneDay
+                    -}
         
         div(class="ui error message")
         br

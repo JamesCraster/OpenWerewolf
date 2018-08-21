@@ -1,0 +1,15 @@
+{
+    "games": [{
+            "name": "OneDay",
+            "location": "./Games/OneDay/OneDay"
+        },
+        {
+            "name": "Demo",
+            "location": "./Games/Demo/demo"
+        },
+        {
+            "name": "Classic",
+            "location": "./Games/Classic/Classic"
+        }
+    ]
+}
