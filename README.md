@@ -11,7 +11,6 @@
 ## Features:
 * You can run multiple games at once using the lobby system.
 * The core engine is general. Use it to build and host whatever games you want.
-* The games are open source under AGPL-3.0.
 * The core engine and client are open source under Apache-2.0 so can be used commercially.
 * Includes spam and profanity filters.
 
