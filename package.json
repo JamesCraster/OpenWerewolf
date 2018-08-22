@@ -1,8 +1,8 @@
 {
   "name": "openwerewolf",
   "version": "0.0.0",
-  "description": "An open source, online multiplayer mafia game.",
-  "main": "index.js",
+  "description": "An open source, online multiplayer werewolf game.",
+  "main": "app.js",
   "dependencies": {
     "@types/node": "^9.6.22",
     "@types/socket.io": "^1.4.36",
@@ -31,7 +31,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JamesCraster/OpenWerewolf-Core.git"
+    "url": "git+https://github.com/JamesCraster/OpenWerewolf.git"
   },
   "keywords": [
     "mafia",
@@ -45,8 +45,9 @@
     "detective"
   ],
   "author": "James Vaughan Craster",
+  "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/JamesCraster/OpenWerewolf-Core/issues"
+    "url": "https://github.com/JamesCraster/OpenWerewolf/issues"
   },
-  "homepage": "https://github.com/JamesCraster/OpenWerewolf-Releases#readme"
+  "homepage": "https://github.com/JamesCraster/OpenWerewolf#readme"
 }
