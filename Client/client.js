@@ -61,6 +61,7 @@ class User {
     this.warn = -1;
     this.gameClicked = false;
     this.registered = false;
+    this.canVote = false;
     setInterval(this.updateTime.bind(this), 1000);
   }
   get inGame() {
@@ -161,6 +162,13 @@ function lobbyItemClick(item) {
 }
 
 let user = new User();
+
+user.socket.on('canVote', () => {
+  user.canVote = true;
+});
+user.socket.on('cannotVote', () => {
+  user.canVote = false;
+});
 
 let notificationSound = new Audio("162464__kastenfrosch__message.mp3");
 notificationSound.volume = 0.4;

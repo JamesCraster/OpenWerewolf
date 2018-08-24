@@ -309,6 +309,17 @@ export class OneDay extends Game {
 
   private winResolution() {
     let showWinWait = 6000;
+
+    //cancel all voting effects
+    for (let i = 0; i < this.players.length; i++) {
+      this.players[i].cancelVoteEffect();
+    }
+
+    //ban voting
+    for (let i = 0; i < this.players.length; i++) {
+      this.players[i].cannotVote();
+    }
+
     //if no players are around, stop here
     if (this.players.length == 0) {
       return;
@@ -502,6 +513,10 @@ export class OneDay extends Game {
   }
   protected start() {
     this.beforeStart();
+    //do not allow players to select someone to vote for, until discussion phase:
+    for (let i = 0; i < this.players.length; i++) {
+      this.players[i].cannotVote();
+    }
     setTimeout(() => {
       this.setAllTime((this.length + 0.5) * 60000, 30000);
       //set everyone's vote to blank
@@ -623,6 +638,10 @@ export class OneDay extends Game {
           this.playerchat.broadcast("*** DISCUSSION ***", Colors.brightGreen);
           for (let i = 0; i < this.players.length; i++) {
             this.players[i].headerSend([{ text: "*** DISCUSSION ***", color: Colors.brightGreen }]);
+          }
+          //allow players to select someone to vote for
+          for (let i = 0; i < this.players.length; i++) {
+            this.players[i].canVote();
           }
         }, 4000);
       }, 4000);
@@ -1083,6 +1102,7 @@ export class OneDay extends Game {
         for (let i = 0; i < this.players.length; i++) {
           if (this.players[i].username == username) {
             player.send("Your vote for '" + username + "' has been received");
+            player.selectPlayer(username);
             player.data.vote = username;
             exists = true;
           }
@@ -1092,6 +1112,7 @@ export class OneDay extends Game {
         }
       } else if (Utils.isCommand(msg, "/unvote") && player.data.vote != "") {
         player.send("Your vote for '" + player.data.vote + "' has been cancelled");
+        player.cancelVoteEffect();
         player.data.vote = "";
       } else if (Utils.isCommand(msg, "/unvote") && player.data.vote == "") {
         player.send("You haven't voted for anybody yet, so there is nothing to cancel");

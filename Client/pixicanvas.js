@@ -10,8 +10,9 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
+"use strict"
 let mainText = undefined;
-WebFontConfig = {
+let WebFontConfig = {
     custom: {
         families: ['Mercutio'],
         urls: ['/main.css']
@@ -22,20 +23,7 @@ WebFont.load({
         families: ['Mercutio']
     },
     active: function () {
-        //when the font is loaded, create the main text.
         mainText = new StandardMainTextList([new StandardMainText('')])
-        /*mainText = new PIXI.Text('Welcome, james', {
-            fontFamily: 'Mercutio',
-            fontSize: 512,
-            fill: 0xFFFFFF,
-            align: 'center',
-            resolution: 20
-        });
-        mainText.scale.x = 0.125;
-        mainText.scale.y = 0.125;
-        mainText.x = Math.floor(app.renderer.width / 2) - mainText.width / 2;
-        mainText.y = 25;
-        app.stage.addChild(mainText);*/
     }
 });
 
@@ -61,6 +49,7 @@ class StandardMainText {
         this.object.scale.y = 0.125;
     }
 }
+
 class StandardMainTextList {
     constructor(standardMainTextArray) {
         this.container = new PIXI.Container();
@@ -109,6 +98,8 @@ let app = new PIXI.Application(800, 600, {
 });
 const playerTexture = new PIXI.Texture.fromImage('assets/swordplayerbreathing/sprite_0.png');
 const playerTexture2 = new PIXI.Texture.fromImage('assets/swordplayerbreathing/sprite_1.png');
+const playerTextureSelected = new PIXI.Texture.fromImage('assets/swordplayerbreathing/sprite_0_selected.png');
+const playerTextureSelected2 = new PIXI.Texture.fromImage('assets/swordplayerbreathing/sprite_1_selected.png');
 let players = [];
 const stoneBlockTexture = new PIXI.Texture.fromImage('assets/stoneblock.png');
 
@@ -131,30 +122,143 @@ class StoneBlock {
 let level = 11;
 for (let y = 0; y < level; y++) {
     if (y < 6) {
-        for (x = -y; x < y; x++) {
+        for (let x = -y; x < y; x++) {
             let stoneblock = new StoneBlock(stoneBlockTexture, x * 64, y * 64);
         }
     } else {
-        for (x = y - 11; x < 11 - y; x++) {
+        for (let x = y - 11; x < 11 - y; x++) {
             let stoneblock = new StoneBlock(stoneBlockTexture, x * 64, y * 64);
         }
     }
 }
-//stoneBlockContainer.pivot.x = stoneBlockContainer.width / 2;
+
 stoneBlockContainer.pivot.y = stoneBlockContainer.height / 2;
+
+app.stage.interactive = true;
+app.stage.on('pointerdown', () => {
+    if (user.inGame) {
+        for (let i = 0; i < players.length; i++) {
+            let unvoted = true;
+            //test if this mousedown has changed anything (to guard against repeat presses)
+            let active = false;
+            if (!players[i].selected && players[i].votedFor) {
+                players[i].votedFor = false;
+                active = true;
+                if (players[i].sprite.texture = playerTextureSelected) {
+                    players[i].sprite.texture = playerTexture;
+                } else {
+                    players[i].sprite.texture = playerTexture2;
+                }
+            }
+            for (let j = 0; j < players.length; j++) {
+                if (players[j].votedFor) {
+                    unvoted = false;
+                }
+            }
+            if (unvoted && active && user.canVote) {
+                user.socket.emit('message', '/unvote');
+            }
+        }
+    }
+})
+
+user.socket.on('cancelVoteEffect', function () {
+    cancelVote();
+});
+user.socket.on('selectPlayer', function (username) {
+    selectPlayer(username.trim());
+})
+
+function cancelVote() {
+    console.log('active');
+    for (let i = 0; i < players.length; i++) {
+        players[i].votedFor = false;
+    }
+}
+
+let firstTimeSelectingPlayer = true;
+
+function selectPlayer(username) {
+    //calling selectPlayer straight away the first time causes a bug - needs fixing
+    if (firstTimeSelectingPlayer) {
+        setTimeout(() => {
+            console.log(username);
+            cancelVote();
+            console.log(players);
+            console.log('anything1');
+            console.log(players[0]);
+            for (let i = 0; i < players.length; i++) {
+                console.log('anything');
+                console.log(players[i].username == username);
+                if (players[i].username == username) {
+                    players[i].votedFor = true;
+                    console.log(players[i]);
+                }
+            }
+            firstTimeSelectingPlayer = false;
+        }, 1000);
+    } else {
+        console.log(username);
+        cancelVote();
+        console.log(players);
+        console.log('anything1');
+        console.log(players[0]);
+        for (let i = 0; i < players.length; i++) {
+            console.log('anything');
+            console.log(players[i].username == username);
+            if (players[i].username == username) {
+                players[i].votedFor = true;
+                console.log(players[i]);
+            }
+        }
+    }
+}
 
 class Player {
     constructor(playerTexture, username, usernameColor) {
-        //usernameColor = usernameColor.substr(1);
         this.sprite = new PIXI.Sprite(playerTexture);
         this.sprite.anchor.set(0.5, 0.5);
-        //this.sprite.scale.x = 2;
+        this.sprite.interactive = true;
+        this.selected = false;
+        this.votedFor = false;
+        this.sprite.on('pointerover', () => {
+            this.selected = true;
+            if (this.sprite.texture == playerTexture) {
+                this.sprite.texture = playerTextureSelected;
+            } else {
+                this.sprite.texture = playerTextureSelected2;
+            }
+        })
+        this.sprite.on('pointerout', () => {
+            this.selected = false;
+            if (this.sprite.texture == playerTextureSelected && !this.votedFor) {
+                this.sprite.texture = playerTexture;
+            } else if (!this.votedFor) {
+                this.sprite.texture = playerTexture2;
+            }
+        })
+        this.sprite.on('pointerdown', () => {
+            if (user.inGame && user.canVote) {
+                user.socket.emit('message', '/vote ' + username.trim());
+                for (let i = 0; i < players.length; i++) {
+                    players[i].votedFor = false;
+                    if (players[i] != this) {
+                        if (players[i].sprite.texture = playerTextureSelected) {
+                            players[i].sprite.texture = playerTexture;
+                        } else {
+                            players[i].sprite.texture = playerTexture2;
+                        }
+                    }
+                }
+                this.votedFor = true;
+            }
+        })
         //this.sprite.scale.y = 2;
         usernameColor = 0xFFFFFF;
         this.frameCount = 0;
         players.push(this);
         app.stage.addChild(this.sprite);
-        this.username = username;
+        this.username = username.trim();
         this.usernameText = new PIXI.Text(username, {
             fontFamily: 'Mercutio',
             fontSize: 128,
@@ -172,9 +276,17 @@ class Player {
     }
     breathe() {
         if (this.frameCount % 2 == 0) {
-            this.sprite.texture = playerTexture;
+            if (this.selected || this.votedFor) {
+                this.sprite.texture = playerTextureSelected;
+            } else {
+                this.sprite.texture = playerTexture;
+            }
         } else {
-            this.sprite.texture = playerTexture2;
+            if (this.selected || this.votedFor) {
+                this.sprite.texture = playerTextureSelected2;
+            } else {
+                this.sprite.texture = playerTexture2;
+            }
         }
         this.frameCount++;
     }

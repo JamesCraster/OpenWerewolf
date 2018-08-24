@@ -210,6 +210,7 @@ export class Server {
             let alreadyPlaying: boolean = false;
             for (let i = 0; i < this._players.length; i++) {
                 if (this._players[i].registered && this._players[i].session == session) {
+                    let thisPlayer = this._players[i];
                     alreadyPlaying = true;
                     if (this._players[i].socketCount < 3) {
                         console.log('added Socket');
@@ -240,6 +241,13 @@ export class Server {
                         }
                         //send the client the correct time
                         socket.emit('setTime', this._players[i].getTime(), this._players[i].getWarn());
+                        //let the client know if they can vote at this time, or not.
+                        if (thisPlayer.ifCanVote) {
+                            thisPlayer.canVote();
+                            thisPlayer.selectPlayer(thisPlayer.selectedPlayerName);
+                        } else {
+                            thisPlayer.cannotVote();
+                        }
                     } else {
                         socket.emit('registrationError', "You can't have more than 3 game tabs open at once.");
                     }

@@ -76,6 +76,8 @@ export class Player {
     private _time: number = 0;
     private _stopwatch: Stopwatch;
     private _warn: number = 0;
+    private _canVote: boolean = false;
+    private _selectedPlayerName: string = "";
     public constructor(id: string, session: string) {
         this._id = id;
         this._username = "randomuser";
@@ -303,5 +305,26 @@ export class Player {
     public headerSend(array: Array<{ text: string, color: string | Colors }>) {
         console.log(array);
         this.emit('headerTextMessage', array);
+    }
+    public cancelVoteEffect() {
+        this.emit('cancelVoteEffect');
+    }
+    public selectPlayer(username: string) {
+        this.emit('selectPlayer', username);
+        this._selectedPlayerName = username;
+    }
+    get selectedPlayerName() {
+        return this._selectedPlayerName;
+    }
+    public canVote() {
+        this.emit('canVote');
+        this._canVote = true;
+    }
+    public cannotVote() {
+        this.emit('cannotVote');
+        this._canVote = false;
+    }
+    get ifCanVote() {
+        return this._canVote;
     }
 }
