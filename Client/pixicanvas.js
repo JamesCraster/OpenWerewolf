@@ -29,7 +29,6 @@ WebFont.load({
 
 class StandardMainText {
     constructor(text, color) {
-        console.log(color);
         if (color == undefined) {
             color = 0xFFFFFF;
         } else {
@@ -37,7 +36,6 @@ class StandardMainText {
             color = "0x" + color;
             color = parseInt(color);
         }
-        console.log(color);
         this.object = new PIXI.Text(text, {
             fontFamily: 'Mercutio',
             fontSize: 512,
@@ -170,45 +168,32 @@ user.socket.on('selectPlayer', function (username) {
 })
 
 function cancelVote() {
-    console.log('active');
     for (let i = 0; i < players.length; i++) {
         players[i].votedFor = false;
     }
 }
 
 let firstTimeSelectingPlayer = true;
+let firstTimeSelectingInterval;
 
 function selectPlayer(username) {
     //calling selectPlayer straight away the first time causes a bug - needs fixing
     if (firstTimeSelectingPlayer) {
-        setTimeout(() => {
-            console.log(username);
-            cancelVote();
-            console.log(players);
-            console.log('anything1');
-            console.log(players[0]);
+        firstTimeSelectingInterval = setInterval(() => {
             for (let i = 0; i < players.length; i++) {
-                console.log('anything');
-                console.log(players[i].username == username);
                 if (players[i].username == username) {
                     players[i].votedFor = true;
-                    console.log(players[i]);
+                    firstTimeSelectingPlayer = false;
+                    clearInterval(firstTimeSelectingInterval);
+                    players[i].select();
                 }
             }
-            firstTimeSelectingPlayer = false;
-        }, 1000);
+        }, 50);
     } else {
-        console.log(username);
         cancelVote();
-        console.log(players);
-        console.log('anything1');
-        console.log(players[0]);
         for (let i = 0; i < players.length; i++) {
-            console.log('anything');
-            console.log(players[i].username == username);
             if (players[i].username == username) {
                 players[i].votedFor = true;
-                console.log(players[i]);
             }
         }
     }
@@ -299,6 +284,13 @@ class Player {
     destructor() {
         app.stage.removeChild(this.sprite);
         app.stage.removeChild(this.usernameText);
+    }
+    select() {
+        if (this.sprite.texture == playerTexture) {
+            this.sprite.texture = playerTextureSelected;
+        } else {
+            this.sprite.texture = playerTextureSelected2;
+        }
     }
 }
 let gallowsTexture = new PIXI.Texture.fromImage('assets/gallows.png');

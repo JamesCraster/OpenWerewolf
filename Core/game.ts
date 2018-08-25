@@ -427,7 +427,6 @@ export class MessageRoom {
         for (let i = 0; i < this._members.length; i++) {
           if (!this._members[i].deafened) {
             this._members[i].send(msg, textColor, backgroundColor, usernameColor);
-            //console.log("message sent to: " + this._members[i].username);
           }
         }
       }

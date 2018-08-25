@@ -166,7 +166,6 @@ app.post("/register", function (req: any, res: any) {
                       mysql.escape(hash) + "," + mysql.escape(salt) + ")";
                     con.query(sql, function (err: any, result: any) {
                       if (err) throw err;
-                      console.log("1 record inserted");
                     })
                   })
                 });
@@ -223,7 +222,6 @@ app.post("/logout", function (req: any, res: any) {
   res.send("{}");
 });
 app.post("/newGame", function (req: any, res: any) {
-  console.log('active newGame');
   let result = 'success';
   if (typeof req.body.name == 'string' && typeof req.body.type == 'string'
     && req.body.name.length > 0 && req.body.name.length < 100) {

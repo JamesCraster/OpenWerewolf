@@ -97,7 +97,6 @@ export class Player {
     }
     public reloadClient(): void {
         this.emit('reloadClient');
-        console.log('reloading in player');
     }
     public banFromRegistering(): void {
         this._cannotRegister = true;
@@ -176,7 +175,6 @@ export class Player {
     public register() {
         this.emit('registered', this.username);
         this._registered = true;
-        console.log('registration called');
     }
     public setUsername(username: string) {
         this._username = username;

@@ -148,7 +148,6 @@ export class Server {
                             "'."
                         );
                         this._games[j].broadcast(player.username + " has joined the game");
-                        //player.send("There are " + (this._games[j].playerCount + 1).toString() + " players in this game");
                         if (this._games[j].minimumPlayersNeeded - 1 > 0) {
                             this._games[j].broadcast("The game will begin when at least " + (this._games[j].minimumPlayersNeeded - 1).toString() + " more players have joined");
                             //if just hit the minimum number of players
@@ -439,27 +438,6 @@ export class Server {
                         this._players.splice(index, 1)[0];
                     }
                 }
-                //console.log("Player length before remove: " + this._players.length);
-                //console.log(this._players.splice(index, 1)[0].username);
-                //console.log("Player length after remove: " + this._players.length);
-                /*if (player.registered && this._registeredPlayerCount > 0) {
-                    for (let i = 0; i < this._players.length; i++) {
-                        this._players[i].removePlayerFromLobbyList(player.username);
-                    }
-                    this._registeredPlayerCount--;
-                    if (player.inGame && player.game != undefined) {
-                        player.game.lineThroughPlayer(player.username, "grey");
-                        if (!player.game.inPlay) {
-                            player.game.kick(player);
-                            console.log("active")
-                        } else {
-                            player.game.broadcast(player.username + " has disconnected.");
-                            player.game.disconnect(player);
-                        }
-                        player.disconnect();
-                    }
-                }
-            }*/
             }
         } else {
             console.log(

@@ -718,9 +718,6 @@ $(function () {
       }
     }
   };
-  //$(window).resize(function () {
-  //$('#inner')[0].scrollTop = $('#inner')[0].scrollHeight;
-  //});
 
   $('#registerForm').submit(function () {
     if ($("#registerBox").val() != "") {
