@@ -17,10 +17,20 @@ div(id="newGameModal" class="ui modal column segment transition")
         div(class="field")
             div(class="ui input")
                 input(id="newGameFormName" name="gameName" type="text" placeholder="Game name" maxlength="20" autocomplete="off")
-        div(class="field")
+        br
+        div(class="field" style="text-align:left; margin-left:auto; margin-right:auto;")
             div(class="ui toggle checkbox")
                 input(id="newGameFormRanked" name="gameType" type="checkbox")
                 label Ranked (signed-in players only)
+            br
+            br
+            div(class="ui toggle checkbox")
+                input(id="newGameFormPrivate" name="gameType" type="checkbox")
+                label Private (players need a password)
+            div(class="ui left icon input disabled" style="width:15em; margin-left:30px;")
+                i(class="lock icon")
+                input(id="newGameFormPassword" name="gamePassword" type="text" placeholder="Enter password" maxlength="20" autocomplete="off")
+        br
         div(class="field")
             div(class="ui form")
                 div(class="inline fields" style="text-align:right;")
@@ -34,10 +44,7 @@ div(id="newGameModal" class="ui modal column segment transition")
                                 input(type="radio" name="type" value= gameCheckboxesArray[i])
                             -}
                             label= gameCheckboxesArray[i]
-                    //div(class="field")
-                        div(class="ui radio checkbox")
-                            input(type="radio" name="type" value="OneDay")
-                            label OneDay
+
                     -}
         
         div(class="ui error message")

@@ -175,9 +175,11 @@ function cancelVote() {
 
 let firstTimeSelectingPlayer = true;
 let firstTimeSelectingInterval;
+let firstTimeNumberOfRuns = 0;
 
 function selectPlayer(username) {
-    //calling selectPlayer straight away the first time causes a bug - needs fixing
+    //calling selectPlayer straight away the first time causes a bug
+    //because not all of the players have been added yet.
     if (firstTimeSelectingPlayer) {
         firstTimeSelectingInterval = setInterval(() => {
             for (let i = 0; i < players.length; i++) {
@@ -188,7 +190,12 @@ function selectPlayer(username) {
                     players[i].select();
                 }
             }
-        }, 50);
+            //stop running loop after 10 seconds if no match found
+            firstTimeNumberOfRuns++;
+            if (firstTimeNumberOfRuns > 100) {
+                clearInterval(firstTimeSelectingInterval);
+            }
+        }, 100);
     } else {
         cancelVote();
         for (let i = 0; i < players.length; i++) {
@@ -223,7 +230,7 @@ class Player {
             }
         })
         this.sprite.on('pointerdown', () => {
-            if (user.inGame && user.canVote) {
+            if (user.inGame && user.canVote && !this.votedFor) {
                 user.socket.emit('message', '/vote ' + username.trim());
                 for (let i = 0; i < players.length; i++) {
                     players[i].votedFor = false;

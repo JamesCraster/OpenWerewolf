@@ -273,8 +273,12 @@ io.on("connection", function (socket: Socket) {
   });
   socket.on("message", function (msg: string) {
     if (typeof msg === 'string') {
+      //exclude commands from filtering (they start with a forward slash):
+      if (msg[0] === '/') {
+        server.receive(thisPlayerId, msg);
+      }
       //filter for spam(consecutive messages within 1/2 a second)
-      if (Date.now() - time < 500) {
+      else if (Date.now() - time < 500) {
         socket.emit("message", "Please do not spam the chat");
         time = Date.now();
       } else {

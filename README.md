@@ -10,7 +10,8 @@
 
 ## Features:
 * Run multiple games at once using the lobby system.
-* You can add new game modes with the config file. Use the core engine to build whatever games you want. 
+* You can use the core engine to create new game modes.
+* You can add new game modes in openwerewolf.json.  
 * Includes spam/profanity filters.
 
 ## The Games:

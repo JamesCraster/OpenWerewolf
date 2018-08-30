@@ -90,6 +90,7 @@ class User {
     $('#playerNames').append('<li class="gameli">Players:</li>');
     $('#roleNames').empty();
     $('#gameClock').text('Time: 00:00');
+    $('#gameClock').css("color", "#cecece");
     $('#roleNames').append('<li class="gameli">Roles:</li>');
     $('#chatbox').empty();
     $('#leaveGame').off('click');
@@ -177,6 +178,40 @@ let newPlayerSound = new Audio("162476__kastenfrosch__gotitem.mp3");
 newPlayerSound.volume = 0.2;
 let lostPlayerSound = new Audio("162465__kastenfrosch__lostitem.mp3");
 lostPlayerSound.volume = 0.2;
+
+//BODGE (needs neatening up):
+//Safari only permits audio playback if the user has previously interacted with the UI
+//Even if this code were to run on other browsers, it should have no effect
+//Test for safari:
+if (window.safari !== undefined) {
+  $(document).on('click', function () {
+
+    //mute and play all the sound effects once
+    notificationSound.muted = true;
+    newPlayerSound.muted = true;
+    lostPlayerSound.muted = true;
+
+    notificationSound.play();
+    newPlayerSound.play();
+    lostPlayerSound.play();
+
+    //unmute each sound effect once they have finished playing once
+    notificationSound.onended = function () {
+      notificationSound.muted = false;
+      notificationSound.onended = undefined;
+    }
+    newPlayerSound.onended = function () {
+      newPlayerSound.muted = false;
+      newPlayerSound.onended = undefined;
+    }
+    lostPlayerSound.onended = function () {
+      lostPlayerSound.muted = false;
+      lostPlayerSound.onended = undefined;
+    }
+
+    $(document).off('click');
+  })
+}
 
 function isClientScrolledDown() {
   return Math.abs($("#inner")[0].scrollTop + $('#inner')[0].clientHeight - $("#inner")[0].scrollHeight) <= 10;
@@ -278,6 +313,15 @@ $(function () {
     $('#lobbyChatInput').val('');
     return false;
   });
+
+  //make ranked and private modes mutually exclusive
+  $('#newGameFormRanked').parent().checkbox({ onChecked: function () { $('#newGameFormPrivate').parent().checkbox('set unchecked'); } });
+  $('#newGameFormPrivate').parent().checkbox({
+    onChecked: function () {
+      $('#newGameFormRanked').parent().checkbox('set unchecked');
+    }
+  });
+
   $('#newGameForm').form({
     fields: {
       gameName: {

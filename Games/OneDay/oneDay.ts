@@ -469,7 +469,7 @@ export class OneDay extends Game {
       }
       //notify players of time left every minute
       if (Date.now() - this.time > this.minutes * 1000 * 60 && this.minutes != this.length && !this.won) {
-        this.playerchat.broadcast(this.length - this.minutes + " minutes remain until the trial. You can vote at any time using \"/vote username\"");
+        this.playerchat.broadcast("There are " + (this.length - this.minutes).toString() + " minutes remaining.");
         this.minutes += 2;
       } else if (Date.now() - this.time > this.length * 60 * 1000 + 30 * 1000 && !this.won) {
         this.winResolution();
@@ -480,7 +480,7 @@ export class OneDay extends Game {
         //notify players of last 30 seconds
       } else if (Date.now() - this.time > this.length * 60 * 1000 && !this.trial && !this.won) {
         this.trial = true;
-        this.playerchat.broadcast("The trial has begun, you have 30 seconds! Vote now using \"/vote username\"");
+        this.playerchat.broadcast("You have 30 seconds left to vote!");
       }
     }
   }
@@ -570,9 +570,7 @@ export class OneDay extends Game {
         "There are 3 cards in the center that no-one has, one left, one middle, one right."
       )
       this.playerchat.broadcast(
-        this.length + " minutes remain. You can secretly vote to kill someone at any time by typing \"/vote username\"," +
-        " e.g \"/vote frank\" secretly casts a vote for frank. Undo your vote " +
-        " by typing \"/unvote\". If everyone votes, the game ends early.",
+        this.length + " minutes remain. You can secretly vote to kill someone at any time by clicking on that player. If everyone votes, the game ends early.",
       );
       this.playerchat.broadcast(
         "In the trial, if a werewolf is killed, the town team win. If no werewolves are killed, the werewolves win. If the " +
