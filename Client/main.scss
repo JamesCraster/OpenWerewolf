@@ -10,7 +10,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-
 $standard-border: 2px solid #020202;
 $central-flexbox-width: 60%;
 $central-innerbox-width: 90%;
@@ -19,6 +18,7 @@ $msg-height: 40px;
 $standard-font-size: 18px;
 $small-font-size: 0.9em;
 $inner-div-margin-bottom: 105px;
+
 @mixin standard-flexbox($flex-direction) {
   display: flex;
   justify-content: center;
@@ -159,6 +159,7 @@ body {
   height: $msg-height + 2;
   padding: 0px 5px;
   float: left;
+
   border: {
     top: none;
     bottom: $standard-border;
@@ -177,9 +178,11 @@ body {
   border: 0px;
   background-color: #0c0c0c;
   color: #cecece;
+
   &:focus {
     outline: none;
   }
+
   &::-moz-focus-inner {
     border: none;
   }
@@ -191,6 +194,7 @@ body {
   color: #cecece;
   padding: 5px 5px;
   word-wrap: break-word;
+
   &:nth-child(odd) {
     background: #303030;
     padding: 5px 5px;
@@ -329,25 +333,35 @@ a {
     height: 100%;
     width: 100%;
   }
+
   #msg {
     height: 60px;
   }
-  #submit {
-    height: 62px;
-    font-size: 18px;
+
+  .input {
+    font-size: 20px;
   }
+
+  //#submit {
+  //height: 62px;
+  //font-size: 18px;
+  //}
   .sideBox {
     display: none;
   }
+
   #name {
     display: none;
   }
+
   #outer {
     @include standard-flexbox(column);
   }
+
   #lobby {
     @include standard-flexbox(row);
   }
+
   #topLevel {
     @include standard-flexbox(row);
   }
@@ -355,14 +369,24 @@ a {
 
 @media only screen and (min-device-width:430px) {
   #outer {
-    //@include standard-flexbox(column);
     display: flex;
     justify-content: flex-end;
     align-items: center;
     align-content: stretch;
     flex-direction: column;
   }
+
   #lobby {
     @include standard-flexbox(row);
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  #lobbyRightBar {
+    display: none;
+  }
+
+  #container {
+    width: 100%;
   }
 }

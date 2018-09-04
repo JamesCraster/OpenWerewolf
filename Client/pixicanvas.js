@@ -301,12 +301,56 @@ class Player {
     }
 }
 let gallowsTexture = new PIXI.Texture.fromImage('assets/gallows.png');
-let gallowsSprite = new PIXI.Sprite(gallowsTexture);
-gallowsSprite.anchor.set(0.5, 0.5);
-gallowsSprite.scale.x = 2;
-gallowsSprite.scale.y = 2;
-gallowsSprite.x = Math.floor(app.renderer.width / 2);
-gallowsSprite.y = Math.floor(app.renderer.height / 2) - 50;
+let gallowsHangingAnimation = [];
+gallowsHangingAnimation.push(new PIXI.Texture.fromImage('assets/swordplayerhanging/sprite_hanging0.png'));
+gallowsHangingAnimation.push(new PIXI.Texture.fromImage('assets/swordplayerhanging/sprite_hanging1.png'));
+gallowsHangingAnimation.push(new PIXI.Texture.fromImage('assets/swordplayerhanging/sprite_hanging2.png'));
+gallowsHangingAnimation.push(new PIXI.Texture.fromImage('assets/swordplayerhanging/sprite_hanging3.png'));
+
+class Gallows {
+    constructor() {
+        this.sprite = new PIXI.Sprite(gallowsTexture);
+        this.sprite.anchor.set(0.5, 0.5);
+        this.sprite.scale.x = 2;
+        this.sprite.scale.y = 2;
+        this.sprite.x = Math.floor(app.renderer.width / 2);
+        this.sprite.y = Math.floor(app.renderer.height / 2) - 50;
+    }
+    hang() {
+        this.sprite.texture = gallowsHangingAnimation[0];
+        this.sprite.scale.x = 1;
+        this.sprite.scale.y = 1;
+        this.counter = 0;
+        this.hangingInterval = setInterval(function () {
+            this.counter++;
+            this.sprite.texture = gallowsHangingAnimation[this.counter];
+            if (this.counter == 3) {
+                clearInterval(this.hangingInterval);
+            }
+        }.bind(this), 25);
+    }
+    reset() {
+        this.sprite.texture = gallowsTexture;
+        this.sprite.scale.x = 2;
+        this.sprite.scale.y = 2;
+    }
+}
+
+let gallows = new Gallows();
+
+user.socket.on('hang', function (usernames) {
+    //make invisible all those players who username matches one on the list
+    for (let i = 0; i < players.length; i++) {
+        for (let j = 0; j < usernames.length; j++) {
+            if (players[i].username == usernames[j]) {
+                players[i].sprite.visible = false;
+                players[i].usernameText.visible = false;
+            }
+        }
+    }
+    //hanging animation
+    gallows.hang();
+});
 
 let mainMessageClearTimeout;
 
@@ -351,19 +395,19 @@ function resize() {
     if (mainText) {
         mainText.reposition();
     }
-    gallowsSprite.x = Math.floor(app.renderer.width / 2);
-    gallowsSprite.y = Math.floor(app.renderer.height / 2) - 10;
+    gallows.sprite.x = Math.floor(app.renderer.width / 2);
+    gallows.sprite.y = Math.floor(app.renderer.height / 2) - 10;
     let positions = distributeInCircle(players.length, 170);
     for (let i = 0; i < players.length; i++) {
-        players[i].setPos(gallowsSprite.x + positions[i][0], gallowsSprite.y + positions[i][1] + 20);
+        players[i].setPos(gallows.sprite.x + positions[i][0], gallows.sprite.y + positions[i][1] + 20);
         if (positions[i][0] > 1) {
             players[i].sprite.scale.x = -1;
         } else {
             players[i].sprite.scale.x = 1;
         }
     }
-    stoneBlockContainer.position.x = gallowsSprite.position.x + 33;
-    stoneBlockContainer.position.y = gallowsSprite.position.y - 33;
+    stoneBlockContainer.position.x = gallows.sprite.position.x + 33;
+    stoneBlockContainer.position.y = gallows.sprite.position.y - 33;
 }
 
 function distributeInCircle(number, radius) {
@@ -375,5 +419,5 @@ function distributeInCircle(number, radius) {
     return positions;
 }
 $(window).resize(resize);
-app.stage.addChild(gallowsSprite);
+app.stage.addChild(gallows.sprite);
 $('#canvasContainer').append(app.view);

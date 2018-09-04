@@ -45,6 +45,7 @@ while [ "$1" != "" ]; do
       cp -r node_modules release
       cp -r views release
       cp -r Core release
+      cp openwerewolf.json release
       
       #minify css on clientside
       #cleancss -o release/Client/main.css Client/main.css

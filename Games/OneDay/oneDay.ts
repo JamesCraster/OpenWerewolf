@@ -307,8 +307,8 @@ export class OneDay extends Game {
   }
 
 
-  private winResolution() {
-    let showWinWait = 6000;
+  private winResolution(): number {
+    let showWinWait = 7000;
 
     //cancel all voting effects
     for (let i = 0; i < this.players.length; i++) {
@@ -322,7 +322,7 @@ export class OneDay extends Game {
 
     //if no players are around, stop here
     if (this.players.length == 0) {
-      return;
+      return 0;
     }
 
     //tally up all the votes
@@ -360,7 +360,7 @@ export class OneDay extends Game {
         winningTeam = Alignment.werewolf;
       }
     } else {
-      //pick the player with the most votes and call them the loser
+      //pick the player(s) with the most votes and call them the loser(s)
       let maxVoteCount = 0;
       let losers: Array<Player> = [];
       for (let i = 0; i < this.players.length; i++) {
@@ -374,24 +374,45 @@ export class OneDay extends Game {
           this.players[i].data.hanged = true;
         }
       }
-      for (let i = 0; i < losers.length; i++) {
-        this.playerchat.broadcast(losers[i].username + " has been hanged.");
-        this.headerBroadcast([{ text: losers[i].username, color: losers[i].color }, { text: ' has been hanged', color: Colors.white }]);
-        setTimeout(() => {
-          if (losers[i].data.role == Roles.jester) {
-            this.playerchat.broadcast(losers[i].username + " was a " + losers[i].data.role + ".");
-            this.headerBroadcast([{ text: losers[i].username, color: losers[i].color }, { text: ' was a ', color: Colors.white },
-            { text: losers[i].data.role, color: Colors.brightYellow }]);
-          } else if (losers[i].data.role == Roles.werewolf || losers[i].data.role == Roles.minion) {
-            this.playerchat.broadcast(losers[i].username + " was a " + losers[i].data.role + ".");
-            this.headerBroadcast([{ text: losers[i].username, color: losers[i].color }, { text: ' was a ', color: Colors.white },
-            { text: losers[i].data.role, color: Colors.brightRed }]);
-          } else {
-            this.playerchat.broadcast(losers[i].username + " was a " + losers[i].data.role + ".");
-            this.headerBroadcast([{ text: losers[i].username, color: losers[i].color }, { text: ' was a ', color: Colors.white },
-            { text: losers[i].data.role, color: Colors.brightGreen }]);
+      setTimeout(() => {
+        for (let j = 0; j < this.players.length; j++) {
+          //start the hanging animation. If there are multiple targets in a tie,
+          //they will both disappear and be hung.
+          //get the usernames of the lynch targets:
+          let losersUsernames: Array<string> = [];
+          for (let i = 0; i < losers.length; i++) {
+            losersUsernames.push(losers[i].username);
           }
-        }, 3000);
+          //do the hanging
+          this.players[j].hang(losersUsernames);
+        }
+      }, 1000);
+
+      //increase the wait until showing the win by 6000ms for each target (not including the first one)
+      showWinWait += ((losers.length - 1) * 6000);
+
+      let showPlayerWait: number = 1000;
+      for (let i = 0; i < losers.length; i++) {
+        setTimeout(() => {
+          this.playerchat.broadcast(losers[i].username + " has been hanged.");
+          this.headerBroadcast([{ text: losers[i].username, color: losers[i].color }, { text: ' has been hanged', color: Colors.white }]);
+          setTimeout(() => {
+            if (losers[i].data.role == Roles.jester) {
+              this.playerchat.broadcast(losers[i].username + " was a " + losers[i].data.role + ".");
+              this.headerBroadcast([{ text: losers[i].username, color: losers[i].color }, { text: ' was a ', color: Colors.white },
+              { text: losers[i].data.role, color: Colors.brightYellow }]);
+            } else if (losers[i].data.role == Roles.werewolf || losers[i].data.role == Roles.minion) {
+              this.playerchat.broadcast(losers[i].username + " was a " + losers[i].data.role + ".");
+              this.headerBroadcast([{ text: losers[i].username, color: losers[i].color }, { text: ' was a ', color: Colors.white },
+              { text: losers[i].data.role, color: Colors.brightRed }]);
+            } else {
+              this.playerchat.broadcast(losers[i].username + " was a " + losers[i].data.role + ".");
+              this.headerBroadcast([{ text: losers[i].username, color: losers[i].color }, { text: ' was a ', color: Colors.white },
+              { text: losers[i].data.role, color: Colors.brightGreen }]);
+            }
+          }, 3000);
+        }, showPlayerWait);
+        showPlayerWait += 6000;
       }
       for (let i = 0; i < losers.length; i++) {
         if (losers[i].data.role == Roles.jester) {
@@ -449,6 +470,7 @@ export class OneDay extends Game {
           " and became a " + this.players[i].data.role + ".");
       }
     }, showWinWait);
+    return showWinWait;
   }
 
   protected update() {
@@ -461,11 +483,12 @@ export class OneDay extends Game {
       //if players all voted early
       if (this.everyoneVoted() && this.won == false) {
         this.playerchat.broadcast("Everyone has voted, so the game has ended.");
-        this.winResolution();
+        let showWinWait = this.winResolution();
         this.won = true;
+        //wait until after win is declared to end the game
         setTimeout(() => {
           this.end();
-        }, 10000);
+        }, showWinWait + 3000);
       }
       //notify players of time left every minute
       if (Date.now() - this.time > this.minutes * 1000 * 60 && this.minutes != this.length && !this.won) {
@@ -634,6 +657,9 @@ export class OneDay extends Game {
           //start timer
           this.time = Date.now();
           this.playerchat.broadcast("*** DISCUSSION ***", Colors.brightGreen);
+          setInterval(() => {
+
+          }, 4000);
           for (let i = 0; i < this.players.length; i++) {
             this.players[i].headerSend([{ text: "*** DISCUSSION ***", color: Colors.brightGreen }]);
           }

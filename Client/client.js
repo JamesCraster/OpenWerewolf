@@ -95,6 +95,8 @@ class User {
     $('#chatbox').empty();
     $('#leaveGame').off('click');
     leaveGameButton.setNotInPlayClick();
+    //clear the gallows
+    gallows.reset();
   }
   convertTime(duration) {
     let seconds = parseInt(duration / 1000 % 60);

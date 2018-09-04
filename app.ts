@@ -22,7 +22,7 @@ let configGameList: any = [];
 for (let i = 0; i < config.games.length; i++) {
   import(config.games[i].location).then((module) => {
     configGameList.push({ constructor: module[config.games[i].name], name: config.games[i].name });
-  }).catch((e) => { console.log('Non-critical error, a game is missing:'); console.log(e); });
+  }).catch((e) => { console.log('Non-critical warning, a game is missing: ' + config.games[i].name); /*console.log(e);*/ });
 }
 
 import { Server } from "./Core/server";

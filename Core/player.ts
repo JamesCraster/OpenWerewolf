@@ -325,4 +325,7 @@ export class Player {
     get ifCanVote() {
         return this._canVote;
     }
+    public hang(usernames: Array<string>) {
+        this.emit('hang', usernames);
+    }
 }
