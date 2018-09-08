@@ -45,7 +45,7 @@ if (myArgs[0] == 'database' || myArgs[1] == 'database') {
   DATABASE = true;
 } else {
   console.log('** DATABASE **');
-  console.log('The database is disabled by default (so no login/register.) Run "node app.js database" to enable the database.');
+  console.log('The database is disabled by default because the game is playable without it. Run "node app.js database" to enable the database.');
   console.log('Enabling the database would require mysql to be running.');
 }
 

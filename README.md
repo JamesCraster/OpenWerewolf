@@ -35,15 +35,14 @@ There's a short [guide](https://github.com/JamesCraster/OpenWerewolf/wiki/Contri
 * Unzip OpenWerewolf.zip, and run: 
 
 ```
+   cd OpenWerewolf
    npm install
    node app.js
 ```
 
-* Open your browser and visit [localhost:8081](localhost:8081)
+* Open your browser and visit [localhost:8081](http://localhost:8081)
 
-* That's it! You're running your own server.
 
-(This includes OneDay. If you want to install more game modes, go to [OpenWerewolf-Games](https://github.com/JamesCraster/OpenWerewolf-Games) and follow the instructions there.)
 
 ## [Documentation](https://jamescraster.github.io/OpenWerewolf/index.html)
 The documentation is generated using Typedoc. Run ./build -d to generate documentation.
