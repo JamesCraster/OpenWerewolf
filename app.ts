@@ -28,12 +28,25 @@ for (let i = 0; i < config.games.length; i++) {
 import { Server } from "./Core/server";
 import { Socket } from "./node_modules/@types/socket.io";
 
-const myArgs = process.argv.slice(2);
+const myArgs = process.argv.splice(2);
+
 export const DEBUGMODE = myArgs[0];
-if (DEBUGMODE) {
+//register if app is in debug mode
+if (DEBUGMODE == 'debug') {
   process.env.NODE_ENV = 'development';
 } else {
   process.env.NODE_ENV = 'production';
+}
+
+//register if app is in database mode
+let DATABASE: boolean = false;
+if (myArgs[0] == 'database' || myArgs[1] == 'database') {
+  console.log('database enabled');
+  DATABASE = true;
+} else {
+  console.log('** DATABASE **');
+  console.log('The database is disabled by default (so no login/register.) Run "node app.js database" to enable the database.');
+  console.log('Enabling the database would require mysql to be running.');
 }
 
 const express = require("express");
@@ -52,20 +65,24 @@ const saltNumber = 10;
 let uGameid = 0;
 let uPlayerid = 0;
 
+let con: any = undefined;
 redisServer.open(((err: string) => { }));
+if (DATABASE) {
 
-const con = mysql.createConnection({
-  host: "localhost",
-  user: "jcraster",
-  password: "password",
-  database: "OPENWEREWOLF"
-});
+  //Details of your MySQL server go here (don't worry, these aren't my production details.)
+  con = mysql.createConnection({
+    host: "localhost",
+    user: "jcraster",
+    password: "password",
+    database: "OPENWEREWOLF"
+  });
 
-con.connect(function (err: any) {
-  if (err) throw err;
-  console.log("Connected!");
-});
 
+  con.connect(function (err: any) {
+    if (err) throw err;
+    console.log("Connected!");
+  });
+}
 //create a new server
 let server = new Server();
 if (myArgs[0] == "debug") {
@@ -127,95 +144,97 @@ app.get("/", function (req: any, res: any) {
     gameCheckboxesArray: gameCheckboxesArray
   });
 });
-app.post("/register", function (req: any, res: any) {
-  let status = "success";
-  //run validation
-  let letters = /^[A-Za-z]+$/;
-  if (typeof req.body.username == 'string' || req.body.username instanceof String) {
-    if (req.body.username.length > 0 && req.body.username.length <= 10) {
-      if (letters.test(req.body.username)) {
-        if (!grawlix.isObscene(req.body.username)) {
-          let sql = "SELECT username FROM USERS where username=" + mysql.escape(req.body.username);
-          con.query(sql, function (err: any, results: any) {
-            if (results.length == 0) {
-              if (typeof req.body.email == 'string' || req.body.email instanceof String) {
-                if (req.body.email.length > 0 && req.body.email.length <= 256) {
+if (DATABASE && con) {
+  app.post("/register", function (req: any, res: any) {
+    let status = "success";
+    //run validation
+    let letters = /^[A-Za-z]+$/;
+    if (typeof req.body.username == 'string' || req.body.username instanceof String) {
+      if (req.body.username.length > 0 && req.body.username.length <= 10) {
+        if (letters.test(req.body.username)) {
+          if (!grawlix.isObscene(req.body.username)) {
+            let sql = "SELECT username FROM USERS where username=" + mysql.escape(req.body.username);
+            con.query(sql, function (err: any, results: any) {
+              if (results.length == 0) {
+                if (typeof req.body.email == 'string' || req.body.email instanceof String) {
+                  if (req.body.email.length > 0 && req.body.email.length <= 256) {
 
-                } else {
-                  status = 'Your email must be between 1 and 256 characters';
-                }
-              }
-              if (typeof req.body.password == 'string' || req.body.email instanceof String) {
-                if (req.body.password.length > 0 && req.body.password.length <= 256) {
-                  if (typeof req.body.repeatPassword == 'string' || req.body.repeatPassword instanceof String) {
-                    if (req.body.password === req.body.repeatPassword) {
-
-                    } else {
-                      status = 'Your password and repeated password don\'t match';
-                    }
+                  } else {
+                    status = 'Your email must be between 1 and 256 characters';
                   }
-                } else {
-                  status = 'Your password must be between 1 and 256 characters';
                 }
-              }
+                if (typeof req.body.password == 'string' || req.body.email instanceof String) {
+                  if (req.body.password.length > 0 && req.body.password.length <= 256) {
+                    if (typeof req.body.repeatPassword == 'string' || req.body.repeatPassword instanceof String) {
+                      if (req.body.password === req.body.repeatPassword) {
 
-              if (status == "success") {
-                bcrypt.genSalt(saltNumber, function (err: any, salt: any) {
-                  bcrypt.hash(req.body.password, salt, function (err: any, hash: any) {
-                    let sql = "INSERT INTO USERS VALUES (" + mysql.escape(req.body.username) + "," + mysql.escape(req.body.email) + "," +
-                      mysql.escape(hash) + "," + mysql.escape(salt) + ")";
-                    con.query(sql, function (err: any, result: any) {
-                      if (err) throw err;
+                      } else {
+                        status = 'Your password and repeated password don\'t match';
+                      }
+                    }
+                  } else {
+                    status = 'Your password must be between 1 and 256 characters';
+                  }
+                }
+
+                if (status == "success") {
+                  bcrypt.genSalt(saltNumber, function (err: any, salt: any) {
+                    bcrypt.hash(req.body.password, salt, function (err: any, hash: any) {
+                      let sql = "INSERT INTO USERS VALUES (" + mysql.escape(req.body.username) + "," + mysql.escape(req.body.email) + "," +
+                        mysql.escape(hash) + "," + mysql.escape(salt) + ")";
+                      con.query(sql, function (err: any, result: any) {
+                        if (err) throw err;
+                      })
                     })
-                  })
-                });
+                  });
+                }
+                res.send('{ "result":' + JSON.stringify(status) + '}');
+              } else {
+                status = "This username is already taken. Please change your username";
+                res.send('{ "result":' + JSON.stringify(status) + '}');
               }
-              res.send('{ "result":' + JSON.stringify(status) + '}');
-            } else {
-              status = "This username is already taken. Please change your username";
-              res.send('{ "result":' + JSON.stringify(status) + '}');
-            }
-          });
+            });
+          } else {
+            status = 'Usernames cannot contain profanity. Please change your username';
+          }
         } else {
-          status = 'Usernames cannot contain profanity. Please change your username';
+          status = 'Usernames can only contain letters (no numbers or punctuation)';
         }
       } else {
-        status = 'Usernames can only contain letters (no numbers or punctuation)';
+        status = 'Your username must be between 1 and 10 characters';
       }
-    } else {
-      status = 'Your username must be between 1 and 10 characters';
     }
-  }
-  if (status != "success") {
-    res.send('{ "result":' + JSON.stringify(status) + '}');
-  }
-});
-app.post("/login", function (req: any, res: any) {
-  let status = "failure";
-  if (typeof req.body.username == 'string' && typeof req.body.password == 'string') {
-    let sql = "SELECT encrypted_password FROM USERS WHERE username=" + mysql.escape(req.body.username);
-    con.query(sql, function (err: any, result: any) {
-      if (result.length != 0) {
-        bcrypt.compare(req.body.password, result[0].encrypted_password, function (err: any, comparisonResult: any) {
-          if (comparisonResult == true) {
-            status = "success";
-            req.session.loggedIn = true;
-            req.session.username = req.body.username;
-            req.session.save(() => { });
-          } else {
-            status = "Your username or password is incorrect.";
-          }
+    if (status != "success") {
+      res.send('{ "result":' + JSON.stringify(status) + '}');
+    }
+  });
+  app.post("/login", function (req: any, res: any) {
+    let status = "failure";
+    if (typeof req.body.username == 'string' && typeof req.body.password == 'string') {
+      let sql = "SELECT encrypted_password FROM USERS WHERE username=" + mysql.escape(req.body.username);
+      con.query(sql, function (err: any, result: any) {
+        if (result.length != 0) {
+          bcrypt.compare(req.body.password, result[0].encrypted_password, function (err: any, comparisonResult: any) {
+            if (comparisonResult == true) {
+              status = "success";
+              req.session.loggedIn = true;
+              req.session.username = req.body.username;
+              req.session.save(() => { });
+            } else {
+              status = "Your username or password is incorrect.";
+            }
+            res.send('{"result":' + JSON.stringify(status) + '}');
+          });
+        } else {
+          status = "Your username or password is incorrect.";
           res.send('{"result":' + JSON.stringify(status) + '}');
-        });
-      } else {
-        status = "Your username or password is incorrect.";
-        res.send('{"result":' + JSON.stringify(status) + '}');
-      }
-    });
-  } else {
-    res.send('{"result":' + JSON.stringify(status) + '}');
-  }
-});
+        }
+      });
+    } else {
+      res.send('{"result":' + JSON.stringify(status) + '}');
+    }
+  });
+}
 app.post("/logout", function (req: any, res: any) {
   req.session.loggedIn = false;
   req.session.username = "";

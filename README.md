@@ -27,7 +27,7 @@ in the Trial, where you'll be voting to kill the werewolves among you. For 3-7 p
 All contributors are welcome. 
 There's a short [guide](https://github.com/JamesCraster/OpenWerewolf/wiki/Contributing) to help make contributing easier.
 
-## Install and run
+## Download and Run
 * Grab the latest [release](https://github.com/JamesCraster/OpenWerewolf/releases) (choose OpenWerewolf.zip).
 
 * [Install Node.js](https://nodejs.org/en/)  
@@ -39,7 +39,11 @@ There's a short [guide](https://github.com/JamesCraster/OpenWerewolf/wiki/Contri
    node app.js
 ```
 
-* This includes OneDay. If you want to install more game modes, go to [OpenWerewolf-Games](https://github.com/JamesCraster/OpenWerewolf-Games) and follow the instructions there.
+* Open your browser and visit [localhost:8081](localhost:8081)
+
+* That's it! You're running your own server.
+
+(This includes OneDay. If you want to install more game modes, go to [OpenWerewolf-Games](https://github.com/JamesCraster/OpenWerewolf-Games) and follow the instructions there.)
 
 ## [Documentation](https://jamescraster.github.io/OpenWerewolf/index.html)
 The documentation is generated using Typedoc. Run ./build -d to generate documentation.
