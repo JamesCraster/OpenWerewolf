@@ -132,6 +132,7 @@ for (let y = 0; y < level; y++) {
 
 stoneBlockContainer.pivot.y = stoneBlockContainer.height / 2;
 
+
 app.stage.interactive = true;
 app.stage.on('pointerdown', () => {
     if (user.inGame) {
@@ -338,6 +339,22 @@ class Gallows {
 
 let gallows = new Gallows();
 
+let graveTexture = PIXI.Texture.fromImage('assets/grave2.png');
+class Grave {
+    constructor() {
+        this.sprite = new PIXI.Sprite(graveTexture);
+        this.sprite.scale.x = 2;
+        this.sprite.scale.y = 2;
+        this.sprite.x = gallows.sprite.x - 60;
+        this.sprite.y = gallows.sprite.y + 80;
+        app.stage.addChild(this.sprite);
+    }
+}
+let graveLeft = new Grave();
+let graveCenter = new Grave();
+let graveRight = new Grave();
+
+
 user.socket.on('hang', function (usernames) {
     //make invisible all those players who username matches one on the list
     for (let i = 0; i < players.length; i++) {
@@ -397,9 +414,9 @@ function resize() {
     }
     gallows.sprite.x = Math.floor(app.renderer.width / 2);
     gallows.sprite.y = Math.floor(app.renderer.height / 2) - 10;
-    let positions = distributeInCircle(players.length, 170);
+    let positions = distributeInCircle(players.length, 210);
     for (let i = 0; i < players.length; i++) {
-        players[i].setPos(gallows.sprite.x + positions[i][0], gallows.sprite.y + positions[i][1] + 20);
+        players[i].setPos(gallows.sprite.x + positions[i][0], gallows.sprite.y + positions[i][1] + 40);
         if (positions[i][0] > 1) {
             players[i].sprite.scale.x = -1;
         } else {
@@ -408,6 +425,12 @@ function resize() {
     }
     stoneBlockContainer.position.x = gallows.sprite.position.x + 33;
     stoneBlockContainer.position.y = gallows.sprite.position.y - 33;
+    graveLeft.sprite.x = gallows.sprite.position.x - 64;
+    graveLeft.sprite.y = gallows.sprite.position.y + 90;
+    graveCenter.sprite.x = gallows.sprite.position.x - 32;
+    graveCenter.sprite.y = gallows.sprite.position.y + 90;
+    graveRight.sprite.x = gallows.sprite.position.x;
+    graveRight.sprite.y = gallows.sprite.position.y + 90;
 }
 
 function distributeInCircle(number, radius) {
