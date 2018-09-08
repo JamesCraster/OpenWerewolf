@@ -276,6 +276,15 @@ function lineThroughPlayer(msg, color) {
 let lobbyChatListContainerSimpleBar = new SimpleBar($('#lobbyChatListContainer')[0]);
 
 $(function () {
+
+  //set up simplebar and modals
+  $('.newAccountButton').click(function () { $("#registerModal").modal('show'); });
+  $('.loginButton').click(function () { $('#loginModal').modal("show"); });
+  $('#newGameButton').click(function () { $('#newGameModal').modal("show"); });
+  new SimpleBar($('#container')[0]);
+  new SimpleBar($('#lobbyListContainer')[0]);
+  $('#container .simplebar-content').css('overflow-x', 'hidden');
+
   //filtering lobby entries
   $('#filterAll').click(function () {
     if ($('.lobbyItem:visible').length == 0) {

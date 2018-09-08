@@ -37,7 +37,7 @@ html(lang="en")
         title OpenWerewolf
     
     // Move scrollbar to bottom on window resize 
-    body(style='overflow-y:hidden;')
+    body
         //need to add hidden attr to all of these...
         include includes/register.pug
         include includes/login.pug
@@ -53,25 +53,21 @@ html(lang="en")
                 div(class="ui inverted right menu")
                     include includes/loggedInRightMenu.pug
                     
-            div(id="landingPageCenter" style="margin-top:12%")
-                p(id="registrationPageTitle") OpenWerewolf
-                //img(src="assets/greylogo.png")
-                //h3(style="color:#cecece; font-style:italic; margin-top:20px;") A classic game of lies and deception
+            div(id="landingPageCenter")
+                //p(id="registrationPageTitle") OpenWerewolf
+                img(src="assets/gallowslogo3.png" style="margin-left:40px")
                 div(id="errors")
                 form(id="registerForm" action="" class="messageForm")
                     div(class="ui action input")
                         input(type="text" id="registerBox" autocomplete="off" maxlength="10"  placeholder="Enter a nickname..." autofocus)
                         button(id="registerButton" class="ui inverted button") Submit
             
-            //p(id="copyrightNotice") OpenWerewolf (C) 2017-2018 James Craster. No warranty. License: 
-                a(style="color:#237bd2" href="https://www.gnu.org/licenses/agpl-3.0.html" target="_blank") AGPLv3
             p(id="copyrightNotice")
                 a(href="/imprint") Copyright and attribution
         
         include includes/lobby.pug
-        div(id="topLevel" style="overflow:hidden;")
+        div(id="topLevel")
             include includes/game.pug
-        
         
     script(src='webfontloader.js')
     script(src="pixi.min.js")
@@ -83,12 +79,4 @@ html(lang="en")
     script(crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js")
     script(src="components.js")
     script(src="client.js")
-    script(src="pixicanvas.js")
-    script
-        |$('.newAccountButton').click(function(){$("#registerModal").modal('show');});        
-        |$('.loginButton').click(function(){$('#loginModal').modal("show");});
-        |$('#newGameButton').click(function(){$('#newGameModal').modal("show");});
-        | new SimpleBar($('#container')[0]);
-        | new SimpleBar($('#lobbyListContainer')[0]);
-        |$('#container .simplebar-content').css('overflow-x', 'hidden');
-        | 
+    script(src="pixicanvas.js") 
