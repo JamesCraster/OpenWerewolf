@@ -59,8 +59,18 @@ const redis = require('redis-server');
 const redisServer = new redis(6379);
 const grawlix = require('grawlix');
 const mysql = require('mysql');
+const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
 const saltNumber = 10;
+
+//details of your email account go here - this needs to be amended for security reasons
+var transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'youremail@gmail.com',
+    pass: 'yourpassword'
+  }
+});
 
 let uGameid = 0;
 let uPlayerid = 0;
@@ -97,6 +107,13 @@ let session = expressSession({
   resave: false,
   saveUninitialized: true
 });
+
+//log the player into their account
+function loginUser(req: any) {
+  req.session.loggedIn = true;
+  req.session.username = req.body.username;
+  req.session.save(() => { });
+}
 
 //use session cookie in sockets
 io.use(function (socket: any, next: any) {
@@ -187,6 +204,8 @@ if (DATABASE && con) {
                       })
                     })
                   });
+                  //log the player into their new account automatically
+                  loginUser(req)
                 }
                 res.send('{ "result":' + JSON.stringify(status) + '}');
               } else {
@@ -217,9 +236,7 @@ if (DATABASE && con) {
           bcrypt.compare(req.body.password, result[0].encrypted_password, function (err: any, comparisonResult: any) {
             if (comparisonResult == true) {
               status = "success";
-              req.session.loggedIn = true;
-              req.session.username = req.body.username;
-              req.session.save(() => { });
+              loginUser(req);
             } else {
               status = "Your username or password is incorrect.";
             }
@@ -265,6 +282,26 @@ app.post("/newGame", function (req: any, res: any) {
   }
   res.send('{"result":' + JSON.stringify(result) + '}');
 });
+app.post("/forgottenPassword", function (req: any, res: any) {
+  if (typeof req.body.username == 'string') {
+    //find email in the database matching username 'req.body.username'
+    let sql = "SELECT email FROM USERS WHERE username=" + mysql.escape(req.body.username);
+    con.query(sql, function (err: any, result: any) {
+      if (result.length == 0) {
+        res.send('{"result":"Your username is incorrect"}');
+      } else {
+        console.log('{"result":' + JSON.stringify(result[0].email) + '}');
+        res.send('{"result":"success"}');
+      }
+    })
+    //send the corresponding email address a randomly generated validation link:
+    //first generate the validation link:
+    //then send the email:
+
+
+
+  }
+})
 app.get("*.png", function () { });
 app.get("*", function (req: any, res: any) {
   res.render("404");

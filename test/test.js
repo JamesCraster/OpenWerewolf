@@ -10,6 +10,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
+
+//UI testing
 const webdriver = require('selenium-webdriver');
 let assert = require('assert');
 const {
@@ -102,3 +104,5 @@ test.describe('Log In', function () {
 //Testing that profanity is being filtered
 
 //Testing that non-letters are not allowed
+
+//Unit testing

@@ -286,6 +286,12 @@ $(function () {
   $('#newGameButton').click(function () {
     $('#newGameModal').modal("show");
   });
+  $('#forgottenPassword').click(function () {
+    $('#forgottenPasswordModal').modal("show");
+  });
+  $('#cancelForgottenPasswordButton').click(function () {
+    $('#forgottenPasswordModal').modal("hide");
+  });
   new SimpleBar($('#container')[0]);
   new SimpleBar($('#lobbyListContainer')[0]);
   $('#container .simplebar-content').css('overflow-x', 'hidden');
@@ -494,6 +500,47 @@ $(function () {
       },
       error: function (error) {
         console.log("There has been an error");
+        console.log(error);
+      }
+    });
+    return false;
+  });
+
+  //set form validation rules for forgotten password - username needs to be supplied
+  $('#forgottenPasswordForm').form({
+    fields: {
+      username: {
+        identifier: 'username',
+        rules: [{
+          type: 'empty',
+          prompt: 'Please enter your username'
+        }]
+      }
+    }
+  });
+  //submit confirmation that the password should be reset 
+  $('#forgottenPasswordForm').submit(() => {
+    $('#forgottenPasswordDimmer').dimmer('show');
+    $('#forgottenPasswordError').text('');
+    $('#forgottenPasswordError').css('display', 'none');
+    const username = $('#forgottenPasswordUsername').val();
+    $.ajax({
+      type: 'POST',
+      url: '/forgottenPassword',
+      data: JSON.stringify({ "username": username }),
+      dataType: 'json',
+      contentType: 'application/json',
+      success: function (data) {
+        if (data.result == 'success') {
+          $('#forgottenPasswordModal').modal('hide');
+        } else {
+          $('#forgottenPasswordError').text('Your username is incorrect');
+          $('#forgottenPasswordError').css('display', 'block');
+        }
+        $('#forgottenPasswordDimmer').dimmer('hide');
+      },
+      error: function (error) {
+        console.log('forgotten password has returned an error');
         console.log(error);
       }
     });
