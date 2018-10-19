@@ -4,11 +4,11 @@
   "description": "An open source, online multiplayer werewolf game.",
   "main": "app.js",
   "dependencies": {
-    "@types/node": "^9.6.22",
-    "@types/socket.io": "^1.4.36",
-    "bcrypt": "^3.0.0",
-    "connect-redis": "^3.3.3",
-    "express": "^4.16.3",
+    "@types/node": "^9.6.35",
+    "@types/socket.io": "^1.4.38",
+    "bcrypt": "^3.0.2",
+    "connect-redis": "^3.4.0",
+    "express": "^4.16.4",
     "express-session": "^1.15.6",
     "grawlix": "^1.0.6",
     "mysql": "^2.16.0",
@@ -17,9 +17,9 @@
     "redis": "^2.8.0",
     "redis-server": "^1.2.2",
     "selenium-webdriver": "^3.6.0",
-    "semantic-ui": "^2.3.3",
-    "simplebar": "^3.0.0-beta.1",
-    "socket.io": "^2.0.4"
+    "semantic-ui": "^2.4.1",
+    "simplebar": "^3.0.0-beta.5",
+    "socket.io": "^2.1.1"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
