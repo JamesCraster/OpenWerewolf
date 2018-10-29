@@ -277,6 +277,9 @@ let lobbyChatListContainerSimpleBar = new SimpleBar($('#lobbyChatListContainer')
 
 $(function () {
 
+  //if navigator is not online, display a message warning that the user has disconnected
+
+
   //set up simplebar and modals
   $('.newAccountButton').click(function () { $("#registerModal").modal('show'); });
   $('.loginButton').click(function () { $('#loginModal').modal("show"); });
@@ -720,6 +723,10 @@ $(function () {
     markAsDead(msg);
     markAsDead(" " + msg);
   });
+  user.socket.on('disconnect', function(){
+    console.log('disconnected - show player warning');
+    
+  })
   user.socket.on("reconnect", function () {
     console.log("disconnected and then reconnected");
   });

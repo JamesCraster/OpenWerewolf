@@ -23,6 +23,7 @@ release/
 TODO.txt
 .DS_Store
 
+Client/client.js
 Core/app.js
 Core/core.js
 Core/app.js
@@ -38,4 +39,3 @@ Client/google2d9c2c2f48980e51.html
 deploy
 app.js.map
 *.js.map
-Classic
