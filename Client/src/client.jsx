@@ -622,13 +622,10 @@ $(function () {
   user.socket.on("headerTextMessage", function (standardArray) {
     let out = [];
     for (let i = 0; i < standardArray.length; i++) {
-      console.log(standardArray[i].color);
       out.push(new StandardMainText(standardArray[i].text, standardArray[i].color))
     }
     if (mainText) {
-      mainText.clear();
-      mainText.create(out);
-      mainText.fadeOut(2500);
+      mainText.push(out);
     }
   })
   user.socket.on("restart", function () {
@@ -729,6 +726,8 @@ $(function () {
   })
   user.socket.on("reconnect", function () {
     console.log("disconnected and then reconnected");
+    $('#offlineWarning').css("display", "block");
+
   });
   user.socket.on("setTime", function (time, warn) {
     if (time > 0) {

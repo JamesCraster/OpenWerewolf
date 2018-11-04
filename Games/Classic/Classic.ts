@@ -238,11 +238,13 @@ export class Classic extends Game {
     }
     if (townWin) {
       this.daychat.broadcast("The town have won!", undefined, Colors.green);
+      this.headerBroadcast([{text: "The town have won!", color: Colors.green}]);
       this.ended = true;
       this.daychat.unmuteAll();
       setTimeout(this.end.bind(this), 30 * 1000);
     } else if (werewolfWin) {
       this.daychat.broadcast("The mafia have won!", undefined, Colors.red);
+      this.headerBroadcast([{text: "The mafia have won!", color: Colors.red}]);
       this.ended = true;
       this.daychat.unmuteAll();
       setTimeout(this.end.bind(this), 30 * 1000);
@@ -287,28 +289,34 @@ export class Classic extends Game {
         case Roles.mafioso:
           this.players[i].data = new PlayerData(new Mafioso());
           this.players[i].send("You are a mafioso", undefined, Colors.red);
+          this.players[i].headerSend([{text: "You are a ", color: Colors.white}, {text: "mafioso", color: Colors.brightRed}]);
           this.mafiachat.addPlayer(this.players[i]);
           this.mafiachat.mute(this.players[i]);
           break;
         case Roles.doctor:
           this.players[i].data = new PlayerData(new Doctor());
           this.players[i].send("You are a doctor", undefined, Colors.green);
+          this.players[i].headerSend([{text: "You are a ", color: Colors.white}, {text: "doctor", color: Colors.brightGreen}]);
           break;
         case Roles.townie:
           this.players[i].data = new PlayerData(new Townie());
           this.players[i].send("You are a townie", undefined, Colors.green);
+          this.players[i].headerSend([{text: "You are a ", color: Colors.white}, {text: "townie", color: Colors.brightGreen}]);
           break;
         case Roles.sherrif:
           this.players[i].data = new PlayerData(new Sherrif());
           this.players[i].send("You are a sherrif", undefined, Colors.green);
+          this.players[i].headerSend([{text: "You are a ", color: Colors.white}, {text: "sheriff", color: Colors.brightGreen}]);
           break;
         case Roles.vigilante:
           this.players[i].data = new PlayerData(new Vigilante());
           this.players[i].send("You are a vigilante", undefined, Colors.green);
+          this.players[i].headerSend([{text: "You are a ", color: Colors.white}, {text: "vigilante", color: Colors.brightGreen}]);
           break;
         case Roles.escort:
           this.players[i].data = new PlayerData(new Escort());
           this.players[i].send("You are an escort", undefined, Colors.green);
+          this.players[i].headerSend([{text: "You are a ", color: Colors.white}, {text: "escort", color: Colors.brightGreen}]);
           break;
       }
     }

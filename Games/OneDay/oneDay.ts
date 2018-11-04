@@ -159,25 +159,7 @@ enum Roles {
 
 
 }
-/*
-These classes are planned to replace the current .data setup
-class OneDayPlayer extends Player{
-  public data:PlayerData;
-  constructor(socket: Socket){
-    super(socket);
-  }
-}
-class PlayerData{
-  private readonly intialRole:Role;
-  private actionRole:Role;
-  private finalRole:Role;
-}
-class Role{
-  private readonly name:string;
-  private readonly wakesWithWolves:boolean;
-  private readonly wakesWithMasons:boolean;
-}
-*/
+
 enum Alignment {
   werewolf = "werewolf",
   town = "town",

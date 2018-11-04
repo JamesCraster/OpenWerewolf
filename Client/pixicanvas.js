@@ -23,7 +23,7 @@ WebFont.load({
         families: ['Mercutio']
     },
     active: function () {
-        mainText = new StandardMainTextList([new StandardMainText('')])
+        mainText = new StandardMainTextList();
     }
 });
 
@@ -49,41 +49,58 @@ class StandardMainText {
 }
 
 class StandardMainTextList {
-    constructor(standardMainTextArray) {
+    constructor(textArray) {
         this.container = new PIXI.Container();
         app.stage.addChild(this.container);
-        this.create(standardMainTextArray);
         this.fadeOutTimeout = undefined;
+        this.textShownDuration = 2500;
+        this.queue = [];
+        if(textArray != undefined){
+            this.push(textArray)
+        }
     }
     clear() {
         this.container.removeChildren();
     }
-    create(standardMainTextArray) {
+    push(textArray){
+        console.log('input:');
+        console.log(textArray);
+        this.queue.unshift(textArray);
+        console.log('queue:')
+        console.log(this.queue);
+        //if this is the only element in the queue, then render it now
+        if(this.queue.length == 1){
+            this.render(this.queue[this.queue.length-1]);
+        }
+    }
+    render(textArray){
+        clearInterval(this.fadeOutTimeout);
         this.clear();
-        clearTimeout(this.fadeOutTimeout);
-        //fade in if faded out
         this.container.alpha = 1;
         let point = 0;
-        for (let i = 0; i < standardMainTextArray.length; i++) {
-            standardMainTextArray[i].object.x = point;
-            this.container.addChild(standardMainTextArray[i].object);
-            point += standardMainTextArray[i].object.width;
+        for (let i = 0; i < textArray.length; i++) {
+            textArray[i].object.x = point;
+            this.container.addChild(textArray[i].object);
+            point += textArray[i].object.width;
         }
         this.reposition();
-    }
-    fadeOut(time) {
-        this.fadeOutTimeout = setTimeout(function () {
+        //render the next one after a delay
+        this.fadeOutTimeout = setTimeout(function(){
             let fadingAnimation = setInterval(function () {
                 this.container.alpha = this.container.alpha * 0.8;
-                //if transparent enough to be invisible
+                //if transparent enough to be invisible, stop fading out and show next text
                 if (this.container.alpha < 0.01) {
-                    this.container.alpha = 0;
+                   this.container.alpha = 0;
                     clearInterval(fadingAnimation);
+                    this.queue.pop();
+                    if(this.queue.length != 0){
+                        this.render(this.queue[this.queue.length-1]);
+                    }
                 }
             }.bind(this), 10);
-        }.bind(this), time);
+        }.bind(this),this.textShownDuration);
     }
-    //called on window resize also
+    //called on window resize in addition to when rerendering happens
     reposition() {
         this.container.x = Math.floor(app.renderer.width / 2) - this.container.width / 2;
         this.container.y = 25;
@@ -351,16 +368,6 @@ user.socket.on('hang', function (usernames) {
     //hanging animation
     gallows.hang();
 });
-
-let mainMessageClearTimeout;
-
-function receiveMainMessage(text) {
-    clearTimeout(mainMessageClearTimeout);
-    setMainText(text);
-    mainMessageClearTimeout = setTimeout(function () {
-        setMainText("")
-    }, 2000);
-}
 
 function removeAllPlayers() {
     for (let i = 0; i < players.length; i++) {

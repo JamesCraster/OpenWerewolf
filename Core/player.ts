@@ -301,7 +301,7 @@ export class Player {
         this.emit('removeGameFromLobby', uid)
     }
     public headerSend(array: Array<{ text: string, color: string | Colors }>) {
-        console.log(array);
+        //console.log(array);
         this.emit('headerTextMessage', array);
     }
     public cancelVoteEffect() {
