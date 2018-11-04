@@ -720,14 +720,9 @@ $(function () {
     markAsDead(msg);
     markAsDead(" " + msg);
   });
-  user.socket.on('disconnect', function(){
+  window.addEventListener('offline', function(e) { 
     console.log('disconnected - show player warning');
-    
-  })
-  user.socket.on("reconnect", function () {
-    console.log("disconnected and then reconnected");
-    $('#offlineWarning').css("display", "block");
-
+    $('#offlineWarning').css("display", "block"); 
   });
   user.socket.on("setTime", function (time, warn) {
     if (time > 0) {
