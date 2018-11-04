@@ -23,7 +23,9 @@
 
 doctype html
 include includes/lobbyEntry.pug
-include includes/offlineWarning.pug
+//this include causes a flash of unstyled content if placed here - put in html tag instead
+//include includes/offlineWarning.pug
+
 html(lang="en")
     head
         meta(charset="UTF-8")
@@ -39,7 +41,9 @@ html(lang="en")
     
     // Move scrollbar to bottom on window resize 
     body
+        
         //need to add hidden attr to all of these...
+        include includes/offlineWarning.pug
         include includes/register.pug
         include includes/login.pug
         include includes/leaveGameModal.pug
