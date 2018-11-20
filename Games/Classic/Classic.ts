@@ -322,7 +322,8 @@ export class Classic extends Game {
     }
     this.setAllTime(10000, 0);
     setTimeout(() => {
-      this.broadcast("Night has fallen.", undefined, "#1919cc");
+      this.broadcast("Night has fallen.", undefined, Colors.nightBlue);
+      this.headerBroadcast([{text: "Night has fallen", color:Colors.nightBlue}]);
       this.phase = Phase.night;
       //Let the werewolves communicate with one another
       this.mafiachat.unmuteAll();
@@ -349,7 +350,12 @@ export class Classic extends Game {
     }, 10000);
   }
   public night() {
+    //reset the gallows' animation if they have been used
+    for(let i = 0; i < this.players.length; i++){
+      this.players[i].resetGallows();
+    }
     this.broadcast("Night has fallen.", undefined, "#1919cc");
+    this.headerBroadcast([{text: "Night has fallen", color:Colors.nightBlue}]);
     this.phase = Phase.night;
     //Let the mafia communicate with one another
     this.mafiachat.unmuteAll();
@@ -476,6 +482,7 @@ export class Classic extends Game {
     this.mafiachat.muteAll();
     this.phase = Phase.day;
     this.daychat.broadcast("Dawn has broken.", undefined, Colors.yellow);
+    this.headerBroadcast([{text:"Dawn has broken", color:Colors.brightYellow}]);
     this.daychat.unmuteAll();
     for (let i = 0; i < this.players.length; i++) {
       if (!this.players[i].data.alive) {
@@ -603,6 +610,9 @@ export class Classic extends Game {
         this.kill(this.players[defendant]);
         this.players[defendant].data.diedThisNight = false;
         this.daychat.broadcast(this.players[defendant].username + " has died.");
+        for(let i = 0; i < this.players.length; i++){
+          this.players[i].hang([this.players[defendant].username]);
+        }
       } else {
         this.daychat.broadcast(this.players[defendant].username + " has been acquitted");
       }

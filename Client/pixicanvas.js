@@ -55,25 +55,25 @@ class StandardMainTextList {
         this.fadeOutTimeout = undefined;
         this.textShownDuration = 2500;
         this.queue = [];
-        if(textArray != undefined){
+        if (textArray != undefined) {
             this.push(textArray)
         }
     }
     clear() {
         this.container.removeChildren();
     }
-    push(textArray){
+    push(textArray) {
         console.log('input:');
         console.log(textArray);
         this.queue.unshift(textArray);
         console.log('queue:')
         console.log(this.queue);
         //if this is the only element in the queue, then render it now
-        if(this.queue.length == 1){
-            this.render(this.queue[this.queue.length-1]);
+        if (this.queue.length == 1) {
+            this.render(this.queue[this.queue.length - 1]);
         }
     }
-    render(textArray){
+    render(textArray) {
         clearInterval(this.fadeOutTimeout);
         this.clear();
         this.container.alpha = 1;
@@ -85,20 +85,20 @@ class StandardMainTextList {
         }
         this.reposition();
         //render the next one after a delay
-        this.fadeOutTimeout = setTimeout(function(){
+        this.fadeOutTimeout = setTimeout(function () {
             let fadingAnimation = setInterval(function () {
                 this.container.alpha = this.container.alpha * 0.8;
                 //if transparent enough to be invisible, stop fading out and show next text
                 if (this.container.alpha < 0.01) {
-                   this.container.alpha = 0;
+                    this.container.alpha = 0;
                     clearInterval(fadingAnimation);
                     this.queue.pop();
-                    if(this.queue.length != 0){
-                        this.render(this.queue[this.queue.length-1]);
+                    if (this.queue.length != 0) {
+                        this.render(this.queue[this.queue.length - 1]);
                     }
                 }
             }.bind(this), 10);
-        }.bind(this),this.textShownDuration);
+        }.bind(this), this.textShownDuration);
     }
     //called on window resize in addition to when rerendering happens
     reposition() {
@@ -368,6 +368,10 @@ user.socket.on('hang', function (usernames) {
     //hanging animation
     gallows.hang();
 });
+
+user.socket.on('resetGallows', function () {
+    gallows.reset();
+})
 
 function removeAllPlayers() {
     for (let i = 0; i < players.length; i++) {

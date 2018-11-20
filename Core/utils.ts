@@ -142,7 +142,8 @@ export enum Colors {
     seaGreen = "#20b2aa",
     white = "#ffffff",
     brown = "#a5542a",
-    darkGreen = "#2aa54c"
+    darkGreen = "#2aa54c",
+    nightBlue = "#1919cc"
 }
 
 //For convenience with Pug, usernames/colors are grouped together.
