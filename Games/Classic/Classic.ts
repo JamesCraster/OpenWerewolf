@@ -248,6 +248,7 @@ export class Classic extends Game {
   private daychat: MessageRoom = new MessageRoom();
   private mafiachat: MessageRoom = new MessageRoom();
   private tallyInterval: any;
+  private trialClock: Stopwatch = new Stopwatch();
 
   constructor(server: Server, name: string, uid: string) {
     super(server, globalMinimumPlayerCount, 9, "Classic", name, uid);
@@ -467,41 +468,44 @@ export class Classic extends Game {
     }, 10000);
   }
   public night() {
-    //reset the gallows' animation if they have been used
-    for (let i = 0; i < this.players.length; i++) {
-      this.players[i].resetGallows();
-    }
-    this.broadcast("Night has fallen.", undefined, "#1919cc");
-    this.headerBroadcast([
-      { text: "Night has fallen", color: Colors.nightBlue },
-    ]);
-    this.phase = Phase.night;
-    //Let the mafia communicate with one another
-    this.mafiachat.unmuteAll();
-    this.mafiachat.broadcast(
-      "This is the mafia chat, you can talk to other mafia now in secret.",
-    );
-    let werewolfList: Array<string> = [];
-    for (let i = 0; i < this.players.length; i++) {
-      if (this.players[i].data.isRole(Roles.mafioso)) {
-        werewolfList.push(this.players[i].username);
+    this.winCondition();
+    if (!this.ended) {
+      //reset the gallows' animation if they have been used
+      for (let i = 0; i < this.players.length; i++) {
+        this.players[i].resetGallows();
       }
-    }
-    let werewolfString = "The mafia are : ";
-    for (let i = 0; i < werewolfList.length; i++) {
-      if (i != 0) {
-        werewolfString += ", ";
+      this.broadcast("Night has fallen.", undefined, "#1919cc");
+      this.headerBroadcast([
+        { text: "Night has fallen", color: Colors.nightBlue },
+      ]);
+      this.phase = Phase.night;
+      //Let the mafia communicate with one another
+      this.mafiachat.unmuteAll();
+      this.mafiachat.broadcast(
+        "This is the mafia chat, you can talk to other mafia now in secret.",
+      );
+      let werewolfList: Array<string> = [];
+      for (let i = 0; i < this.players.length; i++) {
+        if (this.players[i].data.isRole(Roles.mafioso)) {
+          werewolfList.push(this.players[i].username);
+        }
       }
-      werewolfString += werewolfList[i];
-    }
-    this.mafiachat.broadcast(werewolfString);
-    this.daychat.broadcast(
-      "Type '/act username' to do your action on someone. E.g /act frank will perform your" +
-        " action on frank. You have 30 seconds to act.",
-    );
-    this.setAllTime(30000, 10000);
+      let werewolfString = "The mafia are : ";
+      for (let i = 0; i < werewolfList.length; i++) {
+        if (i != 0) {
+          werewolfString += ", ";
+        }
+        werewolfString += werewolfList[i];
+      }
+      this.mafiachat.broadcast(werewolfString);
+      this.daychat.broadcast(
+        "Type '/act username' to do your action on someone. E.g /act frank will perform your" +
+          " action on frank. You have 30 seconds to act.",
+      );
+      this.setAllTime(30000, 10000);
 
-    setTimeout(this.nightResolution.bind(this), 30000);
+      setTimeout(this.nightResolution.bind(this), 30000);
+    }
   }
   private kill(player: Player) {
     for (let i = 0; i < this.players.length; i++) {
@@ -659,6 +663,8 @@ export class Classic extends Game {
   public day() {
     this.winCondition();
     if (!this.ended) {
+      this.trialClock.restart();
+      this.trialClock.stop();
       this.daychat.broadcast(
         "1 minute of general discussion until the trials begin. Discuss who to nominate!",
       );
@@ -674,17 +680,19 @@ export class Classic extends Game {
   }
   public trialVote() {
     if (!this.ended) {
+      console.log(this.trialClock.time);
+      this.trialClock.start();
       this.daychat.muteAll();
       this.daychat.broadcast(
         "The trial has begun! The player with a majority of votes will be put on trial.",
       );
       this.daychat.broadcast(
-        "Max 60 seconds. Only one trial per day, so choose carefully!",
+        "Max 60 seconds. If the target is acquited you can vote for a new one.",
       );
       this.daychat.broadcast(
         "Vote with '/vote', e.g /vote frank casts a vote for frank",
       );
-      this.setAllTime(60000, 20000);
+      this.setAllTime(Math.max(0, 60000 - this.trialClock.time), 20000);
       this.trial = Trial.nominate;
       this.dayClock.restart();
       this.dayClock.start();
@@ -719,10 +727,11 @@ export class Classic extends Game {
         }
       }
       if (beginTrial) {
+        this.trialClock.stop();
         clearInterval(this.tallyInterval);
         this.defenseSpeech(defendant);
       }
-      if (this.dayClock.time > 60000) {
+      if (this.trialClock.time > 60000) {
         for (let i = 0; i < this.players.length; i++) {
           this.players[i].data.resetAfterTrial();
         }
@@ -783,17 +792,29 @@ export class Classic extends Game {
         for (let i = 0; i < this.players.length; i++) {
           this.players[i].hang([this.players[defendant].username]);
         }
+        this.trial = Trial.ended;
+        for (let i = 0; i < this.players.length; i++) {
+          this.players[i].data.resetAfterTrial();
+        }
+        this.setAllTime(10000, 0);
+        setTimeout(this.night.bind(this), 10 * 1000);
       } else {
         this.daychat.broadcast(
           this.players[defendant].username + " has been acquitted",
         );
+        //reset trial values and call trial vote
+        this.trial = Trial.ended;
+        for (let i = 0; i < this.players.length; i++) {
+          this.players[i].data.resetAfterTrial();
+        }
+        if (this.trialClock.time < 60000) {
+          this.trialVote();
+        } else {
+          this.daychat.broadcast("Time's up! Night will now begin.");
+          this.setAllTime(10000, 0);
+          setTimeout(this.night.bind(this), 10 * 1000);
+        }
       }
-      this.trial = Trial.ended;
-      for (let i = 0; i < this.players.length; i++) {
-        this.players[i].data.resetAfterTrial();
-      }
-      this.setAllTime(10000, 0);
-      setTimeout(this.night.bind(this), 10 * 1000);
     }
   }
   public disconnect(player: Player) {
