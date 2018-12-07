@@ -181,6 +181,9 @@ class PlayerData {
   public get vote() {
     return this._vote;
   }
+  public clearVote() {
+    this._vote = "";
+  }
   public set finalVote(vote: string) {
     this._finalVote = vote;
   }
@@ -249,6 +252,10 @@ export class Classic extends Game {
   private mafiachat: MessageRoom = new MessageRoom();
   private tallyInterval: any;
   private trialClock: Stopwatch = new Stopwatch();
+  private readonly maxTrialsPerDay: number = 3;
+  private trialsThisDay: number = 0;
+  private readonly maxDaysWithoutDeath: number = 3;
+  private daysWithoutDeath: number = 0;
 
   constructor(server: Server, name: string, uid: string) {
     super(server, globalMinimumPlayerCount, 9, "Classic", name, uid);
@@ -256,7 +263,18 @@ export class Classic extends Game {
     super.addMessageRoom(this.daychat);
     super.addMessageRoom(this.mafiachat);
   }
-
+  private playersCanVote() {
+    for (let i = 0; i < this.players.length; i++) {
+      if (this.players[i].data.alive) {
+        this.players[i].canVote();
+      }
+    }
+  }
+  private playersCannotVote() {
+    for (let i = 0; i < this.players.length; i++) {
+      this.players[i].cannotVote();
+    }
+  }
   public winCondition() {
     let townWin = true;
     let mafiaWin = true;
@@ -382,55 +400,37 @@ export class Classic extends Game {
       switch (randomDeck[i]) {
         case Roles.mafioso:
           this.players[i].data = new PlayerData(new Mafioso());
-          this.players[i].send("You are a mafioso", undefined, Colors.red);
-          this.players[i].headerSend([
-            { text: "You are a ", color: Colors.white },
-            { text: "mafioso", color: Colors.brightRed },
-          ]);
           this.mafiachat.addPlayer(this.players[i]);
           this.mafiachat.mute(this.players[i]);
           break;
         case Roles.doctor:
           this.players[i].data = new PlayerData(new Doctor());
-          this.players[i].send("You are a doctor", undefined, Colors.green);
-          this.players[i].headerSend([
-            { text: "You are a ", color: Colors.white },
-            { text: "doctor", color: Colors.brightGreen },
-          ]);
           break;
         case Roles.townie:
           this.players[i].data = new PlayerData(new Townie());
-          this.players[i].send("You are a townie", undefined, Colors.green);
-          this.players[i].headerSend([
-            { text: "You are a ", color: Colors.white },
-            { text: "townie", color: Colors.brightGreen },
-          ]);
           break;
         case Roles.sherrif:
           this.players[i].data = new PlayerData(new Sherrif());
-          this.players[i].send("You are a sherrif", undefined, Colors.green);
-          this.players[i].headerSend([
-            { text: "You are a ", color: Colors.white },
-            { text: "sheriff", color: Colors.brightGreen },
-          ]);
           break;
         case Roles.vigilante:
           this.players[i].data = new PlayerData(new Vigilante());
-          this.players[i].send("You are a vigilante", undefined, Colors.green);
-          this.players[i].headerSend([
-            { text: "You are a ", color: Colors.white },
-            { text: "vigilante", color: Colors.brightGreen },
-          ]);
           break;
         case Roles.escort:
           this.players[i].data = new PlayerData(new Escort());
-          this.players[i].send("You are an escort", undefined, Colors.green);
-          this.players[i].headerSend([
-            { text: "You are a ", color: Colors.white },
-            { text: "escort", color: Colors.brightGreen },
-          ]);
+          break;
+        default:
+          console.log(
+            "Critical error: the following role is not assignable:" +
+              randomDeck[i],
+          );
           break;
       }
+      //tell the player what their role is
+      this.sendRole(
+        this.players[i],
+        this.players[i].data.alignment,
+        randomDeck[i],
+      );
     }
     this.setAllTime(10000, 0);
     setTimeout(() => {
@@ -457,6 +457,7 @@ export class Classic extends Game {
         }
         werewolfString += werewolfList[i];
       }
+      this.playersCanVote();
       this.mafiachat.broadcast(werewolfString);
       this.daychat.broadcast(
         "Type '/act username' to do your action on someone. E.g /act frank will perform your" +
@@ -467,7 +468,28 @@ export class Classic extends Game {
       setTimeout(this.nightResolution.bind(this), 30000);
     }, 10000);
   }
+  private sendRole(player: Player, alignment: Alignment, role: string) {
+    switch (alignment) {
+      case Alignment.town:
+        player.send("You are a " + role, undefined, Colors.green);
+        player.headerSend([
+          { text: "You are a ", color: Colors.white },
+          { text: role, color: Colors.brightGreen },
+        ]);
+        break;
+      case Alignment.mafia:
+        player.send("You are a " + role, undefined, Colors.red);
+        player.headerSend([
+          { text: "You are a ", color: Colors.white },
+          { text: role, color: Colors.brightRed },
+        ]);
+        break;
+    }
+  }
+
   public night() {
+    this.cancelVoteSelection();
+    this.playersCanVote();
     this.winCondition();
     if (!this.ended) {
       //reset the gallows' animation if they have been used
@@ -632,6 +654,7 @@ export class Classic extends Game {
       this.players[i].data.resetAfterNight();
     }
     this.mafiachat.muteAll();
+    this.cancelVoteSelection();
     this.phase = Phase.day;
     this.daychat.broadcast("Dawn has broken.", undefined, Colors.yellow);
     this.headerBroadcast([
@@ -658,11 +681,13 @@ export class Classic extends Game {
     for (let i = 0; i < this.players.length; i++) {
       this.players[i].data.diedThisNight = false;
     }
+    this.playersCannotVote();
     this.day();
   }
   public day() {
     this.winCondition();
     if (!this.ended) {
+      this.trialsThisDay = 0;
       this.trialClock.restart();
       this.trialClock.stop();
       this.daychat.broadcast(
@@ -680,6 +705,14 @@ export class Classic extends Game {
   }
   public trialVote() {
     if (!this.ended) {
+      if (this.trialsThisDay > 3) {
+        this.daychat.broadcast(
+          "The town is out of trials - you only get 3 trials a day! Night begins.",
+        );
+        this.endDay();
+        return;
+      }
+      this.cancelVoteSelection();
       console.log(this.trialClock.time);
       this.trialClock.start();
       this.daychat.muteAll();
@@ -692,6 +725,7 @@ export class Classic extends Game {
       this.daychat.broadcast(
         "Vote with '/vote', e.g /vote frank casts a vote for frank",
       );
+      this.playersCanVote();
       this.setAllTime(Math.max(0, 60000 - this.trialClock.time), 20000);
       this.trial = Trial.nominate;
       this.dayClock.restart();
@@ -732,18 +766,15 @@ export class Classic extends Game {
         this.defenseSpeech(defendant);
       }
       if (this.trialClock.time > 60000) {
-        for (let i = 0; i < this.players.length; i++) {
-          this.players[i].data.resetAfterTrial();
-        }
         this.daychat.broadcast("Time's up! Night will now begin.");
-        this.trial = Trial.ended;
-        clearInterval(this.tallyInterval);
-        this.night();
+        this.endDay();
       }
     }
   }
   public defenseSpeech(defendant: number) {
     if (!this.ended) {
+      this.cancelVoteSelection();
+      this.playersCannotVote();
       this.trial = Trial.ended;
       this.daychat.broadcast(
         this.players[defendant].username + " is on trial.",
@@ -753,8 +784,13 @@ export class Classic extends Game {
       );
       this.daychat.muteAll();
       this.daychat.unmute(this.players[defendant]);
-      this.setAllTime(20000, 5000);
-      setTimeout(this.finalVote.bind(this), 20 * 1000, defendant);
+      if (DEBUGMODE) {
+        this.setAllTime(5000, 5000);
+        setTimeout(this.finalVote.bind(this), 5 * 1000, defendant);
+      } else {
+        this.setAllTime(20000, 5000);
+        setTimeout(this.finalVote.bind(this), 20 * 1000, defendant);
+      }
     }
   }
   public finalVote(defendant: number) {
@@ -773,6 +809,7 @@ export class Classic extends Game {
   }
   public verdict(defendant: number) {
     if (!this.ended) {
+      this.trialsThisDay++;
       let innocentCount = 0;
       let guiltyCount = 0;
       for (let i = 0; i < this.players.length; i++) {
@@ -792,30 +829,36 @@ export class Classic extends Game {
         for (let i = 0; i < this.players.length; i++) {
           this.players[i].hang([this.players[defendant].username]);
         }
-        this.trial = Trial.ended;
-        for (let i = 0; i < this.players.length; i++) {
-          this.players[i].data.resetAfterTrial();
-        }
         this.setAllTime(10000, 0);
-        setTimeout(this.night.bind(this), 10 * 1000);
+        setTimeout(this.endDay.bind(this), 10 * 1000);
       } else {
         this.daychat.broadcast(
           this.players[defendant].username + " has been acquitted",
         );
-        //reset trial values and call trial vote
-        this.trial = Trial.ended;
-        for (let i = 0; i < this.players.length; i++) {
-          this.players[i].data.resetAfterTrial();
-        }
         if (this.trialClock.time < 60000) {
+          //reset trial values and call trial vote
+          this.trial = Trial.ended;
+          for (let i = 0; i < this.players.length; i++) {
+            this.players[i].data.resetAfterTrial();
+          }
           this.trialVote();
         } else {
           this.daychat.broadcast("Time's up! Night will now begin.");
           this.setAllTime(10000, 0);
-          setTimeout(this.night.bind(this), 10 * 1000);
+          setTimeout(this.endDay.bind(this), 10 * 1000);
         }
       }
     }
+  }
+  public endDay() {
+    this.trialClock.restart();
+    this.trialClock.stop();
+    for (let i = 0; i < this.players.length; i++) {
+      this.players[i].data.resetAfterTrial();
+    }
+    this.trial = Trial.ended;
+    clearInterval(this.tallyInterval);
+    this.night();
   }
   public disconnect(player: Player) {
     this.kill(player);
@@ -842,8 +885,8 @@ export class Classic extends Game {
     if (this.inPlay) {
       if (player.data.alive) {
         if (msg[0] == "/") {
-          if (Utils.isCommand(msg, "/act") && this.phase == Phase.night) {
-            let username = msg.slice(4).trim();
+          if (Utils.isCommand(msg, "/vote") && this.phase == Phase.night) {
+            let username = msg.slice(5).trim();
             let exists = false;
             for (let i = 0; i < this.players.length; i++) {
               if (this.players[i].username == username) {
@@ -884,6 +927,30 @@ export class Classic extends Game {
                   player.send("That player is dead, you cannot vote for them.");
                 }
               }
+            }
+          } else if (
+            Utils.isCommand(msg, "/unvote") &&
+            this.trial == Trial.nominate
+          ) {
+            if (player.data.vote != "") {
+              let voteTarget = this.getPlayer(player.data.vote);
+              if (voteTarget) {
+                player.send(
+                  "Your vote for " +
+                    voteTarget.username +
+                    " has been cancelled.",
+                );
+                this.daychat.broadcast(
+                  player.username +
+                    " cancelled their vote for " +
+                    voteTarget.username,
+                );
+                player.data.clearVote();
+              }
+            } else {
+              player.send(
+                "You cannot cancel your vote as you haven't vote for anyone.",
+              );
             }
           } else if (
             Utils.isCommand(msg, "/guilty") &&

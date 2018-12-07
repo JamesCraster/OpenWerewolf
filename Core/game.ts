@@ -131,6 +131,11 @@ export abstract class Game {
       this.players[i].markAsDead(name);
     }
   }
+  protected cancelVoteSelection(){
+    for(let i = 0; i < this.players.length; i++){
+      this.players[i].cancelVoteEffect();
+    }
+  } 
   private pregameLobbyUpdate() {
     if (!this.inPlay) {
       if (this._players.length != 0) {

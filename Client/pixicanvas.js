@@ -153,6 +153,7 @@ app.stage.interactive = true;
 app.stage.on('pointerdown', () => {
     if (user.inGame) {
         for (let i = 0; i < players.length; i++) {
+            //assume that the player is unvoting
             let unvoted = true;
             //test if this mousedown has changed anything (to guard against repeat presses)
             let active = false;
@@ -193,6 +194,14 @@ function cancelVote() {
 let firstTimeSelectingPlayer = true;
 let firstTimeSelectingInterval;
 let firstTimeNumberOfRuns = 0;
+
+function markAsDead(username) {
+    for (let i = 0; i < players.length; i++) {
+        if (players[i].username == username) {
+            players[i].disappear();
+        }
+    }
+}
 
 function selectPlayer(username) {
     //calling selectPlayer straight away the first time causes a bug
@@ -308,6 +317,10 @@ class Player {
     destructor() {
         app.stage.removeChild(this.sprite);
         app.stage.removeChild(this.usernameText);
+    }
+    disappear() {
+        this.sprite.visible = false;
+        this.usernameText.visible = false;
     }
     select() {
         if (this.sprite.texture == playerTexture) {
