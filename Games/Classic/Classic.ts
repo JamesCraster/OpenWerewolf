@@ -275,6 +275,48 @@ export class Classic extends Game {
       this.players[i].cannotVote();
     }
   }
+  public dayUnmute() {
+    for (let i = 0; i < this.players.length; i++) {
+      if (this.players[i].data.alive) {
+        this.daychat.unmute(this.players[i]);
+      }
+    }
+  }
+  //called if the game has gone on too many days without a kill
+  public stalemate() {
+    this.daychat.broadcast(
+      "Three days have passed without a death.",
+      undefined,
+      Colors.yellow,
+    );
+    this.daychat.broadcast(
+      "The game has ended in a stalemate.",
+      undefined,
+      Colors.yellow,
+    );
+    for (let i = 0; i < this.players.length; i++) {
+      this.players[i].headerSend([
+        {
+          text: "The game has ended in a stalemate.",
+          color: Colors.brightYellow,
+        },
+      ]);
+      this.players[i].headerSend([
+        {
+          text: "*** YOU LOSE! ***",
+          color: Colors.brightRed,
+        },
+      ]);
+    }
+    this.beforeEnd();
+  }
+  public beforeEnd() {
+    this.ended = true;
+    this.daychat.unmuteAll();
+    //this.setAllTime(30 * 1000, 10 * 1000);
+    //setTimeout(this.end.bind(this), 30 * 1000);
+    this.end();
+  }
   public winCondition() {
     let townWin = true;
     let mafiaWin = true;
@@ -325,10 +367,7 @@ export class Classic extends Game {
           ]);
         }
       }
-      this.ended = true;
-      this.daychat.unmuteAll();
-      this.setAllTime(30 * 1000, 10 * 1000);
-      setTimeout(this.end.bind(this), 30 * 1000);
+      this.beforeEnd();
     } else if (mafiaWin) {
       this.daychat.broadcast("The mafia have won!", undefined, Colors.red);
       this.headerBroadcast([
@@ -352,10 +391,7 @@ export class Classic extends Game {
           ]);
         }
       }
-      this.ended = true;
-      this.daychat.unmuteAll();
-      this.setAllTime(30 * 1000, 10 * 1000);
-      setTimeout(this.end.bind(this), 30 * 1000);
+      this.beforeEnd();
     }
   }
   public update() {
@@ -535,6 +571,7 @@ export class Classic extends Game {
     }
     this.markAsDead(player.username);
     player.data.kill();
+    this.daysWithoutDeath = 0;
   }
   public nightResolution() {
     for (let i = 0; i < this.players.length; i++) {
@@ -687,6 +724,21 @@ export class Classic extends Game {
   public day() {
     this.winCondition();
     if (!this.ended) {
+      if (this.daysWithoutDeath == 1) {
+        this.daychat.broadcast(
+          "No one died yesterday. If no one dies in the next two days the game will end in a stalemate.",
+        );
+      }
+      if (this.daysWithoutDeath == 2) {
+        this.daychat.broadcast(
+          "No one has died for two days. If no one dies by tomorrow morning the game will end in a stalemate.",
+        );
+      }
+      //If no one has died in three days, end the game in a stalemate.
+      if (this.daysWithoutDeath >= this.maxDaysWithoutDeath) {
+        this.stalemate();
+      }
+      this.daysWithoutDeath++;
       this.trialsThisDay = 0;
       this.trialClock.restart();
       this.trialClock.stop();
@@ -705,17 +757,17 @@ export class Classic extends Game {
   }
   public trialVote() {
     if (!this.ended) {
-      if (this.trialsThisDay > 3) {
+      if (this.trialsThisDay >= this.maxTrialsPerDay) {
         this.daychat.broadcast(
           "The town is out of trials - you only get 3 trials a day! Night begins.",
         );
         this.endDay();
         return;
       }
+      this.dayUnmute();
       this.cancelVoteSelection();
       console.log(this.trialClock.time);
       this.trialClock.start();
-      this.daychat.muteAll();
       this.daychat.broadcast(
         "The trial has begun! The player with a majority of votes will be put on trial.",
       );
@@ -796,7 +848,8 @@ export class Classic extends Game {
   public finalVote(defendant: number) {
     if (!this.ended) {
       this.trial = Trial.verdict;
-      this.daychat.muteAll();
+      //this.daychat.muteAll();
+      this.dayUnmute();
       this.daychat.broadcast(
         "20 seconds to vote: guilty, inoccent, or abstain.",
       );
@@ -809,6 +862,7 @@ export class Classic extends Game {
   }
   public verdict(defendant: number) {
     if (!this.ended) {
+      this.daychat.muteAll();
       this.trialsThisDay++;
       let innocentCount = 0;
       let guiltyCount = 0;
@@ -856,6 +910,7 @@ export class Classic extends Game {
     for (let i = 0; i < this.players.length; i++) {
       this.players[i].data.resetAfterTrial();
     }
+    this.daychat.muteAll();
     this.trial = Trial.ended;
     clearInterval(this.tallyInterval);
     this.night();

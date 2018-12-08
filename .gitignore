@@ -4,7 +4,7 @@
 /Games/OneDay/*.js
 /Games/Classic/*.js
 /Client/login.js
-Games/Demo/demo.js
+Games/Demo/Demo.js
 
 #Ignore node_modules
 node_modules
@@ -27,9 +27,9 @@ Client/client.js
 Core/app.js
 Core/core.js
 Core/app.js
-Games/Demo/demo.js
+Games/Demo/Demo.js
 Core/core.js
-Games/Demo/demo.js
+Games/Demo/Demo.js
 dump.rdb
 Core/player.js
 Core/server.js
