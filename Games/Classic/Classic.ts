@@ -496,8 +496,7 @@ export class Classic extends Game {
       this.playersCanVote();
       this.mafiachat.broadcast(werewolfString);
       this.daychat.broadcast(
-        "Type '/act username' to do your action on someone. E.g /act frank will perform your" +
-          " action on frank. You have 30 seconds to act.",
+        "Click on someone to perform your action on them.",
       );
       this.setAllTime(30000, 10000);
 
@@ -557,8 +556,7 @@ export class Classic extends Game {
       }
       this.mafiachat.broadcast(werewolfString);
       this.daychat.broadcast(
-        "Type '/act username' to do your action on someone. E.g /act frank will perform your" +
-          " action on frank. You have 30 seconds to act.",
+        "Click on someone to perform your action on them.",
       );
       this.setAllTime(30000, 10000);
 
@@ -774,9 +772,7 @@ export class Classic extends Game {
       this.daychat.broadcast(
         "Max 60 seconds. If the target is acquited you can vote for a new one.",
       );
-      this.daychat.broadcast(
-        "Vote with '/vote', e.g /vote frank casts a vote for frank",
-      );
+      this.daychat.broadcast("Click on somebody to nominate them.");
       this.playersCanVote();
       this.setAllTime(Math.max(0, 60000 - this.trialClock.time), 20000);
       this.trial = Trial.nominate;
