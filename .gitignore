@@ -29,7 +29,7 @@ Core/core.js
 Core/app.js
 Games/Demo/Demo.js
 Core/core.js
-Games/Demo/Demo.js
+Games/Demo/demo.js
 dump.rdb
 Core/player.js
 Core/server.js

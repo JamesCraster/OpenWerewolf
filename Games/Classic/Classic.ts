@@ -317,7 +317,10 @@ export class Classic extends Game {
     //setTimeout(this.end.bind(this), 30 * 1000);
     this.end();
   }
-  public winCondition() {
+  /*
+   * Function that checks if any faction has won, and announces their victory. Returns true if any faction has won, false otherwise.
+   */
+  public winCondition():boolean {
     let townWin = true;
     let mafiaWin = true;
     //the town have won if no mafia remain, the mafia have won if no town remain
@@ -393,6 +396,7 @@ export class Classic extends Game {
       }
       this.beforeEnd();
     }
+    return mafiaWin || townWin
   }
   public update() {
     if (this.inPlay) {
@@ -525,7 +529,6 @@ export class Classic extends Game {
   public night() {
     this.cancelVoteSelection();
     this.playersCanVote();
-    this.winCondition();
     if (!this.ended) {
       //reset the gallows' animation if they have been used
       for (let i = 0; i < this.players.length; i++) {
@@ -720,8 +723,7 @@ export class Classic extends Game {
     this.day();
   }
   public day() {
-    this.winCondition();
-    if (!this.ended) {
+    if(!this.winCondition()){
       if (this.daysWithoutDeath == 1) {
         this.daychat.broadcast(
           "No one died yesterday. If no one dies in the next two days the game will end in a stalemate.",
@@ -847,17 +849,24 @@ export class Classic extends Game {
       //this.daychat.muteAll();
       this.dayUnmute();
       this.daychat.broadcast(
-        "20 seconds to vote: guilty, inoccent, or abstain.",
+        "20 seconds to vote: click on guilty or innocent, or do nothing to abstain.",
       );
-      this.daychat.broadcast("To vote guilty, type '/guilty'");
-      this.daychat.broadcast("To vote innocent, type '/innocent'");
-      this.daychat.broadcast("To abstain, do nothing.");
+      //this.daychat.broadcast("To vote guilty, type '/guilty'");
+      //this.daychat.broadcast("To vote innocent, type '/innocent'");
+      //this.daychat.broadcast("To abstain, do nothing.");
+      setTimeout(()=>{
+        for(let i = 0; i < this.players.length; i++){
+          this.players[i].emit('finalVerdict');
+      }}, 1500)
       this.setAllTime(20000, 5000);
       setTimeout(this.verdict.bind(this), 20 * 1000, defendant);
     }
   }
   public verdict(defendant: number) {
     if (!this.ended) {
+      for(let i = 0; i < this.players.length; i++){
+        this.players[i].emit('endVerdict');
+      }
       this.daychat.muteAll();
       this.trialsThisDay++;
       let innocentCount = 0;
@@ -909,7 +918,9 @@ export class Classic extends Game {
     this.daychat.muteAll();
     this.trial = Trial.ended;
     clearInterval(this.tallyInterval);
-    this.night();
+    if(!this.winCondition()){
+      this.night();
+    }
   }
   public disconnect(player: Player) {
     this.kill(player);

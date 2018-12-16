@@ -184,6 +184,18 @@ user.socket.on('cancelVoteEffect', function () {
 user.socket.on('selectPlayer', function (username) {
     selectPlayer(username.trim());
 })
+user.socket.on('finalVerdict', function(){
+    $('#guiltyButtons').show();
+})
+user.socket.on('endVerdict', function(){
+    $('#guiltyButtons').hide();
+})
+$('#guiltyButton').on('click', function(){
+    user.socket.emit('message', '/guilty')
+})
+$('#innocentButton').on('click', function(){
+    user.socket.emit('message', '/innocent')
+})
 
 function cancelVote() {
     for (let i = 0; i < players.length; i++) {

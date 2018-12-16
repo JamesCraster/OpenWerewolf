@@ -254,6 +254,7 @@ export abstract class Game {
     this.headerBroadcast([{ text: '*** NEW GAME ***', color: Colors.brightGreen }]);
   }
   protected afterEnd() {
+    //Clear all message rooms of players
     for (let i = 0; i < this._messageRooms.length; i++) {
       for (let j = 0; j < this._players.length; j++) {
         console.log("active " + this._players[j].username);
