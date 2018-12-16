@@ -24,7 +24,6 @@ import {
 } from "../../Core/core";
 
 import { DEBUGMODE } from "../../app";
-import { throwStatement } from "babel-types";
 
 enum Phase {
   day = "day",
@@ -851,13 +850,14 @@ export class Classic extends Game {
       this.daychat.broadcast(
         "20 seconds to vote: click on guilty or innocent, or do nothing to abstain.",
       );
-      //this.daychat.broadcast("To vote guilty, type '/guilty'");
-      //this.daychat.broadcast("To vote innocent, type '/innocent'");
-      //this.daychat.broadcast("To abstain, do nothing.");
+      this.headerBroadcast([{text:"Vote to decide ", color:Colors.white}, {text:this.players[defendant].username, color: this.players[defendant].color},{text:"'s fate", color: Colors.white}]);
       setTimeout(()=>{
         for(let i = 0; i < this.players.length; i++){
-          this.players[i].emit('finalVerdict');
-      }}, 1500)
+          //block the defendant from voting in their own trial
+          if(i != defendant){
+            this.players[i].emit('finalVerdict');
+          }
+      }}, 3500)
       this.setAllTime(20000, 5000);
       setTimeout(this.verdict.bind(this), 20 * 1000, defendant);
     }

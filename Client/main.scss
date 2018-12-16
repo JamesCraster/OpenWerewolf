@@ -330,6 +330,12 @@ a {
   padding-left: 15px;
 }
 
+//Remove simplebar track vertical due to bug that causes it to appear
+//even when not asked for
+.simplebar-track.vertical{
+  display: none;
+}
+
 @media only screen and (max-device-width: 430px) {
   #inner {
     height: 100%;
