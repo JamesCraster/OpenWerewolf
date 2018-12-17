@@ -115,6 +115,7 @@ const playerTexture = new PIXI.Texture.fromImage('assets/swordplayerbreathing/sp
 const playerTexture2 = new PIXI.Texture.fromImage('assets/swordplayerbreathing/sprite_1.png');
 const playerTextureSelected = new PIXI.Texture.fromImage('assets/swordplayerbreathing/sprite_0_selected.png');
 const playerTextureSelected2 = new PIXI.Texture.fromImage('assets/swordplayerbreathing/sprite_1_selected.png');
+const graveTexture = new PIXI.Texture.fromImage('assets/grave2.png');
 let players = [];
 const stoneBlockTexture = new PIXI.Texture.fromImage('assets/stoneblock.png');
 
@@ -184,16 +185,16 @@ user.socket.on('cancelVoteEffect', function () {
 user.socket.on('selectPlayer', function (username) {
     selectPlayer(username.trim());
 })
-user.socket.on('finalVerdict', function(){
+user.socket.on('finalVerdict', function () {
     $('#guiltyButtons').show();
 })
-user.socket.on('endVerdict', function(){
+user.socket.on('endVerdict', function () {
     $('#guiltyButtons').hide();
 })
-$('#guiltyButton').on('click', function(){
+$('#guiltyButton').on('click', function () {
     user.socket.emit('message', '/guilty')
 })
-$('#innocentButton').on('click', function(){
+$('#innocentButton').on('click', function () {
     user.socket.emit('message', '/innocent')
 })
 
@@ -251,6 +252,7 @@ class Player {
         this.sprite.interactive = true;
         this.selected = false;
         this.votedFor = false;
+        this.breatheAnimation = undefined;
         this.sprite.on('pointerover', () => {
             this.selected = true;
             if (this.sprite.texture == playerTexture) {
@@ -302,7 +304,7 @@ class Player {
         this.usernameText.y = Math.floor(this.sprite.y - 45);
         this.usernameText.anchor.set(0.5, 0.5);
         app.stage.addChild(this.usernameText);
-        setInterval(this.breathe.bind(this), 1500);
+        this.breatheAnimation = setInterval(this.breathe.bind(this), 1500);
     }
     breathe() {
         if (this.frameCount % 2 == 0) {
@@ -325,14 +327,25 @@ class Player {
         this.sprite.y = Math.floor(y);
         this.usernameText.x = Math.floor(x);
         this.usernameText.y = Math.floor(y - 45);
+        if (this.graveSprite) {
+            this.graveSprite.x = Math.floor(x);
+            this.graveSprite.y = Math.floor(y);
+        }
     }
     destructor() {
         app.stage.removeChild(this.sprite);
         app.stage.removeChild(this.usernameText);
     }
+    //could more accurately be called 'die'
     disappear() {
         this.sprite.visible = false;
-        this.usernameText.visible = false;
+        //this.usernameText.visible = false;
+        this.graveSprite = new PIXI.Sprite(graveTexture);
+        this.graveSprite.anchor.set(0.5, 0.5);
+        this.graveSprite.scale.x = 2;
+        this.graveSprite.scale.y = 2;
+        app.stage.addChild(this.graveSprite);
+        resize();
     }
     select() {
         if (this.sprite.texture == playerTexture) {
@@ -386,7 +399,7 @@ user.socket.on('hang', function (usernames) {
         for (let j = 0; j < usernames.length; j++) {
             if (players[i].username == usernames[j]) {
                 players[i].sprite.visible = false;
-                players[i].usernameText.visible = false;
+                //players[i].usernameText.visible = false;
             }
         }
     }
