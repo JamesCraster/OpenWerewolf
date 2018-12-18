@@ -16,7 +16,7 @@
 import { Socket } from "../node_modules/@types/socket.io";
 import { Player, Message } from "./player";
 import { Game } from "./game";
-import { Utils, Colors } from "./utils";
+import { Utils, Color } from "./utils";
 import { thisExpression } from "../node_modules/@types/babel-types";
 const grawlix = require("grawlix");
 
@@ -315,7 +315,7 @@ export class Server {
           player.send(
             "You're already playing a game in a different tab, so you cannot join this one.",
             undefined,
-            Colors.red,
+            Color.red,
           );
           player.banFromRegistering();
           return;
@@ -354,13 +354,13 @@ export class Server {
       for (let i = 0; i < this._players.length; i++) {
         this._players[i].lobbyMessage(
           player.username + " : " + msg,
-          Colors.standardWhite,
+          Color.standardWhite,
         );
       }
       this._lobbyChatCache.push([
         {
           text: player.username + " : " + msg,
-          textColor: Colors.standardWhite,
+          color: Color.standardWhite,
         },
       ]);
       if (this._lobbyChatCache.length > 50) {
@@ -381,7 +381,7 @@ export class Server {
               player.send(
                 "You have been granted administrator access",
                 undefined,
-                Colors.green,
+                Color.green,
               );
             }
             if (player.admin) {

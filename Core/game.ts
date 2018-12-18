@@ -17,7 +17,7 @@ import { Socket } from "../node_modules/@types/socket.io";
 import { Server } from "./server";
 import { Player } from "./player";
 import {
-  Colors,
+  Color,
   NameColorPair,
   Stopwatch,
   PlayerColorArray,
@@ -220,7 +220,7 @@ export abstract class Game {
     }
     player.color = this.colorPool[0];
     player.headerSend([
-      { text: "Welcome, ", color: Colors.white },
+      { text: "Welcome, ", color: Color.white },
       { text: player.username, color: player.color },
     ]);
     this.colorPool.splice(0, 1);
@@ -275,7 +275,7 @@ export abstract class Game {
     player.title = "OpenWerewolf";
     this.broadcast(player.username + " has disconnected");
   }
-  protected headerBroadcast(array: Array<{ text: string; color: Colors }>) {
+  protected headerBroadcast(array: Array<{ text: string; color: Color }>) {
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].headerSend(array);
     }
@@ -287,14 +287,14 @@ export abstract class Game {
     }
     this._inPlay = true;
     this._server.markGameStatusInLobby(this, "IN PLAY");
-    this.broadcast("*** NEW GAME ***", Colors.brightGreen);
+    this.broadcast("*** NEW GAME ***", Color.brightGreen);
     this.broadcast(this.title + " by " + this.author);
     this.broadcast("License: " + this.license);
     this.broadcast(
       "You can create your own games! Take a look at the github repository.",
     );
     this.headerBroadcast([
-      { text: "*** NEW GAME ***", color: Colors.brightGreen },
+      { text: "*** NEW GAME ***", color: Color.brightGreen },
     ]);
   }
   protected afterEnd() {
@@ -368,52 +368,52 @@ export abstract class Game {
       if (!this.inPlay) {
         if (Utils.isCommand(msg, "!stop")) {
           this.startClock.stop();
-          player.send("Countdown stopped", undefined, Colors.green);
+          player.send("Countdown stopped", undefined, Color.green);
         } else if (Utils.isCommand(msg, "!start")) {
           if (this._registeredPlayerCount >= this._minPlayerCount) {
             this.start();
           } else {
-            player.send("Not enough players to start game", Colors.brightRed);
+            player.send("Not enough players to start game", Color.brightRed);
           }
         } else if (Utils.isCommand(msg, "!resume")) {
           this.startClock.start();
-          player.send("Countdown resumed", undefined, Colors.green);
+          player.send("Countdown resumed", undefined, Color.green);
         } else if (Utils.isCommand(msg, "!restart")) {
           this.startClock.restart();
-          player.send("Countdown restarted", undefined, Colors.green);
+          player.send("Countdown restarted", undefined, Color.green);
         } else if (Utils.isCommand(msg, "!time")) {
           player.send(this.startClock.time.toString());
         } else if (Utils.isCommand(msg, "!hold")) {
           player.send(
             "The vote to start has been halted.",
             undefined,
-            Colors.green,
+            Color.green,
           );
           this.holdVote = true;
         } else if (Utils.isCommand(msg, "!release")) {
           player.send(
             "The vote to start has been resumed",
             undefined,
-            Colors.green,
+            Color.green,
           );
           this.holdVote = false;
         } else if (Utils.isCommand(msg, "!help")) {
           player.send(
             "!stop, !start, !resume, !restart, !time, !hold, !release, !yell, !help",
             undefined,
-            Colors.green,
+            Color.green,
           );
           player.send(
             "Use !gamehelp for game-specific commands.",
             undefined,
-            Colors.green,
+            Color.green,
           );
         } else {
           this.customAdminReceive(player, msg);
         }
       } else {
         if (Utils.isCommand(msg, "!yell")) {
-          this.broadcast("ADMIN:" + msg.slice(5), Colors.brightGreen);
+          this.broadcast("ADMIN:" + msg.slice(5), Color.brightGreen);
         } else {
           this.customAdminReceive(player, msg);
         }

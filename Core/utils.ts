@@ -125,7 +125,7 @@ export class RoleList {
  * All the colors used in games. No color should be used if it is not in this enum,
  * for consistency.
  */
-export enum Colors {
+export enum Color {
   none = "",
   red = "#950d0d",
   brightRed = "#ff1b1b",
@@ -154,14 +154,14 @@ export interface NameColorPair {
   color: string;
 }
 
-export const PlayerColorArray: Array<Colors> = [
-  Colors.magenta,
-  Colors.lightBlue,
-  Colors.brightYellow,
-  Colors.orange,
-  Colors.darkGreen,
-  Colors.usernameGreen,
-  Colors.darkBlue,
-  Colors.pink,
-  Colors.brown,
+export const PlayerColorArray: Array<Color> = [
+  Color.magenta,
+  Color.lightBlue,
+  Color.brightYellow,
+  Color.orange,
+  Color.darkGreen,
+  Color.usernameGreen,
+  Color.darkBlue,
+  Color.pink,
+  Color.brown,
 ];

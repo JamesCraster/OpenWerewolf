@@ -412,7 +412,7 @@ io.on("connection", function(socket: Socket) {
       }
       //filter for spam(consecutive messages within 1/2 a second)
       else if (Date.now() - time < 500) {
-        socket.emit("message", "Please do not spam the chat");
+        socket.emit("message", [{ text: "Please do not spam the chat" }]);
         time = Date.now();
       } else {
         time = Date.now();
