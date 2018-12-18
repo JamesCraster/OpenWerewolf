@@ -8,15 +8,21 @@
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
-  limitations under the License.
+  limitations under the License. 
 */
 
 "use strict";
 
 import { Socket } from "../node_modules/@types/socket.io";
-import { Server } from "./server"
-import { Player } from "./player"
-import { Colors, NameColorPair, Stopwatch, PlayerColorArray, Utils } from "./utils"
+import { Server } from "./server";
+import { Player } from "./player";
+import {
+  Colors,
+  NameColorPair,
+  Stopwatch,
+  PlayerColorArray,
+  Utils,
+} from "./utils";
 import { DEBUGMODE } from "../app";
 
 export abstract class Game {
@@ -39,9 +45,23 @@ export abstract class Game {
   private _inEndChat: boolean = false;
   private _name: string;
   private _uid: string;
-  private idleTime: number = 60000 * 5
+  private idleTime: number = 60000 * 5;
   private idleTimer: Stopwatch = new Stopwatch();
-  public constructor(server: Server, minPlayerCount: number, maxPlayerCount: number, gameType: string, name: string, uid: string) {
+  private readonly author: string;
+  private readonly title: string;
+  private readonly license: string;
+
+  public constructor(
+    server: Server,
+    minPlayerCount: number,
+    maxPlayerCount: number,
+    gameType: string,
+    name: string,
+    uid: string,
+    title: string,
+    author: string,
+    license: string,
+  ) {
     if (DEBUGMODE) {
       this._startWait = 10000;
     }
@@ -51,6 +71,9 @@ export abstract class Game {
     this._maxPlayerCount = maxPlayerCount;
     this._gameType = gameType;
     this._name = name;
+    this.title = title;
+    this.author = author;
+    this.license = license;
     setInterval(this.pregameLobbyUpdate.bind(this), 500);
     setInterval(this.update.bind(this), 500);
   }
@@ -66,7 +89,10 @@ export abstract class Game {
   get playerNameColorPairs(): Array<NameColorPair> {
     let playerNameColorPairs = [];
     for (let i = 0; i < this._players.length; i++) {
-      playerNameColorPairs.push(<NameColorPair>{ username: this._players[i].username, color: this._players[i].color });
+      playerNameColorPairs.push(<NameColorPair>{
+        username: this._players[i].username,
+        color: this._players[i].color,
+      });
     }
     return playerNameColorPairs;
   }
@@ -131,11 +157,11 @@ export abstract class Game {
       this.players[i].markAsDead(name);
     }
   }
-  protected cancelVoteSelection(){
-    for(let i = 0; i < this.players.length; i++){
+  protected cancelVoteSelection() {
+    for (let i = 0; i < this.players.length; i++) {
       this.players[i].cancelVoteEffect();
     }
-  } 
+  }
   private pregameLobbyUpdate() {
     if (!this.inPlay) {
       if (this._players.length != 0) {
@@ -173,7 +199,6 @@ export abstract class Game {
           }
         }
         //TODO: if everyone has typed /wait, wait a further 30 seconds up to a limit of 3 minutes:
-
       } else {
         this.startClock.restart();
         this.startClock.start();
@@ -194,7 +219,10 @@ export abstract class Game {
       this._players[i].sound("NEWPLAYER");
     }
     player.color = this.colorPool[0];
-    player.headerSend([{ text: 'Welcome, ', color: Colors.white }, { text: player.username, color: player.color }]);
+    player.headerSend([
+      { text: "Welcome, ", color: Colors.white },
+      { text: player.username, color: player.color },
+    ]);
     this.colorPool.splice(0, 1);
     player.startVote = false;
     this._players.push(player);
@@ -203,9 +231,18 @@ export abstract class Game {
     this._server.listPlayerInLobby(player.username, player.color, this);
 
     //If the number of players is between minimum and maximum count, inform them of the wait remaining before game starts
-    if (this._players.length > this._minPlayerCount && this._players.length < this._maxPlayerCount) {
-      player.send("The game will start in " + (Math.floor((this.startWait - this.startClock.time) / 1000)).toString() + " seconds");
-      player.send("Type \"/start\" to start the game immediately");
+    if (
+      this._players.length > this._minPlayerCount &&
+      this._players.length < this._maxPlayerCount
+    ) {
+      player.send(
+        "The game will start in " +
+          Math.floor(
+            (this.startWait - this.startClock.time) / 1000,
+          ).toString() +
+          " seconds",
+      );
+      player.send('Type "/start" to start the game immediately');
       player.setTime(this.startWait - this.startClock.time, 10000);
     }
   }
@@ -217,7 +254,7 @@ export abstract class Game {
   public abstract receive(player: Player, msg: string): void;
   public disconnect(player: Player): void {
     this.lineThroughPlayer(player.username, "grey");
-  };
+  }
   public kick(player: Player) {
     //this function fails
     for (let i = 0; i < this._messageRooms.length; i++) {
@@ -238,7 +275,7 @@ export abstract class Game {
     player.title = "OpenWerewolf";
     this.broadcast(player.username + " has disconnected");
   }
-  protected headerBroadcast(array: Array<{ text: string, color: string }>) {
+  protected headerBroadcast(array: Array<{ text: string; color: string }>) {
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].headerSend(array);
     }
@@ -246,12 +283,19 @@ export abstract class Game {
   protected beforeStart() {
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].sound("NEWGAME");
-      this._players[i].emit('newGame');
+      this._players[i].emit("newGame");
     }
     this._inPlay = true;
     this._server.markGameStatusInLobby(this, "IN PLAY");
     this.broadcast("*** NEW GAME ***", Colors.brightGreen);
-    this.headerBroadcast([{ text: '*** NEW GAME ***', color: Colors.brightGreen }]);
+    this.broadcast(this.title + " by " + this.author);
+    this.broadcast("License: " + this.license);
+    this.broadcast(
+      "You can create your own games! Take a look at the github repository.",
+    );
+    this.headerBroadcast([
+      { text: "*** NEW GAME ***", color: Colors.brightGreen },
+    ]);
   }
   protected afterEnd() {
     //Clear all message rooms of players
@@ -264,7 +308,7 @@ export abstract class Game {
     this._inEndChat = true;
     this.endChat.unmuteAll();
     for (let i = 0; i < this._players.length; i++) {
-      this._players[i].emit('endChat');
+      this._players[i].emit("endChat");
     }
     this.setAllTime(this.endTime, 10000);
     setTimeout(() => {
@@ -295,7 +339,7 @@ export abstract class Game {
     let playersString = "";
     for (let i = 0; i < this._players.length; i++) {
       if (i != 0) {
-        playersString += ", "
+        playersString += ", ";
       }
       playersString += this._players[i].username;
     }
@@ -305,7 +349,7 @@ export abstract class Game {
     let string = "";
     for (let i = 0; i < list.length; i++) {
       if (i != 0) {
-        string += ", "
+        string += ", ";
       }
       string += list[i];
     }
@@ -317,7 +361,7 @@ export abstract class Game {
     }
   }
   //to be overridden in child classes as necessary
-  public customAdminReceive(player: Player, msg: string): void { }
+  public customAdminReceive(player: Player, msg: string): void {}
   //admin commands
   public adminReceive(player: Player, msg: string): void {
     if (player.admin == true && msg[0] == "!") {
@@ -340,14 +384,30 @@ export abstract class Game {
         } else if (Utils.isCommand(msg, "!time")) {
           player.send(this.startClock.time.toString());
         } else if (Utils.isCommand(msg, "!hold")) {
-          player.send("The vote to start has been halted.", undefined, Colors.green);
+          player.send(
+            "The vote to start has been halted.",
+            undefined,
+            Colors.green,
+          );
           this.holdVote = true;
         } else if (Utils.isCommand(msg, "!release")) {
-          player.send("The vote to start has been resumed", undefined, Colors.green);
+          player.send(
+            "The vote to start has been resumed",
+            undefined,
+            Colors.green,
+          );
           this.holdVote = false;
         } else if (Utils.isCommand(msg, "!help")) {
-          player.send("!stop, !start, !resume, !restart, !time, !hold, !release, !yell, !help", undefined, Colors.green);
-          player.send("Use !gamehelp for game-specific commands.", undefined, Colors.green);
+          player.send(
+            "!stop, !start, !resume, !restart, !time, !hold, !release, !yell, !help",
+            undefined,
+            Colors.green,
+          );
+          player.send(
+            "Use !gamehelp for game-specific commands.",
+            undefined,
+            Colors.green,
+          );
         } else {
           this.customAdminReceive(player, msg);
         }
@@ -362,8 +422,8 @@ export abstract class Game {
   }
 }
 /**
- * 
- * Adds 'muted' and 'deafened' properties to Player so that it can be used in a MessageRoom.      
+ *
+ * Adds 'muted' and 'deafened' properties to Player so that it can be used in a MessageRoom.
  * Each MessageRoom will have a different MessageRoomMember for the same Player.
  */
 class MessageRoomMember {
@@ -408,7 +468,12 @@ class MessageRoomMember {
   get id() {
     return this._member.id;
   }
-  public send(message: string, textColor?: string, backgroundColor?: string, usernameColor?: string) {
+  public send(
+    message: string,
+    textColor?: string,
+    backgroundColor?: string,
+    usernameColor?: string,
+  ) {
     this._member.send(message, textColor, backgroundColor, usernameColor);
   }
 }
@@ -421,18 +486,29 @@ export class MessageRoom {
       }
     }
     console.log(
-      "Error: MessageRoom.getMemberById: No message room member found with given id"
+      "Error: MessageRoom.getMemberById: No message room member found with given id",
     );
     return undefined;
   }
-  public receive(sender: Player, msg: string, textColor?: string, backgroundColor?: string, usernameColor?: string) {
+  public receive(
+    sender: Player,
+    msg: string,
+    textColor?: string,
+    backgroundColor?: string,
+    usernameColor?: string,
+  ) {
     //if id passed in, find the sender within the message room
     let messageRoomSender = this.getMemberById(sender.id);
     if (messageRoomSender instanceof MessageRoomMember) {
       if (!messageRoomSender.muted) {
         for (let i = 0; i < this._members.length; i++) {
           if (!this._members[i].deafened) {
-            this._members[i].send(msg, textColor, backgroundColor, usernameColor);
+            this._members[i].send(
+              msg,
+              textColor,
+              backgroundColor,
+              usernameColor,
+            );
           }
         }
       }

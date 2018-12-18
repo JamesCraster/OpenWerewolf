@@ -8,13 +8,22 @@
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
-  limitations under the License.
+  limitations under the License. 
 */
 "use strict";
-import { MessageRoom, Game, Server, Player, Utils, RoleList, Colors, Stopwatch } from "../../Core/core";
+import {
+  MessageRoom,
+  Game,
+  Server,
+  Player,
+  Utils,
+  RoleList,
+  Colors,
+  Stopwatch,
+} from "../../Core/core";
 import { lstat } from "fs";
 enum Roles {
-  /** 
+  /**
    * The evil role, there may be two in the game. They wake up and see each other
    */
   werewolf = "werewolf",
@@ -34,7 +43,7 @@ enum Roles {
    * Sees one card from the centre
    */
   apprenticeSeer = "apprentice seer",
-  /** 
+  /**
    *  Sees two cards from the centre
    */
   seer = "seer",
@@ -44,7 +53,7 @@ enum Roles {
    * Two executioners are on the same team.
    * Apprentice jester and jester are on the same team.
    * Serial killer and survivor are on the same team.
-   * 
+   *
    * Love does not affect who is or isn't on the same team.
    */
   mentalist = "mentalist",
@@ -83,11 +92,11 @@ enum Roles {
   minion = "minion",
   /*
    * Town-aligned role, forces a player to choose someone specific as (one of) their targets.
-   * The chosen player will be informed that they were bewitched. 
+   * The chosen player will be informed that they were bewitched.
    */
   witch = "witch",
   /*
-   * Town aligned role, cannot be swapped by anyone except the robber. 
+   * Town aligned role, cannot be swapped by anyone except the robber.
    */
   android = "android",
   /*
@@ -134,7 +143,7 @@ enum Roles {
   /*
    * Neutral role. Gets given a target, and wins if and only if that target dies.
    * Cannot be swapped by transporter. Can be robbed, but remains an executioner.
-   * The robber also becomes an executioner with the same target. 
+   * The robber also becomes an executioner with the same target.
    * Doppleganger will be given the same target.
    * Drunk roles will be told if they are executioner and given their target.
    * An executioner can receive themselves as a target.
@@ -153,17 +162,15 @@ enum Roles {
    * Town role. Picks two lovers. Lovers win only if their lover is not killed. This is in addition
    * to their other win condition. Lovers are not told what their partner's role is.
    * All executioner's targets will become the cupid if any executioner's target is their lover.
-   * Love is permanent and does not change when people are swapped. 
+   * Love is permanent and does not change when people are swapped.
    */
-  cupid = "cupid"
-
-
+  cupid = "cupid",
 }
 
 enum Alignment {
   werewolf = "werewolf",
   town = "town",
-  jester = "jester"
+  jester = "jester",
 }
 const defaultThreePlayer: RoleList = new RoleList([
   Roles.werewolf,
@@ -171,7 +178,7 @@ const defaultThreePlayer: RoleList = new RoleList([
   Roles.seer,
   Roles.robber,
   Roles.transporter,
-  Roles.drunk
+  Roles.drunk,
 ]);
 const defaultFourPlayer: RoleList = new RoleList([
   Roles.werewolf,
@@ -180,7 +187,7 @@ const defaultFourPlayer: RoleList = new RoleList([
   Roles.robber,
   Roles.troublemaker,
   Roles.drunk,
-  Roles.insomniac
+  Roles.insomniac,
 ]);
 const defaultFivePlayer: RoleList = new RoleList([
   Roles.werewolf,
@@ -190,7 +197,7 @@ const defaultFivePlayer: RoleList = new RoleList([
   Roles.troublemaker,
   Roles.drunk,
   Roles.insomniac,
-  Roles.jester
+  Roles.jester,
 ]);
 const defaultSixPlayer: RoleList = new RoleList([
   Roles.doppleganger,
@@ -201,7 +208,7 @@ const defaultSixPlayer: RoleList = new RoleList([
   Roles.troublemaker,
   Roles.drunk,
   Roles.insomniac,
-  Roles.jester
+  Roles.jester,
 ]);
 const defaultSevenPlayer: RoleList = new RoleList([
   Roles.doppleganger,
@@ -213,7 +220,7 @@ const defaultSevenPlayer: RoleList = new RoleList([
   Roles.drunk,
   Roles.insomniac,
   Roles.jester,
-  Roles.villager
+  Roles.villager,
 ]);
 const defaultEightPlayer: RoleList = new RoleList([
   Roles.doppleganger,
@@ -226,8 +233,8 @@ const defaultEightPlayer: RoleList = new RoleList([
   Roles.mason,
   Roles.mason,
   Roles.jester,
-  Roles.minion
-])
+  Roles.minion,
+]);
 
 export class OneDay extends Game {
   //define new message room
@@ -247,7 +254,17 @@ export class OneDay extends Game {
   private sevenPlayer: RoleList = new RoleList(defaultSevenPlayer.list);
   private eightPlayer: RoleList = new RoleList(defaultEightPlayer.list);
   public constructor(server: Server, name: string, uid: string) {
-    super(server, 3, 8, "OneDay", name, uid);
+    super(
+      server,
+      3,
+      8,
+      "OneDay",
+      name,
+      uid,
+      "OpenWerewolf-OneDay",
+      "James Craster",
+      "Apache-2.0",
+    );
     super.addMessageRoom(this.playerchat);
   }
 
@@ -261,7 +278,10 @@ export class OneDay extends Game {
     return players;
   }
 
-  private getPlayersWithInitialRoleInArray(players: Array<Player>, role: string) {
+  private getPlayersWithInitialRoleInArray(
+    players: Array<Player>,
+    role: string,
+  ) {
     let out = [];
     for (let i = 0; i < players.length; i++) {
       if (players[i].data.actionRole == role) {
@@ -288,7 +308,6 @@ export class OneDay extends Game {
     this.playerchat.addPlayer(player);
   }
 
-
   private winResolution(): number {
     let showWinWait = 7000;
 
@@ -313,7 +332,12 @@ export class OneDay extends Game {
         for (let j = 0; j < this.players.length; j++) {
           if (this.players[j].username == this.players[i].data.vote) {
             this.players[j].data.voteCount++;
-            this.playerchat.broadcast(this.players[i].username + " voted for " + this.players[j].username + ".");
+            this.playerchat.broadcast(
+              this.players[i].username +
+                " voted for " +
+                this.players[j].username +
+                ".",
+            );
           }
         }
       }
@@ -329,10 +353,15 @@ export class OneDay extends Game {
     if (noMoreThanOne) {
       this.playerchat.broadcast("No-one was hanged.");
       showWinWait = 3000;
-      this.headerBroadcast([{ text: 'No-one was hanged', color: Colors.white }]);
+      this.headerBroadcast([
+        { text: "No-one was hanged", color: Colors.white },
+      ]);
       let noWolves = true;
       for (let i = 0; i < this.players.length; i++) {
-        if (this.players[i].data.role == Roles.werewolf || this.players[i].data.role == Roles.minion) {
+        if (
+          this.players[i].data.role == Roles.werewolf ||
+          this.players[i].data.role == Roles.minion
+        ) {
           noWolves = false;
         }
       }
@@ -371,26 +400,47 @@ export class OneDay extends Game {
       }, 1000);
 
       //increase the wait until showing the win by 6000ms for each target (not including the first one)
-      showWinWait += ((losers.length - 1) * 6000);
+      showWinWait += (losers.length - 1) * 6000;
 
       let showPlayerWait: number = 1000;
       for (let i = 0; i < losers.length; i++) {
         setTimeout(() => {
           this.playerchat.broadcast(losers[i].username + " has been hanged.");
-          this.headerBroadcast([{ text: losers[i].username, color: losers[i].color }, { text: ' has been hanged', color: Colors.white }]);
+          this.headerBroadcast([
+            { text: losers[i].username, color: losers[i].color },
+            { text: " has been hanged", color: Colors.white },
+          ]);
           setTimeout(() => {
             if (losers[i].data.role == Roles.jester) {
-              this.playerchat.broadcast(losers[i].username + " was a " + losers[i].data.role + ".");
-              this.headerBroadcast([{ text: losers[i].username, color: losers[i].color }, { text: ' was a ', color: Colors.white },
-              { text: losers[i].data.role, color: Colors.brightYellow }]);
-            } else if (losers[i].data.role == Roles.werewolf || losers[i].data.role == Roles.minion) {
-              this.playerchat.broadcast(losers[i].username + " was a " + losers[i].data.role + ".");
-              this.headerBroadcast([{ text: losers[i].username, color: losers[i].color }, { text: ' was a ', color: Colors.white },
-              { text: losers[i].data.role, color: Colors.brightRed }]);
+              this.playerchat.broadcast(
+                losers[i].username + " was a " + losers[i].data.role + ".",
+              );
+              this.headerBroadcast([
+                { text: losers[i].username, color: losers[i].color },
+                { text: " was a ", color: Colors.white },
+                { text: losers[i].data.role, color: Colors.brightYellow },
+              ]);
+            } else if (
+              losers[i].data.role == Roles.werewolf ||
+              losers[i].data.role == Roles.minion
+            ) {
+              this.playerchat.broadcast(
+                losers[i].username + " was a " + losers[i].data.role + ".",
+              );
+              this.headerBroadcast([
+                { text: losers[i].username, color: losers[i].color },
+                { text: " was a ", color: Colors.white },
+                { text: losers[i].data.role, color: Colors.brightRed },
+              ]);
             } else {
-              this.playerchat.broadcast(losers[i].username + " was a " + losers[i].data.role + ".");
-              this.headerBroadcast([{ text: losers[i].username, color: losers[i].color }, { text: ' was a ', color: Colors.white },
-              { text: losers[i].data.role, color: Colors.brightGreen }]);
+              this.playerchat.broadcast(
+                losers[i].username + " was a " + losers[i].data.role + ".",
+              );
+              this.headerBroadcast([
+                { text: losers[i].username, color: losers[i].color },
+                { text: " was a ", color: Colors.white },
+                { text: losers[i].data.role, color: Colors.brightGreen },
+              ]);
             }
           }, 3000);
         }, showPlayerWait);
@@ -412,44 +462,83 @@ export class OneDay extends Game {
     }
     setTimeout(() => {
       if (winningTeam == Alignment.town) {
-        this.playerchat.broadcast("The town has won! Everyone else loses.", undefined, Colors.green);
+        this.playerchat.broadcast(
+          "The town has won! Everyone else loses.",
+          undefined,
+          Colors.green,
+        );
         for (let i = 0; i < this.players.length; i++) {
-          if (this.players[i].data.role != Roles.jester && this.players[i].data.role != Roles.werewolf
-            && this.players[i].data.role != Roles.minion) {
+          if (
+            this.players[i].data.role != Roles.jester &&
+            this.players[i].data.role != Roles.werewolf &&
+            this.players[i].data.role != Roles.minion
+          ) {
             this.players[i].send("*** YOU WIN! ***", Colors.brightGreen);
-            this.players[i].headerSend([{ text: '*** YOU WIN ***', color: Colors.brightGreen }]);
+            this.players[i].headerSend([
+              { text: "*** YOU WIN ***", color: Colors.brightGreen },
+            ]);
           } else {
             this.players[i].send("*** YOU LOSE! ***", Colors.brightRed);
-            this.players[i].headerSend([{ text: '*** YOU LOSE ***', color: Colors.brightRed }]);
+            this.players[i].headerSend([
+              { text: "*** YOU LOSE ***", color: Colors.brightRed },
+            ]);
           }
         }
       } else if (winningTeam == Alignment.werewolf) {
-        this.playerchat.broadcast("The werewolves have won! Everyone else loses.", undefined, Colors.red);
+        this.playerchat.broadcast(
+          "The werewolves have won! Everyone else loses.",
+          undefined,
+          Colors.red,
+        );
         for (let i = 0; i < this.players.length; i++) {
-          if (this.players[i].data.role == Roles.werewolf || this.players[i].data.role == Roles.minion) {
+          if (
+            this.players[i].data.role == Roles.werewolf ||
+            this.players[i].data.role == Roles.minion
+          ) {
             this.players[i].send("*** YOU WIN! ***", Colors.brightGreen);
-            this.players[i].headerSend([{ text: '*** YOU WIN ***', color: Colors.brightGreen }]);
+            this.players[i].headerSend([
+              { text: "*** YOU WIN ***", color: Colors.brightGreen },
+            ]);
           } else {
             this.players[i].send("*** YOU LOSE! ***", Colors.brightRed);
-            this.players[i].headerSend([{ text: '*** YOU LOSE ***', color: Colors.brightRed }]);
+            this.players[i].headerSend([
+              { text: "*** YOU LOSE ***", color: Colors.brightRed },
+            ]);
           }
         }
       } else if (winningTeam == Alignment.jester) {
-        this.playerchat.broadcast("The jester has won! Everyone else loses.", undefined, Colors.yellow);
+        this.playerchat.broadcast(
+          "The jester has won! Everyone else loses.",
+          undefined,
+          Colors.yellow,
+        );
         for (let i = 0; i < this.players.length; i++) {
-          if (this.players[i].data.role == Roles.jester && this.players[i].data.hanged == true) {
+          if (
+            this.players[i].data.role == Roles.jester &&
+            this.players[i].data.hanged == true
+          ) {
             this.players[i].send("*** YOU WIN! ***", Colors.brightGreen);
-            this.players[i].headerSend([{ text: '*** YOU WIN ***', color: Colors.brightGreen }]);
+            this.players[i].headerSend([
+              { text: "*** YOU WIN ***", color: Colors.brightGreen },
+            ]);
           } else {
             this.players[i].send("*** YOU LOSE! ***", Colors.brightRed);
-            this.players[i].headerSend([{ text: '*** YOU LOSE ***', color: Colors.brightRed }]);
+            this.players[i].headerSend([
+              { text: "*** YOU LOSE ***", color: Colors.brightRed },
+            ]);
           }
         }
       }
       //print out all the list of who had what role and whether their role changed at all
       for (let i = 0; i < this.players.length; i++) {
-        this.playerchat.broadcast(this.players[i].username + " started as a " + this.players[i].data.initialRole +
-          " and became a " + this.players[i].data.role + ".");
+        this.playerchat.broadcast(
+          this.players[i].username +
+            " started as a " +
+            this.players[i].data.initialRole +
+            " and became a " +
+            this.players[i].data.role +
+            ".",
+        );
       }
     }, showWinWait);
     return showWinWait;
@@ -473,17 +562,32 @@ export class OneDay extends Game {
         }, showWinWait + 3000);
       }
       //notify players of time left every minute
-      if (Date.now() - this.time > this.minutes * 1000 * 60 && this.minutes != this.length && !this.won) {
-        this.playerchat.broadcast("There are " + (this.length - this.minutes).toString() + " minutes remaining.");
+      if (
+        Date.now() - this.time > this.minutes * 1000 * 60 &&
+        this.minutes != this.length &&
+        !this.won
+      ) {
+        this.playerchat.broadcast(
+          "There are " +
+            (this.length - this.minutes).toString() +
+            " minutes remaining.",
+        );
         this.minutes += 2;
-      } else if (Date.now() - this.time > this.length * 60 * 1000 + 30 * 1000 && !this.won) {
+      } else if (
+        Date.now() - this.time > this.length * 60 * 1000 + 30 * 1000 &&
+        !this.won
+      ) {
         this.winResolution();
         this.won = true;
         setTimeout(() => {
           this.end();
         }, 10000);
         //notify players of last 30 seconds
-      } else if (Date.now() - this.time > this.length * 60 * 1000 && !this.trial && !this.won) {
+      } else if (
+        Date.now() - this.time > this.length * 60 * 1000 &&
+        !this.trial &&
+        !this.won
+      ) {
         this.trial = true;
         this.playerchat.broadcast("You have 30 seconds left to vote!");
       }
@@ -506,7 +610,11 @@ export class OneDay extends Game {
     let out = true;
     for (let i = 0; i < this.players.length; i++) {
       //if someone hasn't voted and isn't disconnected, return false
-      if ((this.players[i].data.vote == "" || this.players[i].data.vote == undefined) && !this.players[i].disconnected) {
+      if (
+        (this.players[i].data.vote == "" ||
+          this.players[i].data.vote == undefined) &&
+        !this.players[i].disconnected
+      ) {
         return false;
       }
     }
@@ -572,65 +680,83 @@ export class OneDay extends Game {
         "Your card may be swapped without you realising.",
       );
       this.playerchat.broadcast(
-        "There are 3 cards in the center that no-one has, one left, one middle, one right."
-      )
+        "There are 3 cards in the center that no-one has, one left, one middle, one right.",
+      );
       this.playerchat.broadcast(
-        this.length + " minutes remain. You can secretly vote to kill someone at any time by clicking on that player. If everyone votes, the game ends early.",
+        this.length +
+          " minutes remain. You can secretly vote to kill someone at any time by clicking on that player. If everyone votes, the game ends early.",
       );
       this.playerchat.broadcast(
         "In the trial, if a werewolf is killed, the town team win. If no werewolves are killed, the werewolves win. If the " +
-        "jester is killed, the jester wins, and everyone else loses."
+          "jester is killed, the jester wins, and everyone else loses.",
       );
       //for debugging purposes, you can choose the deck:
       //randomDeck = [Roles.seer, Roles.werewolf, Roles.transporter, Roles.werewolf, Roles.villager, Roles.transporter];
       for (let i = 0; i < this.players.length; i++) {
         if (randomDeck[i] == Roles.werewolf || randomDeck[i] == Roles.minion) {
           this.players[i].send(
-            "ROLE: You are a " + randomDeck[i] + ".", undefined, Colors.red
+            "ROLE: You are a " + randomDeck[i] + ".",
+            undefined,
+            Colors.red,
           );
           this.players[i].send(
-            "AIM: You want all the werewolves to survive the trial.", undefined, Colors.red
+            "AIM: You want all the werewolves to survive the trial.",
+            undefined,
+            Colors.red,
           );
-          this.players[i].headerSend([{ text: 'You are a ', color: Colors.white },
-          { text: randomDeck[i], color: Colors.brightRed }]);
+          this.players[i].headerSend([
+            { text: "You are a ", color: Colors.white },
+            { text: randomDeck[i], color: Colors.brightRed },
+          ]);
         } else if (randomDeck[i] == Roles.jester) {
           this.players[i].send(
-            "ROLE: You are a " + randomDeck[i] + ".", undefined, Colors.yellow
+            "ROLE: You are a " + randomDeck[i] + ".",
+            undefined,
+            Colors.yellow,
           );
           this.players[i].send(
-            "AIM: You want to die in the trial", undefined, Colors.yellow
+            "AIM: You want to die in the trial",
+            undefined,
+            Colors.yellow,
           );
-          this.players[i].headerSend([{ text: 'You are a ', color: Colors.white },
-          { text: randomDeck[i], color: Colors.brightYellow }]);
+          this.players[i].headerSend([
+            { text: "You are a ", color: Colors.white },
+            { text: randomDeck[i], color: Colors.brightYellow },
+          ]);
         } else {
           this.players[i].send(
-            "ROLE: You are a " + randomDeck[i] + ".", undefined, Colors.green
+            "ROLE: You are a " + randomDeck[i] + ".",
+            undefined,
+            Colors.green,
           );
           this.players[i].send(
-            "AIM: You want a werewolf to die in the trial.", undefined, Colors.green
+            "AIM: You want a werewolf to die in the trial.",
+            undefined,
+            Colors.green,
           );
-          this.players[i].headerSend([{ text: 'You are a ', color: Colors.white },
-          { text: randomDeck[i], color: Colors.brightGreen }]);
+          this.players[i].headerSend([
+            { text: "You are a ", color: Colors.white },
+            { text: randomDeck[i], color: Colors.brightGreen },
+          ]);
         }
-        //each player starts with three roles, the initialRole, the actionRole and the role. 
+        //each player starts with three roles, the initialRole, the actionRole and the role.
         //initalRole is constant, the first role the player receives.
         //actionRole dictates when the player wakes up during the night. Only Doppleganger/Amnesiac change it.
-        //role changes if the player is robbed/transported etc 
+        //role changes if the player is robbed/transported etc
         this.players[i].data.initialRole = randomDeck[i];
         this.players[i].data.role = randomDeck[i];
         this.players[i].data.actionRole = randomDeck[i];
       }
-      this.playerchat.broadcast(
-        "Read the full rules by typing \"/rules\".",
-
-      );
+      this.playerchat.broadcast('Read the full rules by typing "/rules".');
       setTimeout(() => {
         //assign three cards in the middle
         this.leftCard = randomDeck[randomDeck.length - 1];
         this.middleCard = randomDeck[randomDeck.length - 2];
         this.rightCard = randomDeck[randomDeck.length - 3];
         this.playerchat.broadcast("*** YOUR ACTION ***", Colors.brightGreen);
-        this.headerBroadcast([{ text: '*** YOUR ACTION ***', color: Colors.brightGreen }]);
+        this.headerBroadcast([
+          { text: "*** YOUR ACTION ***", color: Colors.brightGreen },
+        ]);
         //perform player actions
         this.nightActions();
         setTimeout(() => {
@@ -639,11 +765,11 @@ export class OneDay extends Game {
           //start timer
           this.time = Date.now();
           this.playerchat.broadcast("*** DISCUSSION ***", Colors.brightGreen);
-          setInterval(() => {
-
-          }, 4000);
+          setInterval(() => {}, 4000);
           for (let i = 0; i < this.players.length; i++) {
-            this.players[i].headerSend([{ text: "*** DISCUSSION ***", color: Colors.brightGreen }]);
+            this.players[i].headerSend([
+              { text: "*** DISCUSSION ***", color: Colors.brightGreen },
+            ]);
           }
           //allow players to select someone to vote for
           for (let i = 0; i < this.players.length; i++) {
@@ -660,10 +786,14 @@ export class OneDay extends Game {
     //doppleganger
     for (let i = 0; i < this.players.length; i++) {
       if (this.players[i].data.actionRole == Roles.doppleganger) {
-        this.players[i].send("You look at another player's card, and become that role.");
+        this.players[i].send(
+          "You look at another player's card, and become that role.",
+        );
         let target = this.getRandomPlayerExcludingPlayer(i);
         this.players[i].send("You look at " + target.username + "'s card.");
-        this.players[i].send(target.username + " is a " + target.data.actionRole + ".");
+        this.players[i].send(
+          target.username + " is a " + target.data.actionRole + ".",
+        );
         this.players[i].send("You are now a " + target.data.actionRole + ".");
         this.players[i].data.actionRole = target.data.actionRole;
         this.players[i].data.role = this.players[i].data.actionRole;
@@ -672,23 +802,31 @@ export class OneDay extends Game {
     //amnesiac
     for (let i = 0; i < this.players.length; i++) {
       if (this.players[i].data.actionRole == Roles.amnesiac) {
-        this.players[i].send("You look at a card from the center, and become that role.");
+        this.players[i].send(
+          "You look at a card from the center, and become that role.",
+        );
         switch (Math.floor(Math.random() * 3)) {
           case 0:
             this.players[i].send("You look at the leftmost card.");
-            this.players[i].send("The leftmost card is a " + this.leftCard + ".");
+            this.players[i].send(
+              "The leftmost card is a " + this.leftCard + ".",
+            );
             this.players[i].send("You are now a " + this.leftCard + ".");
             this.players[i].data.actionRole = this.leftCard;
             break;
           case 1:
             this.players[i].send("You look at the middle card.");
-            this.players[i].send("The middle card is a " + this.middleCard + ".");
+            this.players[i].send(
+              "The middle card is a " + this.middleCard + ".",
+            );
             this.players[i].send("You are now a " + this.middleCard + ".");
             this.players[i].data.actionRole = this.middleCard;
             break;
           case 2:
             this.players[i].send("You look at the rightmost card.");
-            this.players[i].send("The rightmost card is a " + this.rightCard + ".");
+            this.players[i].send(
+              "The rightmost card is a " + this.rightCard + ".",
+            );
             this.players[i].send("You are now a " + this.rightCard + ".");
             this.players[i].data.actionRole = this.rightCard;
             break;
@@ -699,10 +837,14 @@ export class OneDay extends Game {
     //amnesiac turned doppleganger
     for (let i = 0; i < this.players.length; i++) {
       if (this.players[i].data.actionRole == Roles.doppleganger) {
-        this.players[i].send("You look at another player's card, and become that role.");
+        this.players[i].send(
+          "You look at another player's card, and become that role.",
+        );
         let target = this.getRandomPlayerExcludingPlayer(i);
         this.players[i].send("You look at " + target.username + "'s card.");
-        this.players[i].send(target.username + " is a " + target.data.actionRole);
+        this.players[i].send(
+          target.username + " is a " + target.data.actionRole,
+        );
         this.players[i].send("You are now a " + target.data.actionRole);
         this.players[i].data.actionRole = target.data.actionRole;
         this.players[i].data.role = this.players[i].data.actionRole;
@@ -714,17 +856,24 @@ export class OneDay extends Game {
       if (this.players[i].data.actionRole == Roles.mason) {
         temporaryArray = this.players.slice();
         temporaryArray.splice(i, 1);
-        let masons = this.getPlayersWithInitialRoleInArray(temporaryArray, Roles.mason);
+        let masons = this.getPlayersWithInitialRoleInArray(
+          temporaryArray,
+          Roles.mason,
+        );
         this.players[i].send("You see if there are other masons.");
         if (masons.length == 2) {
           this.players[i].send("There are three masons.");
           this.players[i].send(
-            "Your mason partners are " + masons[0].username + " and " + masons[1].username + "."
+            "Your mason partners are " +
+              masons[0].username +
+              " and " +
+              masons[1].username +
+              ".",
           );
         } else if (masons.length == 1) {
           this.players[i].send("There are two masons.");
           this.players[i].send(
-            "Your mason partner is " + masons[0].username + "."
+            "Your mason partner is " + masons[0].username + ".",
           );
         } else {
           this.players[i].send("You are the only mason.");
@@ -742,41 +891,52 @@ export class OneDay extends Game {
             this.players[i].send("There are no werewolves.");
           } else if (werewolves.length == 1) {
             this.players[i].send("There is one werewolf.");
-            this.players[i].send("The werewolf is " + werewolves[0].username + ".");
+            this.players[i].send(
+              "The werewolf is " + werewolves[0].username + ".",
+            );
           } else {
             this.players[i].send("The werewolves are: ");
             for (let i = 0; i < werewolves.length; i++) {
               this.players[i].send(werewolves[i] + " is a werewolf.");
             }
           }
-          this.players[i].send("Tommorrow, help the werewolves survive. You can die without consequences.");
+          this.players[i].send(
+            "Tommorrow, help the werewolves survive. You can die without consequences.",
+          );
           break;
         //tell the werewolves who the other werewolf is.
         case Roles.werewolf:
           temporaryArray = this.players.slice();
           temporaryArray.splice(i, 1);
-          werewolves = this.getPlayersWithInitialRoleInArray(temporaryArray, Roles.werewolf);
+          werewolves = this.getPlayersWithInitialRoleInArray(
+            temporaryArray,
+            Roles.werewolf,
+          );
           this.players[i].send("You look to see if there are other wolves.");
           if (werewolves.length == 2) {
             this.players[i].send("There are three werewolves.");
             this.players[i].send(
-              "Your werewolf partners are " + werewolves[0].username + " and " + werewolves[1].username + "."
-            )
+              "Your werewolf partners are " +
+                werewolves[0].username +
+                " and " +
+                werewolves[1].username +
+                ".",
+            );
             this.players[i].send(
-              "Try not to be suspicious! You must all pretend to be something else."
+              "Try not to be suspicious! You must all pretend to be something else.",
             );
           } else if (werewolves.length == 1) {
             this.players[i].send("There are two werewolves.");
             this.players[i].send(
-              "Your werewolf partner is '" + werewolves[0].username + "'."
+              "Your werewolf partner is '" + werewolves[0].username + "'.",
             );
             this.players[i].send(
-              "Try not to be suspicious! You and your partner must pretend to be something else."
+              "Try not to be suspicious! You and your partner must pretend to be something else.",
             );
           } else {
             this.players[i].send("You are the only werewolf.");
             this.players[i].send(
-              "Try not to be suspicious! Pretend to be something else."
+              "Try not to be suspicious! Pretend to be something else.",
             );
           }
           break;
@@ -786,30 +946,39 @@ export class OneDay extends Game {
           this.players[i].send("You swap your card with someone else's.");
           this.players[i].send(
             "You swapped your card with '" +
-            randomPlayer.username +
-            "' who was a " +
-            randomPlayer.data.role +
-            "."
+              randomPlayer.username +
+              "' who was a " +
+              randomPlayer.data.role +
+              ".",
           );
-          if (randomPlayer.data.role == Roles.werewolf || randomPlayer.data.role == Roles.minion) {
+          if (
+            randomPlayer.data.role == Roles.werewolf ||
+            randomPlayer.data.role == Roles.minion
+          ) {
             this.players[i].send(
-              "You are now a " + randomPlayer.data.role + ".", undefined, Colors.red
+              "You are now a " + randomPlayer.data.role + ".",
+              undefined,
+              Colors.red,
             );
           } else if (randomPlayer.data.role == Roles.jester) {
             this.players[i].send(
-              "You are now a " + randomPlayer.data.role + ".", undefined, Colors.yellow
-            )
+              "You are now a " + randomPlayer.data.role + ".",
+              undefined,
+              Colors.yellow,
+            );
           } else {
             this.players[i].send(
-              "You are now a " + randomPlayer.data.role + ".", undefined, Colors.green
+              "You are now a " + randomPlayer.data.role + ".",
+              undefined,
+              Colors.green,
             );
           }
           this.players[i].send(
-            "'" + randomPlayer.username + "' is now a robber."
+            "'" + randomPlayer.username + "' is now a robber.",
           );
           if (randomPlayer.data.role == Roles.werewolf) {
             this.players[i].send(
-              "Try not to be suspicious! Pretend you're not a werewolf."
+              "Try not to be suspicious! Pretend you're not a werewolf.",
             );
           }
           this.players[i].data.role = randomPlayer.data.role;
@@ -818,36 +987,42 @@ export class OneDay extends Game {
         //tell the seer 2 of the center cards at random
         case Roles.seer:
           this.players[i].send(
-            "There are 3 cards in the center of the table, one left, one middle and one right."
+            "There are 3 cards in the center of the table, one left, one middle and one right.",
           );
           this.players[i].send("You look at two cards in the center.");
           let cardArray = ["left", "middle", "right"];
           let combo = Utils.chooseCombination(cardArray, 2);
           if (combo.indexOf("left") != -1) {
             this.players[i].send(
-              "You look at the left card. The left card is a " + this.leftCard + "."
+              "You look at the left card. The left card is a " +
+                this.leftCard +
+                ".",
             );
           }
           if (combo.indexOf("middle") != -1) {
             this.players[i].send(
-              "You look at the middle card. The middle card is a " + this.middleCard + "."
+              "You look at the middle card. The middle card is a " +
+                this.middleCard +
+                ".",
             );
           }
           if (combo.indexOf("right") != -1) {
             this.players[i].send(
-              "You look at the right card. The right card is a " + this.rightCard + "."
+              "You look at the right card. The right card is a " +
+                this.rightCard +
+                ".",
             );
           }
           break;
         case Roles.villager:
           this.players[i].send(
-            "You are a villager, so you do nothing. Goodnight!"
+            "You are a villager, so you do nothing. Goodnight!",
           );
           break;
         case Roles.jester:
           this.players[i].send("You are the jester, so you do nothing.");
           this.players[i].send(
-            "You want to be killed in the trial. Act as suspiciously as possible!"
+            "You want to be killed in the trial. Act as suspiciously as possible!",
           );
           break;
       }
@@ -859,22 +1034,24 @@ export class OneDay extends Game {
         let firstTarget = combo[0];
         let secondTarget = combo[1];
         if (firstTarget.equals(this.players[i])) {
-          this.players[i].send("You swapped your own card with " +
-            secondTarget.username +
-            "'s card."
+          this.players[i].send(
+            "You swapped your own card with " +
+              secondTarget.username +
+              "'s card.",
           );
         } else if (secondTarget.equals(this.players[i])) {
-          this.players[i].send("You swapped your own card with " +
-            firstTarget.username +
-            "'s card."
-          )
+          this.players[i].send(
+            "You swapped your own card with " +
+              firstTarget.username +
+              "'s card.",
+          );
         } else {
           this.players[i].send(
             "You swapped '" +
-            firstTarget.username +
-            "''s card with '" +
-            secondTarget.username +
-            "''s card."
+              firstTarget.username +
+              "''s card with '" +
+              secondTarget.username +
+              "''s card.",
           );
         }
         let temporaryRole = firstTarget.data.role;
@@ -893,10 +1070,10 @@ export class OneDay extends Game {
         let secondTarget = combo[1];
         this.players[i].send(
           "You swapped '" +
-          firstTarget.username +
-          "''s card with '" +
-          secondTarget.username +
-          "''s card."
+            firstTarget.username +
+            "''s card with '" +
+            secondTarget.username +
+            "''s card.",
         );
         let temporaryRole = firstTarget.data.role;
         firstTarget.data.role = secondTarget.data.role;
@@ -907,18 +1084,26 @@ export class OneDay extends Game {
     for (let i = 0; i < this.players.length; i++) {
       if (this.players[i].data.actionRole == Roles.drunk) {
         randomvar = Math.floor(Math.random() * 3);
-        this.players[i].send("There are 3 cards in the center of the table: one left, one middle and one right.");
+        this.players[i].send(
+          "There are 3 cards in the center of the table: one left, one middle and one right.",
+        );
         switch (randomvar) {
           case 0:
-            this.players[i].send("You took the leftmost card from the center and swapped it with your own.");
+            this.players[i].send(
+              "You took the leftmost card from the center and swapped it with your own.",
+            );
             this.players[i].data.role = this.leftCard;
             break;
           case 1:
-            this.players[i].send("You took the middle card from the center and swapped it with your own.");
+            this.players[i].send(
+              "You took the middle card from the center and swapped it with your own.",
+            );
             this.players[i].data.role = this.middleCard;
             break;
           case 2:
-            this.players[i].send("You took the rightmost card from the center and swapped it with your own.");
+            this.players[i].send(
+              "You took the rightmost card from the center and swapped it with your own.",
+            );
             this.players[i].data.role = this.rightCard;
             break;
         }
@@ -927,22 +1112,51 @@ export class OneDay extends Game {
     //insomniac
     for (let i = 0; i < this.players.length; i++) {
       if (this.players[i].data.actionRole == Roles.insomniac) {
-        this.players[i].send("It is the end of the night. You look at your card.");
+        this.players[i].send(
+          "It is the end of the night. You look at your card.",
+        );
         if (this.players[i].data.role == Roles.insomniac) {
-          this.players[i].send("Your card has not changed. You are still an insomniac.", undefined, Colors.green);
+          this.players[i].send(
+            "Your card has not changed. You are still an insomniac.",
+            undefined,
+            Colors.green,
+          );
         } else {
-          if (this.players[i].data.role == Roles.werewolf || this.players[i].data.role == Roles.minion) {
-            this.players[i].send("Your card has been swapped by somebody. You are now a " + this.players[i].data.role + ".", undefined, Colors.red);
+          if (
+            this.players[i].data.role == Roles.werewolf ||
+            this.players[i].data.role == Roles.minion
+          ) {
+            this.players[i].send(
+              "Your card has been swapped by somebody. You are now a " +
+                this.players[i].data.role +
+                ".",
+              undefined,
+              Colors.red,
+            );
           } else if (this.players[i].data.role == Roles.jester) {
-            this.players[i].send("Your card has been swapped by somebody. You are now a " + this.players[i].data.role + ".", undefined, Colors.yellow);
-            this.players[i].send("Tomorrow, you want to be killed in the trial. Act as suspiciously as possible!");
+            this.players[i].send(
+              "Your card has been swapped by somebody. You are now a " +
+                this.players[i].data.role +
+                ".",
+              undefined,
+              Colors.yellow,
+            );
+            this.players[i].send(
+              "Tomorrow, you want to be killed in the trial. Act as suspiciously as possible!",
+            );
           } else {
-            this.players[i].send("Your card has been swapped by somebody. You are now a " + this.players[i].data.role + ".", undefined, Colors.green);
+            this.players[i].send(
+              "Your card has been swapped by somebody. You are now a " +
+                this.players[i].data.role +
+                ".",
+              undefined,
+              Colors.green,
+            );
           }
         }
         if (this.players[i].data.role == Roles.werewolf) {
           this.players[i].send(
-            "Try not to be suspicious! Pretend that you are not a werewolf."
+            "Try not to be suspicious! Pretend that you are not a werewolf.",
           );
         }
       }
@@ -978,8 +1192,11 @@ export class OneDay extends Game {
             player.send(this.eightPlayer.toString());
             break;
           default:
-            player.send("Error: number of players is missing or incorrect." +
-              " Example usage: !show 5 will show the rolelist for 5 players", Colors.brightRed);
+            player.send(
+              "Error: number of players is missing or incorrect." +
+                " Example usage: !show 5 will show the rolelist for 5 players",
+              Colors.brightRed,
+            );
             break;
         }
         //set the rolelist before the game begins
@@ -1005,8 +1222,11 @@ export class OneDay extends Game {
             this.eightPlayer.list = this.parseRoleString(msg.slice(7, 7 + 11));
             break;
           default:
-            player.send("Error: number of players is missing or incorrect." +
-              " Example usage: !set 5 ... will set the rolelist for 5 players", Colors.brightRed);
+            player.send(
+              "Error: number of players is missing or incorrect." +
+                " Example usage: !set 5 ... will set the rolelist for 5 players",
+              Colors.brightRed,
+            );
         }
         //reset rolelist to default if there has been a messup
       } else if (Utils.isCommand(msg, "!default")) {
@@ -1030,13 +1250,20 @@ export class OneDay extends Game {
             this.eightPlayer.list = defaultEightPlayer.list;
             break;
           default:
-            player.send("Error: number of players is missing or incorrect." +
-              " Example usage: !default 5 will show the rolelist for 5 players", Colors.brightRed);
+            player.send(
+              "Error: number of players is missing or incorrect." +
+                " Example usage: !default 5 will show the rolelist for 5 players",
+              Colors.brightRed,
+            );
             break;
         }
       } else if (Utils.isCommand(msg, "!gamehelp")) {
-        player.send("!roundtime !sround !stop, !start, !resume, !restart, !time, !hold," +
-          " !release, !show, !set, !default, !yell, !help", undefined, Colors.green);
+        player.send(
+          "!roundtime !sround !stop, !start, !resume, !restart, !time, !hold," +
+            " !release, !show, !set, !default, !yell, !help",
+          undefined,
+          Colors.green,
+        );
       }
     }
   }
@@ -1094,7 +1321,7 @@ export class OneDay extends Game {
   }
   /**
    * Processes a message typed into the client by a player.
-   * 
+   *
    * @param {string} id The id of the sender of the message.
    * @param {string} msg The message the sender sent to the game.
    * @memberof OneDay
@@ -1114,42 +1341,82 @@ export class OneDay extends Game {
           }
         }
         if (!exists) {
-          player.send("There's no player called '" + username + "'. Vote not changed.");
+          player.send(
+            "There's no player called '" + username + "'. Vote not changed.",
+          );
         }
       } else if (Utils.isCommand(msg, "/unvote") && player.data.vote != "") {
-        player.send("Your vote for '" + player.data.vote + "' has been cancelled");
+        player.send(
+          "Your vote for '" + player.data.vote + "' has been cancelled",
+        );
         player.cancelVoteEffect();
         player.data.vote = "";
       } else if (Utils.isCommand(msg, "/unvote") && player.data.vote == "") {
-        player.send("You haven't voted for anybody yet, so there is nothing to cancel");
+        player.send(
+          "You haven't voted for anybody yet, so there is nothing to cancel",
+        );
       } else if (Utils.isCommand(msg, "/rules")) {
         player.send("*** RULES ***", Colors.brightGreen);
-        player.send("Everyone has a role on their card. There are also 3 cards in the middle that no one has.");
+        player.send(
+          "Everyone has a role on their card. There are also 3 cards in the middle that no one has.",
+        );
         player.send("During the night each player performs their role.");
-        player.send("Not all these roles will be in the game: check the role list at the start.");
+        player.send(
+          "Not all these roles will be in the game: check the role list at the start.",
+        );
         player.send("First, the werewolves see who each other are.");
         player.send("Then the seer looks at two cards in the middle.");
-        player.send("Then the robber swaps their card with someone else's and looks at it.");
-        player.send("Then the transporter swaps two people's cards (possibly including themselves).");
-        player.send("Then the troublemaker swaps two people's cards, excluding themselves.");
-        player.send("Then the drunk swaps their card with one from the middle without seeing it.");
-        player.send("Finally, the insomniac looks at their card to see if it changed.");
+        player.send(
+          "Then the robber swaps their card with someone else's and looks at it.",
+        );
+        player.send(
+          "Then the transporter swaps two people's cards (possibly including themselves).",
+        );
+        player.send(
+          "Then the troublemaker swaps two people's cards, excluding themselves.",
+        );
+        player.send(
+          "Then the drunk swaps their card with one from the middle without seeing it.",
+        );
+        player.send(
+          "Finally, the insomniac looks at their card to see if it changed.",
+        );
         player.send("The villager does nothing.");
         player.send("The jester wants to die.");
-        player.send("If you card is swapped you become the role on your new card.");
+        player.send(
+          "If you card is swapped you become the role on your new card.",
+        );
         player.send("You may not know that you have been swapped.");
         player.send("During the day, everyone votes for someone to die.");
-        player.send("If a werewolf dies, the town(everyone except the werewolves and the jester) wins.");
-        player.send("The werewolves win if they survive and the jester doesn't die.");
+        player.send(
+          "If a werewolf dies, the town(everyone except the werewolves and the jester) wins.",
+        );
+        player.send(
+          "The werewolves win if they survive and the jester doesn't die.",
+        );
         player.send("The jester wins if they die.");
         player.send("*** END RULES ***", Colors.brightGreen);
       } else {
-        player.send("Error: no such command exists! Commands are /vote /unvote /rules");
+        player.send(
+          "Error: no such command exists! Commands are /vote /unvote /rules",
+        );
       }
     } else {
-      console.log('received by player chat');
-      this.playerchat.receive(player, player.username + ": " + msg, undefined, undefined, player.color);
-      this.endChat.receive(player, player.username + ": " + msg, undefined, undefined, player.color);
+      console.log("received by player chat");
+      this.playerchat.receive(
+        player,
+        player.username + ": " + msg,
+        undefined,
+        undefined,
+        player.color,
+      );
+      this.endChat.receive(
+        player,
+        player.username + ": " + msg,
+        undefined,
+        undefined,
+        player.color,
+      );
     }
   }
 }

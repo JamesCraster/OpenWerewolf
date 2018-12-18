@@ -257,7 +257,17 @@ export class Classic extends Game {
   private daysWithoutDeath: number = 0;
 
   constructor(server: Server, name: string, uid: string) {
-    super(server, globalMinimumPlayerCount, 9, "Classic", name, uid);
+    super(
+      server,
+      globalMinimumPlayerCount,
+      9,
+      "Classic",
+      name,
+      uid,
+      "OpenWerewolf-Classic",
+      "James Craster",
+      "Apache-2.0",
+    );
     setInterval(this.update.bind(this), 500);
     super.addMessageRoom(this.daychat);
     super.addMessageRoom(this.mafiachat);
@@ -319,7 +329,7 @@ export class Classic extends Game {
   /*
    * Function that checks if any faction has won, and announces their victory. Returns true if any faction has won, false otherwise.
    */
-  public winCondition():boolean {
+  public winCondition(): boolean {
     let townWin = true;
     let mafiaWin = true;
     //the town have won if no mafia remain, the mafia have won if no town remain
@@ -395,7 +405,7 @@ export class Classic extends Game {
       }
       this.beforeEnd();
     }
-    return mafiaWin || townWin
+    return mafiaWin || townWin;
   }
   public update() {
     if (this.inPlay) {
@@ -722,7 +732,7 @@ export class Classic extends Game {
     this.day();
   }
   public day() {
-    if(!this.winCondition()){
+    if (!this.winCondition()) {
       if (this.daysWithoutDeath == 1) {
         this.daychat.broadcast(
           "No one died yesterday. If no one dies in the next two days the game will end in a stalemate.",
@@ -850,22 +860,30 @@ export class Classic extends Game {
       this.daychat.broadcast(
         "20 seconds to vote: click on guilty or innocent, or do nothing to abstain.",
       );
-      this.headerBroadcast([{text:"Vote to decide ", color:Colors.white}, {text:this.players[defendant].username, color: this.players[defendant].color},{text:"'s fate", color: Colors.white}]);
-      setTimeout(()=>{
-        for(let i = 0; i < this.players.length; i++){
+      this.headerBroadcast([
+        { text: "Vote to decide ", color: Colors.white },
+        {
+          text: this.players[defendant].username,
+          color: this.players[defendant].color,
+        },
+        { text: "'s fate", color: Colors.white },
+      ]);
+      setTimeout(() => {
+        for (let i = 0; i < this.players.length; i++) {
           //block the defendant from voting in their own trial
-          if(i != defendant){
-            this.players[i].emit('finalVerdict');
+          if (i != defendant) {
+            this.players[i].emit("finalVerdict");
           }
-      }}, 3500)
+        }
+      }, 3500);
       this.setAllTime(20000, 5000);
       setTimeout(this.verdict.bind(this), 20 * 1000, defendant);
     }
   }
   public verdict(defendant: number) {
     if (!this.ended) {
-      for(let i = 0; i < this.players.length; i++){
-        this.players[i].emit('endVerdict');
+      for (let i = 0; i < this.players.length; i++) {
+        this.players[i].emit("endVerdict");
       }
       this.daychat.muteAll();
       this.trialsThisDay++;
@@ -918,7 +936,7 @@ export class Classic extends Game {
     this.daychat.muteAll();
     this.trial = Trial.ended;
     clearInterval(this.tallyInterval);
-    if(!this.winCondition()){
+    if (!this.winCondition()) {
       this.night();
     }
   }
