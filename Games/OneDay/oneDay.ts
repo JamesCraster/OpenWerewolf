@@ -1408,14 +1408,12 @@ export class OneDay extends Game {
         player.username + ": " + msg,
         undefined,
         undefined,
-        player.color,
       );
       this.endChat.receive(
         player,
         player.username + ": " + msg,
         undefined,
         undefined,
-        player.color,
       );
     }
   }

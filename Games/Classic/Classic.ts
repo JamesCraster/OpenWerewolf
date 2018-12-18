@@ -960,7 +960,6 @@ export class Classic extends Game {
       player.username + ": " + msg,
       undefined,
       undefined,
-      player.color,
     );
     if (this.inPlay) {
       if (player.data.alive) {
@@ -1052,7 +1051,6 @@ export class Classic extends Game {
             player.username + ": " + msg,
             undefined,
             undefined,
-            player.color,
           );
           if (player.data.isRole(Roles.mafioso)) {
             this.mafiachat.receive(
@@ -1060,7 +1058,6 @@ export class Classic extends Game {
               player.username + ": " + msg,
               undefined,
               undefined,
-              player.color,
             );
           }
         }
@@ -1071,7 +1068,6 @@ export class Classic extends Game {
         player.username + ": " + msg,
         undefined,
         undefined,
-        player.color,
       );
     }
   }

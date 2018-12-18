@@ -275,7 +275,7 @@ export abstract class Game {
     player.title = "OpenWerewolf";
     this.broadcast(player.username + " has disconnected");
   }
-  protected headerBroadcast(array: Array<{ text: string; color: string }>) {
+  protected headerBroadcast(array: Array<{ text: string; color: Colors }>) {
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].headerSend(array);
     }
@@ -468,13 +468,8 @@ class MessageRoomMember {
   get id() {
     return this._member.id;
   }
-  public send(
-    message: string,
-    textColor?: string,
-    backgroundColor?: string,
-    usernameColor?: string,
-  ) {
-    this._member.send(message, textColor, backgroundColor, usernameColor);
+  public send(message: string, textColor?: string, backgroundColor?: string) {
+    this._member.send(message, textColor, backgroundColor);
   }
 }
 export class MessageRoom {
@@ -495,7 +490,6 @@ export class MessageRoom {
     msg: string,
     textColor?: string,
     backgroundColor?: string,
-    usernameColor?: string,
   ) {
     //if id passed in, find the sender within the message room
     let messageRoomSender = this.getMemberById(sender.id);
@@ -503,12 +497,7 @@ export class MessageRoom {
       if (!messageRoomSender.muted) {
         for (let i = 0; i < this._members.length; i++) {
           if (!this._members[i].deafened) {
-            this._members[i].send(
-              msg,
-              textColor,
-              backgroundColor,
-              usernameColor,
-            );
+            this._members[i].send(msg, textColor, backgroundColor);
           }
         }
       }
