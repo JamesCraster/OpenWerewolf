@@ -246,7 +246,7 @@ function selectPlayer(username) {
 }
 
 class Player {
-    constructor(playerTexture, username, usernameColor) {
+    constructor(playerTexture, username) {
         this.sprite = new PIXI.Sprite(playerTexture);
         this.sprite.anchor.set(0.5, 0.5);
         this.sprite.interactive = true;
@@ -286,7 +286,7 @@ class Player {
             }
         })
         //this.sprite.scale.y = 2;
-        usernameColor = 0xFFFFFF;
+        let usernameColor = 0xFFFFFF;
         this.frameCount = 0;
         players.push(this);
         app.stage.addChild(this.sprite);
@@ -429,8 +429,8 @@ function removePlayer(username) {
     }
 }
 
-function addPlayer(username, usernameColor) {
-    const newPlayer = new Player(playerTexture, username, usernameColor);
+function addPlayer(username) {
+    const newPlayer = new Player(playerTexture, username);
     if (mainText) {
         app.stage.removeChild(mainText.container);
         app.stage.addChild(mainText.container);

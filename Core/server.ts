@@ -16,7 +16,7 @@
 import { Socket } from "../node_modules/@types/socket.io";
 import { Player, Message } from "./player";
 import { Game } from "./game";
-import { Utils, Colors } from "./utils";
+import { Utils, Color } from "./utils";
 import { thisExpression } from "../node_modules/@types/babel-types";
 const grawlix = require("grawlix");
 
@@ -248,21 +248,10 @@ export class Server {
               socket.emit("transitionToGame", game.name, game.uid, game.inPlay);
               //send stored messages to the central and left boxes
               for (let j = 0; j < this._players[i].cache.length; j++) {
-                socket.emit(
-                  "message",
-                  this._players[i].cache[j].message,
-                  this._players[i].cache[j].textColor,
-                  this._players[i].cache[j].backgroundColor,
-                  this._players[i].cache[j].usernameColor,
-                );
+                socket.emit("message", this._players[i].cache[j]);
               }
               for (let j = 0; j < this._players[i].leftCache.length; j++) {
-                socket.emit(
-                  "leftMessage",
-                  this._players[i].leftCache[j].message,
-                  this._players[i].leftCache[j].textColor,
-                  this._players[i].leftCache[j].backgroundColor,
-                );
+                socket.emit("leftMessage", this._players[i].leftCache[j]);
               }
             }
             //send the client the correct time
@@ -296,11 +285,7 @@ export class Server {
     }
     //update lobby chat for the client
     for (let i = 0; i < this._lobbyChatCache.length; i++) {
-      socket.emit(
-        "lobbyMessage",
-        this._lobbyChatCache[i].message,
-        this._lobbyChatCache[i].textColor,
-      );
+      socket.emit("lobbyMessage", this._lobbyChatCache[i]);
     }
     //update the games for the player as they have been absent for about 2 seconds, if they were reloading.
     for (let j = 0; j < this._games.length; j++) {
@@ -330,7 +315,7 @@ export class Server {
           player.send(
             "You're already playing a game in a different tab, so you cannot join this one.",
             undefined,
-            Colors.red,
+            Color.red,
           );
           player.banFromRegistering();
           return;
@@ -367,11 +352,17 @@ export class Server {
     let player = this.getPlayer(id);
     if (player instanceof Player && player.registered) {
       for (let i = 0; i < this._players.length; i++) {
-        this._players[i].lobbyMessage(player.username + " : " + msg, "#cecece");
+        this._players[i].lobbyMessage(
+          player.username + " : " + msg,
+          Color.standardWhite,
+        );
       }
-      this._lobbyChatCache.push(
-        new Message(player.username + " : " + msg, "#cecece"),
-      );
+      this._lobbyChatCache.push([
+        {
+          text: player.username + " : " + msg,
+          color: Color.standardWhite,
+        },
+      ]);
       if (this._lobbyChatCache.length > 50) {
         this._lobbyChatCache.splice(0, 1);
       }
@@ -390,7 +381,7 @@ export class Server {
               player.send(
                 "You have been granted administrator access",
                 undefined,
-                Colors.green,
+                Color.green,
               );
             }
             if (player.admin) {
@@ -453,17 +444,17 @@ export class Server {
       this._players[i].markGameStatusInLobby(game, status);
     }
   }
-  public listPlayerInLobby(username: string, color: string, game: Game) {
+  public listPlayerInLobby(username: string, color: Color, game: Game) {
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].addListingToGame(username, color, game);
       //if the player is viewing the game, add joiner to their right bar
       if (this._players[i].game != undefined && this._players[i].game == game) {
-        this._players[i].rightSend(username, color);
+        this._players[i].rightSend([{ text: username, color: color }]);
       } else if (
         !this._players[i].inGame &&
         this._players[i].gameClickedLast == game.uid
       ) {
-        this._players[i].rightSend(username, color);
+        this._players[i].rightSend([{ text: username, color: color }]);
       }
     }
   }

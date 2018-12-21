@@ -255,6 +255,7 @@ export class Classic extends Game {
   private trialsThisDay: number = 0;
   private readonly maxDaysWithoutDeath: number = 3;
   private daysWithoutDeath: number = 0;
+  private deadChat: MessageRoom = new MessageRoom();
 
   constructor(server: Server, name: string, uid: string) {
     super(
@@ -271,6 +272,7 @@ export class Classic extends Game {
     setInterval(this.update.bind(this), 500);
     super.addMessageRoom(this.daychat);
     super.addMessageRoom(this.mafiachat);
+    super.addMessageRoom(this.deadChat);
   }
   private playersCanVote() {
     for (let i = 0; i < this.players.length; i++) {
@@ -543,7 +545,7 @@ export class Classic extends Game {
       for (let i = 0; i < this.players.length; i++) {
         this.players[i].resetGallows();
       }
-      this.broadcast("Night has fallen.", undefined, "#1919cc");
+      this.broadcast("Night has fallen.", undefined, Colors.nightBlue);
       this.headerBroadcast([
         { text: "Night has fallen", color: Colors.nightBlue },
       ]);
@@ -581,6 +583,7 @@ export class Classic extends Game {
     }
     this.markAsDead(player.username);
     player.data.kill();
+    this.deadChat.addPlayer(player);
     this.daysWithoutDeath = 0;
   }
   public nightResolution() {
@@ -871,7 +874,7 @@ export class Classic extends Game {
       setTimeout(() => {
         for (let i = 0; i < this.players.length; i++) {
           //block the defendant from voting in their own trial
-          if (i != defendant) {
+          if (i != defendant && this.players[i].data.alive) {
             this.players[i].emit("finalVerdict");
           }
         }
@@ -891,12 +894,22 @@ export class Classic extends Game {
       let guiltyCount = 0;
       for (let i = 0; i < this.players.length; i++) {
         if (this.players[i].data.finalVote == finalVote.guilty) {
-          this.daychat.broadcast(this.players[i].username + " voted guilty");
+          this.daychat.broadcast([
+            { text: this.players[i].username + " voted " },
+            { text: "guilty", color: Colors.brightRed },
+          ]);
           guiltyCount++;
-        }
-        if (this.players[i].data.finalVote == finalVote.innocent) {
-          this.daychat.broadcast(this.players[i].username + " voted innocent");
+        } else if (this.players[i].data.finalVote == finalVote.innocent) {
+          this.daychat.broadcast([
+            { text: this.players[i].username + " voted " },
+            { text: "innocent", color: Colors.brightGreen },
+          ]);
           innocentCount++;
+        } else if (this.players[i].data.alive && i != defendant) {
+          this.daychat.broadcast([
+            { text: this.players[i].username + " chose to " },
+            { text: "abstain", color: Colors.brightYellow },
+          ]);
         }
       }
       if (guiltyCount > innocentCount) {
@@ -955,13 +968,10 @@ export class Classic extends Game {
     this.afterEnd();
   }
   public receive(player: Player, msg: string) {
-    this.endChat.receive(
-      player,
-      player.username + ": " + msg,
-      undefined,
-      undefined,
-      player.color,
-    );
+    this.endChat.receive(player, [
+      { text: player.username, color: player.color },
+      { text: ": " + msg },
+    ]);
     if (this.inPlay) {
       if (player.data.alive) {
         if (msg[0] == "/") {
@@ -997,9 +1007,9 @@ export class Classic extends Game {
                 exists = true;
                 if (this.players[i].data.alive) {
                   player.data.voteFor(this.players[i]);
-                  player.send(
+                  /*player.send(
                     "Your choice of '" + username + "' has been received.",
-                  );
+                  );*/
                   this.daychat.broadcast(
                     player.username + " voted for '" + username + "'.",
                   );
@@ -1047,32 +1057,28 @@ export class Classic extends Game {
             player.send("You have voted innocent.");
           }
         } else {
-          this.daychat.receive(
-            player,
-            player.username + ": " + msg,
-            undefined,
-            undefined,
-            player.color,
-          );
+          this.daychat.receive(player, [
+            { text: player.username, color: player.color },
+            { text: ": " + msg },
+          ]);
           if (player.data.isRole(Roles.mafioso)) {
-            this.mafiachat.receive(
-              player,
-              player.username + ": " + msg,
-              undefined,
-              undefined,
-              player.color,
-            );
+            this.mafiachat.receive(player, [
+              { text: player.username, color: player.color },
+              { text: ": " + msg },
+            ]);
           }
         }
+      } else {
+        this.deadChat.receive(player, [
+          { text: player.username, color: player.color, italic: true },
+          { text: ": " + msg, color: Colors.grey, italic: true },
+        ]);
       }
     } else {
-      this.daychat.receive(
-        player,
-        player.username + ": " + msg,
-        undefined,
-        undefined,
-        player.color,
-      );
+      this.daychat.receive(player, [
+        { text: player.username, color: player.color },
+        { text: ": " + msg },
+      ]);
     }
   }
   public addPlayer(player: Player) {

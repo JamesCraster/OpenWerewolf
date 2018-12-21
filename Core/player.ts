@@ -14,7 +14,7 @@
 "use strict";
 
 import { Socket } from "../node_modules/@types/socket.io";
-import { NameColorPair, Stopwatch, Colors } from "./utils";
+import { NameColorPair, Stopwatch, Color } from "./utils";
 import { Game } from "./game";
 //set this to what the admin password should be
 const password = "goat";
@@ -23,36 +23,14 @@ interface PlayerData {
   [key: string]: any;
 }
 
-//data structure for messages, used when storing them for retrieval (e.g on page reload)
-export class Message {
-  private _message: string;
-  private _textColor: string | undefined = undefined;
-  private _usernameColor: string | undefined = undefined;
-  private _backgroundColor: string | undefined = undefined;
-  constructor(
-    message: string,
-    textColor?: string,
-    backgroundColor?: string,
-    usernameColor?: string,
-  ) {
-    this._message = message;
-    this._textColor = textColor;
-    this._backgroundColor = backgroundColor;
-    this._usernameColor = usernameColor;
-  }
-  get message() {
-    return this._message;
-  }
-  get textColor() {
-    return this._textColor;
-  }
-  get backgroundColor() {
-    return this._backgroundColor;
-  }
-  get usernameColor() {
-    return this._usernameColor;
-  }
+export interface Phrase {
+  text: string;
+  color?: Color;
+  backgroundColor?: Color;
+  italic?: boolean;
 }
+
+export type Message = Array<Phrase>;
 
 export class Player {
   //true if the player has a username
@@ -69,7 +47,7 @@ export class Player {
   private _admin: boolean = false;
   private _startVote: boolean = false;
   //username color
-  private _color: string = "";
+  private _color: Color = Color.none;
   private _gameClickedLast: string = "";
   private _session: string = "";
   //true if already playing in another tab
@@ -94,7 +72,7 @@ export class Player {
     this._inGame = false;
     this.data = {};
     this._startVote = false;
-    this._color = "";
+    this._color = Color.none;
     this.gameClickedLast = "";
     this._cache = [];
     this._leftMessageCache = [];
@@ -128,7 +106,8 @@ export class Player {
       | string[]
       | boolean
       | undefined
-      | Array<{ text: string; color: string | Colors }>
+      | Array<{ text: string; color: string | Color }>
+      | Message
     >
   ) {
     for (let i = 0; i < this._sockets.length; i++) {
@@ -225,18 +204,38 @@ export class Player {
    * send message to this player and only this player
    * @param msg
    */
+
   public send(
-    msg: string,
-    textColor?: string,
-    backgroundColor?: string,
-    usernameColor?: string,
-  ): void {
-    this.emit("message", msg, textColor, backgroundColor, usernameColor);
-    this._cache.push(
-      new Message(msg, textColor, backgroundColor, usernameColor),
-    );
-    if (this._cache.length > 50) {
-      this._cache.splice(0, 1);
+    text: Message | string,
+    textColor?: Color,
+    backgroundColor?: Color,
+    usernameColor?: Color,
+  ) {
+    if (typeof text == "string") {
+      this.emit(
+        "message",
+        [
+          {
+            text: text,
+            color: textColor,
+            //backgroundColor: backgroundColor,
+          },
+        ],
+        backgroundColor,
+      );
+      this._cache.push([
+        {
+          text: text,
+          color: textColor,
+          backgroundColor: backgroundColor,
+        },
+      ]);
+      if (this._cache.length > 50) {
+        this._cache.splice(0, 1);
+      }
+    } else {
+      this.emit("message", text, textColor);
+      //this.cache.push([text]);
     }
   }
   get cache() {
@@ -247,19 +246,29 @@ export class Player {
   }
   //These functions manipulate the two boxes either side of the central chatbox
   public rightSend(
-    msg: string,
-    textColor?: string,
-    backgroundColor?: string,
+    msg: string | Message,
+    textColor?: Color,
+    backgroundColor?: Color,
   ): void {
-    this.emit("rightMessage", msg, textColor, backgroundColor);
+    if (typeof msg == "string") {
+      this.emit("rightMessage", [
+        { text: msg, color: textColor, backgroundColor: backgroundColor },
+      ]);
+    } else {
+      this.emit("rightMessage", msg);
+    }
   }
   public leftSend(
-    msg: string,
-    textColor?: string,
-    backgroundColor?: string,
+    message: string,
+    textColor?: Color,
+    backgroundColor?: Color,
   ): void {
-    this.emit("leftMessage", msg, textColor, backgroundColor);
-    this._leftMessageCache.push(new Message(msg, textColor, backgroundColor));
+    this.emit("leftMessage", [
+      { text: message, color: textColor, backgroundColor: backgroundColor },
+    ]);
+    this._leftMessageCache.push([
+      { text: message, color: textColor, backgroundColor: backgroundColor },
+    ]);
   }
   public removeRight(msg: string) {
     this.emit("removeRight", msg);
@@ -294,12 +303,10 @@ export class Player {
   public removePlayerFromLobbyList(username: string) {
     this.emit("removePlayerFromLobbyList", username);
   }
-  public lobbyMessage(
-    msg: string,
-    textColor: string,
-    backgroundColor?: string,
-  ) {
-    this.emit("lobbyMessage", msg, textColor, backgroundColor);
+  public lobbyMessage(msg: string, textColor: Color, backgroundColor?: Color) {
+    this.emit("lobbyMessage", [
+      { text: msg, color: textColor, backgroundColor: backgroundColor },
+    ]);
   }
   public setTime(time: number, warn: number) {
     this.emit("setTime", time, warn);
@@ -320,7 +327,7 @@ export class Player {
   set startVote(startVote: boolean) {
     this._startVote = startVote;
   }
-  set color(color: string) {
+  set color(color: Color) {
     this._color = color;
   }
   get color() {
@@ -338,9 +345,8 @@ export class Player {
   public removeGameFromLobby(uid: string) {
     this.emit("removeGameFromLobby", uid);
   }
-  public headerSend(array: Array<{ text: string; color: string | Colors }>) {
-    //console.log(array);
-    this.emit("headerTextMessage", array);
+  public headerSend(message: Message) {
+    this.emit("headerTextMessage", message);
   }
   public cancelVoteEffect() {
     this.emit("cancelVoteEffect");
