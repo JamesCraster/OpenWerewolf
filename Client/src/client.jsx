@@ -263,32 +263,30 @@ function removePlayerFromLobbyList(username) {
     .remove();
 }
 
-function appendMessage(msg, target) {
+function appendMessage(msg, target, backgroundColor) {
   //test if client scrolled down
   let scrollDown = isClientScrolledDown();
 
   //we add a span within an li
   let newMessageLi = $("<li class='gameli'></li>");
+  if (backgroundColor) {
+    $(newMessageLi).css("background-color", backgroundColor);
+  }
   for (let i = 0; i < msg.length; i++) {
+    let messageSpan = $("<span></span>");
+    $(messageSpan).text(msg[i].text);
     let textColor = "#cecece";
     if (msg[i].color) {
       textColor = msg[i].color;
     }
+    $(messageSpan).css("color", textColor);
     if (msg[i].backgroundColor) {
-      newMessageLi.append(
-        "<span style='color:" +
-          textColor +
-          ";background-color:" +
-          msg[i].backgroundColor +
-          ";'>" +
-          msg[i].text +
-          "</span>",
-      );
-    } else {
-      newMessageLi.append(
-        "<span style='color:" + textColor + ";'>" + msg[i].text + "</span>",
-      );
+      $(messageSpan).css("background-color", msg[i].backgroundColor);
     }
+    if (msg[i].italic == true) {
+      $(messageSpan).css("font-style", "italic");
+    }
+    $(newMessageLi).append($(messageSpan));
   }
   $(target).append(newMessageLi);
   /*
@@ -340,12 +338,12 @@ function removeMessage(msg, target) {
 }
 
 function lineThroughPlayer(msg, color) {
-  $("#playerNames li")
+  $("#playerNames li span")
     .filter(function() {
       return $(this).text() === msg;
     })
     .css("color", color);
-  $("#playerNames li")
+  $("#playerNames li span")
     .filter(function() {
       return $(this).text() === msg;
     })
@@ -401,9 +399,9 @@ $(function() {
   user.socket.on("transitionToGame", function(name, uid, inPlay) {
     transitionFromLandingToGame(name, uid, inPlay);
   });
-  user.socket.on("message", function(message) {
+  user.socket.on("message", function(message, textColor) {
     console.log(message);
-    appendMessage(message, "#chatbox");
+    appendMessage(message, "#chatbox", textColor);
   });
   user.socket.on("headerTextMessage", function(standardArray) {
     let out = [];
@@ -495,8 +493,8 @@ $(function() {
       .fadeIn(100);
   });
   $("document").resize(function() {});
-  user.socket.on("lobbyMessage", function(msg, textColor, backgroundColor) {
-    appendMessage([{ text: msg, color: textColor }], "#lobbyChatList");
+  user.socket.on("lobbyMessage", function(msg) {
+    appendMessage(msg, "#lobbyChatList");
     if (
       Math.abs(
         lobbyChatListContainerSimpleBar.getScrollElement().scrollTop +

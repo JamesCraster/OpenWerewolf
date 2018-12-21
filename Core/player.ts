@@ -27,6 +27,7 @@ export interface Phrase {
   text: string;
   color?: Color;
   backgroundColor?: Color;
+  italic?: boolean;
 }
 
 export type Message = Array<Phrase>;
@@ -203,13 +204,7 @@ export class Player {
    * send message to this player and only this player
    * @param msg
    */
-  public send(message: Message): void;
-  public send(
-    message: string,
-    textColor?: string,
-    backgroundColor?: string,
-    usernameColor?: string,
-  ): void;
+
   public send(
     text: Message | string,
     textColor?: Color,
@@ -217,13 +212,17 @@ export class Player {
     usernameColor?: Color,
   ) {
     if (typeof text == "string") {
-      this.emit("message", [
-        {
-          text: text,
-          color: textColor,
-          backgroundColor: backgroundColor,
-        },
-      ]);
+      this.emit(
+        "message",
+        [
+          {
+            text: text,
+            color: textColor,
+            //backgroundColor: backgroundColor,
+          },
+        ],
+        backgroundColor,
+      );
       this._cache.push([
         {
           text: text,
@@ -235,7 +234,8 @@ export class Player {
         this._cache.splice(0, 1);
       }
     } else {
-      this.emit("message", text);
+      this.emit("message", text, textColor);
+      //this.cache.push([text]);
     }
   }
   get cache() {
@@ -246,13 +246,17 @@ export class Player {
   }
   //These functions manipulate the two boxes either side of the central chatbox
   public rightSend(
-    msg: string,
+    msg: string | Message,
     textColor?: Color,
     backgroundColor?: Color,
   ): void {
-    this.emit("rightMessage", [
-      { text: msg, color: textColor, backgroundColor: backgroundColor },
-    ]);
+    if (typeof msg == "string") {
+      this.emit("rightMessage", [
+        { text: msg, color: textColor, backgroundColor: backgroundColor },
+      ]);
+    } else {
+      this.emit("rightMessage", msg);
+    }
   }
   public leftSend(
     message: string,

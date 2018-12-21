@@ -444,17 +444,17 @@ export class Server {
       this._players[i].markGameStatusInLobby(game, status);
     }
   }
-  public listPlayerInLobby(username: string, color: string, game: Game) {
+  public listPlayerInLobby(username: string, color: Color, game: Game) {
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].addListingToGame(username, color, game);
       //if the player is viewing the game, add joiner to their right bar
       if (this._players[i].game != undefined && this._players[i].game == game) {
-        this._players[i].rightSend(username);
+        this._players[i].rightSend([{ text: username, color: color }]);
       } else if (
         !this._players[i].inGame &&
         this._players[i].gameClickedLast == game.uid
       ) {
-        this._players[i].rightSend(username);
+        this._players[i].rightSend([{ text: username, color: color }]);
       }
     }
   }

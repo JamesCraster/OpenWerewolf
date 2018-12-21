@@ -15,7 +15,7 @@
 
 import { Socket } from "../node_modules/@types/socket.io";
 import { Server } from "./server";
-import { Player } from "./player";
+import { Player, Message } from "./player";
 import {
   Color,
   NameColorPair,
@@ -246,7 +246,11 @@ export abstract class Game {
       player.setTime(this.startWait - this.startClock.time, 10000);
     }
   }
-  public broadcast(msg: string, textColor?: string, backgroundColor?: string) {
+  public broadcast(
+    msg: string | Message,
+    textColor?: Color,
+    backgroundColor?: Color,
+  ) {
     for (let i = 0; i < this._players.length; i++) {
       this._players[i].send(msg, textColor, backgroundColor);
     }
@@ -468,7 +472,11 @@ class MessageRoomMember {
   get id() {
     return this._member.id;
   }
-  public send(message: string, textColor?: string, backgroundColor?: string) {
+  public send(
+    message: string | Message,
+    textColor?: Color,
+    backgroundColor?: Color,
+  ): void {
     this._member.send(message, textColor, backgroundColor);
   }
 }
@@ -487,9 +495,9 @@ export class MessageRoom {
   }
   public receive(
     sender: Player,
-    msg: string,
-    textColor?: string,
-    backgroundColor?: string,
+    msg: string | Message,
+    textColor?: Color,
+    backgroundColor?: Color,
   ) {
     //if id passed in, find the sender within the message room
     let messageRoomSender = this.getMemberById(sender.id);
@@ -503,7 +511,11 @@ export class MessageRoom {
       }
     }
   }
-  public broadcast(msg: string, textColor?: string, backgroundColor?: string) {
+  public broadcast(
+    msg: string | Message,
+    textColor?: Color,
+    backgroundColor?: Color,
+  ) {
     for (let i = 0; i < this._members.length; i++) {
       if (!this._members[i].deafened) {
         this._members[i].send(msg, textColor, backgroundColor);
