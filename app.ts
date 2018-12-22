@@ -15,7 +15,7 @@
 
 //import config from JSON
 const fs = require("fs");
-const config = JSON.parse(fs.readFileSync("openwerewolf.json", "utf-8"));
+const config = JSON.parse(fs.readFileSync("Games/games.json", "utf-8"));
 let configGameList: any = [];
 
 //dynamically import game classes and add their constructors to configGameList
