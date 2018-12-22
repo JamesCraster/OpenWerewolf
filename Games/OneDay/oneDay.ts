@@ -1403,18 +1403,14 @@ export class OneDay extends Game {
       }
     } else {
       console.log("received by player chat");
-      this.playerchat.receive(
-        player,
-        player.username + ": " + msg,
-        undefined,
-        undefined,
-      );
-      this.endChat.receive(
-        player,
-        player.username + ": " + msg,
-        undefined,
-        undefined,
-      );
+      this.playerchat.receive(player, [
+        { text: player.username, color: player.color },
+        { text: ": " + msg },
+      ]);
+      this.endChat.receive(player, [
+        { text: player.username, color: player.color },
+        { text: ": " + msg },
+      ]);
     }
   }
 }

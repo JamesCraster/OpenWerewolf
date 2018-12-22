@@ -332,11 +332,16 @@ a {
 
 //Remove simplebar track vertical due to bug that causes it to appear
 //even when not asked for
-.simplebar-track.vertical{
+.simplebar-track.vertical {
   display: none;
 }
 
 @media only screen and (max-device-width: 430px) {
+
+  * {
+    font-size: 18px;
+  }
+
   #inner {
     height: 100%;
     width: 100%;
@@ -350,10 +355,6 @@ a {
     font-size: 20px;
   }
 
-  //#submit {
-  //height: 62px;
-  //font-size: 18px;
-  //}
   .sideBox {
     display: none;
   }
@@ -371,7 +372,7 @@ a {
   }
 
   #topLevel {
-    @include standard-flexbox(row);
+    display: none;
   }
 }
 
