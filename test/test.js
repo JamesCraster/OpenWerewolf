@@ -12,7 +12,7 @@
 */
 let assert = require('assert');
 //UI testing is not currently supported by travis-ci (need to set up sauce labs account)
-/*const webdriver = require('selenium-webdriver');
+const webdriver = require('selenium-webdriver');
 const {
     By
 } = require('selenium-webdriver');
@@ -34,6 +34,7 @@ test.describe('Homepage static links', function () {
         })
     })
 });
+
 test.describe('Register', function () {
     test.before(function () {
         this.timeout(4000);
@@ -99,7 +100,7 @@ test.describe('Log In', function () {
         });
     })
 
-});*/
+});
 //Testing that profanity is being filtered
 
 //Testing that non-letters are not allowed
