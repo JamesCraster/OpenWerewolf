@@ -24,6 +24,7 @@ mkdir release/Games
 mkdir release/Games/Classic
 mkdir release/Games/OneDay
 mkdir release/Games/Demo
+mkdir release/.github
 
 #copy over all necessary files
 cp app.js release
@@ -31,10 +32,9 @@ cp LICENSE release
 cp README.md release
 cp package-lock.json release
 cp package.json release
-cp -r node_modules release
+# cp -r node_modules release
 cp -r views release
 cp -r Core release
-cp openwerewolf.json release
 
 #minify css on clientside
 #cleancss -o release/Client/main.css Client/main.css
@@ -50,7 +50,9 @@ cp Client/mercutio_basic.ttf release/Client/mercutio_basic.ttf
 cp Client/pixi.min.js release/Client/pixi.min.js
 cp Client/webfontloader.js release/Client/webfontloader.js
 cp Client/pixicanvas.js release/Client/pixicanvas.js
+cp Client/forms.js release/Client/forms.js
 
+cp Games/games.json release/Games/games.json
 cp Games/OneDay/OneDay.js release/Games/OneDay
 cp Games/OneDay/LICENSE release/Games/OneDay
 cp Games/Classic/Classic.js release/Games/Classic
@@ -58,6 +60,7 @@ cp Games/Classic/LICENSE release/Games/Classic
 cp Games/Demo/Demo.js release/Games/Demo
 cp Games/Demo/LICENSE release/Games/Demo
 cp -r semantic release/semantic
+cp -r .github release/.github
 
 zip -r release.zip release
 

@@ -34,11 +34,11 @@
     "watch:database": "tsc --watch & \n babel --presets react --watch Client/src  --out-dir Client & \n sass --watch Client/main.scss:Client/main.css & \n nodemon app.js database",
     "builddocs": "typedoc --out docs --mode 'file' --excludeExternals --externalPattern \"**/node_modules/**\" --ignoreCompilerErrors ../OpenWerewolf/Core --target es6 --theme default --readme none \n touch docs/.nojekyll",
     "build": "tsc \n sass Client/main.scss Client/main.css \n babel --presets react Client/src  --out-dir Client",
-    "release": "./release",
+    "release": "./release.sh",
     "start": "echo \"*** Please 'npm run build' first if you haven't already!***\" \n node app.js",
     "start:database": "echo \"*** Please 'npm run build' first if you haven't already!***\" \n node app.js database",
     "start:debug": "echo \"*** Please 'npm run build' first if you haven't already!***\" \n node app.js debug",
-    "deploy": "./deploy"
+    "deploy": "./deploy.sh"
   },
   "repository": {
     "type": "git",
