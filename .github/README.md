@@ -44,10 +44,10 @@ This guide includes instructions on how to easily build OpenWerewolf from source
 
 - [Install Node.js](https://nodejs.org/en/)
 
-- Unzip OpenWerewolf.zip, and run:
+- Unzip release.zip, and run:
 
 ```
-   cd OpenWerewolf
+   cd release
    npm install
    node app.js
 ```
