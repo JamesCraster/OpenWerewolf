@@ -338,6 +338,7 @@ function removeMessage(msg, target) {
 }
 
 function lineThroughPlayer(msg, color) {
+  console.log($("#playerNames li span"));
   $("#playerNames li span")
     .filter(function() {
       return $(this).text() === msg;
@@ -523,10 +524,13 @@ $(function() {
     removeMessage(msg, "#roleNames");
   });
   user.socket.on("lineThroughPlayer", function(msg, color) {
+    console.log(msg);
+    console.log(color);
     lineThroughPlayer(msg, color);
     lineThroughPlayer(" " + msg, color);
   });
   user.socket.on("markAsDead", function(msg) {
+    console.log(msg);
     markAsDead(msg);
     markAsDead(" " + msg);
   });

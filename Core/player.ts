@@ -53,13 +53,15 @@ export class Player {
   //true if already playing in another tab
   private _cannotRegister: boolean = false;
   private _id: string;
-  private _cache: Array<Message> = [];
+  private _cache: Array<{ msg: Message; color?: Color }> = [];
   private _leftMessageCache: Array<Message> = [];
   private _time: number = 0;
   private _stopwatch: Stopwatch;
   private _warn: number = 0;
   private _canVote: boolean = false;
   private _selectedPlayerName: string = "";
+  //store a list of all the dead players so they get removed when the page is reloaded.
+  private _deadCache: Array<string> = [];
   public constructor(id: string, session: string) {
     this._id = id;
     this._username = "randomuser";
@@ -76,6 +78,7 @@ export class Player {
     this.gameClickedLast = "";
     this._cache = [];
     this._leftMessageCache = [];
+    this._deadCache = [];
   }
   public reloadClient(): void {
     this.emit("reloadClient");
@@ -223,19 +226,21 @@ export class Player {
         ],
         backgroundColor,
       );
-      this._cache.push([
-        {
-          text: text,
-          color: textColor,
-          backgroundColor: backgroundColor,
-        },
-      ]);
+      this._cache.push({
+        msg: [
+          {
+            text: text,
+            color: textColor,
+          },
+        ],
+        color: backgroundColor,
+      });
       if (this._cache.length > 50) {
         this._cache.splice(0, 1);
       }
     } else {
       this.emit("message", text, textColor);
-      //this.cache.push([text]);
+      this._cache.push({ msg: text, color: textColor });
     }
   }
   get cache() {
@@ -281,6 +286,7 @@ export class Player {
   }
   public markAsDead(msg: string) {
     this.emit("markAsDead", msg);
+    this._deadCache.push(msg);
   }
   /**
    * Removes another player's username from the lobby
@@ -302,6 +308,9 @@ export class Player {
   }
   public removePlayerFromLobbyList(username: string) {
     this.emit("removePlayerFromLobbyList", username);
+  }
+  public get deadCache(): Array<string> {
+    return this._deadCache;
   }
   public lobbyMessage(msg: string, textColor: Color, backgroundColor?: Color) {
     this.emit("lobbyMessage", [

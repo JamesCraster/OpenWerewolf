@@ -248,10 +248,18 @@ export class Server {
               socket.emit("transitionToGame", game.name, game.uid, game.inPlay);
               //send stored messages to the central and left boxes
               for (let j = 0; j < this._players[i].cache.length; j++) {
-                socket.emit("message", this._players[i].cache[j]);
+                socket.emit("message", this._players[i].cache[j].msg, this._players[i].cache[j].color);
               }
               for (let j = 0; j < this._players[i].leftCache.length; j++) {
                 socket.emit("leftMessage", this._players[i].leftCache[j]);
+              }
+              for (let j = 0; j < this._players[i].deadCache.length; j++) {
+                socket.emit("markAsDead", this._players[i].deadCache[j]);
+                socket.emit(
+                  "lineThroughPlayer",
+                  this._players[i].deadCache[j],
+                  Color.brightRed,
+                );
               }
             }
             //send the client the correct time
