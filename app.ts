@@ -172,7 +172,7 @@ app.get("/", function(req: any, res: any) {
   res.render("index", {
     numberOfGames: server.numberOfGames,
     gameNames: gameNames,
-    players: server.playerNameColorPairs,
+    players: server.usernameColorPairs,
     gameInPlay: server.inPlayArray,
     gameTypes: server.gameTypes,
     loggedIn: req.session.loggedIn,
@@ -390,7 +390,7 @@ io.on("connection", function(socket: Socket) {
   let time = 0;
   uPlayerid++;
   let thisPlayerId = uPlayerid.toString();
-  let oldPlayerId = server.addPlayer(
+  let oldPlayerId = server.addUser(
     socket,
     socket.request.session.socketID,
     thisPlayerId,

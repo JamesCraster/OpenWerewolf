@@ -13,13 +13,13 @@
 
 "use strict";
 
-import { Socket } from "../node_modules/@types/socket.io";
+import { Socket } from "socket.io";
 import { NameColorPair, Stopwatch, Color } from "./utils";
 import { Game } from "./game";
 //set this to what the admin password should be
 const password = "goat";
 
-interface PlayerData {
+interface UserData {
   [key: string]: any;
 }
 
@@ -32,17 +32,17 @@ export interface Phrase {
 
 export type Message = Array<Phrase>;
 
-export class Player {
-  //true if the player has a username
+export class User {
+  //true if the user has a username
   private _registered: boolean = false;
   private _sockets: Array<Socket> = [];
   private _inGame: boolean = false;
   private _username: string = "randomuser";
-  //object that can be used to flexibly add data to player for game purposes
-  public data: PlayerData = {};
-  //index of the game the player is in in the server's 'games' array
+  //object that can be used to flexibly add data to user for game purposes
+  public data: UserData = {};
+  //index of the game the user is in in the server's 'games' array
   private _game: undefined | Game = undefined;
-  //true if the player has disconnected entirely
+  //true if the user has disconnected entirely
   private _disconnected: boolean = false;
   private _admin: boolean = false;
   private _startVote: boolean = false;
@@ -59,15 +59,25 @@ export class Player {
   private _stopwatch: Stopwatch;
   private _warn: number = 0;
   private _canVote: boolean = false;
-  private _selectedPlayerName: string = "";
+  private _selectedUserName: string = "";
   //store a list of all the dead players so they get removed when the page is reloaded.
   private _deadCache: Array<string> = [];
-  public constructor(id: string, session: string) {
-    this._id = id;
-    this._username = "randomuser";
-    this._session = session;
-    this._stopwatch = new Stopwatch();
-    this._stopwatch.stop();
+  public constructor(user: User);
+  public constructor(id: string, session: string);
+  public constructor(id: string | User, session?: string) {
+    if (id instanceof User) {
+      Object.assign(this, id);
+      this._stopwatch = id._stopwatch;
+      this._id = id._id;
+    } else {
+      this._id = id;
+      this._username = "randomuser";
+      if (session) {
+        this._session = session;
+      }
+      this._stopwatch = new Stopwatch();
+      this._stopwatch.stop();
+    }
   }
   public resetAfterGame(): void {
     this._game = undefined;
@@ -96,10 +106,10 @@ export class Player {
     return this._gameClickedLast;
   }
   /**
-   * Sends event to this player
+   * Sends event to this user
    *
    * @param {string} event
-   * @memberof Player
+   * @memberof User
    */
   public emit(
     event: string,
@@ -180,17 +190,17 @@ export class Player {
   }
   public updateGameListing(
     name: string,
-    playerNameColorPairs: Array<NameColorPair>,
+    userNameColorPairs: Array<NameColorPair>,
     uid: string,
     inPlay: boolean,
   ) {
-    let playerNames: Array<string> = [];
-    let playerColors: Array<string> = [];
-    for (let i = 0; i < playerNameColorPairs.length; i++) {
-      playerColors.push(playerNameColorPairs[i].color);
-      playerNames.push(playerNameColorPairs[i].username);
+    let usernames: Array<string> = [];
+    let userColors: Array<string> = [];
+    for (let i = 0; i < userNameColorPairs.length; i++) {
+      userColors.push(userNameColorPairs[i].color);
+      usernames.push(userNameColorPairs[i].username);
     }
-    this.emit("updateGame", name, playerNames, playerColors, uid, inPlay);
+    this.emit("updateGame", name, usernames, userColors, uid, inPlay);
   }
   public verifyAsAdmin(msg: string): boolean {
     if (msg == "!" + password) {
@@ -204,7 +214,7 @@ export class Player {
     return this._admin;
   }
   /**
-   * send message to this player and only this player
+   * send message to this user and only this user
    * @param msg
    */
 
@@ -281,7 +291,7 @@ export class Player {
   public removeLeft(msg: string) {
     this.emit("removeLeft", msg);
   }
-  public lineThroughPlayer(msg: string, color: string) {
+  public lineThroughUser(msg: string, color: string) {
     this.emit("lineThroughPlayer", msg, color);
   }
   public markAsDead(msg: string) {
@@ -289,8 +299,8 @@ export class Player {
     this._deadCache.push(msg);
   }
   /**
-   * Removes another player's username from the lobby
-   * E.g the other player has left.
+   * Removes another user's username from the lobby
+   * E.g the other user has left.
    * @param username
    * @param game
    */
@@ -342,8 +352,8 @@ export class Player {
   get color() {
     return this._color;
   }
-  public equals(otherPlayer: Player): boolean {
-    return this.id == otherPlayer.id;
+  public equals(otherUser: User): boolean {
+    return this.id == otherUser.id;
   }
   public registrationError(message: string) {
     this.emit("registrationError", message);
@@ -360,12 +370,12 @@ export class Player {
   public cancelVoteEffect() {
     this.emit("cancelVoteEffect");
   }
-  public selectPlayer(username: string) {
+  public selectUser(username: string) {
     this.emit("selectPlayer", username);
-    this._selectedPlayerName = username;
+    this._selectedUserName = username;
   }
-  get selectedPlayerName() {
-    return this._selectedPlayerName;
+  get selectedUsername() {
+    return this._selectedUserName;
   }
   public canVote() {
     this.emit("canVote");

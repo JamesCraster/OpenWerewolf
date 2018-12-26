@@ -16,7 +16,7 @@ import {
   MessageRoom,
   Game,
   Server,
-  Player,
+  User,
   Utils,
   RoleList,
   Colors,
@@ -49,12 +49,12 @@ export class Demo extends Game {
     this.afterEnd();
   }
   public update() {}
-  public addPlayer(player: Player) {
+  public addPlayer(player: User) {
     //add player to message room
     this.playerchat.addPlayer(player);
     super.addPlayer(player);
   }
-  public receive(player: Player, msg: string) {
+  public receive(player: User, msg: string) {
     //direct player's message to message room
     this.playerchat.receive(player, player.username + ": " + msg);
     //direct player's message to the end chat (for when the game is over)

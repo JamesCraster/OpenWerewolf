@@ -155,7 +155,7 @@ export interface NameColorPair {
   color: string;
 }
 
-export const PlayerColorArray: Array<Color> = [
+export const UserColorArray: Array<Color> = [
   Color.magenta,
   Color.lightBlue,
   Color.brightYellow,
