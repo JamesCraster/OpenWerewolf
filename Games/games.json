@@ -1,8 +1,9 @@
 {
-  "games": [{
-      "name": "OneDay",
-      "location": "./Games/OneDay/OneDay",
-      "title": "OpenWerewolf-OneDay",
+  "games": [
+    {
+      "name": "Classic",
+      "location": "./Games/Classic/Classic",
+      "title": "OpenWerewolf-Classic",
       "author": "James Craster",
       "license": "Apache-2.0"
     },
@@ -14,9 +15,9 @@
       "license": "Apache-2.0"
     },
     {
-      "name": "Classic",
-      "location": "./Games/Classic/Classic",
-      "title": "OpenWerewolf-Classic",
+      "name": "OneDay",
+      "location": "./Games/OneDay/OneDay",
+      "title": "OpenWerewolf-OneDay",
       "author": "James Craster",
       "license": "Apache-2.0"
     }

@@ -1091,6 +1091,7 @@ export class Classic extends Game {
     }
   }
   public addPlayer(player: Player) {
+    player.emit('getAllRolesForSelection', [{name:'Mafia', color:'red'},{name:'Cop', color:'green'}];
     this.daychat.addPlayer(player);
     super.addPlayer(player);
   }

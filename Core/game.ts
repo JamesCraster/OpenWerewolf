@@ -415,12 +415,11 @@ export abstract class Game {
         } else {
           this.customAdminReceive(player, msg);
         }
+      }  
+      if (Utils.isCommand(msg, "!yell")) {
+        this.broadcast("ADMIN:" + msg.slice(5), Color.brightGreen);
       } else {
-        if (Utils.isCommand(msg, "!yell")) {
-          this.broadcast("ADMIN:" + msg.slice(5), Color.brightGreen);
-        } else {
-          this.customAdminReceive(player, msg);
-        }
+        this.customAdminReceive(player, msg);
       }
     }
   }
