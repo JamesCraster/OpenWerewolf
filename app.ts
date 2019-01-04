@@ -30,7 +30,7 @@ for (let i = 0; i < config.games.length; i++) {
     .catch(e => {
       console.log(
         "Non-critical warning, a game is missing: " + config.games[i].name,
-      ); /*console.log(e);*/
+      );
     });
 }
 
