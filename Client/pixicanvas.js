@@ -335,6 +335,7 @@ class Player {
     destructor() {
         app.stage.removeChild(this.sprite);
         app.stage.removeChild(this.usernameText);
+        app.stage.removeChild(this.graveSprite)
     }
     //could more accurately be called 'die'
     disappear() {

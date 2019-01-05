@@ -182,12 +182,13 @@ const fivePlayer: RoleList = new RoleList([
   Roles.sherrif.roleName,
   Roles.sherrif.roleName,
 ]);
-/*const fourPlayer: RoleList = new RoleList([
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.sherrif,
-  Roles.vigilante,
-]);*/
+const fourPlayer: RoleList = new RoleList([
+  Roles.mafioso.roleName,
+  Roles.doctor.roleName,
+  Roles.sherrif.roleName,
+  Roles.vigilante.roleName,
+]);
+
 let globalMinimumPlayerCount = 7;
 //six and five player games are for debugging only
 if (DEBUGMODE) {
@@ -374,7 +375,7 @@ export class Classic extends Game {
     let roleList = fivePlayer.list;
     switch (this.users.length) {
       case 4:
-        //roleList = fourPlayer.list;
+        roleList = fourPlayer.list;
         break;
       case 5:
         //roleList = fivePlayer.list;
