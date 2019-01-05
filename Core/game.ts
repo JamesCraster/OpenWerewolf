@@ -86,6 +86,9 @@ export abstract class Game {
   public get uid() {
     return this._uid;
   }
+  public get users() {
+    return this._users;
+  }
   get usernameColorPairs(): Array<NameColorPair> {
     let usernameColorPairs = [];
     for (let i = 0; i < this._users.length; i++) {
@@ -98,9 +101,6 @@ export abstract class Game {
   }
   public get gameType() {
     return this._gameType;
-  }
-  protected get users() {
-    return this._users;
   }
   get startWait() {
     return this._startWait;
@@ -125,7 +125,7 @@ export abstract class Game {
       return this._maxPlayerCount - this._registeredPlayerCount;
     }
   }
-  public getPlayer(id: string): User | undefined {
+  public getUser(id: string): User | undefined {
     for (let i = 0; i < this._users.length; i++) {
       if (this._users[i].id == id) {
         return this._users[i];

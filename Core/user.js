@@ -22,8 +22,6 @@ class User {
         this._sockets = [];
         this._inGame = false;
         this._username = "randomuser";
-        //object that can be used to flexibly add data to user for game purposes
-        this.data = {};
         //index of the game the user is in in the server's 'games' array
         this._game = undefined;
         //true if the user has disconnected entirely
@@ -62,7 +60,6 @@ class User {
     resetAfterGame() {
         this._game = undefined;
         this._inGame = false;
-        this.data = {};
         this._startVote = false;
         this._color = utils_1.Color.none;
         this.gameClickedLast = "";

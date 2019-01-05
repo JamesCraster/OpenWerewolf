@@ -19,10 +19,6 @@ import { Game } from "./game";
 //set this to what the admin password should be
 const password = "goat";
 
-interface UserData {
-  [key: string]: any;
-}
-
 export interface Phrase {
   text: string;
   color?: Color;
@@ -38,8 +34,6 @@ export class User {
   private _sockets: Array<Socket> = [];
   private _inGame: boolean = false;
   private _username: string = "randomuser";
-  //object that can be used to flexibly add data to user for game purposes
-  public data: UserData = {};
   //index of the game the user is in in the server's 'games' array
   private _game: undefined | Game = undefined;
   //true if the user has disconnected entirely
@@ -82,7 +76,6 @@ export class User {
   public resetAfterGame(): void {
     this._game = undefined;
     this._inGame = false;
-    this.data = {};
     this._startVote = false;
     this._color = Color.none;
     this.gameClickedLast = "";

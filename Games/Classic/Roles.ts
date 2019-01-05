@@ -10,48 +10,49 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
+"use strict";
 
-/*import { Classic } from "./Classic";
-import { Player, RoleList } from "../../Core/core";
-class PlayerData {
-  private readonly role: Role;
-  constructor(role: Role) {
-    this.role = role;
-  }
-}
-enum Alignment {
+import { Classic, ClassicPlayer } from "./Classic";
+import { RoleList } from "../../Core/core";
+
+export enum Alignment {
   town = "town",
   mafia = "mafia",
   neutral = "neutral",
 }
+
 enum Passives {
   //cannot be killed at night
   nightImmune = "nightImmune",
   roleblockImmune = "roleblockImmune",
 }
-type WinCondition = (game: Classic) => boolean;
+
+type WinCondition = (player: ClassicPlayer, game: Classic) => boolean;
+
 type Ability = {
-  condition?: (targetPlayer: Player, game: Classic) => boolean;
-  action: (targetPlayer: Player, game: Classic) => void;
+  condition?: (targetPlayer: ClassicPlayer, game: Classic) => boolean;
+  action: (targetPlayer: ClassicPlayer, game: Classic) => void;
 };
-type Role = {
+
+export type Role = {
+  roleName: string;
   alignment: Alignment;
-  winCondition: (game: Classic) => boolean;
+  winCondition: WinCondition;
   abilities: Array<{ ability: Ability; uses?: number }>;
   passives: Array<Passives>;
 };
 namespace WinConditions {
-  export const town: WinCondition = (game: Classic) => {
-    for (let player of game.playerList) {
-      if (player.data.alignment == Alignment.mafia) {
+  export const town: WinCondition = (player: ClassicPlayer, game: Classic) => {
+    for (let player of game.players) {
+      if (player.alignment == Alignment.mafia) {
         return false;
       }
     }
     return true;
   };
-  export const mafia: WinCondition = (game: Classic) => {
-    for (let player of game.playerList) {
-      if (player.data.alignment == Alignment.town) {
+  export const mafia: WinCondition = (player: ClassicPlayer, game: Classic) => {
+    for (let player of game.players) {
+      if (player.alignment == Alignment.town) {
         return false;
       }
     }
@@ -60,29 +61,45 @@ namespace WinConditions {
 }
 namespace Abilities {
   export const kill: Ability = {
-    action: (targetPlayer: Player, game: Classic) => {
+    action: (targetPlayer: ClassicPlayer, game: Classic) => {
       game.kill(targetPlayer);
     },
   };
 }
-namespace Roles {
+export namespace Roles {
   export const vigilante: Role = {
+    roleName: "vigilante",
     alignment: Alignment.town,
     winCondition: WinConditions.town,
     abilities: [{ ability: Abilities.kill, uses: 2 }],
     passives: [],
   };
   export const mafioso: Role = {
+    roleName: "mafioso",
     alignment: Alignment.mafia,
     winCondition: WinConditions.mafia,
     abilities: [{ ability: Abilities.kill }],
     passives: [],
   };
   export const godfather: Role = {
+    roleName: "godfather",
     alignment: Alignment.mafia,
     winCondition: WinConditions.mafia,
     abilities: [{ ability: Abilities.kill }],
+    passives: [Passives.nightImmune],
+  };
+  export const doctor: Role = {
+    roleName: "doctor",
+    alignment: Alignment.town,
+    winCondition: WinConditions.town,
+    abilities: [],
+    passives: [],
+  };
+  export const sherrif: Role = {
+    roleName: "sherrif",
+    alignment: Alignment.town,
+    winCondition: WinConditions.town,
+    abilities: [],
     passives: [],
   };
 }
-*/
