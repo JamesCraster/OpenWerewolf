@@ -142,7 +142,7 @@ export enum Color {
   pink = "#ff3f9f",
   seaGreen = "#20b2aa",
   white = "#ffffff",
-  standardWhite = "cecece",
+  standardWhite = "#cecece",
   brown = "#a5542a",
   darkGreen = "#2aa54c",
   nightBlue = "#1919cc",
