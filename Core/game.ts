@@ -75,7 +75,6 @@ export abstract class Game {
     this.author = author;
     this.license = license;
     setInterval(this.pregameLobbyUpdate.bind(this), 500);
-    setInterval(this.update.bind(this), 500);
   }
   public get name() {
     return this._name;
@@ -211,7 +210,6 @@ export abstract class Game {
       }
     }
   }
-  protected abstract update(): void;
   public addPlayer(user: User) {
     this.endChat.addPlayer(user);
     this.endChat.muteAll();

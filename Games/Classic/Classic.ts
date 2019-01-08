@@ -12,6 +12,7 @@
 */
 
 "use strict";
+
 import {
   MessageRoom,
   Game,
@@ -27,12 +28,13 @@ import {
   Alignment,
   Roles,
   Role,
+  Ability,
   WinConditions,
   GameEndConditions,
   priorities,
 } from "../../Games/Classic/Roles";
-import { Player } from "../../Core/player";
 
+import { ClassicPlayer } from "./ClassicPlayer";
 import { DEBUGMODE } from "../../app";
 
 enum Phase {
@@ -44,116 +46,10 @@ enum Trial {
   nominate = "nominate",
   verdict = "verdict",
 }
-enum finalVote {
+export enum FinalVote {
   guilty = "guilty",
   abstain = "abstain",
   innocent = "innocent",
-}
-
-export class ClassicPlayer extends Player {
-  private _diedThisNight: boolean = false;
-  private _alive: boolean = true;
-  private _target: string = "";
-  private _healed: boolean = false;
-  private _roleBlocked: boolean = false;
-  private _wolfVotes: number = 0;
-  private _vote: string = "";
-  private _finalVote: string = finalVote.abstain;
-  private readonly _role: Role;
-  constructor(user: User, role: Role) {
-    super(user);
-    this._role = role;
-  }
-  public get alive() {
-    return this._alive;
-  }
-  public get role() {
-    return this._role;
-  }
-  public get alignment(): Alignment {
-    return this._role.alignment;
-  }
-  public get roleName(): string {
-    return this._role.roleName;
-  }
-  public isRole(roleName: string): boolean {
-    return this._role.roleName == roleName;
-  }
-  public set target(target: string) {
-    this._target = target;
-  }
-  public get target(): string {
-    return this._target;
-  }
-  private clearTarget() {
-    this._target = "";
-  }
-  public get winCondition() {
-    return this._role.winCondition;
-  }
-  public resetAfterNight() {
-    this.clearTarget();
-    this._healed = false;
-    this._wolfVotes = 0;
-    this._roleBlocked = false;
-  }
-  public resetAfterTrial() {
-    this._vote = "";
-    this._finalVote = finalVote.abstain;
-  }
-  public set healed(healed: boolean) {
-    this._healed = healed;
-  }
-  public get healed(): boolean {
-    return this._healed;
-  }
-  public roleBlock() {
-    this._roleBlocked = true;
-  }
-  get roleBlocked() {
-    return this._roleBlocked;
-  }
-  set roleBlocked(roleblocked) {
-    this._roleBlocked = roleblocked;
-  }
-  public kill(): void {
-    if ((this._alive = true)) {
-      this._alive = false;
-      this._diedThisNight = true;
-    }
-  }
-  public get wolfVotes() {
-    return this._wolfVotes;
-  }
-  public incrementWolfVote() {
-    if (this.alignment != Alignment.mafia) {
-      this._wolfVotes++;
-    }
-  }
-  public set diedThisNight(diedThisNight: boolean) {
-    this._diedThisNight = diedThisNight;
-  }
-  public get diedThisNight() {
-    return this._diedThisNight;
-  }
-  public voteFor(target: User) {
-    this._vote = target.id;
-  }
-  public get vote() {
-    return this._vote;
-  }
-  public clearVote() {
-    this._vote = "";
-  }
-  public set finalVote(vote: string) {
-    this._finalVote = vote;
-  }
-  public get finalVote() {
-    return this._finalVote;
-  }
-  public get abilities() {
-    return this._role.abilities;
-  }
 }
 
 const ninePlayer: RoleList = new RoleList([
@@ -186,7 +82,7 @@ const sevenPlayer: RoleList = new RoleList([
   Roles.townie.roleName,
   Roles.townie.roleName,
 ]);
-//six and five player games are for debugging only
+
 const sixPlayer: RoleList = new RoleList([
   Roles.mafioso.roleName,
   Roles.doctor.roleName,
@@ -207,24 +103,24 @@ const fourPlayer: RoleList = new RoleList([
   Roles.sherrif.roleName,
   Roles.vigilante.roleName,
 ]);
-let globalMinimumPlayerCount = 7;
-//six and five player games are for debugging only
+let globalMinimumPlayerCount = 5;
+//four player games are for debugging only
 if (DEBUGMODE) {
   globalMinimumPlayerCount = 4;
 }
 export class Classic extends Game {
-  private ended: boolean = false;
   private phase: string = Phase.day;
+  //what stage the trial is in
   private trial: string = Trial.ended;
-  private stopWatch: Stopwatch = new Stopwatch();
   private dayClock: Stopwatch = new Stopwatch();
-  private nightClock: Stopwatch = new Stopwatch();
   private daychat: MessageRoom = new MessageRoom();
   private mafiachat: MessageRoom = new MessageRoom();
+  //the interval which counts votes to get the nomination
   private tallyInterval: any;
   private trialClock: Stopwatch = new Stopwatch();
   private readonly maxTrialsPerDay: number = 3;
   private trialsThisDay: number = 0;
+  //days after which there is a stalemate
   private readonly maxDaysWithoutDeath: number = 3;
   private daysWithoutDeath: number = 0;
   private deadChat: MessageRoom = new MessageRoom();
@@ -242,7 +138,6 @@ export class Classic extends Game {
       "James Craster",
       "Apache-2.0",
     );
-    setInterval(this.update.bind(this), 500);
     super.addMessageRoom(this.daychat);
     super.addMessageRoom(this.mafiachat);
     super.addMessageRoom(this.deadChat);
@@ -259,7 +154,7 @@ export class Classic extends Game {
       this.players[i].user.cannotVote();
     }
   }
-  public dayUnmute() {
+  private dayUnmute() {
     for (let i = 0; i < this.players.length; i++) {
       if (this.players[i].alive) {
         this.daychat.unmute(this.players[i].user);
@@ -267,7 +162,7 @@ export class Classic extends Game {
     }
   }
   //called if the game has gone on too many days without a kill
-  public stalemate() {
+  private stalemate() {
     this.daychat.broadcast(
       "Three days have passed without a death.",
       undefined,
@@ -292,19 +187,14 @@ export class Classic extends Game {
         },
       ]);
     }
-    this.beforeEnd();
-  }
-  public beforeEnd() {
-    this.ended = true;
-    this.daychat.unmuteAll();
-    //this.setAllTime(30 * 1000, 10 * 1000);
-    //setTimeout(this.end.bind(this), 30 * 1000);
     this.end();
   }
   /*
-   * Function that checks if any faction has won, and announces their victory. Returns true if any faction has won, false otherwise.
+   * Function that checks if town or mafia have won, and announces their victory.
+   * Also announces the victory of any other winning faction.
+   * Returns true if any faction has won, false otherwise.
    */
-  public winCondition(): boolean {
+  private winCondition(): boolean {
     let townWin = GameEndConditions.townWin(this);
     let mafiaWin = GameEndConditions.mafiaWin(this);
 
@@ -320,6 +210,21 @@ export class Classic extends Game {
       ]);
     }
     if (townWin || mafiaWin) {
+      //announce other factions that have won (that aren't town or mafia)
+      for (let i = 0; i < this.players.length; i++) {
+        if (
+          this.players[i].winCondition(this.players[i], this) &&
+          this.players[i].alignment != Alignment.mafia &&
+          this.players[i].alignment != Alignment.town
+        ) {
+          this.headerBroadcast([
+            {
+              text: "The " + this.players[i].roleName + " has won!",
+              color: Colors.brightYellow,
+            },
+          ]);
+        }
+      }
       //congratulate winners
       for (let i = 0; i < this.players.length; i++) {
         if (this.players[i].winCondition(this.players[i], this)) {
@@ -338,20 +243,6 @@ export class Classic extends Game {
           ]);
         }
       }
-      //announce other factions that have won (that aren't town or mafia)
-      for (let i = 0; i < this.players.length; i++) {
-        if (
-          this.players[i].winCondition(this.players[i], this) &&
-          this.players[i].alignment != Alignment.mafia &&
-          this.players[i].alignment != Alignment.town
-        ) {
-          this.headerBroadcast([
-            { text: "The ", color: Colors.standardWhite },
-            { text: this.players[i].roleName, color: Colors.brightYellow },
-            { text: " has won!", color: Colors.standardWhite },
-          ]);
-        }
-      }
       //list all winners in the chat
       let winners = "";
       for (let i = 0; i < this.players.length; i++) {
@@ -364,13 +255,9 @@ export class Classic extends Game {
         }
       }
       this.broadcast("Winners: " + winners, Colors.brightGreen);
-      this.beforeEnd();
+      this.end();
     }
     return townWin || mafiaWin;
-  }
-  public update() {
-    if (this.inPlay) {
-    }
   }
   public start() {
     this.beforeStart();
@@ -444,40 +331,8 @@ export class Classic extends Game {
       //tell the player what their role is
       this.sendRole(this.players[i], this.players[i].alignment, randomDeck[i]);
     }
-    this.setAllTime(10000, 0);
-    setTimeout(() => {
-      this.broadcast("Night has fallen.", undefined, Colors.nightBlue);
-      this.headerBroadcast([
-        { text: "Night has fallen", color: Colors.nightBlue },
-      ]);
-      this.phase = Phase.night;
-      //Let the werewolves communicate with one another
-      this.mafiachat.unmuteAll();
-      this.mafiachat.broadcast(
-        "This is the mafia chat, you can talk to other mafia now in secret.",
-      );
-      let werewolfList: Array<string> = [];
-      for (let i = 0; i < this.players.length; i++) {
-        if (this.players[i].isRole(Roles.mafioso.roleName)) {
-          werewolfList.push(this.players[i].user.username);
-        }
-      }
-      let werewolfString = "The mafia are : ";
-      for (let i = 0; i < werewolfList.length; i++) {
-        if (i != 0) {
-          werewolfString += ", ";
-        }
-        werewolfString += werewolfList[i];
-      }
-      this.playersCanVote();
-      this.mafiachat.broadcast(werewolfString);
-      this.daychat.broadcast(
-        "Click on someone to perform your action on them.",
-      );
-      this.setAllTime(30000, 10000);
-
-      setTimeout(this.nightResolution.bind(this), 30000);
-    }, 10000);
+    this.setAllTime(5000, 0);
+    setTimeout(this.night.bind(this), 5000);
   }
   private sendRole(player: ClassicPlayer, alignment: Alignment, role: string) {
     switch (alignment) {
@@ -505,45 +360,41 @@ export class Classic extends Game {
     }
   }
 
-  public night() {
+  private night() {
     this.cancelVoteSelection();
     this.playersCanVote();
-    if (!this.ended) {
-      //reset the gallows' animation if they have been used
-      for (let i = 0; i < this.players.length; i++) {
-        this.players[i].user.resetGallows();
-      }
-      this.broadcast("Night has fallen.", undefined, Colors.nightBlue);
-      this.headerBroadcast([
-        { text: "Night has fallen", color: Colors.nightBlue },
-      ]);
-      this.phase = Phase.night;
-      //Let the mafia communicate with one another
-      this.mafiachat.unmuteAll();
-      this.mafiachat.broadcast(
-        "This is the mafia chat, you can talk to other mafia now in secret.",
-      );
-      let werewolfList: Array<string> = [];
-      for (let i = 0; i < this.players.length; i++) {
-        if (this.players[i].isRole(Roles.mafioso.roleName)) {
-          werewolfList.push(this.players[i].user.username);
-        }
-      }
-      let werewolfString = "The mafia are : ";
-      for (let i = 0; i < werewolfList.length; i++) {
-        if (i != 0) {
-          werewolfString += ", ";
-        }
-        werewolfString += werewolfList[i];
-      }
-      this.mafiachat.broadcast(werewolfString);
-      this.daychat.broadcast(
-        "Click on someone to perform your action on them.",
-      );
-      this.setAllTime(30000, 10000);
-
-      setTimeout(this.nightResolution.bind(this), 30000);
+    //reset the gallows' animation if they have been used
+    for (let i = 0; i < this.players.length; i++) {
+      this.players[i].user.resetGallows();
     }
+    this.broadcast("Night has fallen.", undefined, Colors.nightBlue);
+    this.headerBroadcast([
+      { text: "Night has fallen", color: Colors.nightBlue },
+    ]);
+    this.phase = Phase.night;
+    //Let the mafia communicate with one another
+    this.mafiachat.unmuteAll();
+    this.mafiachat.broadcast(
+      "This is the mafia chat, you can talk to other mafia now in secret.",
+    );
+    let mafiaList: Array<string> = [];
+    for (let i = 0; i < this.players.length; i++) {
+      if (this.players[i].isRole(Roles.mafioso.roleName)) {
+        mafiaList.push(this.players[i].user.username);
+      }
+    }
+    let mafiaString = "The mafia are : ";
+    for (let i = 0; i < mafiaList.length; i++) {
+      if (i != 0) {
+        mafiaString += ", ";
+      }
+      mafiaString += mafiaList[i];
+    }
+    this.mafiachat.broadcast(mafiaString);
+    this.daychat.broadcast("Click on someone to perform your action on them.");
+    this.setAllTime(30000, 10000);
+
+    setTimeout(this.nightResolution.bind(this), 30000);
   }
   public kill(player: ClassicPlayer) {
     for (let i = 0; i < this.players.length; i++) {
@@ -554,7 +405,7 @@ export class Classic extends Game {
     this.deadChat.addPlayer(player.user);
     this.daysWithoutDeath = 0;
   }
-  public nightResolution() {
+  private nightResolution() {
     //sort players based off of the const priorities list
     let nightPlayerArray = this.players.sort((element: ClassicPlayer) => {
       return priorities.indexOf(element.role);
@@ -606,10 +457,10 @@ export class Classic extends Game {
     for (let i = 0; i < this.players.length; i++) {
       if (this.players[i].isRole(Roles.mafioso.roleName)) {
         let targetPlayer = this.getPlayer(this.players[i].target);
-        if (targetPlayer != undefined) {
-          targetPlayer.incrementWolfVote();
-          if (targetPlayer.wolfVotes >= maxVotes) {
-            maxVotes = targetPlayer.wolfVotes;
+        if (targetPlayer) {
+          targetPlayer.incrementMafiaVote();
+          if (targetPlayer.mafiaVotes >= maxVotes) {
+            maxVotes = targetPlayer.mafiaVotes;
             finalTargetPlayer = targetPlayer;
           }
         }
@@ -617,12 +468,12 @@ export class Classic extends Game {
     }
     for (let i = 0; i < this.players.length; i++) {
       let targetPlayer = this.getPlayer(this.players[i].target);
-      if (targetPlayer != undefined) {
+      if (targetPlayer) {
         switch (this.players[i].roleName) {
           case Roles.mafioso.roleName:
             //tell the mafia who the target is
             this.players[i].user.send("Your target is: ");
-            if (finalTargetPlayer != undefined) {
+            if (finalTargetPlayer) {
               this.players[i].user.send(finalTargetPlayer.user.username);
               this.players[i].user.send("You attack your target.");
               if (finalTargetPlayer.healed) {
@@ -659,7 +510,7 @@ export class Classic extends Game {
         deaths++;
       }
     }
-    //Reset each player's action
+    //Reset each player after the night
     for (let i = 0; i < this.players.length; i++) {
       this.players[i].resetAfterNight();
     }
@@ -694,7 +545,7 @@ export class Classic extends Game {
     this.playersCannotVote();
     this.day();
   }
-  public day() {
+  private day() {
     if (!this.winCondition()) {
       if (this.daysWithoutDeath == 1) {
         this.daychat.broadcast(
@@ -727,181 +578,169 @@ export class Classic extends Game {
       }
     }
   }
-  public trialVote() {
-    if (!this.ended) {
-      if (this.trialsThisDay >= this.maxTrialsPerDay) {
-        this.daychat.broadcast(
-          "The town is out of trials - you only get 3 trials a day! Night begins.",
-        );
-        this.endDay();
-        return;
-      }
-      this.dayUnmute();
-      this.cancelVoteSelection();
-      console.log(this.trialClock.time);
-      this.trialClock.start();
+  private trialVote() {
+    if (this.trialsThisDay >= this.maxTrialsPerDay) {
       this.daychat.broadcast(
-        "The trial has begun! The player with a majority of votes will be put on trial.",
+        "The town is out of trials - you only get 3 trials a day! Night begins.",
       );
-      this.daychat.broadcast(
-        "Max 60 seconds. If the target is acquited you can vote for a new one.",
-      );
-      this.daychat.broadcast("Click on somebody to nominate them.");
-      this.playersCanVote();
-      this.setAllTime(Math.max(0, 60000 - this.trialClock.time), 20000);
-      this.trial = Trial.nominate;
-      this.dayClock.restart();
-      this.dayClock.start();
-      this.tallyInterval = setInterval(this.tallyVotes.bind(this), 1000);
+      this.endDay();
+      return;
     }
+    this.dayUnmute();
+    this.cancelVoteSelection();
+    console.log(this.trialClock.time);
+    this.trialClock.start();
+    this.daychat.broadcast(
+      "The trial has begun! The player with a majority of votes will be put on trial.",
+    );
+    this.daychat.broadcast(
+      "Max 60 seconds. If the target is acquited you can vote for a new one.",
+    );
+    this.daychat.broadcast("Click on somebody to nominate them.");
+    this.playersCanVote();
+    this.setAllTime(Math.max(0, 60000 - this.trialClock.time), 20000);
+    this.trial = Trial.nominate;
+    this.dayClock.restart();
+    this.dayClock.start();
+    this.tallyInterval = setInterval(this.tallyVotes.bind(this), 1000);
   }
-  public tallyVotes() {
-    if (!this.ended) {
-      let count = 0;
-      let defendant = 0;
-      let aliveCount = 0;
-      for (let i = 0; i < this.players.length; i++) {
-        if (this.players[i].alive) {
-          aliveCount++;
-        }
+  private tallyVotes() {
+    let count = 0;
+    let defendant = 0;
+    let aliveCount = 0;
+    for (let i = 0; i < this.players.length; i++) {
+      if (this.players[i].alive) {
+        aliveCount++;
       }
-      let beginTrial: boolean = false;
-      for (let i = 0; i < this.players.length; i++) {
-        count = 0;
-        if (beginTrial) {
+    }
+    let beginTrial: boolean = false;
+    for (let i = 0; i < this.players.length; i++) {
+      count = 0;
+      if (beginTrial) {
+        break;
+      }
+      for (let j = 0; j < this.players.length; j++) {
+        if (this.players[j].vote == this.players[i].user.id) {
+          count++;
+        }
+        if (count >= Math.floor(aliveCount / 2) + 1) {
+          beginTrial = true;
+          defendant = i;
           break;
         }
-        for (let j = 0; j < this.players.length; j++) {
-          if (this.players[j].vote == this.players[i].user.id) {
-            count++;
-          }
-          if (count >= Math.floor(aliveCount / 2) + 1) {
-            beginTrial = true;
-            defendant = i;
-            break;
-          }
-        }
-      }
-      if (beginTrial) {
-        this.trialClock.stop();
-        clearInterval(this.tallyInterval);
-        this.defenseSpeech(defendant);
-      }
-      if (this.trialClock.time > 60000) {
-        this.daychat.broadcast("Time's up! Night will now begin.");
-        this.endDay();
       }
     }
-  }
-  public defenseSpeech(defendant: number) {
-    if (!this.ended) {
-      this.cancelVoteSelection();
-      this.playersCannotVote();
-      this.trial = Trial.ended;
-      this.daychat.broadcast(
-        this.players[defendant].user.username + " is on trial.",
-      );
-      this.daychat.broadcast(
-        "The accused can defend themselves for 20 seconds.",
-      );
-      this.daychat.muteAll();
-      this.daychat.unmute(this.players[defendant].user);
-      if (DEBUGMODE) {
-        this.setAllTime(5000, 5000);
-        setTimeout(this.finalVote.bind(this), 5 * 1000, defendant);
-      } else {
-        this.setAllTime(20000, 5000);
-        setTimeout(this.finalVote.bind(this), 20 * 1000, defendant);
-      }
+    if (beginTrial) {
+      this.trialClock.stop();
+      clearInterval(this.tallyInterval);
+      this.defenseSpeech(defendant);
+    }
+    if (this.trialClock.time > 60000) {
+      this.daychat.broadcast("Time's up! Night will now begin.");
+      this.endDay();
     }
   }
-  public finalVote(defendant: number) {
-    if (!this.ended) {
-      this.trial = Trial.verdict;
-      this.dayUnmute();
-      this.daychat.broadcast(
-        "20 seconds to vote: click on guilty or innocent, or do nothing to abstain.",
-      );
-      this.headerBroadcast([
-        { text: "Vote to decide ", color: Colors.white },
-        {
-          text: this.players[defendant].user.username,
-          color: this.players[defendant].user.color,
-        },
-        { text: "'s fate", color: Colors.white },
-      ]);
-      setTimeout(() => {
-        for (let i = 0; i < this.players.length; i++) {
-          //block the defendant from voting in their own trial
-          if (i != defendant && this.players[i].alive) {
-            this.players[i].user.emit("finalVerdict");
-          }
-        }
-      }, 3500);
+  private defenseSpeech(defendant: number) {
+    this.cancelVoteSelection();
+    this.playersCannotVote();
+    this.trial = Trial.ended;
+    this.daychat.broadcast(
+      this.players[defendant].user.username + " is on trial.",
+    );
+    this.daychat.broadcast("The accused can defend themselves for 20 seconds.");
+    this.daychat.muteAll();
+    this.daychat.unmute(this.players[defendant].user);
+    if (DEBUGMODE) {
+      this.setAllTime(5000, 5000);
+      setTimeout(this.finalVote.bind(this), 5 * 1000, defendant);
+    } else {
       this.setAllTime(20000, 5000);
-      setTimeout(this.verdict.bind(this), 20 * 1000, defendant);
+      setTimeout(this.finalVote.bind(this), 20 * 1000, defendant);
     }
   }
-  public verdict(defendant: number) {
-    if (!this.ended) {
+  private finalVote(defendant: number) {
+    this.trial = Trial.verdict;
+    this.dayUnmute();
+    this.daychat.broadcast(
+      "20 seconds to vote: click on guilty or innocent, or do nothing to abstain.",
+    );
+    this.headerBroadcast([
+      { text: "Vote to decide ", color: Colors.white },
+      {
+        text: this.players[defendant].user.username,
+        color: this.players[defendant].user.color,
+      },
+      { text: "'s fate", color: Colors.white },
+    ]);
+    setTimeout(() => {
       for (let i = 0; i < this.players.length; i++) {
-        this.players[i].user.emit("endVerdict");
-      }
-      this.daychat.muteAll();
-      this.trialsThisDay++;
-      let innocentCount = 0;
-      let guiltyCount = 0;
-      for (let i = 0; i < this.players.length; i++) {
-        if (this.players[i].finalVote == finalVote.guilty) {
-          this.daychat.broadcast([
-            { text: this.players[i].user.username + " voted " },
-            { text: "guilty", color: Colors.brightRed },
-          ]);
-          guiltyCount++;
-        } else if (this.players[i].finalVote == finalVote.innocent) {
-          this.daychat.broadcast([
-            { text: this.players[i].user.username + " voted " },
-            { text: "innocent", color: Colors.brightGreen },
-          ]);
-          innocentCount++;
-        } else if (this.players[i].alive && i != defendant) {
-          this.daychat.broadcast([
-            { text: this.players[i].user.username + " chose to " },
-            { text: "abstain", color: Colors.brightYellow },
-          ]);
+        //block the defendant from voting in their own trial
+        if (i != defendant && this.players[i].alive) {
+          this.players[i].user.emit("finalVerdict");
         }
       }
-      if (guiltyCount > innocentCount) {
-        this.kill(this.players[defendant]);
-        this.players[defendant].diedThisNight = false;
-        this.daychat.broadcast(
-          this.players[defendant].user.username + " has died.",
-        );
+    }, 3500);
+    this.setAllTime(20000, 5000);
+    setTimeout(this.verdict.bind(this), 20 * 1000, defendant);
+  }
+  private verdict(defendant: number) {
+    for (let i = 0; i < this.players.length; i++) {
+      this.players[i].user.emit("endVerdict");
+    }
+    this.daychat.muteAll();
+    this.trialsThisDay++;
+    let innocentCount = 0;
+    let guiltyCount = 0;
+    for (let i = 0; i < this.players.length; i++) {
+      if (this.players[i].finalVote == FinalVote.guilty) {
+        this.daychat.broadcast([
+          { text: this.players[i].user.username + " voted " },
+          { text: "guilty", color: Colors.brightRed },
+        ]);
+        guiltyCount++;
+      } else if (this.players[i].finalVote == FinalVote.innocent) {
+        this.daychat.broadcast([
+          { text: this.players[i].user.username + " voted " },
+          { text: "innocent", color: Colors.brightGreen },
+        ]);
+        innocentCount++;
+      } else if (this.players[i].alive && i != defendant) {
+        this.daychat.broadcast([
+          { text: this.players[i].user.username + " chose to " },
+          { text: "abstain", color: Colors.brightYellow },
+        ]);
+      }
+    }
+    if (guiltyCount > innocentCount) {
+      this.kill(this.players[defendant]);
+      this.players[defendant].diedThisNight = false;
+      this.daychat.broadcast(
+        this.players[defendant].user.username + " has died.",
+      );
+      for (let i = 0; i < this.players.length; i++) {
+        this.players[i].user.hang([this.players[defendant].user.username]);
+      }
+      this.setAllTime(10000, 0);
+      setTimeout(this.endDay.bind(this), 10 * 1000);
+    } else {
+      this.daychat.broadcast(
+        this.players[defendant].user.username + " has been acquitted",
+      );
+      if (this.trialClock.time < 60000) {
+        //reset trial values and call trial vote
+        this.trial = Trial.ended;
         for (let i = 0; i < this.players.length; i++) {
-          this.players[i].user.hang([this.players[defendant].user.username]);
+          this.players[i].resetAfterTrial();
         }
+        this.trialVote();
+      } else {
+        this.daychat.broadcast("Time's up! Night will now begin.");
         this.setAllTime(10000, 0);
         setTimeout(this.endDay.bind(this), 10 * 1000);
-      } else {
-        this.daychat.broadcast(
-          this.players[defendant].user.username + " has been acquitted",
-        );
-        if (this.trialClock.time < 60000) {
-          //reset trial values and call trial vote
-          this.trial = Trial.ended;
-          for (let i = 0; i < this.players.length; i++) {
-            this.players[i].resetAfterTrial();
-          }
-          this.trialVote();
-        } else {
-          this.daychat.broadcast("Time's up! Night will now begin.");
-          this.setAllTime(10000, 0);
-          setTimeout(this.endDay.bind(this), 10 * 1000);
-        }
       }
     }
   }
-  public endDay() {
+  private endDay() {
     this.trialClock.restart();
     this.trialClock.stop();
     for (let i = 0; i < this.players.length; i++) {
@@ -924,11 +763,8 @@ export class Classic extends Game {
   public end() {
     //reset initial conditions
     this.phase = Phase.day;
-    this.ended = false;
     this.trial = Trial.ended;
-    this.stopWatch = new Stopwatch();
     this.dayClock = new Stopwatch();
-    this.nightClock = new Stopwatch();
     this.afterEnd();
   }
   public receive(user: User, msg: string) {
@@ -1014,14 +850,14 @@ export class Classic extends Game {
             Utils.isCommand(msg, "/guilty") &&
             this.trial == Trial.verdict
           ) {
-            player.finalVote = finalVote.guilty;
+            player.finalVote = FinalVote.guilty;
             player.user.send("You have voted guilty.");
           } else if (
             (Utils.isCommand(msg, "/innocent") ||
               Utils.isCommand(msg, "/inno")) &&
             this.trial == Trial.verdict
           ) {
-            player.finalVote = finalVote.innocent;
+            player.finalVote = FinalVote.innocent;
             player.user.send("You have voted innocent.");
           }
         } else {
@@ -1057,7 +893,7 @@ export class Classic extends Game {
     this.daychat.addPlayer(player);
     super.addPlayer(player);
   }
-  public getPlayer(id: string) {
+  private getPlayer(id: string) {
     for (let i = 0; i < this.players.length; i++) {
       if (this.players[i].user.id == id) {
         return this.players[i];

@@ -11,11 +11,12 @@
   limitations under the License.
 */
 "use strict";
-
-import { Classic, ClassicPlayer } from "./Classic";
+import { Classic } from "./Classic";
+import { ClassicPlayer } from "./ClassicPlayer";
 import { RoleList } from "../../Core/core";
 import { Class } from "babel-types";
 import { Player } from "../../Core/player";
+import { Color } from "../../Core/utils";
 
 export enum Alignment {
   town = "town",
@@ -32,7 +33,7 @@ enum Passives {
 type WinCondition = (player: ClassicPlayer, game: Classic) => boolean;
 type GameEndCondition = (game: Classic) => boolean;
 
-type Ability = {
+export type Ability = {
   condition: (
     targetPlayer: ClassicPlayer,
     game: Classic,
@@ -51,6 +52,7 @@ export type Role = {
   winCondition: WinCondition;
   abilities: Array<{ ability: Ability; uses?: number }>;
   passives: Array<Passives>;
+  color?: Color;
 };
 
 export namespace GameEndConditions {
@@ -63,7 +65,7 @@ export namespace GameEndConditions {
     }
     return true;
   };
-  //mafia wins if they have more or equal to the number of town
+  //mafia wins if there are no town left alive, or there is just 1 town and 1 mafia (which would otherwise cause stalemate)
   export const mafiaWin: GameEndCondition = (game: Classic) => {
     let townCount = 0;
     let mafiaCount = 0;
@@ -75,7 +77,10 @@ export namespace GameEndConditions {
         mafiaCount += 1;
       }
     }
-    return mafiaCount >= townCount;
+    return (
+      townCount == 0 ||
+      (townCount == 1 && mafiaCount == 1 && game.players.length == 2)
+    );
   };
 }
 export namespace WinConditions {
@@ -195,6 +200,22 @@ export namespace Roles {
     roleName: "survivor",
     alignment: Alignment.neutral,
     winCondition: WinConditions.survive,
+    color: Color.brightYellow,
+    abilities: [],
+    passives: [],
+  };
+  export const medium: Role = {
+    roleName: "medium",
+    alignment: Alignment.town,
+    winCondition: WinConditions.town,
+    abilities: [],
+    passives: [],
+  };
+  export const jester: Role = {
+    roleName: "jester",
+    alignment: Alignment.neutral,
+    winCondition: WinConditions.survive,
+    color: Color.magenta,
     abilities: [],
     passives: [],
   };
