@@ -69,6 +69,7 @@ export namespace GameEndConditions {
   export const mafiaWin: GameEndCondition = (game: Classic) => {
     let townCount = 0;
     let mafiaCount = 0;
+    let alive = 0;
     for (let player of game.players) {
       if (player.alignment == Alignment.town && player.alive) {
         townCount += 1;
@@ -76,11 +77,11 @@ export namespace GameEndConditions {
       if (player.alignment == Alignment.mafia && player.alive) {
         mafiaCount += 1;
       }
+      if (player.alive) {
+        alive += 1;
+      }
     }
-    return (
-      townCount == 0 ||
-      (townCount == 1 && mafiaCount == 1 && game.players.length == 2)
-    );
+    return townCount == 0 || (townCount == 1 && mafiaCount == 1 && alive == 2);
   };
 }
 export namespace WinConditions {

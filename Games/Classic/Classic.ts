@@ -245,13 +245,15 @@ export class Classic extends Game {
       }
       //list all winners in the chat
       let winners = "";
+      let count = 0;
       for (let i = 0; i < this.players.length; i++) {
         if (this.players[i].winCondition(this.players[i], this)) {
-          if (i == 0) {
+          if (count == 0) {
             winners += this.players[i].user.username;
           } else {
             winners += ", " + this.players[i].user.username;
           }
+          count++;
         }
       }
       this.broadcast("Winners: " + winners, Colors.brightGreen);
@@ -284,18 +286,6 @@ export class Classic extends Game {
         break;
     }
     this.broadcastRoleList(roleList);
-    for (let i = 0; i < this.users.length; i++) {
-      for (let j = 0; j < roleList.length; j++) {
-        if (
-          roleList[j] == Roles.mafioso.roleName ||
-          roleList[j] == Roles.godfather.roleName
-        ) {
-          this.users[i].leftSend(roleList[j], Colors.brightRed);
-        } else {
-          this.users[i].leftSend(roleList[j], Colors.brightGreen);
-        }
-      }
-    }
     randomDeck = Utils.shuffle(roleList);
     this.daychat.muteAll();
     //hand out roles
@@ -330,6 +320,31 @@ export class Classic extends Game {
       }
       //tell the player what their role is
       this.sendRole(this.players[i], this.players[i].alignment, randomDeck[i]);
+    }
+    const orderedPlayerList = this.players.sort((element: ClassicPlayer) => {
+      return priorities.indexOf(element.role);
+    });
+    for (let i = 0; i < this.players.length; i++) {
+      for (let j = 0; j < orderedPlayerList.length; j++) {
+        if (orderedPlayerList[j].role.alignment == Alignment.town) {
+          this.players[i].user.leftSend(
+            orderedPlayerList[j].role.roleName,
+            Colors.brightGreen,
+          );
+        } else if (orderedPlayerList[j].role.alignment == Alignment.mafia) {
+          this.players[i].user.leftSend(
+            orderedPlayerList[j].role.roleName,
+            Colors.brightRed,
+          );
+        } else {
+          if (orderedPlayerList[j].role.color) {
+            this.players[i].user.leftSend(
+              orderedPlayerList[j].role.roleName,
+              orderedPlayerList[j].role.color,
+            );
+          }
+        }
+      }
     }
     this.setAllTime(5000, 0);
     setTimeout(this.night.bind(this), 5000);
@@ -402,7 +417,9 @@ export class Classic extends Game {
     }
     this.markAsDead(player.user.username);
     player.kill();
-    this.deadChat.addPlayer(player.user);
+    if (this.deadChat.getMemberById(player.user.id) == undefined) {
+      this.deadChat.addPlayer(player.user);
+    }
     this.daysWithoutDeath = 0;
   }
   private nightResolution() {
