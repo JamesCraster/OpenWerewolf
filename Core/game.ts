@@ -413,12 +413,11 @@ export abstract class Game {
         } else {
           this.customAdminReceive(user, msg);
         }
+      }  
+      if (Utils.isCommand(msg, "!yell")) {
+        this.broadcast("ADMIN:" + msg.slice(5), Color.brightGreen);
       } else {
-        if (Utils.isCommand(msg, "!yell")) {
-          this.broadcast("ADMIN:" + msg.slice(5), Color.brightGreen);
-        } else {
           this.customAdminReceive(user, msg);
-        }
       }
     }
   }

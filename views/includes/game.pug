@@ -39,6 +39,25 @@ div(id="canvasContainer" style="width:100%;height:100%;overflow-y:hidden;")
             input(id="msg" autocomplete="off" placeholder="Type Here" maxlength="150" autofocus)
             input(id="submit" type="submit" value="Submit" style="margin-bottom:70px;")
 
+    div(id="roleSelection" style="display:none; padding-bottom:5px;margin-top: 100px;padding-left:5px;left:35%;background-color: #212121;color:#cecece; font-family: 'IBM Sans Plex', sans-serif; font-size:20px;width:30%;position:absolute; border:2px solid black;")
+        div(class='header')
+                        |You are the host. Role selection:
+        br
+        div(class="ui form")
+            //This button submits the form and continues the game
+            h4 Default
+            p Pressing the default button will start with the default rolelist: 
+            button(class="ui blue button") Default
+            br
+            //These options allow you to pick a custom rolelist
+            h4 Custom 
+            p  Select as many roles as you have players, then hit submit to start:
+            div(id='allRolesForGameType')
+            br
+            button(class="ui blue button") Submit
+
+
+    
     div(id="leftBox" class="sideBox" style="width:10%;position:absolute; right:0px; top:40px;")
         div(id="innerLeftBox" class="innerSideBox" style="overflow-y:hidden;width:90%; margin-right:auto; margin-left:0px;")
             ul(id="roleNames")

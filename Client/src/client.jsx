@@ -518,7 +518,13 @@ $(function() {
   $(".lobbyItem").click(function() {
     lobbyItemClick(this);
   });
-
+  user.socket.on("getAllRolesForSelection", function(rolesArray){
+    console.log(rolesArray)
+    for(let roles of rolesArray){
+      
+      $('#allRolesForGameType').append('<button class="ui ' + roles.color + ' button">' + roles.name + '</button>')
+    }
+  });
   user.socket.on("updateGame", function(
     name,
     playerNames,
