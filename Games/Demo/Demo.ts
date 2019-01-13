@@ -51,8 +51,8 @@ export class Demo extends Game {
   public update() {}
   public addPlayer(player: User) {
     //add player to message room
-    this.playerchat.addPlayer(player);
-    super.addPlayer(player);
+    this.playerchat.addUser(player);
+    super.addUser(player);
   }
   public receive(player: User, msg: string) {
     //direct player's message to message room
