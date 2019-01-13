@@ -289,39 +289,6 @@ function appendMessage(msg, target, backgroundColor) {
     $(newMessageLi).append($(messageSpan));
   }
   $(target).append(newMessageLi);
-  /*
-  if (textColor && backgroundColor) {
-    $(target).append(
-      $(
-        "<li class='gameli' style='color:" +
-          textColor +
-          ";background-color:" +
-          backgroundColor +
-          "'>",
-      ),
-    );
-  } else if (textColor) {
-    $(target).append($("<li class='gameli' style='color:" + textColor + "'>"));
-  } else if (backgroundColor) {
-    $(target).append(
-      $("<li class='gameli' style='background-color:" + backgroundColor + "'>"),
-    );
-  } else {
-    $(target).append($("<li class='gameli'>"));
-  }
-  if (usernameColor) {
-    let username = msg.split(":")[0];
-    let messageBody = ":" + msg.split(":")[1];
-    $(target + " li:last").append(
-      $("<span style='color:" + usernameColor + "'>"),
-    );
-    $(target + " li:last span").text(username);
-    $(target + " li:last").append($("<span>"));
-    $(target + " li:last span:last").text(messageBody);
-  } else {
-    $(target + " li:last").text(msg);
-  }
-  */
   //only scroll down if the client was scrolled down before the message arrived
   if (scrollDown && target == "#chatbox") {
     $("#inner")[0].scrollTop =
