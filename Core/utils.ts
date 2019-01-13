@@ -98,15 +98,15 @@ export class Utils {
   }
 }
 
-export class RoleList {
-  private _list: Array<string> = [];
-  constructor(list: Array<string>) {
+export class RoleList<T> {
+  private _list: Array<T> = [];
+  constructor(list: Array<T>) {
     this._list = list;
   }
-  get list(): Array<string> {
+  get list(): Array<T> {
     return this._list;
   }
-  set list(list: Array<string>) {
+  set list(list: Array<T>) {
     this._list = list;
   }
   public toString(): string {
@@ -142,7 +142,7 @@ export enum Color {
   pink = "#ff3f9f",
   seaGreen = "#20b2aa",
   white = "#ffffff",
-  standardWhite = "cecece",
+  standardWhite = "#cecece",
   brown = "#a5542a",
   darkGreen = "#2aa54c",
   nightBlue = "#1919cc",
@@ -155,7 +155,7 @@ export interface NameColorPair {
   color: string;
 }
 
-export const PlayerColorArray: Array<Color> = [
+export const UserColorArray: Array<Color> = [
   Color.magenta,
   Color.lightBlue,
   Color.brightYellow,

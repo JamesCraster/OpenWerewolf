@@ -14,29 +14,27 @@
 "use strict";
 
 import { Socket } from "../node_modules/@types/socket.io";
-import { Player, Message } from "./player";
+import { User, Message } from "./user";
 import { Game } from "./game";
 import { Utils, Color } from "./utils";
 import { thisExpression } from "../node_modules/@types/babel-types";
 const grawlix = require("grawlix");
 
 export class Server {
-  private _players: Array<Player> = [];
+  private _users: Array<User> = [];
   private _games: Array<Game> = [];
-  private _registeredPlayerCount: number = 0;
   private _debugMode: boolean = false;
   private _lobbyChatCache: Array<Message> = [];
   public constructor() {
-    this._registeredPlayerCount = 0;
     this._games = [];
-    //join waiting players to games that need them
+    //join waiting users to games that need them
     setInterval(this.joinGame.bind(this), 50);
   }
   public reloadClient(id: string) {
     console.log("reloadClient");
-    let player = this.getPlayer(id);
-    if (player instanceof Player) {
-      player.reloadClient();
+    let user = this.getUser(id);
+    if (user instanceof User) {
+      user.reloadClient();
       console.log("called reload");
     }
   }
@@ -47,9 +45,9 @@ export class Server {
     this._debugMode = true;
   }
   public gameClick(id: string, gameId: string) {
-    let player = this.getPlayer(id);
-    if (player) {
-      player.gameClickedLast = gameId;
+    let user = this.getUser(id);
+    if (user) {
+      user.gameClickedLast = gameId;
     }
   }
   public get gameTypes() {
@@ -85,46 +83,46 @@ export class Server {
     }
     return undefined;
   }
-  public get playerNameColorPairs() {
-    let playerNameColorPairs = [];
+  public get usernameColorPairs() {
+    let usernameColorPairs = [];
     for (let i = 0; i < this._games.length; i++) {
-      playerNameColorPairs.push(this._games[i].playerNameColorPairs);
+      usernameColorPairs.push(this._games[i].usernameColorPairs);
     }
-    return playerNameColorPairs;
+    return usernameColorPairs;
   }
   public addGame(game: Game) {
     this._games.push(game);
-    for (let i = 0; i < this._players.length; i++) {
-      this._players[i].addNewGameToLobby(game.name, game.gameType, game.uid);
+    for (let i = 0; i < this._users.length; i++) {
+      this._users[i].addNewGameToLobby(game.name, game.gameType, game.uid);
     }
   }
   public removeGame(game: Game) {
     let index = this._games.indexOf(game);
     if (index != -1) {
-      for (let i = 0; i < this._players.length; i++) {
-        this._players[i].removeGameFromLobby(this._games[index].uid);
+      for (let i = 0; i < this._users.length; i++) {
+        this._users[i].removeGameFromLobby(this._games[index].uid);
       }
       this._games.splice(index, 1);
     }
   }
   public leaveGame(id: string) {
-    let player = this.getPlayer(id);
-    if (player instanceof Player) {
-      if (player.registered && player.inGame) {
-        if (player.game != undefined) {
-          if (player.game.inPlay == false || player.game.inEndChat) {
-            player.game.kick(player);
-            player.resetAfterGame();
-          } else if (player.game.inPlay) {
+    let user = this.getUser(id);
+    if (user instanceof User) {
+      if (user.registered && user.inGame) {
+        if (user.game != undefined) {
+          if (user.game.inPlay == false || user.game.inEndChat) {
+            user.game.kick(user);
+            user.resetAfterGame();
+          } else if (user.game.inPlay) {
             //if game is in play, disconnect the player from the client
             //without destroying its data (its role etc.)
-            player.disconnect();
-            player.game.disconnect(player);
-            let index = this._players.indexOf(player);
+            user.disconnect();
+            user.game.disconnect(user);
+            let index = this._users.indexOf(user);
             if (index != -1) {
-              this._players.splice(index, 1)[0];
+              this._users.splice(index, 1)[0];
             }
-            player.reloadClient();
+            user.reloadClient();
           }
         }
       }
@@ -132,22 +130,22 @@ export class Server {
   }
   //join waiting players to games
   private joinGame() {
-    this._players.forEach(player => {
-      if (player.registered && !player.inGame && player.gameClickedLast != "") {
-        let j = this.getIndexOfGameById(player.gameClickedLast);
+    this._users.forEach(user => {
+      if (user.registered && !user.inGame && user.gameClickedLast != "") {
+        let j = this.getIndexOfGameById(user.gameClickedLast);
         if (j != undefined) {
           //if game needs a player
           if (this._games[j].playersNeeded > 0) {
-            player.inGame = true;
-            player.game = this._games[j];
-            player.send(
+            user.inGame = true;
+            user.game = this._games[j];
+            user.send(
               "Hi, " +
-                player.username +
+                user.username +
                 "! You have joined '" +
-                player.game.name +
+                user.game.name +
                 "'.",
             );
-            this._games[j].broadcast(player.username + " has joined the game");
+            this._games[j].broadcast(user.username + " has joined the game");
             if (this._games[j].minimumPlayersNeeded - 1 > 0) {
               this._games[j].broadcast(
                 "The game will begin when at least " +
@@ -160,16 +158,16 @@ export class Server {
                 'The game will start in 30 seconds. Type "/start" to start the game now',
               );
             }
-            this._games[j].addPlayer(player);
+            this._games[j].addUser(user);
             if (this._games[j].minimumPlayersNeeded > 0) {
-              player.send(
+              user.send(
                 "The game will begin when at least " +
                   this._games[j].minimumPlayersNeeded.toString() +
                   " more players have joined",
               );
               //if just hit the minimum number of players
             } else if (this._games[j].minimumPlayersNeeded == 0) {
-              player.send(
+              user.send(
                 'The game will start in 30 seconds. Type "/start" to start the game now',
               );
               this._games[j].setAllTime(this._games[j].startWait, 10000);
@@ -184,80 +182,81 @@ export class Server {
     username = username.replace(/\s/g, "");
     return username;
   }
-  private validateUsername(player: Player, username: string) {
+  private validateUsername(user: User, username: string) {
     let letters = /^[A-Za-z]+$/;
-    for (let i = 0; i < this._players.length; i++) {
-      if (this._players[i].username == username) {
-        player.registrationError(
+    for (let i = 0; i < this._users.length; i++) {
+      if (this._users[i].username == username) {
+        user.registrationError(
           "This username has already been taken by someone",
         );
         return false;
       }
     }
     if (username.length == 0) {
-      player.registrationError("Cannot be 0 letters long");
+      user.registrationError("Cannot be 0 letters long");
       return false;
     }
     if (username.length > 10) {
-      player.registrationError("Must be no more than 10 letters long");
+      user.registrationError("Must be no more than 10 letters long");
       return false;
     }
     if (!letters.test(username)) {
-      player.registrationError(
+      user.registrationError(
         "Must only contain letters (no numbers or punctuation)",
       );
       return false;
     }
     if (grawlix.isObscene(username)) {
-      player.registrationError("Usernames can't contain profanity");
+      user.registrationError("Usernames can't contain profanity");
       return false;
     }
     return true;
   }
-  public addPlayer(
+  public addUser(
     socket: Socket,
     session: string,
     id: string,
   ): string | undefined {
     let output = undefined;
-    let newPlayer = new Player(id, session);
+    let newUser = new User(id, session);
     if (!this._debugMode) {
       let alreadyPlaying: boolean = false;
-      for (let i = 0; i < this._players.length; i++) {
-        if (
-          this._players[i].registered &&
-          this._players[i].session == session
-        ) {
-          let thisPlayer = this._players[i];
+      for (let i = 0; i < this._users.length; i++) {
+        if (this._users[i].registered && this._users[i].session == session) {
+          let thisUser = this._users[i];
           alreadyPlaying = true;
-          if (this._players[i].socketCount < 3) {
+          if (this._users[i].socketCount < 3) {
             console.log("added Socket");
-            this._players[i].addSocket(socket);
-            output = this._players[i].id;
+            this._users[i].addSocket(socket);
+            output = this._users[i].id;
             //update lobby list for the client
-            for (let i = 0; i < this._players.length; i++) {
-              if (this._players[i].registered) {
-                socket.emit("addPlayerToLobbyList", this._players[i].username);
+            for (let i = 0; i < this._users.length; i++) {
+              if (this._users[i].registered) {
+                socket.emit("addPlayerToLobbyList", this._users[i].username);
               }
             }
             //send the client into the correct game or to the lobby
-            let game = this._players[i].game;
-            if (!this._players[i].inGame) {
+            let game = this._users[i].game;
+            if (!this._users[i].inGame) {
               socket.emit("transitionToLobby");
             } else if (game != undefined) {
               socket.emit("transitionToGame", game.name, game.uid, game.inPlay);
               //send stored messages to the central and left boxes
-              for (let j = 0; j < this._players[i].cache.length; j++) {
-                socket.emit("message", this._players[i].cache[j].msg, this._players[i].cache[j].color);
+              for (let j = 0; j < this._users[i].cache.length; j++) {
+                socket.emit(
+                  "message",
+                  this._users[i].cache[j].msg,
+                  this._users[i].cache[j].color,
+                );
               }
-              for (let j = 0; j < this._players[i].leftCache.length; j++) {
-                socket.emit("leftMessage", this._players[i].leftCache[j]);
+              for (let j = 0; j < this._users[i].leftCache.length; j++) {
+                socket.emit("leftMessage", this._users[i].leftCache[j]);
               }
-              for (let j = 0; j < this._players[i].deadCache.length; j++) {
-                socket.emit("markAsDead", this._players[i].deadCache[j]);
+              for (let j = 0; j < this._users[i].deadCache.length; j++) {
+                socket.emit("markAsDead", this._users[i].deadCache[j]);
                 socket.emit(
                   "lineThroughPlayer",
-                  this._players[i].deadCache[j],
+                  this._users[i].deadCache[j],
                   Color.brightRed,
                 );
               }
@@ -265,15 +264,15 @@ export class Server {
             //send the client the correct time
             socket.emit(
               "setTime",
-              this._players[i].getTime(),
-              this._players[i].getWarn(),
+              this._users[i].getTime(),
+              this._users[i].getWarn(),
             );
             //let the client know if they can vote at this time, or not.
-            if (thisPlayer.ifCanVote) {
-              thisPlayer.canVote();
-              thisPlayer.selectPlayer(thisPlayer.selectedPlayerName);
+            if (thisUser.ifCanVote) {
+              thisUser.canVote();
+              thisUser.selectUser(thisUser.selectedUsername);
             } else {
-              thisPlayer.cannotVote();
+              thisUser.cannotVote();
             }
           } else {
             socket.emit(
@@ -284,12 +283,12 @@ export class Server {
         }
       }
       if (!alreadyPlaying) {
-        newPlayer.addSocket(socket);
-        this._players.push(newPlayer);
+        newUser.addSocket(socket);
+        this._users.push(newUser);
       }
     } else {
-      newPlayer.addSocket(socket);
-      this._players.push(newPlayer);
+      newUser.addSocket(socket);
+      this._users.push(newUser);
     }
     //update lobby chat for the client
     for (let i = 0; i < this._lobbyChatCache.length; i++) {
@@ -297,43 +296,40 @@ export class Server {
     }
     //update the games for the player as they have been absent for about 2 seconds, if they were reloading.
     for (let j = 0; j < this._games.length; j++) {
-      this._players[this._players.length - 1].updateGameListing(
+      this._users[this._users.length - 1].updateGameListing(
         "Game " + (j + 1).toString(),
-        this._games[j].playerNameColorPairs,
+        this._games[j].usernameColorPairs,
         this._games[j].uid,
         this._games[j].inPlay,
       );
     }
-    console.log("Player length on add: " + this._players.length);
+    console.log("Player length on add: " + this._users.length);
     return output;
   }
-  private register(player: Player, msg: string) {
+  private register(user: User, msg: string) {
     if (!this._debugMode) {
-      if (player.cannotRegister) {
-        player.registrationError(
+      if (user.cannotRegister) {
+        user.registrationError(
           "You're already playing in a different tab, so you can't join again.",
         );
         return;
       }
-      for (let i = 0; i < this._players.length; i++) {
-        if (
-          this._players[i].inGame &&
-          this._players[i].session == player.session
-        ) {
-          player.send(
+      for (let i = 0; i < this._users.length; i++) {
+        if (this._users[i].inGame && this._users[i].session == user.session) {
+          user.send(
             "You're already playing a game in a different tab, so you cannot join this one.",
             undefined,
             Color.red,
           );
-          player.banFromRegistering();
+          user.banFromRegistering();
           return;
         }
       }
     }
-    let game = this.getGameById(player.gameClickedLast);
+    let game = this.getGameById(user.gameClickedLast);
     if (game != undefined) {
       if (game.playersNeeded == 0) {
-        player.send(
+        user.send(
           "This game is has already started, please join a different one.",
         );
         return;
@@ -342,32 +338,31 @@ export class Server {
 
     msg = Server.cleanUpUsername(msg);
 
-    if (this.validateUsername(player, msg)) {
-      for (let i = 0; i < this._players.length; i++) {
-        if (this._players[i].registered) {
-          player.addPlayerToLobbyList(this._players[i].username);
+    if (this.validateUsername(user, msg)) {
+      for (let i = 0; i < this._users.length; i++) {
+        if (this._users[i].registered) {
+          user.addPlayerToLobbyList(this._users[i].username);
         }
       }
-      player.setUsername(msg);
-      player.register();
-      this._registeredPlayerCount++;
-      for (let i = 0; i < this._players.length; i++) {
-        this._players[i].addPlayerToLobbyList(player.username);
+      user.setUsername(msg);
+      user.register();
+      for (let i = 0; i < this._users.length; i++) {
+        this._users[i].addPlayerToLobbyList(user.username);
       }
     }
   }
   public receiveLobbyMessage(id: string, msg: string) {
-    let player = this.getPlayer(id);
-    if (player instanceof Player && player.registered) {
-      for (let i = 0; i < this._players.length; i++) {
-        this._players[i].lobbyMessage(
-          player.username + " : " + msg,
+    let user = this.getUser(id);
+    if (user instanceof User && user.registered) {
+      for (let i = 0; i < this._users.length; i++) {
+        this._users[i].lobbyMessage(
+          user.username + " : " + msg,
           Color.standardWhite,
         );
       }
       this._lobbyChatCache.push([
         {
-          text: player.username + " : " + msg,
+          text: user.username + " : " + msg,
           color: Color.standardWhite,
         },
       ]);
@@ -377,43 +372,43 @@ export class Server {
     }
   }
   public receive(id: string, msg: string) {
-    let player = this.getPlayer(id);
-    if (player != undefined) {
-      if (!player.registered) {
-        this.register(player, msg);
+    let user = this.getUser(id);
+    if (user != undefined) {
+      if (!user.registered) {
+        this.register(user, msg);
       } else {
-        if (player.inGame) {
+        if (user.inGame) {
           //if trying to sign in as admin
           if (msg.slice(0, 1) == "!") {
-            if (player.verifyAsAdmin(msg)) {
-              player.send(
+            if (user.verifyAsAdmin(msg)) {
+              user.send(
                 "You have been granted administrator access",
                 undefined,
                 Color.green,
               );
             }
-            if (player.admin) {
-              if (player.game != undefined && player.game.isPlayer(id)) {
-                player.game.adminReceive(player, msg);
+            if (user.admin) {
+              if (user.game != undefined && user.game.isPlayer(id)) {
+                user.game.adminReceive(user, msg);
               }
             }
           } else if (
             msg[0] == "/" &&
-            player.game != undefined &&
-            !player.game.inPlay &&
-            player.startVote == false
+            user.game != undefined &&
+            !user.game.inPlay &&
+            user.startVote == false
           ) {
             if (Utils.isCommand(msg, "/start")) {
-              player.startVote = true;
-              player.game.broadcast(
-                player.username +
+              user.startVote = true;
+              user.game.broadcast(
+                user.username +
                   ' has voted to start the game immediately by typing "/start"',
               );
             }
-          } else if (player.game != undefined && this.validateMessage(msg)) {
+          } else if (user.game != undefined && this.validateMessage(msg)) {
             msg = grawlix(msg, { style: "asterix" });
-            if (player.game.isPlayer(id)) {
-              player.game.receive(player, msg);
+            if (user.game.isPlayer(id)) {
+              user.game.receive(user, msg);
               console.log("received by game");
             }
           }
@@ -423,18 +418,18 @@ export class Server {
       console.log("Player: " + id.toString() + " is not defined");
     }
   }
-  public isPlayer(id: string): boolean {
-    for (let i = 0; i < this._players.length; i++) {
-      if (this._players[i].id == id) {
+  public isUser(id: string): boolean {
+    for (let i = 0; i < this._users.length; i++) {
+      if (this._users[i].id == id) {
         return true;
       }
     }
     return false;
   }
-  public getPlayer(id: string): Player | undefined {
-    for (let i = 0; i < this._players.length; i++) {
-      if (this._players[i].id == id) {
-        return this._players[i];
+  public getUser(id: string): User | undefined {
+    for (let i = 0; i < this._users.length; i++) {
+      if (this._users[i].id == id) {
+        return this._users[i];
       }
     }
     console.log("Error: Server.getPlayer: No player found with given id");
@@ -448,68 +443,68 @@ export class Server {
     }
   }
   public markGameStatusInLobby(game: Game, status: string) {
-    for (let i = 0; i < this._players.length; i++) {
-      this._players[i].markGameStatusInLobby(game, status);
+    for (let i = 0; i < this._users.length; i++) {
+      this._users[i].markGameStatusInLobby(game, status);
     }
   }
   public listPlayerInLobby(username: string, color: Color, game: Game) {
-    for (let i = 0; i < this._players.length; i++) {
-      this._players[i].addListingToGame(username, color, game);
+    for (let i = 0; i < this._users.length; i++) {
+      this._users[i].addListingToGame(username, color, game);
       //if the player is viewing the game, add joiner to their right bar
-      if (this._players[i].game != undefined && this._players[i].game == game) {
-        this._players[i].rightSend([{ text: username, color: color }]);
+      if (this._users[i].game != undefined && this._users[i].game == game) {
+        this._users[i].rightSend([{ text: username, color: color }]);
       } else if (
-        !this._players[i].inGame &&
-        this._players[i].gameClickedLast == game.uid
+        !this._users[i].inGame &&
+        this._users[i].gameClickedLast == game.uid
       ) {
-        this._players[i].rightSend([{ text: username, color: color }]);
+        this._users[i].rightSend([{ text: username, color: color }]);
       }
     }
   }
   public unlistPlayerInLobby(username: string, game: Game) {
-    for (let i = 0; i < this._players.length; i++) {
-      this._players[i].removePlayerListingFromGame(username, game);
+    for (let i = 0; i < this._users.length; i++) {
+      this._users[i].removePlayerListingFromGame(username, game);
       //if the player is viewing the game, remove leaver from their right bar
-      if (this._players[i].game == game) {
-        this._players[i].removeRight(username);
+      if (this._users[i].game == game) {
+        this._users[i].removeRight(username);
       } else if (
-        !this._players[i].inGame &&
-        this._players[i].gameClickedLast == game.uid
+        !this._users[i].inGame &&
+        this._users[i].gameClickedLast == game.uid
       ) {
-        this._players[i].removeRight(username);
+        this._users[i].removeRight(username);
       }
     }
   }
   public removeSocketFromPlayer(id: string, socket: Socket) {
-    for (let i = 0; i < this._players.length; i++) {
-      if (this._players[i].id == id) {
-        this._players[i].removeSocket(socket);
+    for (let i = 0; i < this._users.length; i++) {
+      if (this._users[i].id == id) {
+        this._users[i].removeSocket(socket);
       }
     }
   }
   public kick(id: string): void {
-    let player = this.getPlayer(id);
-    if (player instanceof Player) {
+    let user = this.getUser(id);
+    if (user instanceof User) {
       //if player has no sockets (i.e no one is connected to this player)
-      if (player.socketCount == 0) {
-        let index = this._players.indexOf(player);
+      if (user.socketCount == 0) {
+        let index = this._users.indexOf(user);
         if (index !== -1) {
           //if the player isn't in a game in play, remove them
-          if (!player.inGame || !player.registered) {
-            this._players.splice(index, 1)[0];
-            for (let i = 0; i < this._players.length; i++) {
-              this._players[i].removePlayerFromLobbyList(player.username);
+          if (!user.inGame || !user.registered) {
+            this._users.splice(index, 1)[0];
+            for (let i = 0; i < this._users.length; i++) {
+              this._users[i].removePlayerFromLobbyList(user.username);
             }
           } else if (
-            player.inGame &&
-            player.game != undefined &&
-            !player.game.inPlay
+            user.inGame &&
+            user.game != undefined &&
+            !user.game.inPlay
           ) {
-            for (let i = 0; i < this._players.length; i++) {
-              this._players[i].removePlayerFromLobbyList(player.username);
+            for (let i = 0; i < this._users.length; i++) {
+              this._users[i].removePlayerFromLobbyList(user.username);
             }
-            player.game.kick(player);
-            this._players.splice(index, 1)[0];
+            user.game.kick(user);
+            this._users.splice(index, 1)[0];
           }
         }
       }

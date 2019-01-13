@@ -289,7 +289,6 @@ function appendMessage(msg, target, backgroundColor) {
     $(newMessageLi).append($(messageSpan));
   }
   $(target).append(newMessageLi);
-
   //only scroll down if the client was scrolled down before the message arrived
   if (scrollDown && target == "#chatbox") {
     $("#inner")[0].scrollTop =

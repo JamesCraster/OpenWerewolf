@@ -115,7 +115,7 @@ const playerTexture = new PIXI.Texture.fromImage('assets/swordplayerbreathing/sp
 const playerTexture2 = new PIXI.Texture.fromImage('assets/swordplayerbreathing/sprite_1.png');
 const playerTextureSelected = new PIXI.Texture.fromImage('assets/swordplayerbreathing/sprite_0_selected.png');
 const playerTextureSelected2 = new PIXI.Texture.fromImage('assets/swordplayerbreathing/sprite_1_selected.png');
-const graveTexture = new PIXI.Texture.fromImage('assets/grave2.png');
+const graveTexture = new PIXI.Texture.fromImage('assets/grave.png');
 let players = [];
 const stoneBlockTexture = new PIXI.Texture.fromImage('assets/stoneblock.png');
 
@@ -335,6 +335,7 @@ class Player {
     destructor() {
         app.stage.removeChild(this.sprite);
         app.stage.removeChild(this.usernameText);
+        app.stage.removeChild(this.graveSprite)
     }
     //could more accurately be called 'die'
     disappear() {
