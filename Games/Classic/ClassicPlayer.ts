@@ -27,6 +27,7 @@ export class ClassicPlayer extends Player {
   private _target: string = "";
   private _healed: boolean = false;
   private _roleBlocked: boolean = false;
+  private _hanged: boolean = false;
   //the number of votes the mafia has given to this player (to be attacked)
   private _mafiaVotes: number = 0;
   //the username of the player that this player is nominating during the trial
@@ -43,14 +44,20 @@ export class ClassicPlayer extends Player {
   public get role() {
     return this._role;
   }
+  public get hanged() {
+    return this._hanged;
+  }
+  public hang() {
+    this._hanged = true;
+  }
   public get alignment(): Alignment {
     return this._role.alignment;
   }
   public get roleName(): string {
     return this._role.roleName;
   }
-  public isRole(roleName: string): boolean {
-    return this._role.roleName == roleName;
+  public isRole(role: Role): boolean {
+    return this._role.roleName == role.roleName;
   }
   public set target(target: string) {
     this._target = target;

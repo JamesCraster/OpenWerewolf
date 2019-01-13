@@ -97,6 +97,25 @@ export namespace WinConditions {
   ) => {
     return player.alive;
   };
+  export const hanged: WinCondition = (
+    player: ClassicPlayer,
+    game: Classic,
+  ) => {
+    return player.hanged;
+  };
+  //make last one standing exclusive, except for survivors
+  export const lastOneStanding: WinCondition = (
+    player: ClassicPlayer,
+    game: Classic,
+  ) => {
+    let aliveCount = 0;
+    for (let player of game.players) {
+      if (player.alive) {
+        aliveCount += 1;
+      }
+    }
+    return player.alive && aliveCount <= 2;
+  };
 }
 namespace Conditions {
   export const alwaysTrue = (targetPlayer: ClassicPlayer, game: Classic) => {
@@ -195,7 +214,7 @@ export namespace Roles {
     alignment: Alignment.town,
     winCondition: WinConditions.town,
     abilities: [{ ability: Abilities.roleBlock }],
-    passives: [],
+    passives: [Passives.roleblockImmune],
   };
   export const survivor: Role = {
     roleName: "survivor",
@@ -215,7 +234,15 @@ export namespace Roles {
   export const jester: Role = {
     roleName: "jester",
     alignment: Alignment.neutral,
-    winCondition: WinConditions.survive,
+    winCondition: WinConditions.hanged,
+    color: Color.magenta,
+    abilities: [],
+    passives: [],
+  };
+  export const serialKiller: Role = {
+    roleName: "serial killer",
+    alignment: Alignment.neutral,
+    winCondition: WinConditions.lastOneStanding,
     color: Color.magenta,
     abilities: [],
     passives: [],
@@ -231,4 +258,5 @@ export const priorities = [
   Roles.sherrif,
   Roles.townie,
   Roles.survivor,
+  Roles.jester,
 ];

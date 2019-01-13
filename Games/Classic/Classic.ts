@@ -52,56 +52,56 @@ export enum FinalVote {
   innocent = "innocent",
 }
 
-const ninePlayer: RoleList = new RoleList([
-  Roles.mafioso.roleName,
-  Roles.mafioso.roleName,
-  Roles.doctor.roleName,
-  Roles.vigilante.roleName,
-  Roles.sherrif.roleName,
-  Roles.townie.roleName,
-  Roles.townie.roleName,
-  Roles.townie.roleName,
-  Roles.townie.roleName,
+const ninePlayer = new RoleList<Role>([
+  Roles.mafioso,
+  Roles.mafioso,
+  Roles.doctor,
+  Roles.vigilante,
+  Roles.sherrif,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
 ]);
-const eightPlayer: RoleList = new RoleList([
-  Roles.mafioso.roleName,
-  Roles.mafioso.roleName,
-  Roles.doctor.roleName,
-  Roles.vigilante.roleName,
-  Roles.sherrif.roleName,
-  Roles.townie.roleName,
-  Roles.townie.roleName,
-  Roles.townie.roleName,
+const eightPlayer = new RoleList<Role>([
+  Roles.mafioso,
+  Roles.mafioso,
+  Roles.doctor,
+  Roles.vigilante,
+  Roles.sherrif,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
 ]);
-const sevenPlayer: RoleList = new RoleList([
-  Roles.mafioso.roleName,
-  Roles.mafioso.roleName,
-  Roles.doctor.roleName,
-  Roles.vigilante.roleName,
-  Roles.sherrif.roleName,
-  Roles.townie.roleName,
-  Roles.townie.roleName,
+const sevenPlayer = new RoleList<Role>([
+  Roles.mafioso,
+  Roles.mafioso,
+  Roles.doctor,
+  Roles.vigilante,
+  Roles.sherrif,
+  Roles.townie,
+  Roles.townie,
 ]);
 
-const sixPlayer: RoleList = new RoleList([
-  Roles.mafioso.roleName,
-  Roles.doctor.roleName,
-  Roles.vigilante.roleName,
-  Roles.sherrif.roleName,
-  Roles.townie.roleName,
+const sixPlayer = new RoleList([
+  Roles.mafioso,
+  Roles.doctor,
+  Roles.vigilante,
+  Roles.sherrif,
+  Roles.townie,
 ]);
-const fivePlayer: RoleList = new RoleList([
-  Roles.mafioso.roleName,
-  Roles.doctor.roleName,
-  Roles.escort.roleName,
-  Roles.sherrif.roleName,
-  Roles.survivor.roleName,
+const fivePlayer = new RoleList([
+  Roles.mafioso,
+  Roles.doctor,
+  Roles.escort,
+  Roles.sherrif,
+  Roles.survivor,
 ]);
-const fourPlayer: RoleList = new RoleList([
-  Roles.mafioso.roleName,
-  Roles.doctor.roleName,
-  Roles.sherrif.roleName,
-  Roles.vigilante.roleName,
+const fourPlayer = new RoleList([
+  Roles.mafioso,
+  Roles.doctor,
+  Roles.sherrif,
+  Roles.vigilante,
 ]);
 let globalMinimumPlayerCount = 5;
 //four player games are for debugging only
@@ -120,7 +120,7 @@ export class Classic extends Game {
   private trialClock: Stopwatch = new Stopwatch();
   private readonly maxTrialsPerDay: number = 3;
   private trialsThisDay: number = 0;
-  //days after which there is a stalemate
+  //days after which there is a stalemate if no deaths
   private readonly maxDaysWithoutDeath: number = 3;
   private daysWithoutDeath: number = 0;
   private deadChat: MessageRoom = new MessageRoom();
@@ -251,12 +251,12 @@ export class Classic extends Game {
           if (count == 0) {
             winners += this.players[i].user.username;
           } else {
-            winners += ", " + this.players[i].user.username;
+            winners += `, ${this.players[i].user.username}`;
           }
           count++;
         }
       }
-      this.broadcast("Winners: " + winners, Colors.brightGreen);
+      this.broadcast(`Winners: ${winners}`, Colors.brightGreen);
       this.end();
     }
     return townWin || mafiaWin;
@@ -264,7 +264,6 @@ export class Classic extends Game {
   public start() {
     this.beforeStart();
     this.broadcastPlayerList();
-    let randomDeck: Array<string> = [];
     let roleList = fivePlayer.list;
     switch (this.users.length) {
       case 4:
@@ -285,64 +284,58 @@ export class Classic extends Game {
         roleList = ninePlayer.list;
         break;
     }
-    this.broadcastRoleList(roleList);
-    randomDeck = Utils.shuffle(roleList);
+    this.broadcastRoleList(roleList.map(elem => elem.roleName));
+    let randomDeck = Utils.shuffle(roleList);
     this.daychat.muteAll();
     //hand out roles
     for (let i = 0; i < randomDeck.length; i++) {
       switch (randomDeck[i]) {
-        case Roles.mafioso.roleName:
+        case Roles.mafioso:
           this.players.push(new ClassicPlayer(this.users[i], Roles.mafioso));
-          this.mafiachat.addPlayer(this.players[i].user);
+          this.mafiachat.addUser(this.players[i].user);
           this.mafiachat.mute(this.players[i].user);
           break;
-        case Roles.doctor.roleName:
+        case Roles.doctor:
           this.players.push(new ClassicPlayer(this.users[i], Roles.doctor));
           break;
-        case Roles.sherrif.roleName:
+        case Roles.sherrif:
           this.players.push(new ClassicPlayer(this.users[i], Roles.sherrif));
           break;
-        case Roles.vigilante.roleName:
+        case Roles.vigilante:
           this.players.push(new ClassicPlayer(this.users[i], Roles.vigilante));
           break;
-        case Roles.escort.roleName:
+        case Roles.escort:
           this.players.push(new ClassicPlayer(this.users[i], Roles.escort));
           break;
-        case Roles.survivor.roleName:
+        case Roles.survivor:
           this.players.push(new ClassicPlayer(this.users[i], Roles.survivor));
           break;
         default:
           console.log(
-            "Critical error: the following role is not assignable:" +
-              randomDeck[i],
+            `Critical error: the following role is not assignable: ${
+              randomDeck[i]
+            }`,
           );
           break;
       }
       //tell the player what their role is
-      this.sendRole(this.players[i], this.players[i].alignment, randomDeck[i]);
+      this.sendRole(
+        this.players[i],
+        this.players[i].alignment,
+        randomDeck[i].roleName,
+      );
     }
-    const orderedPlayerList = this.players.sort((element: ClassicPlayer) => {
-      return priorities.indexOf(element.role);
-    });
-    for (let i = 0; i < this.players.length; i++) {
-      for (let j = 0; j < orderedPlayerList.length; j++) {
-        if (orderedPlayerList[j].role.alignment == Alignment.town) {
-          this.players[i].user.leftSend(
-            orderedPlayerList[j].role.roleName,
-            Colors.brightGreen,
-          );
-        } else if (orderedPlayerList[j].role.alignment == Alignment.mafia) {
-          this.players[i].user.leftSend(
-            orderedPlayerList[j].role.roleName,
-            Colors.brightRed,
-          );
+    //print the list of roles in the left panel
+    for (let player of this.players) {
+      for (let role of roleList.sort(
+        (a, b) => priorities.indexOf(a) - priorities.indexOf(b),
+      )) {
+        if (role.alignment == Alignment.mafia) {
+          player.user.leftSend(role.roleName, Colors.brightRed);
+        } else if (role.alignment == Alignment.town) {
+          player.user.leftSend(role.roleName, Colors.brightGreen);
         } else {
-          if (orderedPlayerList[j].role.color) {
-            this.players[i].user.leftSend(
-              orderedPlayerList[j].role.roleName,
-              orderedPlayerList[j].role.color,
-            );
-          }
+          player.user.leftSend(role.roleName, role.color);
         }
       }
     }
@@ -352,21 +345,21 @@ export class Classic extends Game {
   private sendRole(player: ClassicPlayer, alignment: Alignment, role: string) {
     switch (alignment) {
       case Alignment.town:
-        player.user.send("You are a " + role, undefined, Colors.green);
+        player.user.send(`You are a ${role}`, undefined, Colors.green);
         player.user.headerSend([
           { text: "You are a ", color: Colors.white },
           { text: role, color: Colors.brightGreen },
         ]);
         break;
       case Alignment.mafia:
-        player.user.send("You are a " + role, undefined, Colors.red);
+        player.user.send(`You are a ${role}`, undefined, Colors.red);
         player.user.headerSend([
           { text: "You are a ", color: Colors.white },
           { text: role, color: Colors.brightRed },
         ]);
         break;
       case Alignment.neutral:
-        player.user.send("You are a " + role, undefined, Colors.yellow);
+        player.user.send(`You are a ${role}`, undefined, Colors.yellow);
         player.user.headerSend([
           { text: "You are a ", color: Colors.white },
           { text: role, color: Colors.brightYellow },
@@ -394,7 +387,7 @@ export class Classic extends Game {
     );
     let mafiaList: Array<string> = [];
     for (let i = 0; i < this.players.length; i++) {
-      if (this.players[i].isRole(Roles.mafioso.roleName)) {
+      if (this.players[i].isRole(Roles.mafioso)) {
         mafiaList.push(this.players[i].user.username);
       }
     }
@@ -418,7 +411,7 @@ export class Classic extends Game {
     this.markAsDead(player.user.username);
     player.kill();
     if (this.deadChat.getMemberById(player.user.id) == undefined) {
-      this.deadChat.addPlayer(player.user);
+      this.deadChat.addUser(player.user);
     }
     this.daysWithoutDeath = 0;
   }
@@ -472,7 +465,7 @@ export class Classic extends Game {
     let maxVotes = 0;
     let finalTargetPlayer: undefined | ClassicPlayer = undefined;
     for (let i = 0; i < this.players.length; i++) {
-      if (this.players[i].isRole(Roles.mafioso.roleName)) {
+      if (this.players[i].isRole(Roles.mafioso)) {
         let targetPlayer = this.getPlayer(this.players[i].target);
         if (targetPlayer) {
           targetPlayer.incrementMafiaVote();
@@ -730,6 +723,7 @@ export class Classic extends Game {
     }
     if (guiltyCount > innocentCount) {
       this.kill(this.players[defendant]);
+      this.players[defendant].hang();
       this.players[defendant].diedThisNight = false;
       this.daychat.broadcast(
         this.players[defendant].user.username + " has died.",
@@ -882,7 +876,7 @@ export class Classic extends Game {
             { text: player.user.username, color: player.user.color },
             { text: ": " + msg },
           ]);
-          if (player.isRole(Roles.mafioso.roleName)) {
+          if (player.isRole(Roles.mafioso)) {
             this.mafiachat.receive(user, [
               { text: player.user.username, color: player.user.color },
               { text: ": " + msg },
@@ -906,14 +900,14 @@ export class Classic extends Game {
       ]);
     }
   }
-  public addPlayer(player: User) {
-    this.daychat.addPlayer(player);
-    super.addPlayer(player);
+  public addUser(user: User) {
+    this.daychat.addUser(user);
+    super.addUser(user);
   }
   private getPlayer(id: string) {
-    for (let i = 0; i < this.players.length; i++) {
-      if (this.players[i].user.id == id) {
-        return this.players[i];
+    for (let player of this.players) {
+      if (player.user.id == id) {
+        return player;
       }
     }
   }

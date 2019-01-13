@@ -158,7 +158,7 @@ export class Server {
                 'The game will start in 30 seconds. Type "/start" to start the game now',
               );
             }
-            this._games[j].addPlayer(user);
+            this._games[j].addUser(user);
             if (this._games[j].minimumPlayersNeeded > 0) {
               user.send(
                 "The game will begin when at least " +

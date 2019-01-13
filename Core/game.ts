@@ -210,8 +210,8 @@ export abstract class Game {
       }
     }
   }
-  public addPlayer(user: User) {
-    this.endChat.addPlayer(user);
+  public addUser(user: User) {
+    this.endChat.addUser(user);
     this.endChat.muteAll();
     for (let i = 0; i < this._users.length; i++) {
       this._users[i].sound("NEWPLAYER");
@@ -260,8 +260,8 @@ export abstract class Game {
   public kick(user: User) {
     //this function fails
     for (let i = 0; i < this._messageRooms.length; i++) {
-      this._messageRooms[i].removePlayer(user);
-      this.endChat.removePlayer(user);
+      this._messageRooms[i].removeUser(user);
+      this.endChat.removeUser(user);
     }
     for (let i = 0; i < this._users.length; i++) {
       this._users[i].sound("LOSTPLAYER");
@@ -304,7 +304,7 @@ export abstract class Game {
     for (let i = 0; i < this._messageRooms.length; i++) {
       for (let j = 0; j < this._users.length; j++) {
         console.log("active " + this._users[j].username);
-        this._messageRooms[i].removePlayer(this._users[j]);
+        this._messageRooms[i].removeUser(this._users[j]);
       }
     }
     this._inEndChat = true;
@@ -322,7 +322,7 @@ export abstract class Game {
       this._inPlay = false;
       for (let i = 0; i < this._users.length; i++) {
         this._users[i].resetAfterGame();
-        this.endChat.removePlayer(this._users[i]);
+        this.endChat.removeUser(this._users[i]);
       }
       this._users = [];
       this._registeredPlayerCount = 0;
@@ -520,10 +520,10 @@ export class MessageRoom {
       }
     }
   }
-  public addPlayer(user: User) {
+  public addUser(user: User) {
     this._members.push(new MessageRoomMember(user));
   }
-  public removePlayer(user: User) {
+  public removeUser(user: User) {
     let member = this.getMemberById(user.id);
     if (member instanceof MessageRoomMember) {
       let indexOf = this._members.indexOf(member);
