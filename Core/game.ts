@@ -17,7 +17,7 @@ import { Socket } from "../node_modules/@types/socket.io";
 import { Server } from "./server";
 import { User, Message } from "./user";
 import {
-  Color,
+  Colors,
   NameColorPair,
   Stopwatch,
   UserColorArray,
@@ -218,7 +218,7 @@ export abstract class Game {
     }
     user.color = this.colorPool[0];
     user.headerSend([
-      { text: "Welcome, ", color: Color.white },
+      { text: "Welcome, ", color: Colors.white },
       { text: user.username, color: user.color },
     ]);
     this.colorPool.splice(0, 1);
@@ -246,8 +246,8 @@ export abstract class Game {
   }
   public broadcast(
     msg: string | Message,
-    textColor?: Color,
-    backgroundColor?: Color,
+    textColor?: Colors,
+    backgroundColor?: Colors,
   ) {
     for (let i = 0; i < this._users.length; i++) {
       this._users[i].send(msg, textColor, backgroundColor);
@@ -277,7 +277,7 @@ export abstract class Game {
     user.title = "OpenWerewolf";
     this.broadcast(user.username + " has disconnected");
   }
-  protected headerBroadcast(array: Array<{ text: string; color: Color }>) {
+  protected headerBroadcast(array: Array<{ text: string; color: Colors }>) {
     for (let i = 0; i < this._users.length; i++) {
       this._users[i].headerSend(array);
     }
@@ -289,14 +289,14 @@ export abstract class Game {
     }
     this._inPlay = true;
     this._server.markGameStatusInLobby(this, "IN PLAY");
-    this.broadcast("*** NEW GAME ***", Color.brightGreen);
+    this.broadcast("*** NEW GAME ***", Colors.brightGreen);
     this.broadcast(this.title + " by " + this.author);
     this.broadcast("License: " + this.license);
     this.broadcast(
       "You can create your own games! Take a look at the github repository.",
     );
     this.headerBroadcast([
-      { text: "*** NEW GAME ***", color: Color.brightGreen },
+      { text: "*** NEW GAME ***", color: Colors.brightGreen },
     ]);
   }
   protected afterEnd() {
@@ -370,54 +370,54 @@ export abstract class Game {
       if (!this.inPlay) {
         if (Utils.isCommand(msg, "!stop")) {
           this.startClock.stop();
-          user.send("Countdown stopped", undefined, Color.green);
+          user.send("Countdown stopped", undefined, Colors.green);
         } else if (Utils.isCommand(msg, "!start")) {
           if (this._registeredPlayerCount >= this._minPlayerCount) {
             this.start();
           } else {
-            user.send("Not enough players to start game", Color.brightRed);
+            user.send("Not enough players to start game", Colors.brightRed);
           }
         } else if (Utils.isCommand(msg, "!resume")) {
           this.startClock.start();
-          user.send("Countdown resumed", undefined, Color.green);
+          user.send("Countdown resumed", undefined, Colors.green);
         } else if (Utils.isCommand(msg, "!restart")) {
           this.startClock.restart();
-          user.send("Countdown restarted", undefined, Color.green);
+          user.send("Countdown restarted", undefined, Colors.green);
         } else if (Utils.isCommand(msg, "!time")) {
           user.send(this.startClock.time.toString());
         } else if (Utils.isCommand(msg, "!hold")) {
           user.send(
             "The vote to start has been halted.",
             undefined,
-            Color.green,
+            Colors.green,
           );
           this.holdVote = true;
         } else if (Utils.isCommand(msg, "!release")) {
           user.send(
             "The vote to start has been resumed",
             undefined,
-            Color.green,
+            Colors.green,
           );
           this.holdVote = false;
         } else if (Utils.isCommand(msg, "!help")) {
           user.send(
             "!stop, !start, !resume, !restart, !time, !hold, !release, !yell, !help",
             undefined,
-            Color.green,
+            Colors.green,
           );
           user.send(
             "Use !gamehelp for game-specific commands.",
             undefined,
-            Color.green,
+            Colors.green,
           );
         } else {
           this.customAdminReceive(user, msg);
         }
-      }  
+      }
       if (Utils.isCommand(msg, "!yell")) {
-        this.broadcast("ADMIN:" + msg.slice(5), Color.brightGreen);
+        this.broadcast("ADMIN:" + msg.slice(5), Colors.brightGreen);
       } else {
-          this.customAdminReceive(user, msg);
+        this.customAdminReceive(user, msg);
       }
     }
   }
@@ -471,8 +471,8 @@ class MessageRoomMember {
   }
   public send(
     message: string | Message,
-    textColor?: Color,
-    backgroundColor?: Color,
+    textColor?: Colors,
+    backgroundColor?: Colors,
   ): void {
     this._member.send(message, textColor, backgroundColor);
   }
@@ -493,8 +493,8 @@ export class MessageRoom {
   public receive(
     sender: User,
     msg: string | Message,
-    textColor?: Color,
-    backgroundColor?: Color,
+    textColor?: Colors,
+    backgroundColor?: Colors,
   ) {
     //if id passed in, find the sender within the message room
     let messageRoomSender = this.getMemberById(sender.id);
@@ -510,8 +510,8 @@ export class MessageRoom {
   }
   public broadcast(
     msg: string | Message,
-    textColor?: Color,
-    backgroundColor?: Color,
+    textColor?: Colors,
+    backgroundColor?: Colors,
   ) {
     for (let i = 0; i < this._members.length; i++) {
       if (!this._members[i].deafened) {

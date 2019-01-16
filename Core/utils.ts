@@ -49,12 +49,12 @@ export class Stopwatch {
   }
 }
 
-export class Utils {
+export namespace Utils {
   /**
    * Shuffles an array
    * @returns {Array<T>} An array of the same elements in random order
    */
-  public static shuffle<T>(deck: Array<T>): Array<T> {
+  export function shuffle<T>(deck: Array<T>): Array<T> {
     let randomDeck = [];
     let hat = deck.slice();
     while (hat.length !== 0) {
@@ -67,13 +67,13 @@ export class Utils {
   /**
    * Returns true if the first word of message is the command, false otherwise
    */
-  public static isCommand(msg: string, command: string): boolean {
+  export function isCommand(msg: string, command: string): boolean {
     return msg.slice(0, command.length) === command;
   }
   /**
    * Returns list of arguments in command in order
    */
-  public static commandArguments(msg: string): Array<string> {
+  export function commandArguments(msg: string): Array<string> {
     let args = msg.split(" ");
     //remove first word (which is the command itself)
     args.splice(0, 1);
@@ -82,7 +82,7 @@ export class Utils {
   /**
    * Returns a random set of elements of size r from listIn, without repetition.
    */
-  public static chooseCombination<T>(listIn: Array<T>, r: number): Array<T> {
+  export function chooseCombination<T>(listIn: Array<T>, r: number): Array<T> {
     let list = listIn.slice();
     let combination: Array<T> = [];
     if (list.length < r) {
@@ -96,28 +96,16 @@ export class Utils {
       return combination;
     }
   }
-}
 
-export class RoleList<T> {
-  private _list: Array<T> = [];
-  constructor(list: Array<T>) {
-    this._list = list;
-  }
-  get list(): Array<T> {
-    return this._list;
-  }
-  set list(list: Array<T>) {
-    this._list = list;
-  }
-  public toString(): string {
-    let out = "";
-    for (let i = 0; i < this._list.length; i++) {
-      out += this._list[i];
-      if (i != this._list.length - 1) {
-        out += ", ";
+  export function arrayToCommaSeparated(array: Array<string>): string {
+    let string = "";
+    for (let i = 0; i < array.length; i++) {
+      if (i != 0) {
+        string += ", ";
       }
+      string += array[i];
     }
-    return out;
+    return string;
   }
 }
 
@@ -125,7 +113,7 @@ export class RoleList<T> {
  * All the colors used in games. No color should be used if it is not in this enum,
  * for consistency.
  */
-export enum Color {
+export enum Colors {
   none = "",
   red = "#950d0d",
   brightRed = "#ff1b1b",
@@ -155,14 +143,14 @@ export interface NameColorPair {
   color: string;
 }
 
-export const UserColorArray: Array<Color> = [
-  Color.magenta,
-  Color.lightBlue,
-  Color.brightYellow,
-  Color.orange,
-  Color.darkGreen,
-  Color.usernameGreen,
-  Color.darkBlue,
-  Color.pink,
-  Color.brown,
+export const UserColorArray: Array<Colors> = [
+  Colors.magenta,
+  Colors.lightBlue,
+  Colors.brightYellow,
+  Colors.orange,
+  Colors.darkGreen,
+  Colors.usernameGreen,
+  Colors.darkBlue,
+  Colors.pink,
+  Colors.brown,
 ];

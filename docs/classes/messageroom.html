@@ -85,7 +85,7 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="messageroom.html#addplayer" class="tsd-kind-icon">add<wbr>Player</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="messageroom.html#adduser" class="tsd-kind-icon">add<wbr>User</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="messageroom.html#broadcast" class="tsd-kind-icon">broadcast</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="messageroom.html#deafen" class="tsd-kind-icon">deafen</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="messageroom.html#deafenall" class="tsd-kind-icon">deafen<wbr>All</a></li>
@@ -93,7 +93,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="messageroom.html#mute" class="tsd-kind-icon">mute</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="messageroom.html#muteall" class="tsd-kind-icon">mute<wbr>All</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="messageroom.html#receive" class="tsd-kind-icon">receive</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="messageroom.html#removeplayer" class="tsd-kind-icon">remove<wbr>Player</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="messageroom.html#removeuser" class="tsd-kind-icon">remove<wbr>User</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="messageroom.html#undeafen" class="tsd-kind-icon">undeafen</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="messageroom.html#undeafenall" class="tsd-kind-icon">undeafen<wbr>All</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="messageroom.html#unmute" class="tsd-kind-icon">unmute</a></li>
@@ -111,7 +111,7 @@
 					<div class="tsd-signature tsd-kind-icon">_members<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="messageroommember.html" class="tsd-signature-type">MessageRoomMember</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/7f76048/Core/game.ts#L484">game.ts:484</a></li>
+							<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bf5783e/Core/game.ts#L481">game.ts:481</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -119,22 +119,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="addplayer" class="tsd-anchor"></a>
-					<h3>add<wbr>Player</h3>
+					<a name="adduser" class="tsd-anchor"></a>
+					<h3>add<wbr>User</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Player<span class="tsd-signature-symbol">(</span>player<span class="tsd-signature-symbol">: </span><a href="player.html" class="tsd-signature-type">Player</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>User<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><a href="user.html" class="tsd-signature-type">User</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/7f76048/Core/game.ts#L525">game.ts:525</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bf5783e/Core/game.ts#L522">game.ts:522</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>player: <a href="player.html" class="tsd-signature-type">Player</a></h5>
+									<h5>user: <a href="user.html" class="tsd-signature-type">User</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -145,13 +145,13 @@
 					<a name="broadcast" class="tsd-anchor"></a>
 					<h3>broadcast</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">broadcast<span class="tsd-signature-symbol">(</span>msg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../index.html#message" class="tsd-signature-type">Message</a>, textColor<span class="tsd-signature-symbol">?: </span><a href="../enums/color.html" class="tsd-signature-type">Color</a>, backgroundColor<span class="tsd-signature-symbol">?: </span><a href="../enums/color.html" class="tsd-signature-type">Color</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">broadcast<span class="tsd-signature-symbol">(</span>msg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../index.html#message" class="tsd-signature-type">Message</a>, textColor<span class="tsd-signature-symbol">?: </span><a href="../enums/colors.html" class="tsd-signature-type">Colors</a>, backgroundColor<span class="tsd-signature-symbol">?: </span><a href="../enums/colors.html" class="tsd-signature-type">Colors</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/7f76048/Core/game.ts#L514">game.ts:514</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bf5783e/Core/game.ts#L511">game.ts:511</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -160,10 +160,10 @@
 									<h5>msg: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../index.html#message" class="tsd-signature-type">Message</a></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> textColor: <a href="../enums/color.html" class="tsd-signature-type">Color</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> textColor: <a href="../enums/colors.html" class="tsd-signature-type">Colors</a></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> backgroundColor: <a href="../enums/color.html" class="tsd-signature-type">Color</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> backgroundColor: <a href="../enums/colors.html" class="tsd-signature-type">Colors</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -174,19 +174,19 @@
 					<a name="deafen" class="tsd-anchor"></a>
 					<h3>deafen</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">deafen<span class="tsd-signature-symbol">(</span>player<span class="tsd-signature-symbol">: </span><a href="player.html" class="tsd-signature-type">Player</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">deafen<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><a href="user.html" class="tsd-signature-type">User</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/7f76048/Core/game.ts#L543">game.ts:543</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bf5783e/Core/game.ts#L540">game.ts:540</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>player: <a href="player.html" class="tsd-signature-type">Player</a></h5>
+									<h5>user: <a href="user.html" class="tsd-signature-type">User</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -203,7 +203,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/7f76048/Core/game.ts#L566">game.ts:566</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bf5783e/Core/game.ts#L563">game.ts:563</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -220,7 +220,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/7f76048/Core/game.ts#L485">game.ts:485</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bf5783e/Core/game.ts#L482">game.ts:482</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -240,19 +240,19 @@
 					<a name="mute" class="tsd-anchor"></a>
 					<h3>mute</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">mute<span class="tsd-signature-symbol">(</span>player<span class="tsd-signature-symbol">: </span><a href="player.html" class="tsd-signature-type">Player</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">mute<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><a href="user.html" class="tsd-signature-type">User</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/7f76048/Core/game.ts#L537">game.ts:537</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bf5783e/Core/game.ts#L534">game.ts:534</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>player: <a href="player.html" class="tsd-signature-type">Player</a></h5>
+									<h5>user: <a href="user.html" class="tsd-signature-type">User</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -269,7 +269,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/7f76048/Core/game.ts#L561">game.ts:561</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bf5783e/Core/game.ts#L558">game.ts:558</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -280,28 +280,28 @@
 					<a name="receive" class="tsd-anchor"></a>
 					<h3>receive</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">receive<span class="tsd-signature-symbol">(</span>sender<span class="tsd-signature-symbol">: </span><a href="player.html" class="tsd-signature-type">Player</a>, msg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../index.html#message" class="tsd-signature-type">Message</a>, textColor<span class="tsd-signature-symbol">?: </span><a href="../enums/color.html" class="tsd-signature-type">Color</a>, backgroundColor<span class="tsd-signature-symbol">?: </span><a href="../enums/color.html" class="tsd-signature-type">Color</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">receive<span class="tsd-signature-symbol">(</span>sender<span class="tsd-signature-symbol">: </span><a href="user.html" class="tsd-signature-type">User</a>, msg<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../index.html#message" class="tsd-signature-type">Message</a>, textColor<span class="tsd-signature-symbol">?: </span><a href="../enums/colors.html" class="tsd-signature-type">Colors</a>, backgroundColor<span class="tsd-signature-symbol">?: </span><a href="../enums/colors.html" class="tsd-signature-type">Colors</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/7f76048/Core/game.ts#L496">game.ts:496</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bf5783e/Core/game.ts#L493">game.ts:493</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>sender: <a href="player.html" class="tsd-signature-type">Player</a></h5>
+									<h5>sender: <a href="user.html" class="tsd-signature-type">User</a></h5>
 								</li>
 								<li>
 									<h5>msg: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../index.html#message" class="tsd-signature-type">Message</a></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> textColor: <a href="../enums/color.html" class="tsd-signature-type">Color</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> textColor: <a href="../enums/colors.html" class="tsd-signature-type">Colors</a></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> backgroundColor: <a href="../enums/color.html" class="tsd-signature-type">Color</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> backgroundColor: <a href="../enums/colors.html" class="tsd-signature-type">Colors</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -309,22 +309,22 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="removeplayer" class="tsd-anchor"></a>
-					<h3>remove<wbr>Player</h3>
+					<a name="removeuser" class="tsd-anchor"></a>
+					<h3>remove<wbr>User</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">remove<wbr>Player<span class="tsd-signature-symbol">(</span>player<span class="tsd-signature-symbol">: </span><a href="player.html" class="tsd-signature-type">Player</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">remove<wbr>User<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><a href="user.html" class="tsd-signature-type">User</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/7f76048/Core/game.ts#L528">game.ts:528</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bf5783e/Core/game.ts#L525">game.ts:525</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>player: <a href="player.html" class="tsd-signature-type">Player</a></h5>
+									<h5>user: <a href="user.html" class="tsd-signature-type">User</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -335,19 +335,19 @@
 					<a name="undeafen" class="tsd-anchor"></a>
 					<h3>undeafen</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">undeafen<span class="tsd-signature-symbol">(</span>player<span class="tsd-signature-symbol">: </span><a href="player.html" class="tsd-signature-type">Player</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">undeafen<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><a href="user.html" class="tsd-signature-type">User</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/7f76048/Core/game.ts#L555">game.ts:555</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bf5783e/Core/game.ts#L552">game.ts:552</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>player: <a href="player.html" class="tsd-signature-type">Player</a></h5>
+									<h5>user: <a href="user.html" class="tsd-signature-type">User</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -364,7 +364,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/7f76048/Core/game.ts#L576">game.ts:576</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bf5783e/Core/game.ts#L573">game.ts:573</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -375,19 +375,19 @@
 					<a name="unmute" class="tsd-anchor"></a>
 					<h3>unmute</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">unmute<span class="tsd-signature-symbol">(</span>player<span class="tsd-signature-symbol">: </span><a href="player.html" class="tsd-signature-type">Player</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">unmute<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><a href="user.html" class="tsd-signature-type">User</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/7f76048/Core/game.ts#L549">game.ts:549</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bf5783e/Core/game.ts#L546">game.ts:546</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>player: <a href="player.html" class="tsd-signature-type">Player</a></h5>
+									<h5>user: <a href="user.html" class="tsd-signature-type">User</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -404,7 +404,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/7f76048/Core/game.ts#L571">game.ts:571</a></li>
+									<li>Defined in <a href="https://github.com/JamesCraster/OpenWerewolf/blob/bf5783e/Core/game.ts#L568">game.ts:568</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -424,7 +424,7 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-enum">
-						<a href="../enums/color.html" class="tsd-kind-icon">Color</a>
+						<a href="../enums/colors.html" class="tsd-kind-icon">Colors</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="game.html" class="tsd-kind-icon">Game</a>
@@ -438,7 +438,7 @@
 								<a href="messageroom.html#_members" class="tsd-kind-icon">_members</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="messageroom.html#addplayer" class="tsd-kind-icon">add<wbr>Player</a>
+								<a href="messageroom.html#adduser" class="tsd-kind-icon">add<wbr>User</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="messageroom.html#broadcast" class="tsd-kind-icon">broadcast</a>
@@ -462,7 +462,7 @@
 								<a href="messageroom.html#receive" class="tsd-kind-icon">receive</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="messageroom.html#removeplayer" class="tsd-kind-icon">remove<wbr>Player</a>
+								<a href="messageroom.html#removeuser" class="tsd-kind-icon">remove<wbr>User</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="messageroom.html#undeafen" class="tsd-kind-icon">undeafen</a>
@@ -487,16 +487,13 @@
 						<a href="player.html" class="tsd-kind-icon">Player</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="rolelist.html" class="tsd-kind-icon">Role<wbr>List</a>
-					</li>
-					<li class=" tsd-kind-class">
 						<a href="server.html" class="tsd-kind-icon">Server</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="stopwatch.html" class="tsd-kind-icon">Stopwatch</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="utils.html" class="tsd-kind-icon">Utils</a>
+						<a href="user.html" class="tsd-kind-icon">User</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/namecolorpair.html" class="tsd-kind-icon">Name<wbr>Color<wbr>Pair</a>
@@ -504,14 +501,11 @@
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/phrase.html" class="tsd-kind-icon">Phrase</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-is-not-exported">
-						<a href="../interfaces/playerdata.html" class="tsd-kind-icon">Player<wbr>Data</a>
-					</li>
 					<li class=" tsd-kind-type-alias">
 						<a href="../index.html#message" class="tsd-kind-icon">Message</a>
 					</li>
 					<li class=" tsd-kind-variable">
-						<a href="../index.html#playercolorarray" class="tsd-kind-icon">Player<wbr>Color<wbr>Array</a>
+						<a href="../index.html#usercolorarray" class="tsd-kind-icon">User<wbr>Color<wbr>Array</a>
 					</li>
 					<li class=" tsd-kind-variable tsd-is-not-exported">
 						<a href="../index.html#grawlix" class="tsd-kind-icon">grawlix</a>

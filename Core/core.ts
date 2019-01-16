@@ -16,4 +16,4 @@
 export { Server } from "./server";
 export { Game, MessageRoom } from "./game";
 export { User } from "./user";
-export { Utils, Color as Colors, Stopwatch, RoleList } from "./utils";
+export { Utils, Colors, Stopwatch } from "./utils";

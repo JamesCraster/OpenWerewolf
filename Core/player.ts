@@ -1,6 +1,3 @@
-import { User, Message } from "./user";
-import { Color } from "./utils";
-
 /*
   Copyright 2017-2018 James V. Craster
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,31 +11,14 @@ import { Color } from "./utils";
   limitations under the License. 
 */
 
+import { User } from "./user";
+
 export class Player {
   protected _user: User;
   constructor(user: User) {
     this._user = user;
   }
-  /*public canVote() {
-    return this._user.canVote();
-  }
-  public cannotVote() {
-    this._user.cannotVote();
-  }*/
   get user() {
     return this._user;
   }
-  /*public headerSend(message: Message) {
-    this._user.headerSend(message);
-  }
-  public leftSend(message: string, textColor?: Color, backgroundColor?: Color) {
-    this._user.leftSend(message, textColor, backgroundColor);
-  }
-  public send(text: Message | string,
-    textColor?: Color,
-    backgroundColor?: Color,
-    usernameColor?: Color,){
-        this._user.send()
-
-  }*/
 }

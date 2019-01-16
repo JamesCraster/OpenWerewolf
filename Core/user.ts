@@ -14,15 +14,15 @@
 "use strict";
 
 import { Socket } from "socket.io";
-import { NameColorPair, Stopwatch, Color } from "./utils";
+import { NameColorPair, Stopwatch, Colors } from "./utils";
 import { Game } from "./game";
 //set this to what the admin password should be
 const password = "goat";
 
 export interface Phrase {
   text: string;
-  color?: Color;
-  backgroundColor?: Color;
+  color?: Colors;
+  backgroundColor?: Colors;
   italic?: boolean;
 }
 
@@ -41,13 +41,13 @@ export class User {
   private _admin: boolean = false;
   private _startVote: boolean = false;
   //username color
-  private _color: Color = Color.none;
+  private _color: Colors = Colors.none;
   private _gameClickedLast: string = "";
   private _session: string = "";
   //true if already playing in another tab
   private _cannotRegister: boolean = false;
   private _id: string;
-  private _cache: Array<{ msg: Message; color?: Color }> = [];
+  private _cache: Array<{ msg: Message; color?: Colors }> = [];
   private _leftMessageCache: Array<Message> = [];
   private _time: number = 0;
   private _stopwatch: Stopwatch;
@@ -77,7 +77,7 @@ export class User {
     this._game = undefined;
     this._inGame = false;
     this._startVote = false;
-    this._color = Color.none;
+    this._color = Colors.none;
     this.gameClickedLast = "";
     this._cache = [];
     this._leftMessageCache = [];
@@ -112,7 +112,7 @@ export class User {
       | string[]
       | boolean
       | undefined
-      | Array<{ text: string; color: string | Color }>
+      | Array<{ text: string; color: string | Colors }>
       | Message
     >
   ) {
@@ -213,9 +213,9 @@ export class User {
 
   public send(
     text: Message | string,
-    textColor?: Color,
-    backgroundColor?: Color,
-    usernameColor?: Color,
+    textColor?: Colors,
+    backgroundColor?: Colors,
+    usernameColor?: Colors,
   ) {
     if (typeof text == "string") {
       this.emit(
@@ -255,8 +255,8 @@ export class User {
   //These functions manipulate the two boxes either side of the central chatbox
   public rightSend(
     msg: string | Message,
-    textColor?: Color,
-    backgroundColor?: Color,
+    textColor?: Colors,
+    backgroundColor?: Colors,
   ): void {
     if (typeof msg == "string") {
       this.emit("rightMessage", [
@@ -268,8 +268,8 @@ export class User {
   }
   public leftSend(
     message: string,
-    textColor?: Color,
-    backgroundColor?: Color,
+    textColor?: Colors,
+    backgroundColor?: Colors,
   ): void {
     this.emit("leftMessage", [
       { text: message, color: textColor, backgroundColor: backgroundColor },
@@ -315,7 +315,11 @@ export class User {
   public get deadCache(): Array<string> {
     return this._deadCache;
   }
-  public lobbyMessage(msg: string, textColor: Color, backgroundColor?: Color) {
+  public lobbyMessage(
+    msg: string,
+    textColor: Colors,
+    backgroundColor?: Colors,
+  ) {
     this.emit("lobbyMessage", [
       { text: msg, color: textColor, backgroundColor: backgroundColor },
     ]);
@@ -339,7 +343,7 @@ export class User {
   set startVote(startVote: boolean) {
     this._startVote = startVote;
   }
-  set color(color: Color) {
+  set color(color: Colors) {
     this._color = color;
   }
   get color() {

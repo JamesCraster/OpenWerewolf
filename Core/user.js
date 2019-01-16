@@ -29,7 +29,7 @@ class User {
         this._admin = false;
         this._startVote = false;
         //username color
-        this._color = utils_1.Color.none;
+        this._color = utils_1.Colors.none;
         this._gameClickedLast = "";
         this._session = "";
         //true if already playing in another tab
@@ -61,7 +61,7 @@ class User {
         this._game = undefined;
         this._inGame = false;
         this._startVote = false;
-        this._color = utils_1.Color.none;
+        this._color = utils_1.Colors.none;
         this.gameClickedLast = "";
         this._cache = [];
         this._leftMessageCache = [];

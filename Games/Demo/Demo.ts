@@ -18,7 +18,6 @@ import {
   Server,
   User,
   Utils,
-  RoleList,
   Colors,
   Stopwatch,
 } from "../../Core/core";
@@ -39,7 +38,7 @@ export class Demo extends Game {
       "James Craster",
       "Apache-2.0",
     );
-    //add new message room to the game
+    //add the new message room to the game
     super.addMessageRoom(this.playerchat);
   }
   public start() {
@@ -48,7 +47,6 @@ export class Demo extends Game {
   public end() {
     this.afterEnd();
   }
-  public update() {}
   public addPlayer(player: User) {
     //add player to message room
     this.playerchat.addUser(player);

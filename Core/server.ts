@@ -16,8 +16,7 @@
 import { Socket } from "../node_modules/@types/socket.io";
 import { User, Message } from "./user";
 import { Game } from "./game";
-import { Utils, Color } from "./utils";
-import { thisExpression } from "../node_modules/@types/babel-types";
+import { Utils, Colors } from "./utils";
 const grawlix = require("grawlix");
 
 export class Server {
@@ -257,7 +256,7 @@ export class Server {
                 socket.emit(
                   "lineThroughPlayer",
                   this._users[i].deadCache[j],
-                  Color.brightRed,
+                  Colors.brightRed,
                 );
               }
             }
@@ -319,7 +318,7 @@ export class Server {
           user.send(
             "You're already playing a game in a different tab, so you cannot join this one.",
             undefined,
-            Color.red,
+            Colors.red,
           );
           user.banFromRegistering();
           return;
@@ -357,13 +356,13 @@ export class Server {
       for (let i = 0; i < this._users.length; i++) {
         this._users[i].lobbyMessage(
           user.username + " : " + msg,
-          Color.standardWhite,
+          Colors.standardWhite,
         );
       }
       this._lobbyChatCache.push([
         {
           text: user.username + " : " + msg,
-          color: Color.standardWhite,
+          color: Colors.standardWhite,
         },
       ]);
       if (this._lobbyChatCache.length > 50) {
@@ -384,7 +383,7 @@ export class Server {
               user.send(
                 "You have been granted administrator access",
                 undefined,
-                Color.green,
+                Colors.green,
               );
             }
             if (user.admin) {
@@ -447,7 +446,7 @@ export class Server {
       this._users[i].markGameStatusInLobby(game, status);
     }
   }
-  public listPlayerInLobby(username: string, color: Color, game: Game) {
+  public listPlayerInLobby(username: string, color: Colors, game: Game) {
     for (let i = 0; i < this._users.length; i++) {
       this._users[i].addListingToGame(username, color, game);
       //if the player is viewing the game, add joiner to their right bar

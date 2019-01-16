@@ -13,15 +13,14 @@
 "use strict";
 import { Classic } from "./Classic";
 import { ClassicPlayer } from "./ClassicPlayer";
-import { RoleList } from "../../Core/core";
-import { Class } from "babel-types";
 import { Player } from "../../Core/player";
-import { Color } from "../../Core/utils";
+import { Colors } from "../../Core/utils";
 
 export enum Alignment {
   town = "town",
   mafia = "mafia",
   neutral = "neutral",
+  undefined = "undefined",
 }
 
 enum Passives {
@@ -52,7 +51,7 @@ export type Role = {
   winCondition: WinCondition;
   abilities: Array<{ ability: Ability; uses?: number }>;
   passives: Array<Passives>;
-  color?: Color;
+  color?: Colors;
 };
 
 export namespace GameEndConditions {
@@ -115,6 +114,12 @@ export namespace WinConditions {
       }
     }
     return player.alive && aliveCount <= 2;
+  };
+  export const undefined: WinCondition = (
+    player: ClassicPlayer,
+    game: Classic,
+  ) => {
+    return false;
   };
 }
 namespace Conditions {
@@ -220,7 +225,7 @@ export namespace Roles {
     roleName: "survivor",
     alignment: Alignment.neutral,
     winCondition: WinConditions.survive,
-    color: Color.brightYellow,
+    color: Colors.brightYellow,
     abilities: [],
     passives: [],
   };
@@ -235,7 +240,7 @@ export namespace Roles {
     roleName: "jester",
     alignment: Alignment.neutral,
     winCondition: WinConditions.hanged,
-    color: Color.magenta,
+    color: Colors.magenta,
     abilities: [],
     passives: [],
   };
@@ -243,7 +248,21 @@ export namespace Roles {
     roleName: "serial killer",
     alignment: Alignment.neutral,
     winCondition: WinConditions.lastOneStanding,
-    color: Color.magenta,
+    color: Colors.magenta,
+    abilities: [],
+    passives: [],
+  };
+  export const anyTown: Role = {
+    roleName: "Any Town",
+    alignment: Alignment.town,
+    winCondition: WinConditions.undefined,
+    abilities: [],
+    passives: [],
+  };
+  export const any: Role = {
+    roleName: "Any",
+    alignment: Alignment.undefined,
+    winCondition: WinConditions.undefined,
     abilities: [],
     passives: [],
   };
