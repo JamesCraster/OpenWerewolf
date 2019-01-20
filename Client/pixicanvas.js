@@ -10,71 +10,68 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-"use strict"
+"use strict";
 let mainText = undefined;
 let WebFontConfig = {
     custom: {
-        families: ['Mercutio'],
-        urls: ['/main.css']
-    }
+        families: ["Mercutio"],
+        urls: ["/main.css"],
+    },
 };
 WebFont.load({
     custom: {
-        families: ['Mercutio']
+        families: ["Mercutio"],
     },
     active: function () {
         mainText = new StandardMainTextList();
-    }
+    },
 });
-
 class StandardMainText {
     constructor(text, color) {
         if (color == undefined) {
-            color = 0xFFFFFF;
-        } else {
+            color = 0xffffff;
+        }
+        else {
             color = color.substr(1);
             color = "0x" + color;
             color = parseInt(color);
         }
         this.object = new PIXI.Text(text, {
-            fontFamily: 'Mercutio',
+            fontFamily: "Mercutio",
             fontSize: 512,
             fill: color,
-            align: 'center',
-            resolution: 20
+            align: "center",
         });
         this.object.scale.x = 0.125;
         this.object.scale.y = 0.125;
     }
 }
-
 class StandardMainTextList {
     constructor(textArray) {
+        this.fadeOutTimeout = undefined;
+        this.textShownDuration = 2500;
         this.container = new PIXI.Container();
         app.stage.addChild(this.container);
-        this.fadeOutTimeout = undefined;
         this.textShownDuration = 2500;
         this.queue = [];
         if (textArray != undefined) {
-            this.push(textArray)
+            this.push(textArray);
         }
     }
     clear() {
         this.container.removeChildren();
     }
     push(textArray) {
-        console.log('input:');
-        console.log(textArray);
         this.queue.unshift(textArray);
-        console.log('queue:')
-        console.log(this.queue);
         //if this is the only element in the queue, then render it now
         if (this.queue.length == 1) {
             this.render(this.queue[this.queue.length - 1]);
         }
     }
     render(textArray) {
-        clearInterval(this.fadeOutTimeout);
+        if (this.fadeOutTimeout) {
+            clearInterval(this.fadeOutTimeout);
+        }
         this.clear();
         this.container.alpha = 1;
         let point = 0;
@@ -85,8 +82,8 @@ class StandardMainTextList {
         }
         this.reposition();
         //render the next one after a delay
-        this.fadeOutTimeout = setTimeout(function () {
-            let fadingAnimation = setInterval(function () {
+        this.fadeOutTimeout = setTimeout(() => {
+            let fadingAnimation = setInterval(() => {
                 this.container.alpha = this.container.alpha * 0.8;
                 //if transparent enough to be invisible, stop fading out and show next text
                 if (this.container.alpha < 0.01) {
@@ -97,33 +94,32 @@ class StandardMainTextList {
                         this.render(this.queue[this.queue.length - 1]);
                     }
                 }
-            }.bind(this), 10);
-        }.bind(this), this.textShownDuration);
+            }, 10);
+        }, this.textShownDuration);
     }
     //called on window resize in addition to when rerendering happens
     reposition() {
-        this.container.x = Math.floor(app.renderer.width / 2) - this.container.width / 2;
+        this.container.x =
+            Math.floor(app.renderer.width / 2) - this.container.width / 2;
         this.container.y = 25;
     }
 }
 //set scaling to work well with pixel art
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
 let app = new PIXI.Application(800, 600, {
-    backgroundColor: 0x2d2d2d
+    backgroundColor: 0x2d2d2d,
 });
-const playerTexture = new PIXI.Texture.fromImage('assets/swordplayerbreathing/sprite_0.png');
-const playerTexture2 = new PIXI.Texture.fromImage('assets/swordplayerbreathing/sprite_1.png');
-const playerTextureSelected = new PIXI.Texture.fromImage('assets/swordplayerbreathing/sprite_0_selected.png');
-const playerTextureSelected2 = new PIXI.Texture.fromImage('assets/swordplayerbreathing/sprite_1_selected.png');
-const graveTexture = new PIXI.Texture.fromImage('assets/grave.png');
+const playerTexture = PIXI.Texture.fromImage("assets/swordplayerbreathing/sprite_0.png");
+const playerTexture2 = PIXI.Texture.fromImage("assets/swordplayerbreathing/sprite_1.png");
+const playerTextureSelected = PIXI.Texture.fromImage("assets/swordplayerbreathing/sprite_0_selected.png");
+const playerTextureSelected2 = PIXI.Texture.fromImage("assets/swordplayerbreathing/sprite_1_selected.png");
+const graveTexture = PIXI.Texture.fromImage("assets/grave.png");
 let players = [];
-const stoneBlockTexture = new PIXI.Texture.fromImage('assets/stoneblock.png');
-
+const stoneBlockTexture = PIXI.Texture.fromImage("assets/stoneblock.png");
 const stoneBlockContainer = new PIXI.Container();
 app.stage.addChild(stoneBlockContainer);
-
 class StoneBlock {
-    constructor(stoneBlockTexture, x, y) {
+    constructor(x, y) {
         this.sprite = new PIXI.Sprite(stoneBlockTexture);
         this.sprite.pivot.x = 0.5;
         this.sprite.pivot.y = 0.5;
@@ -139,19 +135,18 @@ let level = 11;
 for (let y = 0; y < level; y++) {
     if (y < 6) {
         for (let x = -y; x < y; x++) {
-            let stoneblock = new StoneBlock(stoneBlockTexture, x * 64, y * 64);
+            let stoneblock = new StoneBlock(x * 64, y * 64);
         }
-    } else {
+    }
+    else {
         for (let x = y - 11; x < 11 - y; x++) {
-            let stoneblock = new StoneBlock(stoneBlockTexture, x * 64, y * 64);
+            let stoneblock = new StoneBlock(x * 64, y * 64);
         }
     }
 }
-
 stoneBlockContainer.pivot.y = stoneBlockContainer.height / 2;
-
 app.stage.interactive = true;
-app.stage.on('pointerdown', () => {
+app.stage.on("pointerdown", () => {
     if (user.inGame) {
         for (let i = 0; i < players.length; i++) {
             //assume that the player is unvoting
@@ -161,9 +156,10 @@ app.stage.on('pointerdown', () => {
             if (!players[i].selected && players[i].votedFor) {
                 players[i].votedFor = false;
                 active = true;
-                if (players[i].sprite.texture = playerTextureSelected) {
+                if ((players[i].sprite.texture = playerTextureSelected)) {
                     players[i].sprite.texture = playerTexture;
-                } else {
+                }
+                else {
                     players[i].sprite.texture = playerTexture2;
                 }
             }
@@ -173,41 +169,37 @@ app.stage.on('pointerdown', () => {
                 }
             }
             if (unvoted && active && user.canVote) {
-                user.socket.emit('message', '/unvote');
+                user.socket.emit("message", "/unvote");
             }
         }
     }
-})
-
-user.socket.on('cancelVoteEffect', function () {
+});
+user.socket.on("cancelVoteEffect", function () {
     cancelVote();
 });
-user.socket.on('selectPlayer', function (username) {
+user.socket.on("selectPlayer", function (username) {
     selectPlayer(username.trim());
-})
-user.socket.on('finalVerdict', function () {
-    $('#guiltyButtons').show();
-})
-user.socket.on('endVerdict', function () {
-    $('#guiltyButtons').hide();
-})
-$('#guiltyButton').on('click', function () {
-    user.socket.emit('message', '/guilty')
-})
-$('#innocentButton').on('click', function () {
-    user.socket.emit('message', '/innocent')
-})
-
+});
+user.socket.on("finalVerdict", function () {
+    $("#guiltyButtons").show();
+});
+user.socket.on("endVerdict", function () {
+    $("#guiltyButtons").hide();
+});
+$("#guiltyButton").on("click", function () {
+    user.socket.emit("message", "/guilty");
+});
+$("#innocentButton").on("click", function () {
+    user.socket.emit("message", "/innocent");
+});
 function cancelVote() {
     for (let i = 0; i < players.length; i++) {
         players[i].votedFor = false;
     }
 }
-
 let firstTimeSelectingPlayer = true;
-let firstTimeSelectingInterval;
+let firstTimeSelectingInterval = undefined;
 let firstTimeNumberOfRuns = 0;
-
 function markAsDead(username) {
     for (let i = 0; i < players.length; i++) {
         if (players[i].username == username) {
@@ -215,7 +207,6 @@ function markAsDead(username) {
         }
     }
 }
-
 function selectPlayer(username) {
     //calling selectPlayer straight away the first time causes a bug
     //because not all of the players have been added yet.
@@ -225,17 +216,20 @@ function selectPlayer(username) {
                 if (players[i].username == username) {
                     players[i].votedFor = true;
                     firstTimeSelectingPlayer = false;
-                    clearInterval(firstTimeSelectingInterval);
+                    if (firstTimeSelectingInterval) {
+                        clearInterval(firstTimeSelectingInterval);
+                    }
                     players[i].select();
                 }
             }
             //stop running loop after 10 seconds if no match found
             firstTimeNumberOfRuns++;
-            if (firstTimeNumberOfRuns > 100) {
+            if (firstTimeNumberOfRuns > 100 && firstTimeSelectingInterval) {
                 clearInterval(firstTimeSelectingInterval);
             }
         }, 100);
-    } else {
+    }
+    else {
         cancelVote();
         for (let i = 0; i < players.length; i++) {
             if (players[i].username == username) {
@@ -244,59 +238,63 @@ function selectPlayer(username) {
         }
     }
 }
-
 class Player {
-    constructor(playerTexture, username) {
+    constructor(username) {
+        this.username = username;
         this.sprite = new PIXI.Sprite(playerTexture);
         this.sprite.anchor.set(0.5, 0.5);
         this.sprite.interactive = true;
         this.selected = false;
         this.votedFor = false;
         this.breatheAnimation = undefined;
-        this.sprite.on('pointerover', () => {
+        this.frameCount = 0;
+        this.graveSprite = new PIXI.Sprite(graveTexture);
+        this.sprite.on("pointerover", () => {
             this.selected = true;
             if (this.sprite.texture == playerTexture) {
                 this.sprite.texture = playerTextureSelected;
-            } else {
+            }
+            else {
                 this.sprite.texture = playerTextureSelected2;
             }
-        })
-        this.sprite.on('pointerout', () => {
+        });
+        this.sprite.on("pointerout", () => {
             this.selected = false;
             if (this.sprite.texture == playerTextureSelected && !this.votedFor) {
                 this.sprite.texture = playerTexture;
-            } else if (!this.votedFor) {
+            }
+            else if (!this.votedFor) {
                 this.sprite.texture = playerTexture2;
             }
-        })
-        this.sprite.on('pointerdown', () => {
+        });
+        this.sprite.on("pointerdown", () => {
             if (user.inGame && user.canVote && !this.votedFor) {
-                user.socket.emit('message', '/vote ' + username.trim());
+                user.socket.emit("message", "/vote " + username.trim());
                 for (let i = 0; i < players.length; i++) {
                     players[i].votedFor = false;
                     if (players[i] != this) {
-                        if (players[i].sprite.texture = playerTextureSelected) {
+                        if ((players[i].sprite.texture = playerTextureSelected)) {
                             players[i].sprite.texture = playerTexture;
-                        } else {
+                        }
+                        else {
                             players[i].sprite.texture = playerTexture2;
                         }
                     }
                 }
                 this.votedFor = true;
             }
-        })
+        });
         //this.sprite.scale.y = 2;
-        let usernameColor = 0xFFFFFF;
+        let usernameColor = 0xffffff;
         this.frameCount = 0;
         players.push(this);
         app.stage.addChild(this.sprite);
         this.username = username.trim();
         this.usernameText = new PIXI.Text(username, {
-            fontFamily: 'Mercutio',
+            fontFamily: "Mercutio",
             fontSize: 128,
             fill: usernameColor,
-            align: 'center',
-            resolution: 20
+            align: "center",
         });
         this.usernameText.scale.x = 0.25;
         this.usernameText.scale.y = 0.25;
@@ -310,13 +308,16 @@ class Player {
         if (this.frameCount % 2 == 0) {
             if (this.selected || this.votedFor) {
                 this.sprite.texture = playerTextureSelected;
-            } else {
+            }
+            else {
                 this.sprite.texture = playerTexture;
             }
-        } else {
+        }
+        else {
             if (this.selected || this.votedFor) {
                 this.sprite.texture = playerTextureSelected2;
-            } else {
+            }
+            else {
                 this.sprite.texture = playerTexture2;
             }
         }
@@ -335,13 +336,11 @@ class Player {
     destructor() {
         app.stage.removeChild(this.sprite);
         app.stage.removeChild(this.usernameText);
-        app.stage.removeChild(this.graveSprite)
+        app.stage.removeChild(this.graveSprite);
     }
     //could more accurately be called 'die'
     disappear() {
         this.sprite.visible = false;
-        //this.usernameText.visible = false;
-        this.graveSprite = new PIXI.Sprite(graveTexture);
         this.graveSprite.anchor.set(0.5, 0.5);
         this.graveSprite.scale.x = 2;
         this.graveSprite.scale.y = 2;
@@ -351,20 +350,22 @@ class Player {
     select() {
         if (this.sprite.texture == playerTexture) {
             this.sprite.texture = playerTextureSelected;
-        } else {
+        }
+        else {
             this.sprite.texture = playerTextureSelected2;
         }
     }
 }
-let gallowsTexture = new PIXI.Texture.fromImage('assets/gallows.png');
+let gallowsTexture = PIXI.Texture.fromImage("assets/gallows.png");
 let gallowsHangingAnimation = [];
-gallowsHangingAnimation.push(new PIXI.Texture.fromImage('assets/swordplayerhanging/sprite_hanging0.png'));
-gallowsHangingAnimation.push(new PIXI.Texture.fromImage('assets/swordplayerhanging/sprite_hanging1.png'));
-gallowsHangingAnimation.push(new PIXI.Texture.fromImage('assets/swordplayerhanging/sprite_hanging2.png'));
-gallowsHangingAnimation.push(new PIXI.Texture.fromImage('assets/swordplayerhanging/sprite_hanging3.png'));
-
+gallowsHangingAnimation.push(PIXI.Texture.fromImage("assets/swordplayerhanging/sprite_hanging0.png"));
+gallowsHangingAnimation.push(PIXI.Texture.fromImage("assets/swordplayerhanging/sprite_hanging1.png"));
+gallowsHangingAnimation.push(PIXI.Texture.fromImage("assets/swordplayerhanging/sprite_hanging2.png"));
+gallowsHangingAnimation.push(PIXI.Texture.fromImage("assets/swordplayerhanging/sprite_hanging3.png"));
 class Gallows {
     constructor() {
+        this.counter = 0;
+        this.hangingInterval = undefined;
         this.sprite = new PIXI.Sprite(gallowsTexture);
         this.sprite.anchor.set(0.5, 0.5);
         this.sprite.scale.x = 2;
@@ -377,13 +378,13 @@ class Gallows {
         this.sprite.scale.x = 1;
         this.sprite.scale.y = 1;
         this.counter = 0;
-        this.hangingInterval = setInterval(function () {
+        this.hangingInterval = setInterval(() => {
             this.counter++;
             this.sprite.texture = gallowsHangingAnimation[this.counter];
-            if (this.counter == 3) {
+            if (this.counter == 3 && this.hangingInterval) {
                 clearInterval(this.hangingInterval);
             }
-        }.bind(this), 25);
+        }, 25);
     }
     reset() {
         this.sprite.texture = gallowsTexture;
@@ -391,10 +392,8 @@ class Gallows {
         this.sprite.scale.y = 2;
     }
 }
-
 let gallows = new Gallows();
-
-user.socket.on('hang', function (usernames) {
+user.socket.on("hang", function (usernames) {
     //make invisible all those players who username matches one on the list
     for (let i = 0; i < players.length; i++) {
         for (let j = 0; j < usernames.length; j++) {
@@ -407,11 +406,9 @@ user.socket.on('hang', function (usernames) {
     //hanging animation
     gallows.hang();
 });
-
-user.socket.on('resetGallows', function () {
+user.socket.on("resetGallows", function () {
     gallows.reset();
-})
-
+});
 function removeAllPlayers() {
     for (let i = 0; i < players.length; i++) {
         players[i].destructor();
@@ -419,7 +416,6 @@ function removeAllPlayers() {
     players = [];
     resize();
 }
-
 function removePlayer(username) {
     for (let i = 0; i < players.length; i++) {
         if (players[i].username == username) {
@@ -429,16 +425,14 @@ function removePlayer(username) {
         }
     }
 }
-
 function addPlayer(username) {
-    const newPlayer = new Player(playerTexture, username);
+    const newPlayer = new Player(username);
     if (mainText) {
         app.stage.removeChild(mainText.container);
         app.stage.addChild(mainText.container);
     }
     resize();
 }
-
 function resize() {
     const parent = app.view.parentNode;
     app.renderer.resize(parent.clientWidth, parent.clientHeight);
@@ -452,22 +446,26 @@ function resize() {
         players[i].setPos(gallows.sprite.x + positions[i][0], gallows.sprite.y + positions[i][1] + 20);
         if (positions[i][0] > 1) {
             players[i].sprite.scale.x = -1;
-        } else {
+        }
+        else {
             players[i].sprite.scale.x = 1;
         }
     }
     stoneBlockContainer.position.x = gallows.sprite.position.x + 33;
     stoneBlockContainer.position.y = gallows.sprite.position.y - 33;
 }
-
 function distributeInCircle(number, radius) {
     let positions = [];
-    let angle = 2 * Math.PI / number;
+    let angle = (2 * Math.PI) / number;
     for (let i = 0; i < number; i++) {
-        positions.push([radius * Math.sin(angle * i), radius * Math.cos(angle * i)]);
+        positions.push([
+            radius * Math.sin(angle * i),
+            radius * Math.cos(angle * i),
+        ]);
     }
     return positions;
 }
 $(window).resize(resize);
 app.stage.addChild(gallows.sprite);
-$('#canvasContainer').append(app.view);
+$("#canvasContainer").append(app.view);
+//# sourceMappingURL=pixicanvas.js.map

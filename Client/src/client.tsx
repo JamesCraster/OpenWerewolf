@@ -12,24 +12,32 @@
 */
 "use strict";
 
-class States {
-  static get NOTASSIGNEDGAME() {
-    return "NOT ASSIGNED GAME";
-  }
-  static get INGAMEWAITING() {
-    return "IN GAME WAITING";
-  }
-  static get INGAMEPLAYING() {
-    return "IN GAME PLAYING";
-  }
-  static get GAMEENDED() {
-    return "GAME ENDED";
-  }
+import React from "react";
+import ReactDOM from "react-dom";
+import LobbyItem from "./components";
+import SimpleBar from "simplebar";
+import {
+  gallows,
+  resize,
+  addPlayer,
+  markAsDead,
+  removePlayer,
+  StandardMainText,
+  mainText,
+  removeAllPlayers,
+} from "../pixicanvas";
+
+type Message = Array<{ text: string; color: string; backgroundColor: string }>;
+
+enum States {
+  NOTASSIGNEDGAME = "NOT ASSIGNED GAME",
+  INGAMEWAITING = "IN GAME WAITING",
+  INGAMEPLAYING = "IN GAME PLAYING",
+  GAMEENDED = "GAME ENDED",
 }
 class LeaveGameButton {
-  constructor() {
-    this.action = this.inPlayClick;
-  }
+  public action: () => void = () => {};
+  constructor() {}
   setinPlayClick() {
     $("#leaveGame").off("click");
     this.action = function() {
@@ -53,8 +61,16 @@ class LeaveGameButton {
 let leaveGameButton = new LeaveGameButton();
 
 class User {
+  private _state: States = States.NOTASSIGNEDGAME;
+  public socket = io();
+  public now = 0;
+  public time = 0;
+  public warn = -1;
+  public gameClicked = false;
+  public registered = false;
+  public canVote = false;
+  public username: string = "";
   constructor() {
-    this._state = States.NOTASSIGNEDGAME;
     this.socket = io();
     this.now = 0;
     this.time = 0;
@@ -67,7 +83,7 @@ class User {
   get inGame() {
     return this.state == States.INGAMEPLAYING;
   }
-  isState(state) {
+  isState(state: States) {
     return this.state == state;
   }
   set state(inputState) {
@@ -98,12 +114,13 @@ class User {
     //clear the gallows
     gallows.reset();
   }
-  convertTime(duration) {
-    let seconds = parseInt((duration / 1000) % 60);
-    let minutes = parseInt((duration / (1000 * 60)) % 60);
-    minutes = minutes < 10 ? "0" + minutes : minutes;
-    seconds = seconds < 10 ? "0" + seconds : seconds;
-    return minutes + ":" + seconds;
+  //convert number of seconds into minute:second format
+  convertTime(duration: number) {
+    let seconds = Math.floor((duration / 1000) % 60);
+    let minutes = Math.floor((duration / (1000 * 60)) % 60);
+    let minuteString = minutes < 10 ? `0${minutes}` : `${minutes}`;
+    let secondString = seconds < 10 ? `0${seconds}` : `${seconds}`;
+    return minuteString + ":" + secondString;
   }
   updateTime() {
     if (this.time > 0) {
@@ -127,14 +144,14 @@ class User {
   }
 }
 
-function lobbyItemClick(item) {
+function lobbyItemClick(item: HTMLElement) {
   user.gameClicked = true;
   if (user.isState(States.NOTASSIGNEDGAME)) {
     transitionFromLobbyToGame($(item).attr("name"));
   } else {
     transitionFromLobbyToGame();
   }
-  location.hash = 3;
+  location.hash = "3";
   if ($(item).attr("inPlay") == "false") {
     if (user.isState(States.NOTASSIGNEDGAME)) {
       $("#chatbox").empty();
@@ -154,7 +171,7 @@ function lobbyItemClick(item) {
           ],
           "#playerNames",
         );
-        addPlayer($(usernameList[i]).text(), "#FFFFFF");
+        addPlayer($(usernameList[i]).text());
       }
       user.socket.emit("gameClick", $(item).attr("uid"));
       user.state = States.INGAMEWAITING;
@@ -177,7 +194,7 @@ function lobbyItemClick(item) {
           ],
           "#playerNames",
         );
-        addPlayer($(usernameList[i]).text(), "#FFFFFF");
+        addPlayer($(usernameList[i]).text());
       }
       appendMessage(
         [
@@ -192,7 +209,7 @@ function lobbyItemClick(item) {
   }
 }
 
-let user = new User();
+export let user = new User();
 
 user.socket.on("canVote", () => {
   user.canVote = true;
@@ -201,45 +218,50 @@ user.socket.on("cannotVote", () => {
   user.canVote = false;
 });
 
-let notificationSound = new Audio("162464__kastenfrosch__message.mp3");
+let notificationSound: HTMLAudioElement = new Audio(
+  "162464__kastenfrosch__message.mp3",
+);
 notificationSound.volume = 0.4;
-let newPlayerSound = new Audio("162476__kastenfrosch__gotitem.mp3");
+let newPlayerSound: HTMLAudioElement = new Audio(
+  "162476__kastenfrosch__gotitem.mp3",
+);
 newPlayerSound.volume = 0.2;
-let lostPlayerSound = new Audio("162465__kastenfrosch__lostitem.mp3");
+let lostPlayerSound: HTMLAudioElement = new Audio(
+  "162465__kastenfrosch__lostitem.mp3",
+);
 lostPlayerSound.volume = 0.2;
 
 //BODGE (needs neatening up):
 //Safari only permits audio playback if the user has previously interacted with the UI
 //Even if this code were to run on other browsers, it should have no effect
-//Test for safari:
-if (window.safari !== undefined) {
-  $(document).on("click", function() {
-    //mute and play all the sound effects once
-    notificationSound.muted = true;
-    newPlayerSound.muted = true;
-    lostPlayerSound.muted = true;
+$(document).on("click", function() {
+  //mute and play all the sound effects once
+  notificationSound.muted = true;
+  newPlayerSound.muted = true;
+  lostPlayerSound.muted = true;
 
-    notificationSound.play();
-    newPlayerSound.play();
-    lostPlayerSound.play();
+  notificationSound.play();
+  newPlayerSound.play();
+  lostPlayerSound.play();
 
-    //unmute each sound effect once they have finished playing once
-    notificationSound.onended = function() {
+  //unmute each sound effect once they have finished playing once
+  notificationSound.onended = function() {
+    if (notificationSound) {
       notificationSound.muted = false;
-      notificationSound.onended = undefined;
-    };
-    newPlayerSound.onended = function() {
-      newPlayerSound.muted = false;
-      newPlayerSound.onended = undefined;
-    };
-    lostPlayerSound.onended = function() {
-      lostPlayerSound.muted = false;
-      lostPlayerSound.onended = undefined;
-    };
+      notificationSound.onended = () => {};
+    }
+  };
+  newPlayerSound.onended = function() {
+    newPlayerSound.muted = false;
+    newPlayerSound.onended = () => {};
+  };
+  lostPlayerSound.onended = function() {
+    lostPlayerSound.muted = false;
+    lostPlayerSound.onended = () => {};
+  };
 
-    $(document).off("click");
-  });
-}
+  $(document).off("click");
+});
 
 function isClientScrolledDown() {
   return (
@@ -251,11 +273,11 @@ function isClientScrolledDown() {
   );
 }
 
-function addPlayerToLobbyList(username) {
+function addPlayerToLobbyList(username: string) {
   $("#lobbyList").append("<li>" + username + "</li>");
 }
 
-function removePlayerFromLobbyList(username) {
+function removePlayerFromLobbyList(username: string) {
   $("#lobbyList li")
     .filter(function() {
       return $(this).text() === username;
@@ -263,15 +285,20 @@ function removePlayerFromLobbyList(username) {
     .remove();
 }
 
-function appendMessage(msg, target, backgroundColor) {
+function appendMessage(
+  msg: Array<{
+    text: string;
+    color: string;
+    backgroundColor: string;
+    italic?: boolean;
+  }>,
+  target: string,
+) {
   //test if client scrolled down
   let scrollDown = isClientScrolledDown();
 
   //we add a span within an li
   let newMessageLi = $("<li class='gameli'></li>");
-  if (backgroundColor) {
-    $(newMessageLi).css("background-color", backgroundColor);
-  }
   for (let i = 0; i < msg.length; i++) {
     let messageSpan = $("<span></span>");
     $(messageSpan).text(msg[i].text);
@@ -296,7 +323,7 @@ function appendMessage(msg, target, backgroundColor) {
   }
 }
 
-function removeMessage(msg, target) {
+function removeMessage(msg: string, target: string) {
   $(target + " li")
     .filter(function() {
       return $(this).text() === msg;
@@ -304,7 +331,7 @@ function removeMessage(msg, target) {
     .remove();
 }
 
-function lineThroughPlayer(msg, color) {
+function lineThroughPlayer(msg: string, color: string) {
   console.log($("#playerNames li span"));
   $("#playerNames li span")
     .filter(function() {
@@ -364,14 +391,18 @@ $(function() {
   user.socket.on("transitionToLobby", function() {
     transitionFromLandingToLobby();
   });
-  user.socket.on("transitionToGame", function(name, uid, inPlay) {
+  user.socket.on("transitionToGame", function(
+    name: string,
+    uid: string,
+    inPlay: boolean,
+  ) {
     transitionFromLandingToGame(name, uid, inPlay);
   });
-  user.socket.on("message", function(message, textColor) {
+  user.socket.on("message", function(message: Message, textColor: string) {
     console.log(message);
-    appendMessage(message, "#chatbox", textColor);
+    appendMessage(message, "#chatbox");
   });
-  user.socket.on("headerTextMessage", function(standardArray) {
+  user.socket.on("headerTextMessage", function(standardArray: Message) {
     let out = [];
     for (let i = 0; i < standardArray.length; i++) {
       out.push(
@@ -385,22 +416,22 @@ $(function() {
   user.socket.on("restart", function() {
     user.restart();
   });
-  user.socket.on("registered", function(username) {
+  user.socket.on("registered", function(username: string) {
     transitionFromLandingToLobby();
     user.register();
     user.username = username;
     leaveGameButton.setNotInPlayClick();
   });
   user.socket.on("clear", function() {
-    $("ul").clear();
+    $("ul").empty();
   });
-  user.socket.on("setTitle", function(title) {
+  user.socket.on("setTitle", function(title: string) {
     $(document).attr("title", title);
   });
   user.socket.on("notify", function() {
     notificationSound.play();
   });
-  user.socket.on("removeGameFromLobby", function(uid) {
+  user.socket.on("removeGameFromLobby", function(uid: string) {
     $("#container .lobbyItem[uid=" + uid + "]").remove();
     if ($("#lobbyItemList .lobbyItem").length == 0) {
       ReactDOM.render(
@@ -419,13 +450,17 @@ $(function() {
       );
     }
   });
-  user.socket.on("addNewGameToLobby", function(name, type, uid) {
+  user.socket.on("addNewGameToLobby", function(
+    name: string,
+    type: string,
+    uid: string,
+  ) {
     $("#emptyLobbyItemPrompt").css("display", "none");
     let div = document.createElement("div");
     div.className = "lobbyItemReactContainer";
     $("#container .simplebar-content #lobbyItemList").prepend(div);
     ReactDOM.render(
-      <LobbyItem name={name} type={type} uid={uid} ranked="false" />,
+      <LobbyItem name={name} type={type} uid={uid} ranked={false} />,
       $("#container .simplebar-content .lobbyItemReactContainer:first")[0],
     );
     $(".lobbyItem").off("click");
@@ -441,7 +476,7 @@ $(function() {
     user.state = States.GAMEENDED;
     leaveGameButton.setNotInPlayClick();
   });
-  user.socket.on("sound", function(sound) {
+  user.socket.on("sound", function(sound: string) {
     if (sound == "NEWGAME") {
       notificationSound.play();
     } else if (sound == "NEWPLAYER") {
@@ -450,7 +485,7 @@ $(function() {
       lostPlayerSound.play();
     }
   });
-  user.socket.on("registrationError", function(error) {
+  user.socket.on("registrationError", function(error: string) {
     $(
       '<p style="color:red;font-size:18px;margin-top:15px;">Invalid: ' +
         error +
@@ -461,7 +496,7 @@ $(function() {
       .fadeIn(100);
   });
   $("document").resize(function() {});
-  user.socket.on("lobbyMessage", function(msg) {
+  user.socket.on("lobbyMessage", function(msg: Message) {
     appendMessage(msg, "#lobbyChatList");
     if (
       Math.abs(
@@ -473,30 +508,30 @@ $(function() {
       lobbyChatListContainerSimpleBar.getScrollElement().scrollTop = lobbyChatListContainerSimpleBar.getScrollElement().scrollHeight;
     }
   });
-  user.socket.on("rightMessage", function(msg) {
+  user.socket.on("rightMessage", function(msg: Message) {
     appendMessage(msg, "#playerNames");
-    addPlayer(msg[0].text, "#FFFFFF");
+    addPlayer(msg[0].text);
   });
-  user.socket.on("leftMessage", function(msg) {
+  user.socket.on("leftMessage", function(msg: Message) {
     appendMessage(msg, "#roleNames");
   });
-  user.socket.on("removeRight", function(msg) {
+  user.socket.on("removeRight", function(msg: string) {
     removeMessage(msg, "#playerNames");
     removeMessage(" " + msg, "#playerNames");
     console.log("active: " + msg);
     removePlayer(msg);
     removePlayer(" " + msg);
   });
-  user.socket.on("removeLeft", function(msg) {
+  user.socket.on("removeLeft", function(msg: string) {
     removeMessage(msg, "#roleNames");
   });
-  user.socket.on("lineThroughPlayer", function(msg, color) {
+  user.socket.on("lineThroughPlayer", function(msg: string, color: string) {
     console.log(msg);
     console.log(color);
     lineThroughPlayer(msg, color);
     lineThroughPlayer(" " + msg, color);
   });
-  user.socket.on("markAsDead", function(msg) {
+  user.socket.on("markAsDead", function(msg: string) {
     console.log(msg);
     markAsDead(msg);
     markAsDead(" " + msg);
@@ -505,7 +540,7 @@ $(function() {
     console.log("disconnected - show player warning");
     $("#offlineWarning").css("display", "block");
   });
-  user.socket.on("setTime", function(time, warn) {
+  user.socket.on("setTime", function(time: number, warn: number) {
     if (time > 0) {
       $("#gameClock").text("Time: " + user.convertTime(time));
     }
@@ -518,19 +553,29 @@ $(function() {
   $(".lobbyItem").click(function() {
     lobbyItemClick(this);
   });
-  user.socket.on("getAllRolesForSelection", function(rolesArray){
-    console.log(rolesArray)
-    for(let roles of rolesArray){
-      
-      $('#allRolesForGameType').append('<button class="ui ' + roles.color + ' button">' + roles.name + '</button>')
+  user.socket.on("getAllRolesForSelection", function(
+    rolesArray: Array<{
+      color: string;
+      name: string;
+    }>,
+  ) {
+    console.log(rolesArray);
+    for (let roles of rolesArray) {
+      $("#allRolesForGameType").append(
+        '<button class="ui ' +
+          roles.color +
+          ' button">' +
+          roles.name +
+          "</button>",
+      );
     }
   });
   user.socket.on("updateGame", function(
-    name,
-    playerNames,
-    playerColors,
-    number,
-    inPlay,
+    name: string,
+    playerNames: Array<string>,
+    playerColors: Array<string>,
+    number: number,
+    inPlay: boolean,
   ) {
     if (inPlay) {
       $("#container div[uid=" + number.toString() + "] p:first span:last").html(
@@ -569,14 +614,17 @@ $(function() {
       }
     }
   });
-  user.socket.on("addPlayerToLobbyList", function(username) {
+  user.socket.on("addPlayerToLobbyList", function(username: string) {
     addPlayerToLobbyList(username);
   });
-  user.socket.on("removePlayerFromLobbyList", function(username) {
+  user.socket.on("removePlayerFromLobbyList", function(username: string) {
     removePlayerFromLobbyList(username);
   });
   //removes player from game list
-  user.socket.on("removePlayerFromGameList", function(name, game) {
+  user.socket.on("removePlayerFromGameList", function(
+    name: string,
+    game: string,
+  ) {
     let spanList = $("#container div[uid=" + game + "] p:last span:first span");
     for (let i = 0; i < spanList.length; i++) {
       if (
@@ -595,7 +643,11 @@ $(function() {
       }
     }
   });
-  user.socket.on("addPlayerToGameList", function(name, color, game) {
+  user.socket.on("addPlayerToGameList", function(
+    name: string,
+    color: string,
+    game: string,
+  ) {
     let div = $("#container div[uid=" + game + "] p:last span:first");
     let spanList = $("#container div[uid=" + game + "] p:last .username");
     if (spanList.length == 0) {
@@ -605,7 +657,10 @@ $(function() {
       div.append('<span class="username" style="color:' + color + '"> ' + name);
     }
   });
-  user.socket.on("markGameStatusInLobby", function(game, status) {
+  user.socket.on("markGameStatusInLobby", function(
+    game: string,
+    status: string,
+  ) {
     if (status == "OPEN") {
       $("#container div[uid=" + game + "]").attr("inplay", "false");
     } else if (status == "IN PLAY") {
@@ -619,7 +674,7 @@ $(function() {
   });
   window.onhashchange = function() {
     if (location.hash == "") {
-      this.location.hash = 2;
+      location.hash = "2";
     } else if (location.hash == "#3" && user.gameClicked) {
       transitionFromLobbyToGame();
     } else if (location.hash == "#2") {
@@ -654,7 +709,11 @@ function transitionFromLandingToLobby() {
 }
 //only use when the player has created a new tab
 //and should connect to the game they were previously in
-function transitionFromLandingToGame(gameName, uid, inGame) {
+function transitionFromLandingToGame(
+  gameName: string,
+  uid: string,
+  inGame: boolean,
+) {
   console.log(inGame);
   $("#landingPage").fadeOut("fast", function() {
     $("#playerNames").empty();
@@ -670,7 +729,7 @@ function transitionFromLandingToGame(gameName, uid, inGame) {
         ],
         "#playerNames",
       );
-      addPlayer($(usernameList[i]).text(), "#FFFFFF");
+      addPlayer($(usernameList[i]).text());
     }
     user.gameClicked = true;
     if (inGame) {
@@ -703,7 +762,7 @@ function transitionFromLandingToGame(gameName, uid, inGame) {
   });
 }
 
-function transitionFromLobbyToGame(gameName) {
+function transitionFromLobbyToGame(gameName?: string) {
   $("#landingPage").fadeOut("fast", function() {
     $("#lobbyContainer").fadeOut(200, function() {
       $("#topLevel").fadeIn(200);
