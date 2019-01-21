@@ -1,5 +1,5 @@
 # Ignore javascript builds in the root directory
-/*.js
+/app.js
 /Games/*.js
 /Games/OneDay/*.js
 /Games/Classic/*.js
