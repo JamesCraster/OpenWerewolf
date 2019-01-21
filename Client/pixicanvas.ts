@@ -11,8 +11,9 @@
   limitations under the License.
 */
 "use strict";
-import { user } from "./src/client";
-import WebFont from "webfontloader";
+import { user } from "./internal";
+import * as WebFont from "webfontloader";
+import * as PIXI from "pixi.js";
 
 export let mainText: StandardMainTextList | undefined = undefined;
 let WebFontConfig = {
@@ -35,9 +36,9 @@ export class StandardMainText {
     if (color == undefined) {
       color = 0xffffff;
     } else {
-      color = color.substr(1);
-      color = "0x" + color;
-      color = parseInt(color);
+      //color = color.substr(1);
+      //color = "0x" + color;
+      //color = parseInt(color);
     }
     this.object = new PIXI.Text(text, {
       fontFamily: "Mercutio",
@@ -315,7 +316,7 @@ class Player {
     this.usernameText.y = Math.floor(this.sprite.y - 45);
     this.usernameText.anchor.set(0.5, 0.5);
     app.stage.addChild(this.usernameText);
-    this.breatheAnimation = setInterval(this.breathe.bind(this), 1500);
+    //this.breatheAnimation = setInterval(this.breathe.bind(this), 1500);
   }
   breathe() {
     if (this.frameCount % 2 == 0) {

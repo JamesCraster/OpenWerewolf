@@ -11,7 +11,18 @@
   limitations under the License.
 */
 "use strict";
-let mainText = undefined;
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const internal_1 = require("./internal");
+const WebFont = __importStar(require("webfontloader"));
+const PIXI = __importStar(require("pixi.js"));
+exports.mainText = undefined;
 let WebFontConfig = {
     custom: {
         families: ["Mercutio"],
@@ -23,7 +34,7 @@ WebFont.load({
         families: ["Mercutio"],
     },
     active: function () {
-        mainText = new StandardMainTextList();
+        exports.mainText = new StandardMainTextList();
     },
 });
 class StandardMainText {
@@ -32,9 +43,9 @@ class StandardMainText {
             color = 0xffffff;
         }
         else {
-            color = color.substr(1);
-            color = "0x" + color;
-            color = parseInt(color);
+            //color = color.substr(1);
+            //color = "0x" + color;
+            //color = parseInt(color);
         }
         this.object = new PIXI.Text(text, {
             fontFamily: "Mercutio",
@@ -46,6 +57,7 @@ class StandardMainText {
         this.object.scale.y = 0.125;
     }
 }
+exports.StandardMainText = StandardMainText;
 class StandardMainTextList {
     constructor(textArray) {
         this.fadeOutTimeout = undefined;
@@ -147,7 +159,7 @@ for (let y = 0; y < level; y++) {
 stoneBlockContainer.pivot.y = stoneBlockContainer.height / 2;
 app.stage.interactive = true;
 app.stage.on("pointerdown", () => {
-    if (user.inGame) {
+    if (internal_1.user.inGame) {
         for (let i = 0; i < players.length; i++) {
             //assume that the player is unvoting
             let unvoted = true;
@@ -168,29 +180,29 @@ app.stage.on("pointerdown", () => {
                     unvoted = false;
                 }
             }
-            if (unvoted && active && user.canVote) {
-                user.socket.emit("message", "/unvote");
+            if (unvoted && active && internal_1.user.canVote) {
+                internal_1.user.socket.emit("message", "/unvote");
             }
         }
     }
 });
-user.socket.on("cancelVoteEffect", function () {
+internal_1.user.socket.on("cancelVoteEffect", function () {
     cancelVote();
 });
-user.socket.on("selectPlayer", function (username) {
+internal_1.user.socket.on("selectPlayer", function (username) {
     selectPlayer(username.trim());
 });
-user.socket.on("finalVerdict", function () {
+internal_1.user.socket.on("finalVerdict", function () {
     $("#guiltyButtons").show();
 });
-user.socket.on("endVerdict", function () {
+internal_1.user.socket.on("endVerdict", function () {
     $("#guiltyButtons").hide();
 });
 $("#guiltyButton").on("click", function () {
-    user.socket.emit("message", "/guilty");
+    internal_1.user.socket.emit("message", "/guilty");
 });
 $("#innocentButton").on("click", function () {
-    user.socket.emit("message", "/innocent");
+    internal_1.user.socket.emit("message", "/innocent");
 });
 function cancelVote() {
     for (let i = 0; i < players.length; i++) {
@@ -207,6 +219,7 @@ function markAsDead(username) {
         }
     }
 }
+exports.markAsDead = markAsDead;
 function selectPlayer(username) {
     //calling selectPlayer straight away the first time causes a bug
     //because not all of the players have been added yet.
@@ -268,8 +281,8 @@ class Player {
             }
         });
         this.sprite.on("pointerdown", () => {
-            if (user.inGame && user.canVote && !this.votedFor) {
-                user.socket.emit("message", "/vote " + username.trim());
+            if (internal_1.user.inGame && internal_1.user.canVote && !this.votedFor) {
+                internal_1.user.socket.emit("message", "/vote " + username.trim());
                 for (let i = 0; i < players.length; i++) {
                     players[i].votedFor = false;
                     if (players[i] != this) {
@@ -302,7 +315,7 @@ class Player {
         this.usernameText.y = Math.floor(this.sprite.y - 45);
         this.usernameText.anchor.set(0.5, 0.5);
         app.stage.addChild(this.usernameText);
-        this.breatheAnimation = setInterval(this.breathe.bind(this), 1500);
+        //this.breatheAnimation = setInterval(this.breathe.bind(this), 1500);
     }
     breathe() {
         if (this.frameCount % 2 == 0) {
@@ -392,8 +405,8 @@ class Gallows {
         this.sprite.scale.y = 2;
     }
 }
-let gallows = new Gallows();
-user.socket.on("hang", function (usernames) {
+exports.gallows = new Gallows();
+internal_1.user.socket.on("hang", function (usernames) {
     //make invisible all those players who username matches one on the list
     for (let i = 0; i < players.length; i++) {
         for (let j = 0; j < usernames.length; j++) {
@@ -404,10 +417,10 @@ user.socket.on("hang", function (usernames) {
         }
     }
     //hanging animation
-    gallows.hang();
+    exports.gallows.hang();
 });
-user.socket.on("resetGallows", function () {
-    gallows.reset();
+internal_1.user.socket.on("resetGallows", function () {
+    exports.gallows.reset();
 });
 function removeAllPlayers() {
     for (let i = 0; i < players.length; i++) {
@@ -416,6 +429,7 @@ function removeAllPlayers() {
     players = [];
     resize();
 }
+exports.removeAllPlayers = removeAllPlayers;
 function removePlayer(username) {
     for (let i = 0; i < players.length; i++) {
         if (players[i].username == username) {
@@ -425,25 +439,27 @@ function removePlayer(username) {
         }
     }
 }
+exports.removePlayer = removePlayer;
 function addPlayer(username) {
     const newPlayer = new Player(username);
-    if (mainText) {
-        app.stage.removeChild(mainText.container);
-        app.stage.addChild(mainText.container);
+    if (exports.mainText) {
+        app.stage.removeChild(exports.mainText.container);
+        app.stage.addChild(exports.mainText.container);
     }
     resize();
 }
+exports.addPlayer = addPlayer;
 function resize() {
     const parent = app.view.parentNode;
     app.renderer.resize(parent.clientWidth, parent.clientHeight);
-    if (mainText) {
-        mainText.reposition();
+    if (exports.mainText) {
+        exports.mainText.reposition();
     }
-    gallows.sprite.x = Math.floor(app.renderer.width / 2);
-    gallows.sprite.y = Math.floor(app.renderer.height / 2) - 10;
+    exports.gallows.sprite.x = Math.floor(app.renderer.width / 2);
+    exports.gallows.sprite.y = Math.floor(app.renderer.height / 2) - 10;
     let positions = distributeInCircle(players.length, 170);
     for (let i = 0; i < players.length; i++) {
-        players[i].setPos(gallows.sprite.x + positions[i][0], gallows.sprite.y + positions[i][1] + 20);
+        players[i].setPos(exports.gallows.sprite.x + positions[i][0], exports.gallows.sprite.y + positions[i][1] + 20);
         if (positions[i][0] > 1) {
             players[i].sprite.scale.x = -1;
         }
@@ -451,9 +467,10 @@ function resize() {
             players[i].sprite.scale.x = 1;
         }
     }
-    stoneBlockContainer.position.x = gallows.sprite.position.x + 33;
-    stoneBlockContainer.position.y = gallows.sprite.position.y - 33;
+    stoneBlockContainer.position.x = exports.gallows.sprite.position.x + 33;
+    stoneBlockContainer.position.y = exports.gallows.sprite.position.y - 33;
 }
+exports.resize = resize;
 function distributeInCircle(number, radius) {
     let positions = [];
     let angle = (2 * Math.PI) / number;
@@ -466,6 +483,6 @@ function distributeInCircle(number, radius) {
     return positions;
 }
 $(window).resize(resize);
-app.stage.addChild(gallows.sprite);
+app.stage.addChild(exports.gallows.sprite);
 $("#canvasContainer").append(app.view);
 //# sourceMappingURL=pixicanvas.js.map

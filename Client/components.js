@@ -1,3 +1,12 @@
+"use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 /*
   Copyright 2017-2018 James V. Craster
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -10,44 +19,20 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-
+const React = __importStar(require("react"));
 class LobbyItem extends React.Component {
-
     render() {
-        return React.createElement(
-            "div",
-            { className: "lobbyItem", name: this.props.name,
-                inplay: "false", type: this.props.type, ranked: this.props.ranked, uid: this.props.uid },
-            React.createElement(
-                "div",
-                { className: "lobbyItemHeader" },
-                React.createElement(
-                    "p",
-                    null,
-                    React.createElement(
-                        "span",
-                        { className: "gameName" },
-                        this.props.name
-                    ),
-                    React.createElement(
-                        "span",
-                        { className: "inPlay" },
-                        " OPEN "
-                    )
-                )
-            ),
-            React.createElement(
-                "p",
-                { className: "lobbyItemBody" },
+        return (React.createElement("div", { className: "lobbyItem", name: this.props.name, inplay: "false", type: this.props.type, ranked: this.props.ranked, uid: this.props.uid },
+            React.createElement("div", { className: "lobbyItemHeader" },
+                React.createElement("p", null,
+                    React.createElement("span", { className: "gameName" }, this.props.name),
+                    React.createElement("span", { className: "inPlay" }, " OPEN "))),
+            React.createElement("p", { className: "lobbyItemBody" },
                 " ",
-                'Players: ',
+                "Players: ",
                 React.createElement("span", null),
-                React.createElement(
-                    "span",
-                    { id: "gameType" },
-                    this.props.type
-                )
-            )
-        );
+                React.createElement("span", { id: "gameType" }, this.props.type))));
     }
 }
+exports.default = LobbyItem;
+//# sourceMappingURL=components.js.map
