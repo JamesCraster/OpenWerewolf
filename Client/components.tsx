@@ -20,10 +20,12 @@ type Props = {
 export default class LobbyItem extends React.Component<Props, {}> {
   render() {
     return (
+      //have to ignore as tsx does not permit custom props on div
+      //@ts-ignore
       <div
         className="lobbyItem"
-        name={this.props.name}
         inplay="false"
+        name={this.props.name}
         type={this.props.type}
         ranked={this.props.ranked}
         uid={this.props.uid}

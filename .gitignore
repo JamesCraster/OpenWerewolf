@@ -4,6 +4,7 @@
 /Games/OneDay/*.js
 /Games/Classic/*.js
 /Client/login.js
+/Client/components.js
 Games/Demo/Demo.js
 
 #Ignore node_modules

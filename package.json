@@ -49,7 +49,7 @@
     "watch": "tsc --watch & \n sass --watch Client/main.scss:Client/main.css & \n nodemon app.js",
     "watch:database": "tsc --watch & \n sass --watch Client/main.scss:Client/main.css & \n nodemon app.js database",
     "builddocs": "typedoc --out docs --mode 'file' --excludeExternals --externalPattern \"**/node_modules/**\" --ignoreCompilerErrors ../OpenWerewolf/Core --target es6 --theme default --readme none \n touch docs/.nojekyll",
-    "build": "webpack -p \n tsc \n sass Client/main.scss Client/main.css",
+    "build": "tsc \n webpack -p \n sass Client/main.scss Client/main.css",
     "release": "./release.sh",
     "start": "echo \"*** Please 'npm run build' first if you haven't already!***\" \n node app.js",
     "start:database": "echo \"*** Please 'npm run build' first if you haven't already!***\" \n node app.js database",

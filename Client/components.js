@@ -22,7 +22,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const React = __importStar(require("react"));
 class LobbyItem extends React.Component {
     render() {
-        return (React.createElement("div", { className: "lobbyItem", name: this.props.name, inplay: "false", type: this.props.type, ranked: this.props.ranked, uid: this.props.uid },
+        return (
+        //have to ignore as tsx does not permit custom props on div
+        //@ts-ignore
+        React.createElement("div", { className: "lobbyItem", inplay: "false", name: this.props.name, type: this.props.type, ranked: this.props.ranked, uid: this.props.uid },
             React.createElement("div", { className: "lobbyItemHeader" },
                 React.createElement("p", null,
                     React.createElement("span", { className: "gameName" }, this.props.name),
