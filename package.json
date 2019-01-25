@@ -45,9 +45,9 @@
   },
   "scripts": {
     "test": "mocha \n blc http://localhost:8081 -ro",
-    "watch:debug": "tsc --watch & \n sass --watch Client/main.scss:Client/main.css & \n nodemon app.js debug",
-    "watch": "tsc --watch & \n sass --watch Client/main.scss:Client/main.css & \n nodemon app.js",
-    "watch:database": "tsc --watch & \n sass --watch Client/main.scss:Client/main.css & \n nodemon app.js database",
+    "watch:debug": "tsc \n webpack -p --watch & \n tsc --watch & \n sass --watch Client/main.scss:Client/main.css & \n nodemon app.js debug",
+    "watch": "tsc \n webpack -p --watch & \n tsc --watch & \n sass --watch Client/main.scss:Client/main.css & \n nodemon app.js",
+    "watch:database": "tsc \n webpack -p --watch & \n tsc --watch & \n sass --watch Client/main.scss:Client/main.css & \n nodemon app.js database",
     "builddocs": "typedoc --out docs --mode 'file' --excludeExternals --externalPattern \"**/node_modules/**\" --ignoreCompilerErrors ../OpenWerewolf/Core --target es6 --theme default --readme none \n touch docs/.nojekyll",
     "build": "tsc \n webpack -p \n sass Client/main.scss Client/main.css",
     "release": "./release.sh",

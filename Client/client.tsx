@@ -1089,6 +1089,8 @@ class Player {
       fontSize: 128,
       fill: usernameColor,
       align: "center",
+      //stroke: "#000000",
+      //strokeThickness: 20,
     });
     this.usernameText.scale.x = 0.25;
     this.usernameText.scale.y = 0.25;
@@ -1243,7 +1245,7 @@ export function resize() {
   }
   gallows.sprite.x = Math.floor(app.renderer.width / 2);
   gallows.sprite.y = Math.floor(app.renderer.height / 2) - 10;
-  let positions = distributeInCircle(players.length, 170);
+  let positions = distributeInCircle(players.length, 190);
   for (let i = 0; i < players.length; i++) {
     players[i].setPos(
       gallows.sprite.x + positions[i][0],
