@@ -9,6 +9,18 @@ export class Register extends Component {
       this.props.nextCard();
     });
   }
+  handleSubmit = event => {
+    event.preventDefault();
+    console.log(event.target.name.value);
+    console.log(event.target.code.value);
+    console.log("sent");
+    //register player and join game
+    this.props.socket.emit(
+      "localGameClick",
+      event.target.name.value,
+      event.target.code.value,
+    );
+  };
   render() {
     return (
       <div className="Register">
@@ -33,7 +45,7 @@ export class Register extends Component {
             <Dimmer />
             <Card.Content textAlign="left">
               <Header dividing={true}>OpenWerewolf - Local</Header>
-              <Form>
+              <Form onSubmit={this.handleSubmit}>
                 <p>
                   <b>To host a game:</b> go to{" "}
                   <a href="https://www.openwerewolf.com">
@@ -48,6 +60,7 @@ export class Register extends Component {
                 <Form.Field>
                   <label>N.B: Please use your real name!</label>
                   <Input
+                    name="name"
                     fluid={true}
                     icon="user"
                     iconPosition="left"
@@ -57,6 +70,7 @@ export class Register extends Component {
                 </Form.Field>
                 <Form.Field>
                   <Input
+                    name="code"
                     fluid={true}
                     icon="key"
                     iconPosition="left"
@@ -65,17 +79,7 @@ export class Register extends Component {
                   />
                 </Form.Field>
                 <Form.Field>
-                  <Button
-                    type="submit"
-                    fluid={true}
-                    color="green"
-                    //join the player to a game if one exists
-                    onClick={() => {
-                      console.log("sent");
-                      //register player and join game
-                      this.props.socket.emit("localGameClick", "name", "1");
-                    }}
-                  >
+                  <Button type="submit" fluid={true} color="green">
                     JOIN GAME
                   </Button>
                 </Form.Field>

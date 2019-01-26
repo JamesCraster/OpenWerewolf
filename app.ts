@@ -437,6 +437,17 @@ io.on("connection", function(socket: Socket) {
       server.gameClick(thisPlayerId, gameId);
     }
   });
+  socket.on("localGameClick", function(name: string, gameId: string) {
+    server.receive(thisPlayerId, name);
+    console.log(server.getUser(thisPlayerId));
+    console.log(server.getGameById(gameId));
+    if (
+      server.getUser(thisPlayerId) != undefined &&
+      server.getGameById(gameId) != undefined
+    ) {
+      server.gameClick(thisPlayerId, gameId);
+    }
+  });
   let lobbyTime = 0;
   socket.on("lobbyMessage", function(msg: string) {
     if (typeof msg === "string") {

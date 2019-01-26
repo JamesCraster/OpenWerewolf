@@ -2,6 +2,12 @@ import React, { Component } from "react";
 import { Button, Dimmer, Card, Header, Input, Form } from "semantic-ui-react";
 
 export class Waiting extends Component {
+  constructor(props) {
+    super(props);
+    this.props.socket.on("newGame", () => {
+      this.props.nextCard();
+    });
+  }
   render() {
     return (
       <div className="Waiting">
