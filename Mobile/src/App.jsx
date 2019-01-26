@@ -14,6 +14,9 @@ class App extends Component {
     //connect up to OpenWerewolf main server
     this.socket = io("localhost:8081");
     //if the player is already connected, bounce them to the correct page
+    this.socket.on("transitionToGame", () => {
+      this.setState({ page: "Game" });
+    });
   }
   render() {
     if (this.state.page == "Register") {

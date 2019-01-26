@@ -41,7 +41,13 @@ export class Waiting extends Component {
             </Card.Content>
             {
               <Card.Content extra>
-                <Button fluid={true} color="red">
+                <Button
+                  fluid={true}
+                  color="red"
+                  onClick={() => {
+                    window.location.reload();
+                  }}
+                >
                   LEAVE GAME
                 </Button>
               </Card.Content>
