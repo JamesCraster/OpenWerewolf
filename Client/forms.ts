@@ -11,21 +11,23 @@
   limitations under the License.
 */
 "use strict";
+import { user } from "./client";
+declare let SimpleBar: any;
 
 //set up simplebar and modals
-$(".newAccountButton").click(function () {
+$(".newAccountButton").click(function() {
   $("#registerModal").modal("show");
 });
-$(".loginButton").click(function () {
+$(".loginButton").click(function() {
   $("#loginModal").modal("show");
 });
-$("#newGameButton").click(function () {
+$("#newGameButton").click(function() {
   $("#newGameModal").modal("show");
 });
-$("#forgottenPassword").click(function () {
+$("#forgottenPassword").click(function() {
   $("#forgottenPasswordModal").modal("show");
 });
-$("#cancelForgottenPasswordButton").click(function () {
+$("#cancelForgottenPasswordButton").click(function() {
   $("#forgottenPasswordModal").modal("hide");
 });
 new SimpleBar($("#container")[0]);
@@ -33,29 +35,29 @@ new SimpleBar($("#lobbyListContainer")[0]);
 $("#container .simplebar-content").css("overflow-x", "hidden");
 
 //filtering lobby entries
-$("#filterAll").click(function () {
+$("#filterAll").click(function() {
   if ($(".lobbyItem:visible").length == 0) {
     $(".lobbyItem").fadeIn("fast");
   } else {
-    $(".lobbyItem:visible").fadeOut("fast", function () {
+    $(".lobbyItem:visible").fadeOut("fast", function() {
       $(".lobbyItem").fadeIn("fast");
     });
   }
 });
-$("#filterOneDay").click(function () {
+$("#filterOneDay").click(function() {
   if ($(".lobbyItem:visible").length == 0) {
     $(".lobbyItem").fadeIn("fast");
   } else {
-    $(".lobbyItem:visible").fadeOut("fast", function () {
+    $(".lobbyItem:visible").fadeOut("fast", function() {
       $(".lobbyItem[type='OneDay']").fadeIn("fast");
     });
   }
 });
-$("#filterClassic").click(function () {
+$("#filterClassic").click(function() {
   if ($(".lobbyItem:visible").length == 0) {
     $(".lobbyItem").fadeIn("fast");
   } else {
-    $(".lobbyItem:visible").fadeOut("fast", function () {
+    $(".lobbyItem:visible").fadeOut("fast", function() {
       $(".lobbyItem[type='Classic']").fadeIn("fast");
     });
   }
@@ -65,7 +67,7 @@ $("#filterClassic").click(function () {
 $("#newGameFormRanked")
   .parent()
   .checkbox({
-    onChecked: function () {
+    onChecked: function() {
       $("#newGameFormPrivate")
         .parent()
         .checkbox("set unchecked");
@@ -74,7 +76,7 @@ $("#newGameFormRanked")
 $("#newGameFormPrivate")
   .parent()
   .checkbox({
-    onChecked: function () {
+    onChecked: function() {
       $("#newGameFormRanked")
         .parent()
         .checkbox("set unchecked");
@@ -85,10 +87,12 @@ $("#newGameForm").form({
   fields: {
     gameName: {
       identifier: "gameName",
-      rules: [{
-        type: "empty",
-        prompt: "Please enter a name for your game",
-      }, ],
+      rules: [
+        {
+          type: "empty",
+          prompt: "Please enter a name for your game",
+        },
+      ],
     },
   },
 });
@@ -113,15 +117,17 @@ $("#newGameForm").submit(() => {
     }),
     dataType: "json",
     contentType: "application/json",
-    success: function (data) {
+    success: function(data) {
       console.log(data.result);
       if (data.result == "success") {
         //prevent multiple submissions
-        $("#newGameModal").modal("hide", function () {
+        //@ts-ignore
+        $("#newGameModal").modal("hide", function() {
           $("#newGameModalCreateButton").removeClass("disabled");
           newGameFormOngoing = false;
           $("#newGameForm").removeClass("loading");
         });
+        //@ts-ignore
         $("#newGameForm").form("reset");
         $("#addNewGameAdditionalError").text("");
       } else {
@@ -132,7 +138,7 @@ $("#newGameForm").submit(() => {
         $("#newGameForm").removeClass("loading");
       }
     },
-    error: function (error) {
+    error: function(error) {
       newGameFormOngoing = false;
       console.log("There has been an error");
       console.log(error);
@@ -146,57 +152,71 @@ $("#loginForm").form({
   fields: {
     username: {
       identifier: "username",
-      rules: [{
-        type: "empty",
-        prompt: "Please enter your username",
-      }, ],
+      rules: [
+        {
+          type: "empty",
+          prompt: "Please enter your username",
+        },
+      ],
     },
     password: {
       identifier: "password",
-      rules: [{
-        type: "empty",
-        prompt: "Please enter your password",
-      }, ],
+      rules: [
+        {
+          type: "empty",
+          prompt: "Please enter your password",
+        },
+      ],
     },
   },
 });
 
 //create a new form rule to recongnize when the repeated password doesn't match the password
-$.fn.form.settings.rules.repeatMatchInitial = function () {
-  return (
-    $("#addNewUserRepeatPassword").val() == $("#addNewUserPassword").val()
-  );
-};
+if ($.fn.form.settings.rules) {
+  $.fn.form.settings.rules.repeatMatchInitial = function() {
+    return (
+      $("#addNewUserRepeatPassword").val() == $("#addNewUserPassword").val()
+    );
+  };
+}
 
 $("#addNewUserForm").form({
   fields: {
     username: {
       identifier: "username",
-      rules: [{
-        type: "empty",
-        prompt: "Please enter your username",
-      }, ],
+      rules: [
+        {
+          type: "empty",
+          prompt: "Please enter your username",
+        },
+      ],
     },
     email: {
       identifier: "email",
-      rules: [{
-        type: "email",
-        prompt: "Your email is invalid",
-      }, ],
+      rules: [
+        {
+          type: "email",
+          prompt: "Your email is invalid",
+        },
+      ],
     },
     password: {
       identifier: "password",
-      rules: [{
-        type: "empty",
-        prompt: "Please enter your password",
-      }, ],
+      rules: [
+        {
+          type: "empty",
+          prompt: "Please enter your password",
+        },
+      ],
     },
     repeatPassword: {
       identifier: "repeatPassword",
-      rules: [{
-        type: "repeatMatchInitial",
-        prompt: "Your password and repeated password don't match",
-      }, ],
+      rules: [
+        {
+          type: "repeatMatchInitial",
+          prompt: "Your password and repeated password don't match",
+        },
+      ],
     },
   },
 });
@@ -219,7 +239,7 @@ $("#addNewUserForm").submit(() => {
     }),
     dataType: "json",
     contentType: "application/json",
-    success: function (data) {
+    success: function(data) {
       console.log(data);
       //if result is not success, the input was not valid
       if (data.result == "success") {
@@ -231,7 +251,7 @@ $("#addNewUserForm").submit(() => {
         $("#addNewUserAdditionalError").text(data.result);
       }
     },
-    error: function (error) {
+    error: function(error) {
       console.log("There has been an error");
       console.log(error);
     },
@@ -244,10 +264,12 @@ $("#forgottenPasswordForm").form({
   fields: {
     username: {
       identifier: "username",
-      rules: [{
-        type: "empty",
-        prompt: "Please enter your username",
-      }, ],
+      rules: [
+        {
+          type: "empty",
+          prompt: "Please enter your username",
+        },
+      ],
     },
   },
 });
@@ -261,11 +283,11 @@ $("#forgottenPasswordForm").submit(() => {
     type: "POST",
     url: "/forgottenPassword",
     data: JSON.stringify({
-      username: username
+      username: username,
     }),
     dataType: "json",
     contentType: "application/json",
-    success: function (data) {
+    success: function(data) {
       if (data.result == "success") {
         $("#forgottenPasswordModal").modal("hide");
       } else {
@@ -274,7 +296,7 @@ $("#forgottenPasswordForm").submit(() => {
       }
       $("#forgottenPasswordDimmer").dimmer("hide");
     },
-    error: function (error) {
+    error: function(error) {
       console.log("forgotten password has returned an error");
       console.log(error);
     },
@@ -295,7 +317,7 @@ $("#loginForm").submit(() => {
     }),
     dataType: "json",
     contentType: "application/json",
-    success: function (data) {
+    success: function(data) {
       if (data.result == "success") {
         user.socket.emit("reloadClient");
         location.reload();
@@ -305,7 +327,7 @@ $("#loginForm").submit(() => {
         $("#loginDimmer").dimmer("hide");
       }
     },
-    error: function (error) {
+    error: function(error) {
       console.log("There has been an error");
       console.log(error);
     },
@@ -319,14 +341,14 @@ $(".logoutButton").click(() => {
     data: "{}",
     dataType: "json",
     contentType: "application/json",
-    success: function (data) {
+    success: function(data) {
       user.socket.emit("reloadClient");
       location.reload();
     },
   });
 });
 
-$(".messageForm").submit(function () {
+$(".messageForm").submit(function() {
   //prevent submitting empty messages
   if ($("#msg").val() == "") {
     return false;
@@ -340,10 +362,12 @@ $("#leaveGameForm").form({
   fields: {
     confirmation: {
       identifier: "confirmation",
-      rules: [{
-        type: "checked",
-        prompt: "You must confirm by ticking the box",
-      }, ],
+      rules: [
+        {
+          type: "checked",
+          prompt: "You must confirm by ticking the box",
+        },
+      ],
     },
   },
 });

@@ -1,9 +1,10 @@
 # Ignore javascript builds in the root directory
-/*.js
+/app.js
 /Games/*.js
 /Games/OneDay/*.js
 /Games/Classic/*.js
 /Client/login.js
+/Client/components.js
 Games/Demo/Demo.js
 
 #Ignore node_modules
@@ -27,6 +28,9 @@ Client/client.js
 Core/app.js
 Core/core.js
 Core/app.js
+Client/bundle.js
+Client/components.js
+Client/forms.js
 Games/Demo/Demo.js
 Core/core.js
 Games/Demo/demo.js
