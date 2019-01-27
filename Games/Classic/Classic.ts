@@ -298,6 +298,13 @@ export class Classic extends Game {
     for (let player of this.players) {
       //tell the player what their role is
       this.sendRole(player, player.alignment, player.role.roleName);
+      if (player.role.alignment == Alignment.town) {
+        player.user.emit("role", player.role.roleName, Colors.brightGreen);
+      } else if (player.role.alignment == Alignment.mafia) {
+        player.user.emit("role", player.role.roleName, Colors.brightRed);
+      } else {
+        player.user.emit("role", player.role.roleName, player.role.color);
+      }
     }
     //print the list of roles in the left panel
     for (let player of this.players) {
@@ -868,5 +875,17 @@ export class Classic extends Game {
   }
   private getPlayer(id: string) {
     return this.players.find(player => player.user.id == id);
+  }
+  public resendData(user: User) {
+    let player = this.getPlayer(user.id);
+    if (player) {
+      if (player.role.alignment == Alignment.town) {
+        player.user.emit("role", player.role.roleName, Colors.brightGreen);
+      } else if (player.role.alignment == Alignment.mafia) {
+        player.user.emit("role", player.role.roleName, Colors.brightRed);
+      } else {
+        player.user.emit("role", player.role.roleName, player.role.color);
+      }
+    }
   }
 }

@@ -282,6 +282,7 @@ export abstract class Game {
       this._users[i].headerSend(array);
     }
   }
+  public abstract resendData(user: User): void;
   protected beforeStart() {
     for (let i = 0; i < this._users.length; i++) {
       this._users[i].sound("NEWGAME");
@@ -298,6 +299,10 @@ export abstract class Game {
     this.headerBroadcast([
       { text: "*** NEW GAME ***", color: Colors.brightGreen },
     ]);
+    //send all players to user
+    for (let user of this.users) {
+      user.emit("allPlayers", this.users.map(elem => elem.username));
+    }
   }
   protected afterEnd() {
     //Clear all message rooms of players

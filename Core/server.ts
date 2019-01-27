@@ -259,6 +259,18 @@ export class Server {
                   Colors.brightRed,
                 );
               }
+              //send all players to user (only used in local mode)
+              let thisUser = this._users[i];
+              if (thisUser.game && thisUser.game.uid) {
+                let game = this.getGameById(thisUser.game.uid);
+                if (game) {
+                  thisUser.emit(
+                    "allPlayers",
+                    game.users.map(elem => elem.username),
+                  );
+                  game.resendData(thisUser);
+                }
+              }
             }
             //send the client the correct time
             socket.emit(

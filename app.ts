@@ -131,6 +131,8 @@ io.use(function(socket: any, next: any) {
 
 app.use(express.json());
 //serve static content
+app.use("/mobile", express.static(__dirname + "/Mobile/build"));
+app.use("/static", express.static(__dirname + "/Mobile/build/static"));
 app.use("/", express.static(__dirname + "/Client"));
 app.use(
   "/semantic/dist/semantic.min.js",
@@ -153,6 +155,9 @@ app.get("/imprint", function(req: any, res: any) {
 });
 app.get("/about", function(req: any, res: any) {
   res.render("about");
+});
+app.get("/mobile", function(req: any, res: any) {
+  res.render("mobile");
 });
 app.get("/", function(req: any, res: any) {
   let gameNames = [];
@@ -429,6 +434,17 @@ io.on("connection", function(socket: Socket) {
   });
   socket.on("gameClick", function(gameId: string) {
     if (parseInt(gameId) != NaN) {
+      server.gameClick(thisPlayerId, gameId);
+    }
+  });
+  socket.on("localGameClick", function(name: string, gameId: string) {
+    server.receive(thisPlayerId, name);
+    console.log(server.getUser(thisPlayerId));
+    console.log(server.getGameById(gameId));
+    if (
+      server.getUser(thisPlayerId) != undefined &&
+      server.getGameById(gameId) != undefined
+    ) {
       server.gameClick(thisPlayerId, gameId);
     }
   });
