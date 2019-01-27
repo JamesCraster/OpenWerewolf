@@ -1035,7 +1035,7 @@ class Player {
   public graveSprite: PIXI.Sprite;
   public selected: boolean;
   public votedFor: boolean;
-  public breatheAnimation: NodeJS.Timer | undefined;
+  public breatheAnimation: number | undefined;
   public frameCount: number;
   constructor(public username: string) {
     this.sprite = new PIXI.Sprite(playerTexture);
@@ -1098,7 +1098,7 @@ class Player {
     this.usernameText.y = Math.floor(this.sprite.y - 45);
     this.usernameText.anchor.set(0.5, 0.5);
     app.stage.addChild(this.usernameText);
-    this.breatheAnimation = setInterval(this.breathe.bind(this), 1500);
+    this.breatheAnimation = window.setInterval(this.breathe.bind(this), 1500);
   }
   breathe() {
     if (this.frameCount % 2 == 0) {

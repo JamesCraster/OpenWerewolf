@@ -24,10 +24,15 @@ export default class LobbyItem extends React.Component<Props, {}> {
       //@ts-ignore
       <div
         className="lobbyItem"
+        //@ts-ignore
         inplay="false"
+        //@ts-ignore
         name={this.props.name}
+        //@ts-ignore
         type={this.props.type}
+        //@ts-ignore
         ranked={this.props.ranked}
+        //@ts-ignore
         uid={this.props.uid}
       >
         <div className="lobbyItemHeader">

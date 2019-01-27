@@ -75,6 +75,10 @@ html(lang="en")
         div(id="topLevel")
             include includes/game.pug
 
+    script
+        | if (screen.width <= 699) {
+        |   document.location = "/mobile";
+        | }
     //script(src="s.min.js")
     //script(src="pixi.min.js")
     //script(src='webfontloader.js')
