@@ -448,7 +448,6 @@ io.on("connection", function(socket: Socket) {
       server.gameClick(thisPlayerId, gameId);
     }
   });
-  let lobbyTime = 0;
   socket.on("lobbyMessage", function(msg: string) {
     if (typeof msg === "string") {
       if (Date.now() - time < 500) {

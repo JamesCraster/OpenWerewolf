@@ -179,6 +179,7 @@ export class Server {
   private static cleanUpUsername(username: string) {
     username = username.toLowerCase();
     username = username.replace(/\s/g, "");
+    username.trim();
     return username;
   }
   private validateUsername(user: User, username: string) {
@@ -251,14 +252,6 @@ export class Server {
               for (let j = 0; j < this._users[i].leftCache.length; j++) {
                 socket.emit("leftMessage", this._users[i].leftCache[j]);
               }
-              for (let j = 0; j < this._users[i].deadCache.length; j++) {
-                socket.emit("markAsDead", this._users[i].deadCache[j]);
-                socket.emit(
-                  "lineThroughPlayer",
-                  this._users[i].deadCache[j],
-                  Colors.brightRed,
-                );
-              }
               //send all players to user (only used in local mode)
               let thisUser = this._users[i];
               if (thisUser.game && thisUser.game.uid) {
@@ -270,6 +263,14 @@ export class Server {
                   );
                   game.resendData(thisUser);
                 }
+              }
+              for (let j = 0; j < this._users[i].deadCache.length; j++) {
+                socket.emit("markAsDead", this._users[i].deadCache[j]);
+                socket.emit(
+                  "lineThroughPlayer",
+                  this._users[i].deadCache[j],
+                  Colors.brightRed,
+                );
               }
             }
             //send the client the correct time

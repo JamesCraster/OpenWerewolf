@@ -280,6 +280,7 @@ function appendMessage(
     italic?: boolean;
   }>,
   target: string,
+  backgroundColor?: string,
 ) {
   //test if client scrolled down
   let scrollDown = isClientScrolledDown();
@@ -302,6 +303,9 @@ function appendMessage(
     }
     $(newMessageLi).append($(messageSpan));
   }
+  if (backgroundColor) {
+    $(newMessageLi).css("background-color", backgroundColor);
+  }
   $(target).append(newMessageLi);
   //only scroll down if the client was scrolled down before the message arrived
   if (scrollDown && target == "#chatbox") {
@@ -319,7 +323,6 @@ function removeMessage(msg: string, target: string) {
 }
 
 function lineThroughPlayer(msg: string, color: string) {
-  console.log($("#playerNames li span"));
   $("#playerNames li span")
     .filter(function() {
       return $(this).text() === msg;
@@ -386,9 +389,7 @@ $(function() {
     transitionFromLandingToGame(name, uid, inPlay);
   });
   user.socket.on("message", function(message: Message, textColor: string) {
-    console.log(message);
-    console.log(textColor);
-    appendMessage(message, "#chatbox");
+    appendMessage(message, "#chatbox", textColor);
   });
   user.socket.on("headerTextMessage", function(standardArray: Message) {
     let out = [];
@@ -514,15 +515,14 @@ $(function() {
     removeMessage(msg, "#roleNames");
   });
   user.socket.on("lineThroughPlayer", function(msg: string, color: string) {
-    console.log(msg);
-    console.log(color);
     lineThroughPlayer(msg, color);
     lineThroughPlayer(" " + msg, color);
   });
   user.socket.on("markAsDead", function(msg: string) {
-    console.log(msg);
     markAsDead(msg);
     markAsDead(" " + msg);
+    lineThroughPlayer(msg, "red");
+    lineThroughPlayer(" " + msg, "red");
   });
   window.addEventListener("offline", function(e) {
     console.log("disconnected - show player warning");
@@ -1245,7 +1245,12 @@ export function resize() {
   }
   gallows.sprite.x = Math.floor(app.renderer.width / 2);
   gallows.sprite.y = Math.floor(app.renderer.height / 2) - 10;
-  let positions = distributeInCircle(players.length, 190);
+  let positions: Array<Array<number>> = [];
+  if (players.length <= 10) {
+    positions = distributeInCircle(players.length, 190);
+  } else {
+    positions = distributeInCircle(players.length, 210);
+  }
   for (let i = 0; i < players.length; i++) {
     players[i].setPos(
       gallows.sprite.x + positions[i][0],

@@ -16,6 +16,7 @@ class App extends Component {
     //if the player is already connected, bounce them to the correct page
     this.socket.on("transitionToGame", () => {
       this.setState({ page: "Game" });
+      console.log("transition!");
     });
   }
   render() {

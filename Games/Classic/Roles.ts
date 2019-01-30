@@ -225,7 +225,7 @@ export namespace Roles {
     roleName: "survivor",
     alignment: Alignment.neutral,
     winCondition: WinConditions.survive,
-    color: Colors.brightYellow,
+    color: Colors.yellow,
     abilities: [],
     passives: [],
   };

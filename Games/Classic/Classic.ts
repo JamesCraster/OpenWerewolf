@@ -48,7 +48,93 @@ export enum FinalVote {
   abstain = "abstain",
   innocent = "innocent",
 }
-
+const fifteenPlayer = [
+  Roles.mafioso,
+  Roles.mafioso,
+  Roles.doctor,
+  Roles.vigilante,
+  Roles.sherrif,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+];
+const fourteenPlayer = [
+  Roles.mafioso,
+  Roles.mafioso,
+  Roles.doctor,
+  Roles.vigilante,
+  Roles.sherrif,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+];
+const thirteenPlayer = [
+  Roles.mafioso,
+  Roles.mafioso,
+  Roles.doctor,
+  Roles.vigilante,
+  Roles.sherrif,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+];
+const twelvePlayer = [
+  Roles.mafioso,
+  Roles.mafioso,
+  Roles.doctor,
+  Roles.vigilante,
+  Roles.sherrif,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+];
+const elevenPlayer = [
+  Roles.mafioso,
+  Roles.mafioso,
+  Roles.doctor,
+  Roles.vigilante,
+  Roles.sherrif,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+];
+const tenPlayer = [
+  Roles.mafioso,
+  Roles.mafioso,
+  Roles.doctor,
+  Roles.vigilante,
+  Roles.sherrif,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+  Roles.townie,
+];
 const ninePlayer = [
   Roles.mafioso,
   Roles.mafioso,
@@ -127,7 +213,7 @@ export class Classic extends Game {
     super(
       server,
       globalMinimumPlayerCount,
-      9,
+      15,
       "Classic",
       name,
       uid,
@@ -278,6 +364,24 @@ export class Classic extends Game {
       case 9:
         roleList = ninePlayer;
         break;
+      case 10:
+        roleList = tenPlayer;
+        break;
+      case 11:
+        roleList = elevenPlayer;
+        break;
+      case 12:
+        roleList = twelvePlayer;
+        break;
+      case 13:
+        roleList = thirteenPlayer;
+        break;
+      case 14:
+        roleList = fourteenPlayer;
+        break;
+      case 15:
+        roleList = fifteenPlayer;
+        break;
     }
     this.broadcastRoleList(roleList.map(elem => elem.roleName));
     let randomDeck = Utils.shuffle(roleList);
@@ -386,9 +490,6 @@ export class Classic extends Game {
   }
   public kill(target: ClassicPlayer) {
     //let the other players know the target has died
-    for (let player of this.players) {
-      player.user.lineThroughUser(player.user.username, "red");
-    }
     this.markAsDead(target.user.username);
     target.kill();
     if (this.deadChat.getMemberById(target.user.id) == undefined) {

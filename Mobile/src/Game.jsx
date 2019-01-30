@@ -19,7 +19,18 @@ export class Game extends Component {
     };
     this.props.socket.on("allPlayers", usernames => {
       console.log(usernames);
-      this.setState({ players: usernames });
+      let players = usernames.map(elem => {
+        return { username: elem, dead: false };
+      });
+      this.setState({ players: players });
+    });
+    this.props.socket.on("markAsDead", username => {
+      let target = this.state.players.findIndex(
+        elem => elem.username == username || elem.username == " " + username,
+      );
+      let temporaryArray = this.state.players.slice();
+      temporaryArray[target].dead = true;
+      this.setState({ players: temporaryArray });
     });
     this.props.socket.on("role", (roleName, color) => {
       this.setState({ role: { roleName: roleName, color: color } });
@@ -28,20 +39,39 @@ export class Game extends Component {
   handleChange = (e, { value }) => this.setState({ value: value });
   render() {
     let radios = [];
-
     for (let i = 0; i < this.state.players.length; i++) {
-      radios.push(
-        <Form.Field key={i}>
-          <Radio
-            toggle
-            label={this.state.players[i]}
-            name="radioGroup"
-            value={this.state.players[i]}
-            checked={this.state.value === this.state.players[i]}
-            onChange={this.handleChange}
-          />
-        </Form.Field>,
-      );
+      let style = {};
+      if (this.state.players[i].dead) {
+        style = { textDecoration: "line-through", color: "red" };
+        radios.push(
+          <Form.Field key={this.state.players[i].username}>
+            <Radio
+              disabled
+              toggle
+              label={this.state.players[i].username}
+              name="radioGroup"
+              value={this.state.players[i].username}
+              checked={this.state.value === this.state.players[i].username}
+              onChange={this.handleChange}
+              style={style}
+            />
+          </Form.Field>,
+        );
+      } else {
+        radios.push(
+          <Form.Field key={this.state.players[i].username}>
+            <Radio
+              toggle
+              label={this.state.players[i].username}
+              name="radioGroup"
+              value={this.state.players[i].username}
+              checked={this.state.value === this.state.players[i].username}
+              onChange={this.handleChange}
+              style={style}
+            />
+          </Form.Field>,
+        );
+      }
     }
 
     return (
@@ -87,6 +117,22 @@ export class Game extends Component {
                 }}
               >
                 {radios}
+
+                <Form.Field>
+                  <Button
+                    negative
+                    onClick={this.props.socket.emit("message", "/guilty")}
+                  >
+                    Guilty
+                  </Button>
+                  <Button blue>Abstain</Button>
+                  <Button
+                    positive
+                    onClick={this.props.socket.emit("message", "/innocent")}
+                  >
+                    Innocent
+                  </Button>
+                </Form.Field>
               </Form>
             </Card.Content>
             {
