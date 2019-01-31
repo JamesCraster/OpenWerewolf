@@ -12,6 +12,13 @@
       "title": "OpenWerewolf-Demo",
       "author": "James Craster",
       "license": "Apache-2.0"
+    },
+    {
+      "name": "Local",
+      "location": "./Games/Local/Local",
+      "title": "OpenWerewolf-Local",
+      "author": "James Craster",
+      "license": "Apache-2.0"
     }
   ]
 }
