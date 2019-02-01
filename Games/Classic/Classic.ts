@@ -444,7 +444,15 @@ export class Classic extends Game {
         ]);
         break;
       case Alignment.neutral:
-        player.user.send(`You are a ${role}`, undefined, player.role.color);
+        if (player.role.backgroundColor) {
+          player.user.send(
+            `You are a ${role}`,
+            undefined,
+            player.role.backgroundColor,
+          );
+        } else {
+          player.user.send(`You are a ${role}`, undefined, player.role.color);
+        }
         player.user.headerSend([
           { text: "You are a ", color: Colors.white },
           { text: role, color: player.role.color },

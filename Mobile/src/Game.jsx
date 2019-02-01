@@ -121,14 +121,22 @@ export class Game extends Component {
                 <Form.Field>
                   <Button
                     negative
-                    onClick={this.props.socket.emit("message", "/guilty")}
+                    onClick={() => {
+                      this.props.socket.emit("message", "/guilty");
+                    }}
                   >
                     Guilty
                   </Button>
+                </Form.Field>
+                <Form.Field>
                   <Button blue>Abstain</Button>
+                </Form.Field>
+                <Form.Field>
                   <Button
                     positive
-                    onClick={this.props.socket.emit("message", "/innocent")}
+                    onClick={() => {
+                      this.props.socket.emit("message", "/innocent");
+                    }}
                   >
                     Innocent
                   </Button>

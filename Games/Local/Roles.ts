@@ -156,7 +156,7 @@ namespace Abilities {
   };
 }
 
-export let Roles: { [x: string]: Role } = {
+export const Roles: { readonly [x: string]: Role } = {
   vigilante: {
     roleName: "vigilante",
     alignment: Alignment.town,

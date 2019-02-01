@@ -44,6 +44,8 @@ This guide includes instructions on how to easily build OpenWerewolf from source
 
 - [Install Node.js](https://nodejs.org/en/)
 
+- [Install Redis](https://redis.io/download)
+
 - Unzip release.zip, and run:
 
 ```

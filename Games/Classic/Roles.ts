@@ -52,6 +52,7 @@ export type Role = {
   abilities: Array<{ ability: Ability; uses?: number }>;
   passives: Array<Passives>;
   color?: Colors;
+  backgroundColor?: Colors;
 };
 
 export namespace GameEndConditions {
@@ -225,7 +226,8 @@ export namespace Roles {
     roleName: "survivor",
     alignment: Alignment.neutral,
     winCondition: WinConditions.survive,
-    color: Colors.yellow,
+    color: Colors.brightYellow,
+    backgroundColor: Colors.yellow,
     abilities: [],
     passives: [],
   };
