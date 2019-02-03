@@ -7,6 +7,13 @@
       "license": "Apache-2.0"
     },
     {
+      "name": "OneDay",
+      "location": "./Games/OneDay/OneDay",
+      "title": "OpenWerewolf-OneDay",
+      "author": "James Craster",
+      "license": "Apache-2.0"
+    },
+    {
       "name": "Demo",
       "location": "./Games/Demo/Demo",
       "title": "OpenWerewolf-Demo",
