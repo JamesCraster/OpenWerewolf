@@ -53,8 +53,7 @@
     "release": "./release.sh",
     "start": "echo \"*** Please 'npm run build' first if you haven't already!***\" \n node app.js",
     "start:database": "echo \"*** Please 'npm run build' first if you haven't already!***\" \n node app.js database",
-    "start:debug": "echo \"*** Please 'npm run build' first if you haven't already!***\" \n node app.js debug",
-    "deploy": "./deploy.sh"
+    "start:debug": "echo \"*** Please 'npm run build' first if you haven't already!***\" \n node app.js debug"
   },
   "repository": {
     "type": "git",

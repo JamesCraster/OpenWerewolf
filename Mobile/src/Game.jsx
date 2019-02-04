@@ -109,6 +109,7 @@ export class Game extends Component {
                 id="action"
                 onSubmit={() => {
                   console.log(this.state.value);
+                  console.log('vote');
                   this.props.socket.emit(
                     "message",
                     `/vote ${this.state.value}`,
@@ -120,15 +121,17 @@ export class Game extends Component {
 
                 <Form.Field>
                   <Button
+                    type='button'
                     negative
-                    onClick={this.props.socket.emit("message", "/guilty")}
+                    onClick={()=>{this.props.socket.emit("message", "/guilty");}}
                   >
                     Guilty
                   </Button>
-                  <Button blue>Abstain</Button>
+                  <Button type='button'>Abstain</Button>
                   <Button
+                    type='button'
                     positive
-                    onClick={this.props.socket.emit("message", "/innocent")}
+                    onClick={()=>{this.props.socket.emit("message", "/innocent");}}
                   >
                     Innocent
                   </Button>

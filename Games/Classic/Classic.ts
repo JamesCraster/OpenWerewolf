@@ -186,7 +186,7 @@ const fourPlayer = [
   Roles.sherrif,
   Roles.vigilante,
 ];
-let globalMinimumPlayerCount = 5;
+let globalMinimumPlayerCount = 4;
 //four player games are for debugging only
 if (DEBUGMODE) {
   globalMinimumPlayerCount = 4;
