@@ -75,6 +75,7 @@ export abstract class Game {
     this.author = author;
     this.license = license;
     setInterval(this.pregameLobbyUpdate.bind(this), 500);
+    setInterval(this.update.bind(this), 500);
   }
   public get name() {
     return this._name;
@@ -88,6 +89,7 @@ export abstract class Game {
   public get users() {
     return this._users;
   }
+  protected update() {}
   get usernameColorPairs(): Array<NameColorPair> {
     let usernameColorPairs = [];
     for (let i = 0; i < this._users.length; i++) {

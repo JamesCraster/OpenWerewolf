@@ -20,6 +20,7 @@ let configGameList: any = [];
 
 //dynamically import game classes and add their constructors to configGameList
 for (let i = 0; i < config.games.length; i++) {
+  console.log(config.games);
   import(config.games[i].location)
     .then(module => {
       configGameList.push({

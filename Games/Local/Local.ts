@@ -29,9 +29,9 @@ import {
   Role,
   GameEndConditions,
   priorities,
-} from "../../Games/Classic/Roles";
+} from "../Local/Roles";
 
-import { ClassicPlayer } from "./ClassicPlayer";
+import { LocalPlayer } from "./LocalPlayer";
 import { DEBUGMODE } from "../../app";
 
 enum Phase {
@@ -48,150 +48,18 @@ export enum FinalVote {
   abstain = "abstain",
   innocent = "innocent",
 }
-const fifteenPlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-];
-const fourteenPlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-];
-const thirteenPlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-];
-const twelvePlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-];
-const elevenPlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-];
-const tenPlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-];
-const ninePlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-];
-const eightPlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-];
-const sevenPlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-];
+//import { defaultLists } from "./List.json";
+let fs = require("fs");
+const Default: { defaultLists: Array<Array<string>> } = JSON.parse(
+  fs.readFileSync("Games/Local/List.json", "utf-8"),
+);
 
-const sixPlayer = [
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-];
-const fivePlayer = [
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.escort,
-  Roles.sherrif,
-  Roles.survivor,
-];
-const fourPlayer = [
-  Roles.mafioso,
-  Roles.jester,
-  Roles.sherrif,
-  Roles.vigilante,
-];
 let globalMinimumPlayerCount = 4;
 //four player games are for debugging only
 if (DEBUGMODE) {
   globalMinimumPlayerCount = 4;
 }
-export class Classic extends Game {
+export class Local extends Game {
   private phase: string = Phase.day;
   //what stage the trial is in
   private trial: string = Trial.ended;
@@ -207,17 +75,17 @@ export class Classic extends Game {
   private readonly maxDaysWithoutDeath: number = 3;
   private daysWithoutDeath: number = 0;
   private deadChat: MessageRoom = new MessageRoom();
-  public players: Array<ClassicPlayer> = [];
+  public players: Array<LocalPlayer> = [];
 
   constructor(server: Server, name: string, uid: string) {
     super(
       server,
       globalMinimumPlayerCount,
       15,
-      "Classic",
+      "Local",
       name,
       uid,
-      "OpenWerewolf-Classic",
+      "OpenWerewolf-Local",
       "James Craster",
       "Apache-2.0",
     );
@@ -345,57 +213,28 @@ export class Classic extends Game {
   public start() {
     this.beforeStart();
     this.broadcastPlayerList();
-    let roleList: Array<Role> = [];
-    switch (this.users.length) {
-      case 4:
-        roleList = fourPlayer;
-        break;
-      case 5:
-        roleList = fivePlayer;
-        break;
-      case 6:
-        roleList = sixPlayer;
-      case 7:
-        roleList = sevenPlayer;
-        break;
-      case 8:
-        roleList = eightPlayer;
-        break;
-      case 9:
-        roleList = ninePlayer;
-        break;
-      case 10:
-        roleList = tenPlayer;
-        break;
-      case 11:
-        roleList = elevenPlayer;
-        break;
-      case 12:
-        roleList = twelvePlayer;
-        break;
-      case 13:
-        roleList = thirteenPlayer;
-        break;
-      case 14:
-        roleList = fourteenPlayer;
-        break;
-      case 15:
-        roleList = fifteenPlayer;
-        break;
-    }
-    this.broadcastRoleList(roleList.map(elem => elem.roleName));
+    //we map the rolename strings from List.json into role classes
+    let roleList: Array<Role> = Default.defaultLists[
+      this.users.length - globalMinimumPlayerCount
+    ].map(stringElem => {
+      return Object.keys(Roles)
+        .map(elem => Roles[elem])
+        .find(elem => elem.roleName == stringElem) as Role;
+    });
+    //this.broadcastRoleList(roleList.map(elem => elem.roleName));
     let randomDeck = Utils.shuffle(roleList);
     this.daychat.muteAll();
     //hand out roles
     for (let i = 0; i < randomDeck.length; i++) {
+      //console.log(randomDeck[i]);
       switch (randomDeck[i]) {
         case Roles.mafioso:
-          this.players.push(new ClassicPlayer(this.users[i], Roles.mafioso));
+          this.players.push(new LocalPlayer(this.users[i], Roles.mafioso));
           this.mafiachat.addUser(this.players[i].user);
           this.mafiachat.mute(this.players[i].user);
           break;
         default:
-          this.players.push(new ClassicPlayer(this.users[i], randomDeck[i]));
+          this.players.push(new LocalPlayer(this.users[i], randomDeck[i]));
           break;
       }
     }
@@ -411,7 +250,7 @@ export class Classic extends Game {
       }
     }
     //print the list of roles in the left panel
-    for (let player of this.players) {
+    /*for (let player of this.players) {
       for (let role of roleList.sort(
         (a, b) => priorities.indexOf(a) - priorities.indexOf(b),
       )) {
@@ -423,11 +262,11 @@ export class Classic extends Game {
           player.user.leftSend(role.roleName, role.color);
         }
       }
-    }
+    }*/
     this.setAllTime(5000, 0);
     setTimeout(this.night.bind(this), 5000);
   }
-  private sendRole(player: ClassicPlayer, alignment: Alignment, role: string) {
+  private sendRole(player: LocalPlayer, alignment: Alignment, role: string) {
     switch (alignment) {
       case Alignment.town:
         player.user.send(`You are a ${role}`, undefined, Colors.green);
@@ -444,15 +283,7 @@ export class Classic extends Game {
         ]);
         break;
       case Alignment.neutral:
-        if (player.role.backgroundColor) {
-          player.user.send(
-            `You are a ${role}`,
-            undefined,
-            player.role.backgroundColor,
-          );
-        } else {
-          player.user.send(`You are a ${role}`, undefined, player.role.color);
-        }
+        player.user.send(`You are a ${role}`, undefined, player.role.color);
         player.user.headerSend([
           { text: "You are a ", color: Colors.white },
           { text: role, color: player.role.color },
@@ -491,12 +322,12 @@ export class Classic extends Game {
     this.setAllTime(30000, 10000);
     setTimeout(this.nightResolution.bind(this), 30000);
   }
-  public hang(target: ClassicPlayer) {
+  public hang(target: LocalPlayer) {
     target.hang();
     this.kill(target);
     target.diedThisNight = false;
   }
-  public kill(target: ClassicPlayer) {
+  public kill(target: LocalPlayer) {
     //let the other players know the target has died
     this.markAsDead(target.user.username);
     target.kill();
@@ -507,7 +338,7 @@ export class Classic extends Game {
   }
   private nightResolution() {
     //sort players based off of the const priorities list
-    let nightPlayerArray = this.players.sort((element: ClassicPlayer) => {
+    let nightPlayerArray = this.players.sort((element: LocalPlayer) => {
       return priorities.indexOf(element.role);
     });
     //perform each player's ability in turn
@@ -553,7 +384,7 @@ export class Classic extends Game {
     }
     //calculate the plurality target of the mafia
     let maxVotes = 0;
-    let finalTargetPlayer: undefined | ClassicPlayer = undefined;
+    let finalTargetPlayer: undefined | LocalPlayer = undefined;
     for (let i = 0; i < this.players.length; i++) {
       if (this.players[i].isRole(Roles.mafioso)) {
         let targetPlayer = this.getPlayer(this.players[i].target);
@@ -845,7 +676,7 @@ export class Classic extends Game {
   }
   public disconnect(user: User) {
     let player = this.getPlayer(user.id);
-    if (player instanceof ClassicPlayer) {
+    if (player instanceof LocalPlayer) {
       this.kill(player);
       this.broadcast(player.user.username + " has died.");
     }
@@ -865,7 +696,7 @@ export class Classic extends Game {
       { text: ": " + msg },
     ]);
 
-    if (this.inPlay && player instanceof ClassicPlayer) {
+    if (this.inPlay && player instanceof LocalPlayer) {
       if (player.alive) {
         if (msg[0] == "/") {
           if (Utils.isCommand(msg, "/vote") && this.phase == Phase.night) {

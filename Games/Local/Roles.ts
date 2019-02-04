@@ -11,10 +11,11 @@
   limitations under the License.
 */
 "use strict";
-import { Classic } from "./Classic";
-import { ClassicPlayer } from "./ClassicPlayer";
+import { Local } from "./Local";
+import { LocalPlayer } from "./LocalPlayer";
 import { Player } from "../../Core/player";
 import { Colors } from "../../Core/utils";
+import { string } from "prop-types";
 
 export enum Alignment {
   town = "town",
@@ -29,19 +30,19 @@ enum Passives {
   roleblockImmune = "roleblockImmune",
 }
 
-type WinCondition = (player: ClassicPlayer, game: Classic) => boolean;
-type GameEndCondition = (game: Classic) => boolean;
+type WinCondition = (player: LocalPlayer, game: Local) => boolean;
+type GameEndCondition = (game: Local) => boolean;
 
 export type Ability = {
   condition: (
-    targetPlayer: ClassicPlayer,
-    game: Classic,
+    targetPlayer: LocalPlayer,
+    game: Local,
     player?: Player,
   ) => boolean | undefined;
   action: (
-    targetPlayer: ClassicPlayer,
-    game: Classic,
-    player?: ClassicPlayer,
+    targetPlayer: LocalPlayer,
+    game: Local,
+    player?: LocalPlayer,
   ) => void;
 };
 
@@ -52,12 +53,11 @@ export type Role = {
   abilities: Array<{ ability: Ability; uses?: number }>;
   passives: Array<Passives>;
   color?: Colors;
-  backgroundColor?: Colors;
 };
 
 export namespace GameEndConditions {
   //town wins if no mafia remain
-  export const townWin: GameEndCondition = (game: Classic) => {
+  export const townWin: GameEndCondition = (game: Local) => {
     for (let player of game.players) {
       if (player.alignment == Alignment.mafia && player.alive) {
         return false;
@@ -66,7 +66,7 @@ export namespace GameEndConditions {
     return true;
   };
   //mafia wins if there are no town left alive, or there is just 1 town and 1 mafia (which would otherwise cause stalemate)
-  export const mafiaWin: GameEndCondition = (game: Classic) => {
+  export const mafiaWin: GameEndCondition = (game: Local) => {
     let townCount = 0;
     let mafiaCount = 0;
     let alive = 0;
@@ -85,28 +85,22 @@ export namespace GameEndConditions {
   };
 }
 export namespace WinConditions {
-  export const town: WinCondition = (player: ClassicPlayer, game: Classic) => {
+  export const town: WinCondition = (player: LocalPlayer, game: Local) => {
     return GameEndConditions.townWin(game);
   };
-  export const mafia: WinCondition = (player: ClassicPlayer, game: Classic) => {
+  export const mafia: WinCondition = (player: LocalPlayer, game: Local) => {
     return GameEndConditions.mafiaWin(game);
   };
-  export const survive: WinCondition = (
-    player: ClassicPlayer,
-    game: Classic,
-  ) => {
+  export const survive: WinCondition = (player: LocalPlayer, game: Local) => {
     return player.alive;
   };
-  export const hanged: WinCondition = (
-    player: ClassicPlayer,
-    game: Classic,
-  ) => {
+  export const hanged: WinCondition = (player: LocalPlayer, game: Local) => {
     return player.hanged;
   };
   //make last one standing exclusive, except for survivors
   export const lastOneStanding: WinCondition = (
-    player: ClassicPlayer,
-    game: Classic,
+    player: LocalPlayer,
+    game: Local,
   ) => {
     let aliveCount = 0;
     for (let player of game.players) {
@@ -116,47 +110,36 @@ export namespace WinConditions {
     }
     return player.alive && aliveCount <= 2;
   };
-  export const undefined: WinCondition = (
-    player: ClassicPlayer,
-    game: Classic,
-  ) => {
+  export const undefined: WinCondition = (player: LocalPlayer, game: Local) => {
     return false;
   };
 }
 namespace Conditions {
-  export const alwaysTrue = (targetPlayer: ClassicPlayer, game: Classic) => {
+  export const alwaysTrue = (targetPlayer: LocalPlayer, game: Local) => {
     return true;
   };
 }
 namespace Abilities {
   export const kill: Ability = {
-    condition: (
-      targetPlayer: ClassicPlayer,
-      game: Classic,
-      player?: Player,
-    ) => {
+    condition: (targetPlayer: LocalPlayer, game: Local, player?: Player) => {
       if (targetPlayer.healed && player) {
         player.user.send("Your target was healed!");
       }
       return !targetPlayer.healed;
     },
-    action: (targetPlayer: ClassicPlayer, game: Classic) => {
+    action: (targetPlayer: LocalPlayer, game: Local) => {
       game.kill(targetPlayer);
     },
   };
   export const heal: Ability = {
     condition: Conditions.alwaysTrue,
-    action: (targetPlayer: ClassicPlayer, game: Classic) => {
+    action: (targetPlayer: LocalPlayer, game: Local) => {
       targetPlayer.healed = true;
     },
   };
   export const getAlignment: Ability = {
     condition: Conditions.alwaysTrue,
-    action: (
-      targetPlayer: ClassicPlayer,
-      game: Classic,
-      player?: ClassicPlayer,
-    ) => {
+    action: (targetPlayer: LocalPlayer, game: Local, player?: LocalPlayer) => {
       if (player) {
         player.user.send("You investigated your target:");
         player.user.send(
@@ -167,108 +150,108 @@ namespace Abilities {
   };
   export const roleBlock: Ability = {
     condition: Conditions.alwaysTrue,
-    action: (targetPlayer: ClassicPlayer, game: Classic) => {
+    action: (targetPlayer: LocalPlayer, game: Local) => {
       targetPlayer.roleBlocked = true;
     },
   };
 }
-export namespace Roles {
-  export const vigilante: Role = {
+
+export const Roles: { readonly [x: string]: Role } = {
+  vigilante: {
     roleName: "vigilante",
     alignment: Alignment.town,
     winCondition: WinConditions.town,
     abilities: [{ ability: Abilities.kill, uses: 2 }],
     passives: [],
-  };
-  export const mafioso: Role = {
+  },
+  mafioso: {
     roleName: "mafioso",
     alignment: Alignment.mafia,
     winCondition: WinConditions.mafia,
     abilities: [{ ability: Abilities.kill }],
     passives: [],
-  };
-  export const godfather: Role = {
+  },
+  godfather: {
     roleName: "godfather",
     alignment: Alignment.mafia,
     winCondition: WinConditions.mafia,
     abilities: [{ ability: Abilities.kill }],
     passives: [Passives.nightImmune],
-  };
-  export const doctor: Role = {
+  },
+  doctor: {
     roleName: "doctor",
     alignment: Alignment.town,
     winCondition: WinConditions.town,
     abilities: [{ ability: Abilities.heal }],
     passives: [],
-  };
-  export const sherrif: Role = {
+  },
+  sherrif: {
     roleName: "sherrif",
     alignment: Alignment.town,
     winCondition: WinConditions.town,
     abilities: [{ ability: Abilities.getAlignment }],
     passives: [],
-  };
-  export const townie: Role = {
+  },
+  townie: {
     roleName: "townie",
     alignment: Alignment.town,
     winCondition: WinConditions.town,
     abilities: [],
     passives: [],
-  };
-  export const escort: Role = {
+  },
+  escort: {
     roleName: "escort",
     alignment: Alignment.town,
     winCondition: WinConditions.town,
     abilities: [{ ability: Abilities.roleBlock }],
     passives: [Passives.roleblockImmune],
-  };
-  export const survivor: Role = {
+  },
+  survivor: {
     roleName: "survivor",
     alignment: Alignment.neutral,
     winCondition: WinConditions.survive,
-    color: Colors.brightYellow,
-    backgroundColor: Colors.yellow,
+    color: Colors.yellow,
     abilities: [],
     passives: [],
-  };
-  export const medium: Role = {
+  },
+  medium: {
     roleName: "medium",
     alignment: Alignment.town,
     winCondition: WinConditions.town,
     abilities: [],
     passives: [],
-  };
-  export const jester: Role = {
+  },
+  jester: {
     roleName: "jester",
     alignment: Alignment.neutral,
     winCondition: WinConditions.hanged,
     color: Colors.magenta,
     abilities: [],
     passives: [],
-  };
-  export const serialKiller: Role = {
+  },
+  serialKiller: {
     roleName: "serial killer",
     alignment: Alignment.neutral,
     winCondition: WinConditions.lastOneStanding,
     color: Colors.magenta,
     abilities: [],
     passives: [],
-  };
-  export const anyTown: Role = {
+  },
+  anyTown: {
     roleName: "Any Town",
     alignment: Alignment.town,
     winCondition: WinConditions.undefined,
     abilities: [],
     passives: [],
-  };
-  export const any: Role = {
+  },
+  any: {
     roleName: "Any",
     alignment: Alignment.undefined,
     winCondition: WinConditions.undefined,
     abilities: [],
     passives: [],
-  };
-}
+  },
+};
 
 export const priorities = [
   Roles.escort,
