@@ -18,6 +18,6 @@
   "permission": false,
   "autoInstall": true,
   "rtl": false,
-  "version": "2.4.1",
+  "version": "2.4.2",
   "components": ["reset", "site", "button", "divider", "header", "message", "icon", "input", "label", "loader", "segment", "form", "menu", "item", "checkbox", "dimmer", "dropdown", "modal", "transition", "api", "state", "visibility"]
 }

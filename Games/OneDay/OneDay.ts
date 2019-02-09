@@ -268,7 +268,7 @@ export class OneDay extends Game {
   private sixPlayer = defaultSixPlayer;
   private sevenPlayer = defaultSevenPlayer;
   private eightPlayer = defaultEightPlayer;
-  private players: Array<OneDayPlayer> = [];
+  public readonly players: Array<OneDayPlayer> = [];
   public constructor(server: Server, name: string, uid: string) {
     super(
       server,
@@ -409,6 +409,9 @@ export class OneDay extends Game {
             losersUsernames.push(losers[i].user.username);
           }
           //do the hanging
+          for (let loser of losersUsernames) {
+            this.markAsDead(loser);
+          }
           this.players[j].user.hang(losersUsernames);
         }
       }, 1000);
