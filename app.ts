@@ -20,7 +20,6 @@ let configGameList: any = [];
 
 //dynamically import game classes and add their constructors to configGameList
 for (let i = 0; i < config.games.length; i++) {
-  console.log(config.games);
   import(config.games[i].location)
     .then(module => {
       configGameList.push({
@@ -31,7 +30,7 @@ for (let i = 0; i < config.games.length; i++) {
     .catch(e => {
       console.log(
         "Non-critical warning, a game is missing: " + config.games[i].name,
-      ); /*console.log(e);*/
+      );
     });
 }
 
@@ -89,7 +88,8 @@ let uPlayerid = 0;
 
 let con: any = undefined;
 redisServer.open((err: string) => {});
-if (DATABASE) {
+
+function connectDatabase() {
   //Details of your MySQL server go here (don't worry, these aren't my production details.)
   con = mysql.createConnection({
     host: "localhost",
@@ -98,11 +98,29 @@ if (DATABASE) {
     database: "OPENWEREWOLF",
   });
 
-  con.connect(function(err: any) {
-    if (err) throw err;
-    console.log("Connected!");
+  //if database fails to connect, try to reconnect
+  con.connect((err: any) => {
+    if (err) {
+      console.log("Database error:", err);
+      setTimeout(connectDatabase, 3000);
+    }
+  });
+
+  //if database times out due to inactivity, try to reconnect
+  con.on("error", (err: any) => {
+    console.log("Database error:", err);
+    if(err.code == 'PROTOCOL_CONNECTION_LOST'){
+      connectDatabase();
+    }else{
+      throw err;
+    }
   });
 }
+
+if (DATABASE) {
+  connectDatabase();
+}
+
 //create a new server
 let server = new Server();
 if (myArgs[0] == "debug") {
@@ -440,8 +458,6 @@ io.on("connection", function(socket: Socket) {
   });
   socket.on("localGameClick", function(name: string, gameId: string) {
     server.receive(thisPlayerId, name);
-    console.log(server.getUser(thisPlayerId));
-    console.log(server.getGameById(gameId));
     if (
       server.getUser(thisPlayerId) != undefined &&
       server.getGameById(gameId) != undefined

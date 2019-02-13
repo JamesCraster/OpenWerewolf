@@ -188,11 +188,11 @@ function lobbyItemClick(item: HTMLElement) {
       appendMessage(
         [
           {
-            text: "This game has already started, please join a different one.",
-            backgroundColor: "#950d0d",
+            text: "This game has already started, please join a different one."
           },
         ],
         "#chatbox",
+        "#950d0d"
       );
     }
   }
@@ -363,8 +363,10 @@ $(function() {
   leaveGameButton.setNotInPlayClick();
   $("#lobbyChatForm").submit(() => {
     console.log("active");
-    user.socket.emit("lobbyMessage", $("#lobbyChatInput").val());
-    $("#lobbyChatInput").val("");
+    if ($("#lobbyChatInput").val() != "") {
+      user.socket.emit("lobbyMessage", $("#lobbyChatInput").val());
+      $("#lobbyChatInput").val("");
+    }
     return false;
   });
 
