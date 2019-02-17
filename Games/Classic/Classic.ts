@@ -29,7 +29,7 @@ import {
   Role,
   GameEndConditions,
   priorities,
-} from "../../Games/Classic/Roles";
+} from "../Classic/Roles";
 
 import { ClassicPlayer } from "./ClassicPlayer";
 import { DEBUGMODE } from "../../app";
@@ -48,144 +48,11 @@ export enum FinalVote {
   abstain = "abstain",
   innocent = "innocent",
 }
-const fifteenPlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-];
-const fourteenPlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-];
-const thirteenPlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-];
-const twelvePlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-];
-const elevenPlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-];
-const tenPlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-];
-const ninePlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-];
-const eightPlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-  Roles.townie,
-];
-const sevenPlayer = [
-  Roles.mafioso,
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-  Roles.townie,
-];
+let fs = require("fs");
+const Default: { defaultLists: Array<Array<string>> } = JSON.parse(
+  fs.readFileSync("Games/Classic/List.json", "utf-8"),
+);
 
-const sixPlayer = [
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.vigilante,
-  Roles.sherrif,
-  Roles.townie,
-];
-const fivePlayer = [
-  Roles.mafioso,
-  Roles.doctor,
-  Roles.escort,
-  Roles.sherrif,
-  Roles.survivor,
-];
-const fourPlayer = [
-  Roles.mafioso,
-  Roles.jester,
-  Roles.sherrif,
-  Roles.vigilante,
-];
 let globalMinimumPlayerCount = 4;
 //four player games are for debugging only
 if (DEBUGMODE) {
@@ -345,44 +212,12 @@ export class Classic extends Game {
   public start() {
     this.beforeStart();
     this.broadcastPlayerList();
-    let roleList: Array<Role> = [];
-    switch (this.users.length) {
-      case 4:
-        roleList = fourPlayer;
-        break;
-      case 5:
-        roleList = fivePlayer;
-        break;
-      case 6:
-        roleList = sixPlayer;
-      case 7:
-        roleList = sevenPlayer;
-        break;
-      case 8:
-        roleList = eightPlayer;
-        break;
-      case 9:
-        roleList = ninePlayer;
-        break;
-      case 10:
-        roleList = tenPlayer;
-        break;
-      case 11:
-        roleList = elevenPlayer;
-        break;
-      case 12:
-        roleList = twelvePlayer;
-        break;
-      case 13:
-        roleList = thirteenPlayer;
-        break;
-      case 14:
-        roleList = fourteenPlayer;
-        break;
-      case 15:
-        roleList = fifteenPlayer;
-        break;
-    }
+    //we map the rolename strings from List.json into role classes
+    let roleList: Array<Role> = Default.defaultLists[
+      this.users.length - globalMinimumPlayerCount
+    ].map(stringElem => {
+        return priorities.find(elem => elem.roleName == stringElem) as Role;
+    });
     this.broadcastRoleList(roleList.map(elem => elem.roleName));
     let randomDeck = Utils.shuffle(roleList);
     this.daychat.muteAll();
@@ -444,15 +279,7 @@ export class Classic extends Game {
         ]);
         break;
       case Alignment.neutral:
-        if (player.role.backgroundColor) {
-          player.user.send(
-            `You are a ${role}`,
-            undefined,
-            player.role.backgroundColor,
-          );
-        } else {
-          player.user.send(`You are a ${role}`, undefined, player.role.color);
-        }
+        player.user.send(`You are a ${role}`, undefined, player.role.color);
         player.user.headerSend([
           { text: "You are a ", color: Colors.white },
           { text: role, color: player.role.color },
@@ -890,6 +717,11 @@ export class Classic extends Game {
               player.user.send(
                 "There's no player called '" + username + "'. Try again.",
               );
+            }
+          } else if(Utils.isCommand(msg, '/unvote') && this.phase == Phase.night){
+            if(player.target != ""){
+              player.user.send(`Your choice of "${this.getPlayer(player.target)!.user.username}" has been cancelled`);
+              player.target = "";
             }
           } else if (
             Utils.isCommand(msg, "/vote") &&
