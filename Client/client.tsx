@@ -188,11 +188,11 @@ function lobbyItemClick(item: HTMLElement) {
       appendMessage(
         [
           {
-            text: "This game has already started, please join a different one."
+            text: "This game has already started, please join a different one.",
           },
         ],
         "#chatbox",
-        "#950d0d"
+        "#950d0d",
       );
     }
   }
@@ -491,12 +491,14 @@ $(function() {
     appendMessage(msg, "#lobbyChatList");
     if (
       Math.abs(
-        lobbyChatListContainerSimpleBar.getScrollElement().scrollTop +
-          lobbyChatListContainerSimpleBar.getScrollElement().clientHeight -
-          lobbyChatListContainerSimpleBar.getScrollElement().scrollHeight,
-      ) <= 50
+        $("#lobbyChatListContainer")[0].scrollTop +
+          $("#lobbyChatListContainer")[0].clientHeight -
+          $("#lobbyChatListContainer")[0].scrollHeight,
+      ) <= 100
     ) {
-      lobbyChatListContainerSimpleBar.getScrollElement().scrollTop = lobbyChatListContainerSimpleBar.getScrollElement().scrollHeight;
+      $("#lobbyChatListContainer")[0].scrollTop = $(
+        "#lobbyChatListContainer",
+      )[0].scrollHeight;
     }
   });
   user.socket.on("rightMessage", function(msg: Message) {

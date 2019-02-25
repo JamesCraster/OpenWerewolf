@@ -36,6 +36,7 @@ for (let i = 0; i < config.games.length; i++) {
 
 import { Server } from "./Core/server";
 import { Socket } from "./node_modules/@types/socket.io";
+import { Colors } from "./Core/core";
 
 const myArgs = process.argv.splice(2);
 
@@ -109,9 +110,9 @@ function connectDatabase() {
   //if database times out due to inactivity, try to reconnect
   con.on("error", (err: any) => {
     console.log("Database error:", err);
-    if(err.code == 'PROTOCOL_CONNECTION_LOST'){
+    if (err.code == "PROTOCOL_CONNECTION_LOST") {
       connectDatabase();
-    }else{
+    } else {
       throw err;
     }
   });
@@ -469,7 +470,12 @@ io.on("connection", function(socket: Socket) {
     if (typeof msg === "string") {
       if (Date.now() - time < 500) {
         time = Date.now();
-        socket.emit("lobbyMessage", "Chat: Please do not spam the chat");
+        socket.emit("lobbyMessage", [
+          {
+            text: "Chat: Please do not spam the chat",
+            color: Colors.standardWhite,
+          },
+        ]);
       } else {
         time = Date.now();
         server.receiveLobbyMessage(thisPlayerId, msg);
