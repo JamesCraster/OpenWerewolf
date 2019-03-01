@@ -20,7 +20,6 @@
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "grawlix": "^1.0.6",
-    "jquery": "^3.3.1",
     "mysql": "^2.16.0",
     "nodemailer": "^4.6.8",
     "pixi.js": "^4.8.5",

@@ -696,7 +696,9 @@ function transitionFromLandingToLobby() {
     $("#lobbyContainer").fadeIn(200);
     location.hash = "#2";
     //scroll down the lobby chat
-    lobbyChatListContainerSimpleBar.getScrollElement().scrollTop = lobbyChatListContainerSimpleBar.getScrollElement().scrollHeight;
+    $("#lobbyChatListContainer")[0].scrollTop = $(
+      "#lobbyChatListContainer",
+    )[0].scrollHeight;
   });
 }
 //only use when the player has created a new tab
@@ -773,7 +775,9 @@ function transitionFromGameToLobby() {
     $("#topLevel").fadeOut(200, function() {
       $("#lobbyContainer").fadeIn(200);
       //scroll down the lobby chat
-      lobbyChatListContainerSimpleBar.getScrollElement().scrollTop = lobbyChatListContainerSimpleBar.getScrollElement().scrollHeight;
+      $("#lobbyChatListContainer")[0].scrollTop = $(
+        "#lobbyChatListContainer",
+      )[0].scrollHeight;
     });
     $("#lobbyContainer")[0].scrollTop = 0;
   });
@@ -1082,7 +1086,6 @@ class Player {
         this.votedFor = true;
       }
     });
-    //this.sprite.scale.y = 2;
     let usernameColor = 0xffffff;
     this.frameCount = 0;
     players.push(this);
@@ -1093,8 +1096,6 @@ class Player {
       fontSize: 128,
       fill: usernameColor,
       align: "center",
-      //stroke: "#000000",
-      //strokeThickness: 20,
     });
     this.usernameText.scale.x = 0.25;
     this.usernameText.scale.y = 0.25;
