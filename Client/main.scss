@@ -29,7 +29,7 @@ $inner-div-margin-bottom: 105px;
 
 @font-face {
   font-family: Mercutio;
-  src: url('mercutio_basic.ttf') format('truetype');
+  src: url("mercutio_basic.ttf") format("truetype");
 }
 
 * {
@@ -60,11 +60,11 @@ body {
 }
 
 #errors {
-  height: 50px
+  height: 50px;
 }
 
 #landingPageCenter {
-  margin-top: 9%;
+  margin-top: 10%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -297,12 +297,12 @@ a {
 
 #mainTitle {
   font-size: 2.24em;
-  margin-bottom: 2%
+  margin-bottom: 2%;
 }
 
 #gameStatus {
   float: right;
-  padding-right: 5px
+  padding-right: 5px;
 }
 
 #gameType {
@@ -312,7 +312,7 @@ a {
 
 .gameName {
   float: left;
-  padding-right: 5px
+  padding-right: 5px;
 }
 
 .inPlay {
@@ -337,7 +337,6 @@ a {
 }
 
 @media only screen and (max-device-width: 430px) {
-
   * {
     font-size: 18px;
   }
@@ -376,7 +375,7 @@ a {
   }
 }
 
-@media only screen and (min-device-width:430px) {
+@media only screen and (min-device-width: 430px) {
   #outer {
     display: flex;
     justify-content: flex-end;

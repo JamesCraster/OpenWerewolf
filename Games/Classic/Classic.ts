@@ -216,7 +216,7 @@ export class Classic extends Game {
     let roleList: Array<Role> = Default.defaultLists[
       this.users.length - globalMinimumPlayerCount
     ].map(stringElem => {
-        return priorities.find(elem => elem.roleName == stringElem) as Role;
+      return priorities.find(elem => elem.roleName == stringElem) as Role;
     });
     this.broadcastRoleList(roleList.map(elem => elem.roleName));
     let randomDeck = Utils.shuffle(roleList);
@@ -286,6 +286,10 @@ export class Classic extends Game {
         ]);
         break;
     }
+    player.user.emit(
+      "ownInfoSend",
+      `${player.user.username} - ${player.role.roleName}`,
+    );
   }
 
   private night() {
@@ -718,9 +722,16 @@ export class Classic extends Game {
                 "There's no player called '" + username + "'. Try again.",
               );
             }
-          } else if(Utils.isCommand(msg, '/unvote') && this.phase == Phase.night){
-            if(player.target != ""){
-              player.user.send(`Your choice of "${this.getPlayer(player.target)!.user.username}" has been cancelled`);
+          } else if (
+            Utils.isCommand(msg, "/unvote") &&
+            this.phase == Phase.night
+          ) {
+            if (player.target != "") {
+              player.user.send(
+                `Your choice of "${
+                  this.getPlayer(player.target)!.user.username
+                }" has been cancelled`,
+              );
               player.target = "";
             }
           } else if (
@@ -820,6 +831,10 @@ export class Classic extends Game {
   public resendData(user: User) {
     let player = this.getPlayer(user.id);
     if (player) {
+      player.user.emit(
+        "ownInfoSend",
+        `${player.user.username} - ${player.role.roleName}`,
+      );
       if (player.role.alignment == Alignment.town) {
         player.user.emit("role", player.role.roleName, Colors.brightGreen);
       } else if (player.role.alignment == Alignment.mafia) {

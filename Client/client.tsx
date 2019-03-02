@@ -501,6 +501,10 @@ $(function() {
       )[0].scrollHeight;
     }
   });
+  //adds text to the username + role line of the client
+  user.socket.on("ownInfoSend", (msg: string) => {
+    $("#nameAndRole").text(msg);
+  });
   user.socket.on("rightMessage", function(msg: Message) {
     appendMessage(msg, "#playerNames");
     addPlayer(msg[0].text);

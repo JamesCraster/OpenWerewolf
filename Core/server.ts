@@ -134,7 +134,7 @@ export class Server {
         let j = this.getIndexOfGameById(user.gameClickedLast);
         if (j != undefined) {
           //if game needs a player
-          if (this._games[j].playersNeeded > 0) {
+          if (this._games[j].playersWanted > 0) {
             user.inGame = true;
             user.game = this._games[j];
             user.send(
@@ -340,7 +340,7 @@ export class Server {
     }
     let game = this.getGameById(user.gameClickedLast);
     if (game != undefined) {
-      if (game.playersNeeded == 0) {
+      if (game.playersWanted == 0) {
         user.send(
           "This game is has already started, please join a different one.",
         );
@@ -400,7 +400,7 @@ export class Server {
               );
             }
             if (user.admin) {
-              if (user.game != undefined && user.game.isPlayer(id)) {
+              if (user.game != undefined && user.game.isUser(id)) {
                 user.game.adminReceive(user, msg);
               }
             }
@@ -419,7 +419,7 @@ export class Server {
             }
           } else if (user.game != undefined && this.validateMessage(msg)) {
             msg = grawlix(msg, { style: "asterix" });
-            if (user.game.isPlayer(id)) {
+            if (user.game.isUser(id)) {
               user.game.receive(user, msg);
               console.log("received by game");
             }

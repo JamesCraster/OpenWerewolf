@@ -12,8 +12,6 @@
 */
 
 "use strict";
-
-import { Socket } from "../node_modules/@types/socket.io";
 import { Server } from "./server";
 import { User, Message } from "./user";
 import {
@@ -28,25 +26,36 @@ import { DEBUGMODE } from "../app";
 export abstract class Game {
   protected endChat: MessageRoom = new MessageRoom();
   protected endTime: number = 30000;
+  //the list of message rooms, used for communication between players,
+  //adds the ability to mute players etc.
   private _messageRooms: Array<MessageRoom> = [];
   private _users: Array<User> = [];
   private _registeredPlayerCount: number = 0;
+  //min and max number of players - controls when the game chooses to start
   private readonly _minPlayerCount: number;
   private readonly _maxPlayerCount: number;
   //true until the point where players are all kicked (so includes end chat phase)
   private _inPlay: boolean = false;
+  //a reference to the parent server
   private readonly _server: Server;
   private readonly startClock: Stopwatch = new Stopwatch();
+  //time given to players to join the game once min is exceeded
   private _startWait = 30000;
   private holdVote: boolean = false;
+  //used to hand out username colors to players
   private colorPool = UserColorArray.slice();
+  //what the game mode is
   private _gameType: string;
   private _resetStartTime: boolean = false;
   private _inEndChat: boolean = false;
+  //the name the game creator gave the game
   private _name: string;
   private _uid: string;
+  //if no one is in the game for this long, the game is closed by the server
   private idleTime: number = 60000 * 5;
+  //timer that keeps track of game inactivity
   private idleTimer: Stopwatch = new Stopwatch();
+  //game data printed when the game starts
   private readonly author: string;
   private readonly title: string;
   private readonly license: string;
@@ -62,6 +71,7 @@ export abstract class Game {
     author: string,
     license: string,
   ) {
+    //debug mode will start game faster
     if (DEBUGMODE) {
       this._startWait = 10000;
     }
@@ -74,6 +84,7 @@ export abstract class Game {
     this.title = title;
     this.author = author;
     this.license = license;
+    //run update functions periodically
     setInterval(this.pregameLobbyUpdate.bind(this), 500);
     setInterval(this.update.bind(this), 500);
   }
@@ -89,7 +100,9 @@ export abstract class Game {
   public get users() {
     return this._users;
   }
+  //update is supplied by concrete child class
   protected update() {}
+  //returns array of usernames and their colors, to put in the lobby chat
   get usernameColorPairs(): Array<NameColorPair> {
     let usernameColorPairs = [];
     for (let i = 0; i < this._users.length; i++) {
@@ -112,6 +125,7 @@ export abstract class Game {
   get playerCount() {
     return this._registeredPlayerCount;
   }
+  //returns how many more players are needed to start
   get minimumPlayersNeeded() {
     if (this._inPlay) {
       return 0;
@@ -119,7 +133,8 @@ export abstract class Game {
       return this._minPlayerCount - this._registeredPlayerCount;
     }
   }
-  get playersNeeded() {
+  //returns how many players are wanted
+  get playersWanted() {
     if (this._inPlay) {
       return 0;
     } else {
@@ -132,10 +147,10 @@ export abstract class Game {
         return this._users[i];
       }
     }
-    console.log("Error: Game.getPlayer: No player found with given id");
+    console.log("Error: Game.getUser: No user found with given id");
     return undefined;
   }
-  public isPlayer(id: string): boolean {
+  public isUser(id: string): boolean {
     for (let i = 0; i < this._users.length; i++) {
       if (this._users[i].id == id) {
         return true;
@@ -165,6 +180,7 @@ export abstract class Game {
   }
   private pregameLobbyUpdate() {
     if (!this.inPlay) {
+      //remove inactive games
       if (this._users.length != 0) {
         this.idleTimer.restart();
         this.idleTimer.stop();
@@ -259,8 +275,8 @@ export abstract class Game {
   public disconnect(user: User): void {
     this.lineThroughPlayer(user.username, "grey");
   }
+  //remove a user from the game
   public kick(user: User) {
-    //this function fails
     for (let i = 0; i < this._messageRooms.length; i++) {
       this._messageRooms[i].removeUser(user);
       this.endChat.removeUser(user);
@@ -371,7 +387,7 @@ export abstract class Game {
   }
   //to be overridden in child classes as necessary
   public customAdminReceive(user: User, msg: string): void {}
-  //admin commands
+  //generic admin commands
   public adminReceive(user: User, msg: string): void {
     if (user.admin == true && msg[0] == "!") {
       if (!this.inPlay) {
