@@ -263,32 +263,36 @@ export class Classic extends Game {
     setTimeout(this.night.bind(this), 5000);
   }
   private sendRole(player: ClassicPlayer, alignment: Alignment, role: string) {
+    let backgroundColor: Colors = Colors.none;
+    let color = Colors.none;
     switch (alignment) {
       case Alignment.town:
-        player.user.send(`You are a ${role}`, undefined, Colors.green);
-        player.user.headerSend([
-          { text: "You are a ", color: Colors.white },
-          { text: role, color: Colors.brightGreen },
-        ]);
+        backgroundColor = Colors.green;
+        color = Colors.brightGreen;
         break;
       case Alignment.mafia:
-        player.user.send(`You are a ${role}`, undefined, Colors.red);
-        player.user.headerSend([
-          { text: "You are a ", color: Colors.white },
-          { text: role, color: Colors.brightRed },
-        ]);
+        backgroundColor = Colors.red;
+        color = Colors.brightRed;
         break;
       case Alignment.neutral:
-        player.user.send(`You are a ${role}`, undefined, player.role.color);
-        player.user.headerSend([
-          { text: "You are a ", color: Colors.white },
-          { text: role, color: player.role.color },
-        ]);
+        color = <Colors>player.role.color;
+        backgroundColor = <Colors>(
+          (player.role.backgroundColor
+            ? player.role.backgroundColor
+            : player.role.color)
+        );
         break;
     }
+    player.user.send(`You are a ${role}`, undefined, backgroundColor);
+    player.user.headerSend([
+      { text: "You are a ", color: Colors.white },
+      { text: role, color: color },
+    ]);
     player.user.emit(
       "ownInfoSend",
-      `${player.user.username} - ${player.role.roleName}`,
+      player.user.username,
+      player.role.roleName,
+      color,
     );
   }
 
@@ -821,6 +825,19 @@ export class Classic extends Game {
     }
   }
   public addUser(user: User) {
+    if (this.users.length == 0) {
+      user.makeHost(
+        priorities.map(elem => {
+          return {
+            roleName: elem.roleName,
+            color:
+              elem.alignment == Alignment.town
+                ? Colors.brightGreen
+                : Colors.brightRed,
+          };
+        }),
+      );
+    }
     //player.emit('getAllRolesForSelection', [{name:'Mafia', color:'red'},{name:'Cop', color:'green'}];
     this.daychat.addUser(user);
     super.addUser(user);
@@ -831,17 +848,32 @@ export class Classic extends Game {
   public resendData(user: User) {
     let player = this.getPlayer(user.id);
     if (player) {
+      let backgroundColor: Colors = Colors.none;
+      let color = Colors.none;
+      switch (player.role.alignment) {
+        case Alignment.town:
+          backgroundColor = Colors.green;
+          color = Colors.brightGreen;
+          break;
+        case Alignment.mafia:
+          backgroundColor = Colors.red;
+          color = Colors.brightRed;
+          break;
+        case Alignment.neutral:
+          color = <Colors>player.role.color;
+          backgroundColor = <Colors>(
+            (player.role.backgroundColor
+              ? player.role.backgroundColor
+              : player.role.color)
+          );
+          break;
+      }
       player.user.emit(
         "ownInfoSend",
-        `${player.user.username} - ${player.role.roleName}`,
+        player.user.username,
+        player.role.roleName,
+        color,
       );
-      if (player.role.alignment == Alignment.town) {
-        player.user.emit("role", player.role.roleName, Colors.brightGreen);
-      } else if (player.role.alignment == Alignment.mafia) {
-        player.user.emit("role", player.role.roleName, Colors.brightRed);
-      } else {
-        player.user.emit("role", player.role.roleName, player.role.color);
-      }
     }
   }
 }

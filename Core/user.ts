@@ -54,6 +54,7 @@ export class User {
   private _warn: number = 0;
   private _canVote: boolean = false;
   private _selectedUserName: string = "";
+  private _host: boolean = false;
   //store a list of all the dead players so they get removed when the page is reloaded.
   private _deadCache: Array<string> = [];
   public constructor(user: User);
@@ -82,6 +83,7 @@ export class User {
     this._cache = [];
     this._leftMessageCache = [];
     this._deadCache = [];
+    this._host = false;
   }
   public reloadClient(): void {
     this.emit("reloadClient");
@@ -114,11 +116,23 @@ export class User {
       | undefined
       | Array<{ text: string; color: string | Colors }>
       | Message
+      | Array<{ roleName: string; color: Colors }>
     >
   ) {
     for (let i = 0; i < this._sockets.length; i++) {
       this._sockets[i].emit(event, ...args);
     }
+  }
+  public makeHost(roles: Array<{ roleName: string; color: Colors }>) {
+    this._host = true;
+    this.emit("makeHost", roles);
+  }
+  public removeHostPrivileges() {
+    this._host = false;
+    this.emit("removeHostPrivileges");
+  }
+  get isHost() {
+    return this._host;
   }
   public addSocket(socket: Socket) {
     this._sockets.push(socket);

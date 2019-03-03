@@ -14,6 +14,8 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import LobbyItem from "./components";
+import RoleSelection from "./roleSelection";
+
 declare let SimpleBar: any;
 
 type Message = Array<{ text: string; color: string; backgroundColor: string }>;
@@ -132,6 +134,7 @@ export class User {
   }
 }
 export const user = new User();
+ReactDOM.render(<RoleSelection user={user} />, $("#roleSelection")[0]);
 
 function lobbyItemClick(item: HTMLElement) {
   user.gameClicked = true;
@@ -502,8 +505,10 @@ $(function() {
     }
   });
   //adds text to the username + role line of the client
-  user.socket.on("ownInfoSend", (msg: string) => {
-    $("#nameAndRole").text(msg);
+  user.socket.on("ownInfoSend", (name: string, role: string, color: string) => {
+    $("#nameAndRole").html(
+      `<span>${name} -</span><span style="color:${color};"> ${role}</span>`,
+    );
   });
   user.socket.on("rightMessage", function(msg: Message) {
     appendMessage(msg, "#playerNames");

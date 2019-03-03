@@ -40,6 +40,7 @@ class User {
         this._warn = 0;
         this._canVote = false;
         this._selectedUserName = "";
+        this._host = false;
         //store a list of all the dead players so they get removed when the page is reloaded.
         this._deadCache = [];
         if (id instanceof User) {
@@ -66,6 +67,7 @@ class User {
         this._cache = [];
         this._leftMessageCache = [];
         this._deadCache = [];
+        this._host = false;
     }
     reloadClient() {
         this.emit("reloadClient");
@@ -92,6 +94,17 @@ class User {
         for (let i = 0; i < this._sockets.length; i++) {
             this._sockets[i].emit(event, ...args);
         }
+    }
+    makeHost(roles) {
+        this._host = true;
+        this.emit("makeHost", roles);
+    }
+    removeHostPrivileges() {
+        this._host = false;
+        this.emit("removeHostPrivileges");
+    }
+    get isHost() {
+        return this._host;
     }
     addSocket(socket) {
         this._sockets.push(socket);
