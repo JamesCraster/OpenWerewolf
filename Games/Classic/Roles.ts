@@ -172,6 +172,25 @@ namespace Abilities {
     },
   };
 }
+export function getRoleColor(role: Role): Colors {
+  if (role.alignment == Alignment.town) {
+    return Colors.brightGreen;
+  } else if (role.alignment == Alignment.mafia) {
+    return Colors.brightRed;
+  } else {
+    return <Colors>role.color;
+  }
+}
+export function getRoleBackgroundColor(role: Role): Colors {
+  if (role.alignment == Alignment.town) {
+    return Colors.brightGreen;
+  } else if (role.alignment == Alignment.mafia) {
+    return Colors.brightRed;
+  } else {
+    return <Colors>role.backgroundColor;
+  }
+}
+
 export namespace Roles {
   export const vigilante: Role = {
     roleName: "vigilante",

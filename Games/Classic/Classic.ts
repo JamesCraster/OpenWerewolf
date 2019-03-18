@@ -29,6 +29,7 @@ import {
   Role,
   GameEndConditions,
   priorities,
+  getRoleColor,
 } from "../Classic/Roles";
 
 import { ClassicPlayer } from "./ClassicPlayer";
@@ -825,20 +826,17 @@ export class Classic extends Game {
     }
   }
   public addUser(user: User) {
-    if (this.users.length == 0) {
+    //if there is no host, make them the host
+    if (this.users.filter(elem => elem.isHost).length == 0) {
       user.makeHost(
         priorities.map(elem => {
           return {
             roleName: elem.roleName,
-            color:
-              elem.alignment == Alignment.town
-                ? Colors.brightGreen
-                : Colors.brightRed,
+            color: getRoleColor(elem),
           };
         }),
       );
     }
-    //player.emit('getAllRolesForSelection', [{name:'Mafia', color:'red'},{name:'Cop', color:'green'}];
     this.daychat.addUser(user);
     super.addUser(user);
   }
@@ -873,6 +871,24 @@ export class Classic extends Game {
         player.user.username,
         player.role.roleName,
         color,
+      );
+      console.log(this.players.filter(elem => !elem.alive));
+      setTimeout(() => {
+        for (let p of this.players.filter(elem => !elem.alive)) {
+          (player as ClassicPlayer).user.markAsDead(p.user.username);
+          console.log(p.user.username);
+        }
+      }, 500);
+    }
+    //if the user is the host, on reload they are still the host
+    if (user.isHost) {
+      user.makeHost(
+        priorities.map(elem => {
+          return {
+            roleName: elem.roleName,
+            color: getRoleColor(elem),
+          };
+        }),
       );
     }
   }

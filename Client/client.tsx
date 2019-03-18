@@ -926,6 +926,8 @@ const playerTextureSelected2 = PIXI.Texture.fromImage(
 );
 const graveTexture = PIXI.Texture.fromImage("assets/grave.png");
 let players: Array<Player> = [];
+//@ts-ignore
+window.players = players;
 const stoneBlockTexture = PIXI.Texture.fromImage("assets/stoneblock.png");
 const stoneBlockContainer = new PIXI.Container();
 app.stage.addChild(stoneBlockContainer);
@@ -1097,7 +1099,6 @@ class Player {
     });
     let usernameColor = 0xffffff;
     this.frameCount = 0;
-    players.push(this);
     app.stage.addChild(this.sprite);
     this.username = username.trim();
     this.usernameText = new PIXI.Text(username, {
@@ -1241,7 +1242,7 @@ export function removePlayer(username: string) {
   }
 }
 export function addPlayer(username: string) {
-  const newPlayer = new Player(username);
+  players.push(new Player(username));
   if (mainText) {
     app.stage.removeChild(mainText.container);
     app.stage.addChild(mainText.container);

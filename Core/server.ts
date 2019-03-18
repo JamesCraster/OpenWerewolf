@@ -257,21 +257,21 @@ export class Server {
               if (thisUser.game && thisUser.game.uid) {
                 let game = this.getGameById(thisUser.game.uid);
                 if (game) {
-                  thisUser.emit(
+                  /*thisUser.emit(
                     "allPlayers",
                     game.users.map(elem => elem.username),
-                  );
+                  );*/
                   game.resendData(thisUser);
                 }
               }
-              for (let j = 0; j < this._users[i].deadCache.length; j++) {
+              /*for (let j = 0; j < this._users[i].deadCache.length; j++) {
                 socket.emit("markAsDead", this._users[i].deadCache[j]);
                 socket.emit(
                   "lineThroughPlayer",
                   this._users[i].deadCache[j],
                   Colors.brightRed,
                 );
-              }
+              }*/
             }
             //send the client the correct time
             socket.emit(
