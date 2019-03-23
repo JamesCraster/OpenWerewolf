@@ -34,6 +34,7 @@ export class ClassicPlayer extends Player {
   private _vote: string = "";
   private _finalVote: string = FinalVote.abstain;
   private _role: Role;
+  private _winLynchTarget: ClassicPlayer | undefined = undefined;
   constructor(user: User, role: Role) {
     super(user);
     this._role = role;
@@ -46,6 +47,12 @@ export class ClassicPlayer extends Player {
   }
   public upgradeToGodfather() {
     this._role == Roles.godfather;
+  }
+  get winLynchTarget(){
+    return this._winLynchTarget;
+  }
+  public assignLynchTarget(target:ClassicPlayer){
+    this._winLynchTarget = target;
   }
   public get hanged() {
     return this._hanged;

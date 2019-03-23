@@ -31,6 +31,7 @@ import {
   priorities,
   getRoleColor,
   Passives,
+  WinConditions,
 } from "../Classic/Roles";
 
 import { ClassicPlayer } from "./ClassicPlayer";
@@ -187,6 +188,7 @@ export class Classic extends Game {
               color: Colors.brightGreen,
             },
           ]);
+          player.user.send([{text:"*** YOU WIN! ***", color:Colors.brightGreen}]);
         } else {
           player.user.headerSend([
             {
@@ -194,6 +196,7 @@ export class Classic extends Game {
               color: Colors.brightRed,
             },
           ]);
+          player.user.send([{text:"*** YOU LOSE! ***", color:Colors.brightRed}]);
         }
       }
       //list all winners in the chat
@@ -265,9 +268,15 @@ export class Classic extends Game {
       }
     }
     for (let player of this.players) {
-      if (player.role.passives.indexOf(Passives.hearDeadChat) != -1) {
-        player.user.send("You have the power to hear the dead chat.");
+      if (player.role.passives.indexOf(Passives.speakWithDead) != -1) {
+        player.user.send("You have the power to speak with the dead at night.");
         this.deadChat.addUser(player.user);
+      }
+    }
+    for (let player of this.players) {
+      if (player.role.winCondition == WinConditions.lynchTarget) {
+        player.assignLynchTarget(Utils.chooseCombination(this.players, 1)[0]);
+        player.user.send(`Your target is ${player.winLynchTarget!.user.username} : if they are lynched, you win!`);
       }
     }
     this.setAllTime(5000, 0);
@@ -448,8 +457,8 @@ export class Classic extends Game {
               if (finalTargetPlayer.healed) {
                 this.players[i].user.send(
                   finalTargetPlayer.user.username +
-                    " was healed during the night and so" +
-                    " they have survived.",
+                  " was healed during the night and so" +
+                  " they have survived.",
                 );
               } else {
                 this.players[i].user.send(
@@ -743,7 +752,19 @@ export class Classic extends Game {
     ]);
 
     if (this.inPlay && player instanceof ClassicPlayer) {
+      //let medium etc. talk in dead chat at night
+      if (player.alive && this.phase == Phase.night && player.role.passives.indexOf(Passives.speakWithDead) != -1) {
+        this.deadChat.receive(player.user, [
+          {
+            text: "Hidden",
+            color: Colors.standardWhite,
+            italic: false,
+          },
+          { text: ": " + msg, color: Colors.grey, italic: true },
+        ]);
+      }
       if (player.alive) {
+        //if the message is an in-game command, like voting
         if (msg[0] == "/") {
           if (Utils.isCommand(msg, "/vote") && this.phase == Phase.night) {
             let username = msg.slice(5).trim();
@@ -775,7 +796,7 @@ export class Classic extends Game {
             if (player.target != "") {
               player.user.send(
                 `Your choice of "${
-                  this.getPlayer(player.target)!.user.username
+                this.getPlayer(player.target)!.user.username
                 }" has been cancelled`,
               );
               player.target = "";
@@ -808,13 +829,13 @@ export class Classic extends Game {
               if (voteTarget) {
                 player.user.send(
                   "Your vote for " +
-                    voteTarget.user.username +
-                    " has been cancelled.",
+                  voteTarget.user.username +
+                  " has been cancelled.",
                 );
                 this.daychat.broadcast(
                   player.user.username +
-                    " cancelled their vote for " +
-                    voteTarget.user.username,
+                  " cancelled their vote for " +
+                  voteTarget.user.username,
                 );
                 player.clearVote();
               }
@@ -838,6 +859,7 @@ export class Classic extends Game {
             player.user.send("You have voted innocent.");
           }
         } else {
+          //send message to day/mafiachat
           this.daychat.receive(player.user, [
             { text: player.user.username, color: player.user.color },
             { text: ": " + msg },
@@ -850,6 +872,7 @@ export class Classic extends Game {
           }
         }
       } else {
+        //player is dead, route their message to dead chat
         this.deadChat.receive(player.user, [
           {
             text: player.user.username,
@@ -860,6 +883,7 @@ export class Classic extends Game {
         ]);
       }
     } else {
+      //if the sender isn't a user, route their message to day chat as default
       this.daychat.receive(user, [
         { text: user.username, color: user.color },
         { text: ": " + msg },

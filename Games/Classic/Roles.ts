@@ -27,7 +27,7 @@ export enum Passives {
   //cannot be killed at night
   nightImmune = "nightImmune",
   roleblockImmune = "roleblockImmune",
-  hearDeadChat = "hearDeadChat",
+  speakWithDead = "hearDeadChat",
 }
 
 type WinCondition = (player: ClassicPlayer, game: Classic) => boolean;
@@ -46,7 +46,7 @@ export type Ability = {
   ) => void;
 };
 
-export type Role = {
+export interface Role {
   roleName: string;
   alignment: Alignment;
   winCondition: WinCondition;
@@ -92,6 +92,14 @@ export namespace WinConditions {
   export const mafia: WinCondition = (player: ClassicPlayer, game: Classic) => {
     return GameEndConditions.mafiaWin(game);
   };
+  export const lynchTarget: WinCondition = (player:ClassicPlayer, game:Classic) =>{
+    if(player.winLynchTarget){
+      return player.winLynchTarget.hanged;
+    }else{
+      console.log("Error: executioner was not given lynch target")
+      return false;
+    }
+  }
   export const survive: WinCondition = (
     player: ClassicPlayer,
     game: Classic,
@@ -281,7 +289,7 @@ export namespace Roles {
     alignment: Alignment.town,
     winCondition: WinConditions.town,
     abilities: [],
-    passives: [Passives.hearDeadChat],
+    passives: [Passives.speakWithDead],
   };
   export const jester: Role = {
     roleName: "jester",
@@ -291,6 +299,14 @@ export namespace Roles {
     abilities: [],
     passives: [],
   };
+  export const executioner: Role = {
+    roleName: "executioner",
+    alignment: Alignment.neutral,
+    winCondition: WinConditions.lynchTarget,
+    color: Colors.grey,
+    abilities: [],
+    passives: [],
+  }
   export const retributionist: Role = {
     roleName: "retributionist",
     alignment: Alignment.town,
@@ -342,4 +358,5 @@ export const priorities = [
   Roles.medium,
   Roles.survivor,
   Roles.jester,
+  Roles.executioner
 ];
