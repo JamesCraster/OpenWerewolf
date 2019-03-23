@@ -23,10 +23,11 @@ export enum Alignment {
   undefined = "undefined",
 }
 
-enum Passives {
+export enum Passives {
   //cannot be killed at night
   nightImmune = "nightImmune",
   roleblockImmune = "roleblockImmune",
+  hearDeadChat = "hearDeadChat",
 }
 
 type WinCondition = (player: ClassicPlayer, game: Classic) => boolean;
@@ -171,6 +172,20 @@ namespace Abilities {
       targetPlayer.roleBlocked = true;
     },
   };
+  export const revive: Ability = {
+    condition: Conditions.alwaysTrue,
+    action: (targetPlayer: ClassicPlayer, game: Classic) => {
+      if (!targetPlayer.alive) {
+        game.revive(targetPlayer);
+      }
+    },
+  };
+  export const sendMessage: Ability = {
+    condition: Conditions.alwaysTrue,
+    action: (targetPlayer: ClassicPlayer, game: Classic) => {
+      targetPlayer.user.send("You received some fruit!");
+    },
+  };
 }
 export function getRoleColor(role: Role): Colors {
   if (role.alignment == Alignment.town) {
@@ -190,7 +205,15 @@ export function getRoleBackgroundColor(role: Role): Colors {
     return <Colors>role.backgroundColor;
   }
 }
-
+function mafia(role: Role) {
+  return {
+    roleName: "mafia " + role.roleName,
+    alignment: Alignment.mafia,
+    winCondition: WinConditions.mafia,
+    abilities: role.abilities,
+    passives: [],
+  };
+}
 export namespace Roles {
   export const vigilante: Role = {
     roleName: "vigilante",
@@ -203,7 +226,9 @@ export namespace Roles {
     roleName: "mafioso",
     alignment: Alignment.mafia,
     winCondition: WinConditions.mafia,
-    abilities: [{ ability: Abilities.kill }],
+    abilities: [
+      /*{ ability: Abilities.kill }*/
+    ],
     passives: [],
   };
   export const godfather: Role = {
@@ -241,6 +266,7 @@ export namespace Roles {
     abilities: [{ ability: Abilities.roleBlock }],
     passives: [Passives.roleblockImmune],
   };
+  export const consort: Role = mafia(escort);
   export const survivor: Role = {
     roleName: "survivor",
     alignment: Alignment.neutral,
@@ -255,7 +281,7 @@ export namespace Roles {
     alignment: Alignment.town,
     winCondition: WinConditions.town,
     abilities: [],
-    passives: [],
+    passives: [Passives.hearDeadChat],
   };
   export const jester: Role = {
     roleName: "jester",
@@ -265,12 +291,26 @@ export namespace Roles {
     abilities: [],
     passives: [],
   };
+  export const retributionist: Role = {
+    roleName: "retributionist",
+    alignment: Alignment.town,
+    winCondition: WinConditions.town,
+    abilities: [{ ability: Abilities.revive, uses: 1 }],
+    passives: [],
+  };
+  export const fruitVendor: Role = {
+    roleName: "fruit vendor",
+    alignment: Alignment.town,
+    winCondition: WinConditions.town,
+    abilities: [{ ability: Abilities.sendMessage }],
+    passives: [],
+  };
   export const serialKiller: Role = {
     roleName: "serial killer",
     alignment: Alignment.neutral,
     winCondition: WinConditions.lastOneStanding,
-    color: Colors.magenta,
-    abilities: [],
+    color: Colors.darkBlue,
+    abilities: [{ ability: Abilities.kill }],
     passives: [],
   };
   export const anyTown: Role = {
@@ -291,12 +331,15 @@ export namespace Roles {
 
 export const priorities = [
   Roles.escort,
+  Roles.fruitVendor,
+  Roles.retributionist,
   Roles.doctor,
   Roles.godfather,
   Roles.mafioso,
   Roles.vigilante,
   Roles.sherrif,
   Roles.townie,
+  Roles.medium,
   Roles.survivor,
   Roles.jester,
 ];

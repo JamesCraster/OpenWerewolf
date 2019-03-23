@@ -14,7 +14,7 @@
 import { Player } from "../../Core/player";
 import { User } from "../../Core/user";
 import { FinalVote } from "../../Games/Classic/Classic";
-import { Role, Alignment, Ability } from "../../Games/Classic/Roles";
+import { Role, Alignment, Ability, Roles } from "../../Games/Classic/Roles";
 
 /**
  * A class that contains a user and adds to it all the player information
@@ -33,7 +33,7 @@ export class ClassicPlayer extends Player {
   //the username of the player that this player is nominating during the trial
   private _vote: string = "";
   private _finalVote: string = FinalVote.abstain;
-  private readonly _role: Role;
+  private _role: Role;
   constructor(user: User, role: Role) {
     super(user);
     this._role = role;
@@ -43,6 +43,9 @@ export class ClassicPlayer extends Player {
   }
   public get role() {
     return this._role;
+  }
+  public upgradeToGodfather() {
+    this._role == Roles.godfather;
   }
   public get hanged() {
     return this._hanged;
@@ -101,6 +104,10 @@ export class ClassicPlayer extends Player {
       this._alive = false;
       this._diedThisNight = true;
     }
+  }
+  public revive(): void {
+    this._alive = true;
+    this._diedThisNight = false;
   }
   public get mafiaVotes() {
     return this._mafiaVotes;

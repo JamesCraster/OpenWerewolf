@@ -88,6 +88,12 @@ export abstract class Game {
     setInterval(this.pregameLobbyUpdate.bind(this), 500);
     setInterval(this.update.bind(this), 500);
   }
+  public get maxPlayerCount() {
+    return this._maxPlayerCount;
+  }
+  public get minPlayerCount() {
+    return this._minPlayerCount;
+  }
   public get name() {
     return this._name;
   }
@@ -295,7 +301,7 @@ export abstract class Game {
     user.title = "OpenWerewolf";
     this.broadcast(user.username + " has disconnected");
   }
-  protected headerBroadcast(array: Array<{ text: string; color: Colors }>) {
+  protected headerBroadcast(array: Array<{ text: string; color?: Colors }>) {
     for (let i = 0; i < this._users.length; i++) {
       this._users[i].headerSend(array);
     }
@@ -433,15 +439,12 @@ export abstract class Game {
             undefined,
             Colors.green,
           );
-        } else {
-          this.customAdminReceive(user, msg);
         }
       }
       if (Utils.isCommand(msg, "!yell")) {
         this.broadcast("ADMIN:" + msg.slice(5), Colors.brightGreen);
-      } else {
-        this.customAdminReceive(user, msg);
       }
+      this.customAdminReceive(user, msg);
     }
   }
 }

@@ -23,10 +23,13 @@ class RoleSelection extends React.Component {
             console.log(newRoleNames);
         };
         this.state = { roles: [], key: 0, roleNames: [], display: "none" };
-        this.props.user.socket.on("makeHost", (roles) => {
+        /*this.props.user.socket.on(
+          "makeHost",
+          (roles: Array<{ roleName: string; color: string }>) => {
             this.addButtons(roles);
             this.setState({ display: "inherit" });
-        });
+          },
+        );*/
     }
     render() {
         return (React.createElement("div", { className: "header", style: {

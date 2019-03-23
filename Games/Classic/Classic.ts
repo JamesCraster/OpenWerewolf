@@ -30,10 +30,13 @@ import {
   GameEndConditions,
   priorities,
   getRoleColor,
+  Passives,
 } from "../Classic/Roles";
 
 import { ClassicPlayer } from "./ClassicPlayer";
 import { DEBUGMODE } from "../../app";
+import { Phrase } from "../../Core/user";
+import { booleanLiteral } from "babel-types";
 
 enum Phase {
   day = "day",
@@ -50,7 +53,7 @@ export enum FinalVote {
   innocent = "innocent",
 }
 let fs = require("fs");
-const Default: { defaultLists: Array<Array<string>> } = JSON.parse(
+let roleLists: { defaultLists: Array<Array<string>> } = JSON.parse(
   fs.readFileSync("Games/Classic/List.json", "utf-8"),
 );
 
@@ -76,7 +79,8 @@ export class Classic extends Game {
   private daysWithoutDeath: number = 0;
   private deadChat: MessageRoom = new MessageRoom();
   public players: Array<ClassicPlayer> = [];
-
+  //these are the messages that town crier, thanos etc. send
+  public announcements: Array<Array<Phrase>> = [];
   constructor(server: Server, name: string, uid: string) {
     super(
       server,
@@ -214,7 +218,7 @@ export class Classic extends Game {
     this.beforeStart();
     this.broadcastPlayerList();
     //we map the rolename strings from List.json into role classes
-    let roleList: Array<Role> = Default.defaultLists[
+    let roleList: Array<Role> = roleLists.defaultLists[
       this.users.length - globalMinimumPlayerCount
     ].map(stringElem => {
       return priorities.find(elem => elem.roleName == stringElem) as Role;
@@ -258,6 +262,12 @@ export class Classic extends Game {
         } else {
           player.user.leftSend(role.roleName, role.color);
         }
+      }
+    }
+    for (let player of this.players) {
+      if (player.role.passives.indexOf(Passives.hearDeadChat) != -1) {
+        player.user.send("You have the power to hear the dead chat.");
+        this.deadChat.addUser(player.user);
       }
     }
     this.setAllTime(5000, 0);
@@ -332,6 +342,16 @@ export class Classic extends Game {
     this.kill(target);
     target.diedThisNight = false;
   }
+  public revive(target: ClassicPlayer) {
+    target.revive();
+    this.deadChat.removeUser(target.user);
+    this.announcements.push([
+      {
+        text: `${target.user.username} has been revived`,
+        color: Colors.standardWhite,
+      },
+    ]);
+  }
   public kill(target: ClassicPlayer) {
     //let the other players know the target has died
     this.markAsDead(target.user.username);
@@ -342,6 +362,19 @@ export class Classic extends Game {
     this.daysWithoutDeath = 0;
   }
   private nightResolution() {
+    /*if (
+      this.players.filter(elem => {
+        elem.role == Roles.godfather;
+      }).length == 0
+    ) {
+      let mafioso = this.players.find(elem => elem.role == Roles.mafioso);
+      if (mafioso) {
+        mafioso.upgradeToGodfather();
+        mafioso.user.send(
+          "You have been promoted to godfather - now you decide who to kill",
+        );
+      }
+    }*/
     //sort players based off of the const priorities list
     let nightPlayerArray = this.players.sort((element: ClassicPlayer) => {
       return priorities.indexOf(element.role);
@@ -497,17 +530,25 @@ export class Classic extends Game {
       this.trialsThisDay = 0;
       this.trialClock.restart();
       this.trialClock.stop();
-      this.daychat.broadcast(
-        "1 minute of general discussion until the trials begin. Discuss who to nominate!",
-      );
-      //make time to wait shorter if in debug mode
-      if (DEBUGMODE) {
-        this.setAllTime(20000, 20000);
-        setTimeout(this.trialVote.bind(this), 20000);
-      } else {
-        this.setAllTime(60000, 20000);
-        setTimeout(this.trialVote.bind(this), 60000);
+
+      //read out all of the announcements
+      for (let announcement of this.announcements) {
+        this.headerBroadcast(announcement);
       }
+
+      setTimeout(() => {
+        this.daychat.broadcast(
+          "1 minute of general discussion until the trials begin. Discuss who to nominate!",
+        );
+        //make time to wait shorter if in debug mode
+        if (DEBUGMODE) {
+          this.setAllTime(20000, 20000);
+          setTimeout(this.trialVote.bind(this), 20000);
+        } else {
+          this.setAllTime(60000, 20000);
+          setTimeout(this.trialVote.bind(this), 60000);
+        }
+      }, 10000);
     }
   }
   private trialVote() {
@@ -891,5 +932,57 @@ export class Classic extends Game {
         }),
       );
     }
+  }
+  public customAdminReceive(user: User, msg: string): void {
+    if (!this.inPlay) {
+      //enter list of roles as a single word of first initials
+      if (Utils.isCommand(msg, "!roles")) {
+        let roleWord = Utils.commandArguments(msg)[0];
+        roleLists.defaultLists[
+          roleWord.length - this.minPlayerCount
+        ] = this.parseRoleWord(roleWord);
+        console.log(this.parseRoleWord(roleWord));
+      }
+      //show the rolelist for a given number of people
+      if (Utils.isCommand(msg, "!show")) {
+        let number = parseInt(Utils.commandArguments(msg)[0]);
+        user.send(Utils.arrayToCommaSeparated(roleLists.defaultLists[number]));
+      }
+    }
+  }
+  private parseRoleWord(word: string) {
+    let out = [];
+    for (let letter of word) {
+      switch (letter) {
+        case "t":
+          out.push(Roles.townie.roleName);
+          break;
+        case "v":
+          out.push(Roles.vigilante.roleName);
+          break;
+        case "s":
+          out.push(Roles.sherrif.roleName);
+          break;
+        case "g":
+          out.push(Roles.godfather.roleName);
+          break;
+        case "m":
+          out.push(Roles.mafioso.roleName);
+          break;
+        case "e":
+          out.push(Roles.escort.roleName);
+          break;
+        case "j":
+          out.push(Roles.jester.roleName);
+          break;
+        case "f":
+          out.push(Roles.fruitVendor.roleName);
+          break;
+        case "d":
+          out.push(Roles.medium.roleName);
+          break;
+      }
+    }
+    return out;
   }
 }

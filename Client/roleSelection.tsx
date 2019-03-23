@@ -18,13 +18,13 @@ class RoleSelection extends React.Component<Props, State> {
   constructor(props: any) {
     super(props);
     this.state = { roles: [], key: 0, roleNames: [], display: "none" };
-    this.props.user.socket.on(
+    /*this.props.user.socket.on(
       "makeHost",
       (roles: Array<{ roleName: string; color: string }>) => {
         this.addButtons(roles);
         this.setState({ display: "inherit" });
       },
-    );
+    );*/
   }
 
   addButtons = (roles: Array<{ roleName: string; color: string }>) => {
