@@ -46,12 +46,13 @@ export class ClassicPlayer extends Player {
     return this._role;
   }
   public upgradeToGodfather() {
-    this._role == Roles.godfather;
+    this._role = Roles.godfather;
+    this.user.send("You have been promoted to godfather - now you get final say on who to kill.");
   }
-  get winLynchTarget(){
+  get winLynchTarget() {
     return this._winLynchTarget;
   }
-  public assignLynchTarget(target:ClassicPlayer){
+  public assignLynchTarget(target: ClassicPlayer) {
     this._winLynchTarget = target;
   }
   public get hanged() {
