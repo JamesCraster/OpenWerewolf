@@ -161,6 +161,8 @@ namespace Abilities {
       player?: Player,
     ) => {
       if (player) {
+        console.log(targetPlayer.user.username);
+        console.log(targetPlayer.healed);
         game.mafiachat.broadcast(`${player.user.username} attacked ${targetPlayer.user.username}.`);
         if (targetPlayer.healed) {
           game.mafiachat.broadcast(`The target was healed and so survived the attack.`);
@@ -180,7 +182,7 @@ namespace Abilities {
     action: Abilities.kill.action
   }
   export const mafiosoKill: Ability = {
-    condition: Abilities.kill.condition,
+    condition: Conditions.alwaysTrue,
     action: (targetPlayer: ClassicPlayer, game: Classic, player?: ClassicPlayer) => {
       if (player) {
         let godfather = game.players.find(elem => elem.role == Roles.godfather);
@@ -202,6 +204,7 @@ namespace Abilities {
   export const heal: Ability = {
     condition: Conditions.alwaysTrue,
     action: (targetPlayer: ClassicPlayer, game: Classic) => {
+      console.log(targetPlayer.user.username + " has been healed.")
       targetPlayer.healed = true;
     },
   };

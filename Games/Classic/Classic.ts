@@ -82,6 +82,7 @@ export class Classic extends Game {
   public players: Array<ClassicPlayer> = [];
   //these are the messages that town crier, thanos etc. send
   public announcements: Array<Array<Phrase>> = [];
+  public generalDiscussionDuration = 2 * 60000;
   constructor(server: Server, name: string, uid: string) {
     super(
       server,
@@ -290,11 +291,11 @@ export class Classic extends Game {
     //Let the mafia communicate with one another
     this.mafiachat.unmuteAll();
     //if there is no godfather
-    if (!this.players.find(elem => elem.role == Roles.godfather)) {
+    if (!this.players.find(elem => elem.role == Roles.godfather && elem.alive)) {
       //promote mafioso to godfather if one exists
-      if (!safeCall(this.players.find(elem => elem.role == Roles.mafioso), mafioso => { mafioso.upgradeToGodfather(); this.sendRole(mafioso) })) {
+      if (!safeCall(this.players.find(elem => elem.role == Roles.mafioso && elem.alive), mafioso => { mafioso.upgradeToGodfather(); this.sendRole(mafioso) })) {
         //there is no mafioso, so promote one of the other mafia
-        safeCall(this.players.find(player => player.alignment == Alignment.mafia), mafiaMember => { mafiaMember.upgradeToGodfather(); this.sendRole(mafiaMember) });
+        safeCall(this.players.find(player => player.alignment == Alignment.mafia && player.alive), mafiaMember => { mafiaMember.upgradeToGodfather(); this.sendRole(mafiaMember) });
       }
     }
     this.mafiachat.broadcast(
@@ -308,8 +309,8 @@ export class Classic extends Game {
       .forEach(elem => this.mafiachat.broadcast(elem));
 
     this.daychat.broadcast("Click on someone to perform your action on them.");
-    this.setAllTime(30000, 10000);
-    setTimeout(this.nightResolution.bind(this), 30000);
+    this.setAllTime(60000, 10000);
+    setTimeout(this.nightResolution.bind(this), 60000);
   }
   public hang(target: ClassicPlayer) {
     target.hang();
@@ -337,7 +338,8 @@ export class Classic extends Game {
   }
   private nightResolution() {
     //sort players based off of the const priorities list
-    let nightPlayerArray = this.players.sort(element => priorities.indexOf(element.role));
+    let nightPlayerArray = this.players.sort((a, b) => priorities.indexOf(a.role) - priorities.indexOf(b.role));
+    console.log(nightPlayerArray.map(elem => console.log(elem.role.roleName)));
     //perform each player's ability in turn
     for (let actingPlayer of nightPlayerArray) {
       for (let ability of actingPlayer.abilities) {
@@ -439,15 +441,15 @@ export class Classic extends Game {
 
       setTimeout(() => {
         this.daychat.broadcast(
-          "1 minute of general discussion until the trials begin. Discuss who to nominate!",
+          "2 minutes of general discussion until the trials begin. Discuss who to nominate.",
         );
         //make time to wait shorter if in debug mode
         if (DEBUGMODE) {
           this.setAllTime(20000, 20000);
           setTimeout(this.trialVote.bind(this), 20000);
         } else {
-          this.setAllTime(60000, 20000);
-          setTimeout(this.trialVote.bind(this), 60000);
+          this.setAllTime(this.generalDiscussionDuration, 20000);
+          setTimeout(this.trialVote.bind(this), this.generalDiscussionDuration);
         }
       }, 10000);
     }
@@ -467,7 +469,7 @@ export class Classic extends Game {
       "The trial has begun! The player with a majority of votes will be put on trial.",
     );
     this.daychat.broadcast(
-      "Max 60 seconds. If the target is acquited you can vote for a new one.",
+      "Max 60 seconds in total. If the target is acquitted you can vote for a new one. At most 3 trials a day.",
     );
     this.daychat.broadcast("Click on somebody to nominate them.");
     this.playersCanVote();
@@ -515,22 +517,22 @@ export class Classic extends Game {
     this.daychat.broadcast(
       this.players[defendant].user.username + " is on trial.",
     );
-    this.daychat.broadcast("The accused can defend themselves for 20 seconds.");
+    this.daychat.broadcast("The accused can defend themselves for 30 seconds.");
     this.daychat.muteAll();
     this.daychat.unmute(this.players[defendant].user);
     if (DEBUGMODE) {
       this.setAllTime(5000, 5000);
       setTimeout(this.finalVote.bind(this), 5 * 1000, defendant);
     } else {
-      this.setAllTime(20000, 5000);
-      setTimeout(this.finalVote.bind(this), 20 * 1000, defendant);
+      this.setAllTime(30000, 5000);
+      setTimeout(this.finalVote.bind(this), 30 * 1000, defendant);
     }
   }
   private finalVote(defendant: number) {
     this.trial = Trial.verdict;
     this.dayUnmute();
     this.daychat.broadcast(
-      "20 seconds to vote: click on guilty or innocent, or do nothing to abstain.",
+      "30 seconds to vote: click on guilty or innocent, or do nothing to abstain.",
     );
     this.headerBroadcast([
       { text: "Vote to decide ", color: Colors.white },
@@ -548,8 +550,8 @@ export class Classic extends Game {
         }
       }
     }, 3500);
-    this.setAllTime(20000, 5000);
-    setTimeout(this.verdict.bind(this), 20 * 1000, defendant);
+    this.setAllTime(30000, 5000);
+    setTimeout(this.verdict.bind(this), 30 * 1000, defendant);
   }
   private verdict(defendant: number) {
     this.players.forEach(player => player.user.emit("endVerdict"));
@@ -586,8 +588,9 @@ export class Classic extends Game {
       for (let player of this.players) {
         player.user.hang([this.players[defendant].user.username]);
       }
-      this.setAllTime(10000, 0);
-      setTimeout(this.endDay.bind(this), 10 * 1000);
+      this.daychat.broadcast("The dead player has 30 seconds for a death speech.")
+      this.setAllTime(30000, 0);
+      setTimeout(this.endDay.bind(this), 30 * 1000);
     } else {
       this.daychat.broadcast(
         this.players[defendant].user.username + " has been acquitted",
@@ -627,6 +630,9 @@ export class Classic extends Game {
     }
   }
   public end() {
+    //read out all the roles
+    this.players.map(player => { return [{ text: `${player.user.username} was the `, color: Colors.standardWhite }, { text: player.role.roleName, color: getRoleColor(player.role) }] })
+      .forEach(elem => this.daychat.broadcast(elem));
     //reset initial conditions
     this.phase = Phase.day;
     this.trial = Trial.ended;
@@ -669,9 +675,9 @@ export class Classic extends Game {
                   this.mafiachat.broadcast(`${player.user.username} has chosen to target ${this.players[i].user.username}.`);
                 }
                 player.target = this.players[i].user.id;
-              }
-              if (!this.players[i].alive) {
-                player.user.send("That player is dead - unless you are retributionist, you should pick some one else.");
+                if (!this.players[i].alive) {
+                  player.user.send("That player is dead - unless you are retributionist, you should pick someone else.");
+                }
               }
             }
             if (!exists) {
@@ -838,6 +844,13 @@ export class Classic extends Game {
         let number = parseInt(Utils.commandArguments(msg)[0]);
         user.send(Utils.arrayToCommaSeparated(roleLists.defaultLists[number]));
       }
+    } else {
+      //set general discussion length, in seconds
+      if (Utils.isCommand(msg, "!daytime")) {
+        if (Utils.commandArguments(msg).length > 0 && parseInt(Utils.commandArguments(msg)[0])) {
+          this.generalDiscussionDuration = parseInt(Utils.commandArguments(msg)[0]) * 1000;
+        }
+      }
     }
   }
   private parseRoleWord(word: string) {
@@ -869,6 +882,9 @@ export class Classic extends Game {
           out.push(Roles.fruitVendor.roleName);
           break;
         case "d":
+          out.push(Roles.doctor.roleName);
+          break;
+        case "u":
           out.push(Roles.medium.roleName);
           break;
         case "x":

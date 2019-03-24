@@ -1,8 +1,26 @@
 {
   "defaultLists": [
-    ["mafioso", "jester", "sherrif", "vigilante"],
-    ["mafioso", "medium", "fruit vendor", "retributionist", "executioner"],
-    ["mafioso", "doctor", "escort", "sherrif", "survivor", "townie"],
+    [
+      "mafioso",
+      "godfather",
+      "doctor",
+      "vigilante"
+    ],
+    [
+      "mafioso",
+      "medium",
+      "fruit vendor",
+      "retributionist",
+      "executioner"
+    ],
+    [
+      "mafioso",
+      "doctor",
+      "escort",
+      "sherrif",
+      "survivor",
+      "townie"
+    ],
     [
       "mafioso",
       "mafioso",

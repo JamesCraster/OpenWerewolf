@@ -25,7 +25,8 @@ import { DEBUGMODE } from "../app";
 
 export abstract class Game {
   protected endChat: MessageRoom = new MessageRoom();
-  protected endTime: number = 30000;
+  //the time players are given at the end to discuss the game before they are kicked
+  protected endTime: number = 60000;
   //the list of message rooms, used for communication between players,
   //adds the ability to mute players etc.
   private _messageRooms: Array<MessageRoom> = [];
