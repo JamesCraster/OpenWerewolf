@@ -896,6 +896,8 @@ export class Classic extends Game {
         case "c":
           out.push(Roles.consort.roleName);
           break;
+        case "a":
+          out.push(Roles.mafiaVanilla.roleName);
       }
     }
     return out;

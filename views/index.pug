@@ -30,6 +30,7 @@ html(lang="en")
     head
         meta(charset="UTF-8")
         meta(name="description" content="The online multiplayer mafia game that's 100% open-source.")
+        meta(name="google-site-verification" content="")
         link(rel="icon" href="icon.png")
         link(rel="stylesheet" type="text/css" href="main.css")
         link(rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css")
@@ -37,7 +38,7 @@ html(lang="en")
         link(rel="alternate" media="only screen and (max-width: 640px)" href="http://www.openwerewolf.com/mobile")
         // IBM Plex Sans google font
         link(href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans" rel="stylesheet")
-        title OpenWerewolf - The online multiplayer mafia game that's 100% open source
+        title OpenWerewolf
     
     // Move scrollbar to bottom on window resize 
     body
@@ -75,11 +76,6 @@ html(lang="en")
         include includes/lobby.pug
         div(id="topLevel")
             include includes/game.pug
-
-    script
-        | if (screen.width <= 699) {
-        |   document.location = "/mobile";
-        | }
     script(src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js")
     script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js")
     script(src="semantic/dist/semantic.min.js")

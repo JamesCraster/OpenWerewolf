@@ -15,7 +15,6 @@ import { Classic } from "./Classic";
 import { ClassicPlayer } from "./ClassicPlayer";
 import { Player } from "../../Core/player";
 import { Colors } from "../../Core/utils";
-import { Color } from "csstype";
 
 export enum Alignment {
   town = "town",
@@ -268,7 +267,7 @@ function mafia(role: Role) {
     alignment: Alignment.mafia,
     winCondition: WinConditions.mafia,
     abilities: role.abilities,
-    passives: [],
+    passives: role.passives,
   };
 }
 export namespace Roles {
@@ -279,6 +278,13 @@ export namespace Roles {
     abilities: [{ ability: Abilities.kill, uses: 2 }],
     passives: [],
   };
+  export const mafiaVanilla: Role = {
+    roleName: "mafia(vanilla)",
+    alignment: Alignment.mafia,
+    winCondition: WinConditions.mafia,
+    abilities: [],
+    passives: [],
+  }
   export const mafioso: Role = {
     roleName: "mafioso",
     alignment: Alignment.mafia,
@@ -393,6 +399,7 @@ export namespace Roles {
 }
 
 export const priorities = [
+  Roles.consort,
   Roles.escort,
   Roles.fruitVendor,
   Roles.retributionist,
@@ -401,6 +408,7 @@ export const priorities = [
   Roles.mafioso,
   Roles.vigilante,
   Roles.sherrif,
+  Roles.mafiaVanilla,
   Roles.townie,
   Roles.medium,
   Roles.survivor,
