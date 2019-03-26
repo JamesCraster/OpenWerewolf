@@ -66,7 +66,7 @@ export namespace GameEndConditions {
     }
     return true;
   };
-  //mafia wins if there are no town left alive, or there is just 1 town and 1 mafia (which would otherwise cause stalemate)
+  //mafia wins if there are more mafia then town, or there is just 1 town and 1 mafia (which would otherwise cause stalemate)
   export const mafiaWin: GameEndCondition = (game: Classic) => {
     let townCount = 0;
     let mafiaCount = 0;
@@ -82,7 +82,7 @@ export namespace GameEndConditions {
         alive += 1;
       }
     }
-    return townCount == 0 || (townCount == 1 && mafiaCount == 1 && alive == 2);
+    return townCount < mafiaCount || (townCount == 1 && mafiaCount == 1 && alive == 2);
   };
 }
 export namespace WinConditions {
