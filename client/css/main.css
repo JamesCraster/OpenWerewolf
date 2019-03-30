@@ -1,0 +1,390 @@
+/*!
+  Copyright 2017-2018 James V. Craster
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+      http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/
+@font-face {
+  font-family: Mercutio;
+  src: url("../assets/fonts/mercutio_basic.ttf") format("truetype");
+}
+* {
+  margin: 0;
+  padding: 0px 0px;
+  font-family: "IBM Plex Sans", sans-serif;
+  line-height: normal;
+}
+
+html,
+body {
+  height: 100%;
+  background: #212121;
+}
+
+body {
+  overflow-y: hidden;
+}
+
+#header {
+  height: 100%;
+}
+
+#discordLogo {
+  display: inline;
+  padding-left: 5px;
+  padding-top: 5px;
+}
+
+#errors {
+  height: 50px;
+}
+
+#landingPageCenter {
+  margin-top: 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+#registerForm {
+  margin-top: 1%;
+}
+
+#copyrightNotice {
+  min-width: 500px;
+  font-size: 0.9em;
+  color: #a5a5a5;
+  position: fixed;
+  bottom: 8px;
+  left: 10px;
+}
+
+#registrationPageTitle {
+  font-size: 5em;
+  margin-bottom: 20px;
+  color: #cecece;
+}
+
+#inner {
+  height: 70%;
+  width: 90%;
+  overflow-x: hidden;
+  position: relative;
+  border: 2px solid #020202;
+  box-sizing: border-box;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+#outer {
+  float: left;
+  height: 100%;
+  width: 60%;
+}
+
+.sideBox {
+  float: left;
+  height: 100%;
+  width: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: stretch;
+  flex-direction: column;
+}
+
+.innerSideBox {
+  border: 2px solid #020202;
+  height: 70%;
+  border-radius: 3px;
+  width: 90%;
+  margin-top: 20px;
+  margin-bottom: 147px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  background-color: #212121;
+}
+
+#innerRightBox {
+  margin-right: auto;
+}
+
+#innerLeftBox {
+  margin-left: auto;
+}
+
+#chatbox {
+  list-style: none;
+}
+
+#msgForm {
+  width: 90%;
+  display: inline-block;
+}
+
+#topLevel {
+  display: none;
+  overflow: hidden;
+  float: left;
+  height: 100%;
+  width: 100%;
+}
+
+#msg {
+  color: #cecece;
+  font-size: 0.9em;
+  width: calc(100% - 81px);
+  outline: none;
+  background-color: #23272a;
+  height: 42px;
+  padding: 0px 5px;
+  float: left;
+  border-top: none;
+  border-bottom: 2px solid #020202;
+  border-left: 2px solid #020202;
+  border-right: 2px solid #020202;
+}
+
+#submit {
+  margin-bottom: 105px;
+  font-size: 0.9em;
+  width: 81px;
+  height: 42px;
+  line-height: 0px;
+  border-radius: 0px;
+  border: 0px;
+  background-color: #0c0c0c;
+  color: #cecece;
+}
+#submit:focus {
+  outline: none;
+}
+#submit::-moz-focus-inner {
+  border: none;
+}
+
+.gameli {
+  font-size: 18px;
+  background: #23272a;
+  color: #cecece;
+  padding: 5px 5px;
+  word-wrap: break-word;
+}
+.gameli:nth-child(odd) {
+  background: #303030;
+  padding: 5px 5px;
+  word-wrap: break-word;
+}
+
+a {
+  white-space: nowrap;
+  color: #268ef5;
+}
+
+#lobby {
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.loading {
+  font-style: italic;
+}
+
+#container {
+  color: #cecece;
+  flex-direction: column;
+  margin: 0px 0px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 65%;
+  height: 100%;
+  margin-left: 10px;
+  margin-right: auto;
+  margin-bottom: 0px;
+}
+
+#lobbyRightBar {
+  width: 35%;
+  border-left: 2px solid #020202;
+  border-right: 2px solid #020202;
+  border-bottom: 2px solid #020202;
+}
+
+.lobbyItemHeader {
+  overflow: auto;
+  background-color: #1b1c1d;
+  padding-left: 5px;
+  padding-top: 5px;
+  border-bottom: 2px solid #0d0d0e;
+}
+
+.lobbyItemBody {
+  padding-left: 5px;
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+}
+
+.lobbyItem {
+  font-size: 1.2em;
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 30px;
+  border-bottom: 2px solid black;
+  border-top: 2px solid black;
+  border-right: 2px solid black;
+  border-left: 2px solid black;
+  height: 95px;
+  min-width: 150px;
+  padding-left: 0px;
+  padding-top: 0px;
+  background-color: #303030;
+  width: 95%;
+  border-radius: 3px;
+  position: relative;
+}
+
+#menubar {
+  flex-direction: column;
+  background-color: #1c4b6d;
+  border: 2px solid black;
+  display: block;
+  width: 25%;
+  height: 25px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.menuitem {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  min-width: 50px;
+}
+
+#mainTitle {
+  font-size: 2.24em;
+  margin-bottom: 2%;
+}
+
+#gameStatus {
+  float: right;
+  padding-right: 5px;
+}
+
+#gameType {
+  float: right;
+  padding-right: 5px;
+}
+
+.gameName {
+  float: left;
+  padding-right: 5px;
+}
+
+.inPlay {
+  float: right;
+  padding-right: 5px;
+}
+
+#mainGameName {
+  margin-top: 0;
+  margin-left: 0;
+  font-size: 1rem;
+}
+
+.menulink {
+  padding-left: 15px;
+}
+
+.simplebar-track.vertical {
+  display: none;
+}
+
+@media only screen and (max-device-width: 430px) {
+  * {
+    font-size: 18px;
+  }
+
+  #inner {
+    height: 100%;
+    width: 100%;
+  }
+
+  #msg {
+    height: 60px;
+  }
+
+  .input {
+    font-size: 20px;
+  }
+
+  .sideBox {
+    display: none;
+  }
+
+  #name {
+    display: none;
+  }
+
+  #outer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: stretch;
+    flex-direction: column;
+  }
+
+  #lobby {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: stretch;
+    flex-direction: row;
+  }
+
+  #topLevel {
+    display: none;
+  }
+}
+@media only screen and (min-device-width: 430px) {
+  #outer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    align-content: stretch;
+    flex-direction: column;
+  }
+
+  #lobby {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: stretch;
+    flex-direction: row;
+  }
+}
+@media only screen and (max-width: 600px) {
+  #lobbyRightBar {
+    display: none;
+  }
+
+  #container {
+    width: 100%;
+  }
+}
+
+/*# sourceMappingURL=main.css.map */

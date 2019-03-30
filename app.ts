@@ -15,7 +15,7 @@
 
 //import config from JSON
 const fs = require("fs");
-const config = JSON.parse(fs.readFileSync("Games/games.json", "utf-8"));
+const config = JSON.parse(fs.readFileSync("games/games.json", "utf-8"));
 let configGameList: any = [];
 
 //dynamically import game classes and add their constructors to configGameList
@@ -35,9 +35,9 @@ for (let i = 0; i < config.games.length; i++) {
     });
 }
 
-import { Server } from "./Core/server";
+import { Server } from "./core/server";
 import { Socket } from "./node_modules/@types/socket.io";
-import { Colors } from "./Core/core";
+import { Colors } from "./core/core";
 
 const myArgs = process.argv.splice(2);
 
@@ -154,7 +154,7 @@ app.use(express.json());
 //serve static content
 app.use("/mobile", express.static(__dirname + "/Mobile/build"));
 app.use("/static", express.static(__dirname + "/Mobile/build/static"));
-app.use("/", express.static(__dirname + "/Client"));
+app.use("/", express.static(__dirname + "/client"));
 app.use(
   "/semantic/dist/semantic.min.js",
   express.static(__dirname + "/semantic/dist/semantic.min.js"),

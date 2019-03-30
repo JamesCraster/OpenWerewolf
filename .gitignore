@@ -1,46 +1,13 @@
-# Ignore javascript builds in the root directory
+# Ignore builds
 /app.js
-/Games/*.js
-/Games/OneDay/*.js
-/Games/Classic/*.js
-/Client/login.js
-/Client/components.js
-Games/Demo/Demo.js
+/games/**/*.js
+/core/**/*.js
+/client/js/*.js
+bundle.js
 
-#Ignore node_modules
 node_modules
-
-#Ignore unused html under development
-lobby.html
-
-#Ignore css output
-/Client/*.css
-
-#Ignore releases
-release/
-*.zip
 
 #Ignore notes
 TODO.txt
 .DS_Store
 
-Client/client.js
-Core/app.js
-Core/core.js
-Core/app.js
-Client/bundle.js
-Client/components.js
-Client/forms.js
-Games/Demo/Demo.js
-Core/core.js
-Games/Demo/demo.js
-dump.rdb
-Core/player.js
-Core/server.js
-Core/utils.js
-Core/game.js
-Client/google2d9c2c2f48980e51.html
-deploy
-app.js.map
-*.js.map
-Core/user.js

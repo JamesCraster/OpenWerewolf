@@ -1,0 +1,25 @@
+{
+  "games": [
+    {
+      "name": "Classic",
+      "location": "./games/classic/classic",
+      "title": "OpenWerewolf-Classic",
+      "author": "James Craster",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "OneDay",
+      "location": "./games/oneDay/oneDay",
+      "title": "OpenWerewolf-OneDay",
+      "author": "James Craster",
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "demo",
+      "location": "./games/demo/demo",
+      "title": "OpenWerewolf-Demo",
+      "author": "James Craster",
+      "license": "Apache-2.0"
+    }
+  ]
+}
