@@ -139,17 +139,17 @@ export class Server {
             user.game = this._games[j];
             user.send(
               "Hi, " +
-                user.username +
-                "! You have joined '" +
-                user.game.name +
-                "'.",
+              user.username +
+              "! You have joined '" +
+              user.game.name +
+              "'.",
             );
             this._games[j].broadcast(user.username + " has joined the game");
             if (this._games[j].minimumPlayersNeeded - 1 > 0) {
               this._games[j].broadcast(
                 "The game will begin when at least " +
-                  (this._games[j].minimumPlayersNeeded - 1).toString() +
-                  " more players have joined",
+                (this._games[j].minimumPlayersNeeded - 1).toString() +
+                " more players have joined",
               );
               //if just hit the minimum number of players
             } else if (this._games[j].minimumPlayersNeeded - 1 == 0) {
@@ -161,8 +161,8 @@ export class Server {
             if (this._games[j].minimumPlayersNeeded > 0) {
               user.send(
                 "The game will begin when at least " +
-                  this._games[j].minimumPlayersNeeded.toString() +
-                  " more players have joined",
+                this._games[j].minimumPlayersNeeded.toString() +
+                " more players have joined",
               );
               //if just hit the minimum number of players
             } else if (this._games[j].minimumPlayersNeeded == 0) {
@@ -178,12 +178,11 @@ export class Server {
   }
   private static cleanUpUsername(username: string) {
     username = username.toLowerCase();
-    username = username.replace(/\s/g, "");
-    username.trim();
+    username = username.trim();
     return username;
   }
   private validateUsername(user: User, username: string) {
-    let letters = /^[A-Za-z]+$/;
+    let letters = /^([A-Za-z0-9]|\s)+$/;
     for (let i = 0; i < this._users.length; i++) {
       if (this._users[i].username == username) {
         user.registrationError(
@@ -196,13 +195,13 @@ export class Server {
       user.registrationError("Cannot be 0 letters long");
       return false;
     }
-    if (username.length > 10) {
-      user.registrationError("Must be no more than 10 letters long");
+    if (username.length > 12) {
+      user.registrationError("Must be no more than 12 letters long");
       return false;
     }
     if (!letters.test(username)) {
       user.registrationError(
-        "Must only contain letters (no numbers or punctuation)",
+        "Can't contain punctuation/special characters",
       );
       return false;
     }
@@ -257,21 +256,9 @@ export class Server {
               if (thisUser.game && thisUser.game.uid) {
                 let game = this.getGameById(thisUser.game.uid);
                 if (game) {
-                  /*thisUser.emit(
-                    "allPlayers",
-                    game.users.map(elem => elem.username),
-                  );*/
                   game.resendData(thisUser);
                 }
               }
-              /*for (let j = 0; j < this._users[i].deadCache.length; j++) {
-                socket.emit("markAsDead", this._users[i].deadCache[j]);
-                socket.emit(
-                  "lineThroughPlayer",
-                  this._users[i].deadCache[j],
-                  Colors.brightRed,
-                );
-              }*/
             }
             //send the client the correct time
             socket.emit(
@@ -414,7 +401,7 @@ export class Server {
               user.startVote = true;
               user.game.broadcast(
                 user.username +
-                  ' has voted to start the game immediately by typing "/start"',
+                ' has voted to start the game immediately by typing "/start"',
               );
             }
           } else if (user.game != undefined && this.validateMessage(msg)) {
@@ -523,9 +510,9 @@ export class Server {
     } else {
       console.log(
         "Error: Server.kick" +
-          ": tried to kick player " +
-          "id" +
-          " but that player does not exist",
+        ": tried to kick player " +
+        "id" +
+        " but that player does not exist",
       );
     }
   }
