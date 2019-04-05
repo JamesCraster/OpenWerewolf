@@ -150,6 +150,7 @@ namespace Abilities {
       return !targetPlayer.healed;
     },
     action: (targetPlayer: ClassicPlayer, game: Classic) => {
+      console.log("attack" + targetPlayer.user.username);
       game.kill(targetPlayer);
     },
   };
@@ -160,8 +161,6 @@ namespace Abilities {
       player?: Player,
     ) => {
       if (player) {
-        console.log(targetPlayer.user.username);
-        console.log(targetPlayer.healed);
         game.mafiachat.broadcast(`${player.user.username} attacked ${targetPlayer.user.username}.`);
         if (targetPlayer.healed) {
           game.mafiachat.broadcast(`The target was healed and so survived the attack.`);
@@ -203,7 +202,6 @@ namespace Abilities {
   export const heal: Ability = {
     condition: Conditions.alwaysTrue,
     action: (targetPlayer: ClassicPlayer, game: Classic) => {
-      console.log(targetPlayer.user.username + " has been healed.")
       targetPlayer.healed = true;
     },
   };
