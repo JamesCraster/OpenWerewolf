@@ -39,16 +39,19 @@
     "webpack": "^4.29.0"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.11",
+    "jest": "^24.7.1",
     "mocha": "^5.2.0",
-    "webpack-cli": "^3.2.1"
+    "ts-jest": "^24.0.1",
+    "webpack-cli": "^3.3.0"
   },
   "scripts": {
-    "test": "mocha \n blc http://localhost:8081 -ro",
-    "watch:debug": "tsc \n webpack -p --watch & \n tsc --watch & \n sass --watch client/css/main.scss:client/css/main.css & \n nodemon app.js debug",
-    "watch": "tsc \n webpack -p --watch & \n tsc --watch & \n sass --watch client/css/main.scss:client/css/main.css & \n nodemon app.js",
-    "watch:database": "tsc \n webpack -p --watch & \n tsc --watch & \n sass --watch client/css/main.scss:client/css/main.css & \n nodemon app.js database",
+    "test": "jest",
+    "watch:debug": "tsc \n webpack --watch & \n tsc --watch & \n sass --watch client/css/main.scss:client/css/main.css & \n nodemon app.js debug",
+    "watch": "tsc \n webpack --watch & \n tsc --watch & \n sass --watch client/css/main.scss:client/css/main.css & \n nodemon app.js",
+    "watch:database": "tsc \n webpack --watch & \n tsc --watch & \n sass --watch client/css/main.scss:client/css/main.css & \n nodemon app.js database",
     "builddocs": "typedoc --out docs --mode 'file' --excludeExternals --externalPattern \"**/node_modules/**\" --ignoreCompilerErrors ../OpenWerewolf/Core --target es6 --theme default --readme none \n touch docs/.nojekyll",
-    "build": "tsc \n webpack -p \n sass client/css/main.scss client/css/main.css",
+    "build": "tsc \n webpack \n sass client/css/main.scss client/css/main.css",
     "start": "echo \"*** Please 'npm run build' first if you haven't already!***\" \n node app.js",
     "start:database": "echo \"*** Please 'npm run build' first if you haven't already!***\" \n node app.js database",
     "start:debug": "echo \"*** Please 'npm run build' first if you haven't already!***\" \n node app.js debug"

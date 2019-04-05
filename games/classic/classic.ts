@@ -310,7 +310,51 @@ export class Classic extends Game {
 
     this.daychat.broadcast("Click on someone to perform your action on them.");
     this.setAllTime(60000, 10000);
-    setTimeout(this.nightResolution.bind(this), 60000);
+    setTimeout(() => {
+      Classic.nightResolution(this);
+      let deaths: number = 0;
+      //Notify the dead that they have died
+      for (let player of this.players) {
+        if (player.diedThisNight) {
+          player.user.send("You have been killed!", undefined, Colors.red);
+          deaths++;
+        }
+      }
+      //Reset each player after the night
+      for (let player of this.players) {
+        player.resetAfterNight();
+      }
+      this.mafiachat.muteAll();
+      this.cancelVoteSelection();
+      this.phase = Phase.day;
+      this.daychat.broadcast("Dawn has broken.", undefined, Colors.yellow);
+      this.headerBroadcast([
+        { text: "Dawn has broken", color: Colors.brightYellow },
+      ]);
+      this.daychat.unmuteAll();
+      for (let player of this.players) {
+        if (!player.alive) {
+          this.daychat.mute(player.user);
+        }
+      }
+      //Notify the living that the dead have died
+      this.daychat.broadcast("The deaths:");
+      if (deaths == 0) {
+        this.daychat.broadcast("Nobody died.");
+      } else {
+        for (let player of this.players) {
+          if (player.diedThisNight) {
+            this.daychat.broadcast(player.user.username + " has died.");
+            this.daychat.mute(player.user);
+          }
+        }
+      }
+      for (let player of this.players) {
+        player.diedThisNight = false;
+      }
+      this.playersCannotVote();
+      this.day();
+    }, 6000);
   }
   public hang(target: ClassicPlayer) {
     target.hang();
@@ -324,10 +368,10 @@ export class Classic extends Game {
       {
         text: `${target.user.username} has been revived`,
         color: Colors.standardWhite,
-      },
-    ]);
+      }]);
   }
   public kill(target: ClassicPlayer) {
+    console.log("KILL" + target.user.username);
     //let the other players know the target has died
     this.markAsDead(target.user.username);
     target.kill();
@@ -336,21 +380,20 @@ export class Classic extends Game {
     }
     this.daysWithoutDeath = 0;
   }
-  private nightResolution() {
+  public static nightResolution(game: Classic) {
     //sort players based off of the const priorities list
-    let nightPlayerArray = this.players.sort((a, b) => priorities.indexOf(a.role) - priorities.indexOf(b.role));
-    console.log(nightPlayerArray.map(elem => console.log(elem.role.roleName)));
+    let nightPlayerArray = game.players.sort((a, b) => priorities.indexOf(a.role) - priorities.indexOf(b.role));
     //perform each player's ability in turn
     for (let actingPlayer of nightPlayerArray) {
       for (let ability of actingPlayer.abilities) {
-        let targetPlayer = this.getPlayer(actingPlayer.target);
+        let targetPlayer = game.getPlayer(actingPlayer.target);
         if (targetPlayer) {
           //check player can perform ability
           if (ability.uses != 0) {
             if (!actingPlayer.roleBlocked) {
               //check condition of ability is satisfied
-              if (ability.ability.condition(targetPlayer, this, actingPlayer)) {
-                ability.ability.action(targetPlayer, this, actingPlayer);
+              if (ability.ability.condition(targetPlayer, game, actingPlayer)) {
+                ability.ability.action(targetPlayer, game, actingPlayer);
                 if (ability.uses) {
                   ability.uses--;
                 }
@@ -370,48 +413,6 @@ export class Classic extends Game {
         }
       }
     }
-    let deaths: number = 0;
-    //Notify the dead that they have died
-    for (let player of this.players) {
-      if (player.diedThisNight) {
-        player.user.send("You have been killed!", undefined, Colors.red);
-        deaths++;
-      }
-    }
-    //Reset each player after the night
-    for (let player of this.players) {
-      player.resetAfterNight();
-    }
-    this.mafiachat.muteAll();
-    this.cancelVoteSelection();
-    this.phase = Phase.day;
-    this.daychat.broadcast("Dawn has broken.", undefined, Colors.yellow);
-    this.headerBroadcast([
-      { text: "Dawn has broken", color: Colors.brightYellow },
-    ]);
-    this.daychat.unmuteAll();
-    for (let player of this.players) {
-      if (!player.alive) {
-        this.daychat.mute(player.user);
-      }
-    }
-    //Notify the living that the dead have died
-    this.daychat.broadcast("The deaths:");
-    if (deaths == 0) {
-      this.daychat.broadcast("Nobody died.");
-    } else {
-      for (let player of this.players) {
-        if (player.diedThisNight) {
-          this.daychat.broadcast(player.user.username + " has died.");
-          this.daychat.mute(player.user);
-        }
-      }
-    }
-    for (let player of this.players) {
-      player.diedThisNight = false;
-    }
-    this.playersCannotVote();
-    this.day();
   }
   private day() {
     if (!this.winCondition()) {
