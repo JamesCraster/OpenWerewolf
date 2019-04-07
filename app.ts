@@ -72,24 +72,13 @@ const redis = require("redis-server");
 const redisServer = new redis(6379);
 const grawlix = require("grawlix");
 const mysql = require("mysql");
-const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const saltNumber = 10;
-
-//details of your email account go here - this needs to be amended for security reasons
-var transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: "youremail@gmail.com",
-    pass: "yourpassword",
-  },
-});
-
 let uGameid = 0;
 let uPlayerid = 0;
 
 let con: any = undefined;
-redisServer.open((err: string) => { });
+redisServer.open((err: string) => {});
 
 function connectDatabase() {
   //Details of your MySQL server go here (don't worry, these aren't my production details.)
@@ -142,11 +131,11 @@ let session = expressSession({
 function loginUser(req: any) {
   req.session.loggedIn = true;
   req.session.username = req.body.username;
-  req.session.save(() => { });
+  req.session.save(() => {});
 }
 
 //use session cookie in sockets
-io.use(function (socket: any, next: any) {
+io.use(function(socket: any, next: any) {
   session(socket.request, socket.request.res, next);
 });
 
@@ -171,16 +160,16 @@ app.use(
 );
 app.set("view engine", "pug");
 app.use(session);
-app.get("/imprint", function (req: any, res: any) {
+app.get("/imprint", function(req: any, res: any) {
   res.render("imprint");
 });
-app.get("/about", function (req: any, res: any) {
+app.get("/about", function(req: any, res: any) {
   res.render("about");
 });
-app.get("/mobile", function (req: any, res: any) {
+app.get("/mobile", function(req: any, res: any) {
   res.render("mobile");
 });
-app.get("/", function (req: any, res: any) {
+app.get("/", function(req: any, res: any) {
   let gameNames = [];
   for (let i = 0; i < server.games.length; i++) {
     gameNames.push(server.games[i].name);
@@ -208,7 +197,7 @@ app.get("/", function (req: any, res: any) {
   });
 });
 if (DATABASE && con) {
-  app.post("/register", function (req: any, res: any) {
+  app.post("/register", function(req: any, res: any) {
     let status = "success";
     //run validation
     let letters = /^[A-Za-z]+$/;
@@ -222,7 +211,7 @@ if (DATABASE && con) {
             let sql =
               "SELECT username FROM USERS where username=" +
               mysql.escape(req.body.username);
-            con.query(sql, function (err: any, results: any) {
+            con.query(sql, function(err: any, results: any) {
               if (results.length == 0) {
                 if (
                   typeof req.body.email == "string" ||
@@ -261,8 +250,8 @@ if (DATABASE && con) {
                 }
 
                 if (status == "success") {
-                  bcrypt.genSalt(saltNumber, function (err: any, salt: any) {
-                    bcrypt.hash(req.body.password, salt, function (
+                  bcrypt.genSalt(saltNumber, function(err: any, salt: any) {
+                    bcrypt.hash(req.body.password, salt, function(
                       err: any,
                       hash: any,
                     ) {
@@ -276,7 +265,7 @@ if (DATABASE && con) {
                         "," +
                         mysql.escape(salt) +
                         ")";
-                      con.query(sql, function (err: any, result: any) {
+                      con.query(sql, function(err: any, result: any) {
                         if (err) throw err;
                       });
                     });
@@ -307,7 +296,7 @@ if (DATABASE && con) {
       res.send('{ "result":' + JSON.stringify(status) + "}");
     }
   });
-  app.post("/login", function (req: any, res: any) {
+  app.post("/login", function(req: any, res: any) {
     let status = "failure";
     if (
       typeof req.body.username == "string" &&
@@ -316,12 +305,12 @@ if (DATABASE && con) {
       let sql =
         "SELECT encrypted_password FROM USERS WHERE username=" +
         mysql.escape(req.body.username);
-      con.query(sql, function (err: any, result: any) {
+      con.query(sql, function(err: any, result: any) {
         if (result.length != 0) {
           bcrypt.compare(
             req.body.password,
             result[0].encrypted_password,
-            function (err: any, comparisonResult: any) {
+            function(err: any, comparisonResult: any) {
               if (comparisonResult == true) {
                 status = "success";
                 loginUser(req);
@@ -341,12 +330,12 @@ if (DATABASE && con) {
     }
   });
 }
-app.post("/logout", function (req: any, res: any) {
+app.post("/logout", function(req: any, res: any) {
   req.session.loggedIn = false;
   req.session.username = "";
   res.send("{}");
 });
-app.post("/newGame", function (req: any, res: any) {
+app.post("/newGame", function(req: any, res: any) {
   let result = "success";
   if (
     typeof req.body.name == "string" &&
@@ -382,13 +371,13 @@ app.post("/newGame", function (req: any, res: any) {
   }
   res.send('{"result":' + JSON.stringify(result) + "}");
 });
-app.post("/forgottenPassword", function (req: any, res: any) {
+app.post("/forgottenPassword", function(req: any, res: any) {
   if (typeof req.body.username == "string") {
     //find email in the database matching username 'req.body.username'
     let sql =
       "SELECT email FROM USERS WHERE username=" +
       mysql.escape(req.body.username);
-    con.query(sql, function (err: any, result: any) {
+    con.query(sql, function(err: any, result: any) {
       if (result.length == 0) {
         res.send('{"result":"Your username is incorrect"}');
       } else {
@@ -401,13 +390,13 @@ app.post("/forgottenPassword", function (req: any, res: any) {
     //then send the email:
   }
 });
-app.get("*.png", function () { });
-app.get("*", function (req: any, res: any) {
+app.get("*.png", function() {});
+app.get("*", function(req: any, res: any) {
   res.render("404");
 });
 
 //handle socket requests
-io.on("connection", function (socket: Socket) {
+io.on("connection", function(socket: Socket) {
   //set the session unless it is already set
   if (!socket.request.session.socketID) {
     socket.request.session.socketID = socket.id;
@@ -427,10 +416,10 @@ io.on("connection", function (socket: Socket) {
   if (oldPlayerId != undefined) {
     thisPlayerId = oldPlayerId;
   }
-  socket.on("reloadClient", function () {
+  socket.on("reloadClient", function() {
     server.reloadClient(thisPlayerId);
   });
-  socket.on("message", function (msg: string) {
+  socket.on("message", function(msg: string) {
     if (typeof msg === "string") {
       //exclude commands from filtering (they start with a forward slash):
       if (msg[0] === "/") {
@@ -446,19 +435,19 @@ io.on("connection", function (socket: Socket) {
       }
     }
   });
-  socket.on("leaveGame", function () {
+  socket.on("leaveGame", function() {
     server.leaveGame(thisPlayerId);
   });
-  socket.on("disconnect", function () {
+  socket.on("disconnect", function() {
     server.removeSocketFromPlayer(thisPlayerId, socket);
     server.kick(thisPlayerId);
   });
-  socket.on("gameClick", function (gameId: string) {
+  socket.on("gameClick", function(gameId: string) {
     if (parseInt(gameId) != NaN) {
       server.gameClick(thisPlayerId, gameId);
     }
   });
-  socket.on("localGameClick", function (name: string, gameId: string) {
+  socket.on("localGameClick", function(name: string, gameId: string) {
     server.receive(thisPlayerId, name);
     if (
       server.getUser(thisPlayerId) != undefined &&
@@ -467,7 +456,7 @@ io.on("connection", function (socket: Socket) {
       server.gameClick(thisPlayerId, gameId);
     }
   });
-  socket.on("lobbyMessage", function (msg: string) {
+  socket.on("lobbyMessage", function(msg: string) {
     if (typeof msg === "string") {
       if (Date.now() - time < 500) {
         time = Date.now();
@@ -487,6 +476,6 @@ io.on("connection", function (socket: Socket) {
 
 //listen on port
 let port = 8081;
-http.listen(port, function () {
+http.listen(port, function() {
   console.log("Port is:" + port);
 });

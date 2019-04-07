@@ -54,7 +54,7 @@ export interface Role {
   passives: Array<Passives>;
   color?: Colors;
   backgroundColor?: Colors;
-};
+}
 
 export namespace GameEndConditions {
   //town wins if no mafia remain
@@ -82,7 +82,10 @@ export namespace GameEndConditions {
         alive += 1;
       }
     }
-    return townCount < mafiaCount || (townCount == 1 && mafiaCount == 1 && alive == 2);
+    return (
+      townCount < mafiaCount ||
+      (townCount == 1 && mafiaCount == 1 && alive == 2)
+    );
   };
 }
 export namespace WinConditions {
@@ -92,14 +95,17 @@ export namespace WinConditions {
   export const mafia: WinCondition = (player: ClassicPlayer, game: Classic) => {
     return GameEndConditions.mafiaWin(game);
   };
-  export const lynchTarget: WinCondition = (player: ClassicPlayer, game: Classic) => {
+  export const lynchTarget: WinCondition = (
+    player: ClassicPlayer,
+    game: Classic,
+  ) => {
     if (player.winLynchTarget) {
       return player.winLynchTarget.hanged;
     } else {
-      console.log("Error: executioner was not given lynch target")
+      console.log("Error: executioner was not given lynch target");
       return false;
     }
-  }
+  };
   export const survive: WinCondition = (
     player: ClassicPlayer,
     game: Classic,
@@ -112,14 +118,19 @@ export namespace WinConditions {
   ) => {
     return player.hanged;
   };
-  //make last one standing exclusive, except for survivors
+  //last one standing excludes survivors, jesters and executioners
   export const lastOneStanding: WinCondition = (
     player: ClassicPlayer,
     game: Classic,
   ) => {
     let aliveCount = 0;
     for (let player of game.players) {
-      if (player.alive) {
+      if (
+        player.alive &&
+        player.role != Roles.survivor &&
+        player.role != Roles.jester &&
+        player.role != Roles.executioner
+      ) {
         aliveCount += 1;
       }
     }
@@ -150,7 +161,6 @@ namespace Abilities {
       return !targetPlayer.healed;
     },
     action: (targetPlayer: ClassicPlayer, game: Classic) => {
-      console.log("attack" + targetPlayer.user.username);
       game.kill(targetPlayer);
     },
   };
@@ -161,27 +171,46 @@ namespace Abilities {
       player?: Player,
     ) => {
       if (player) {
-        game.mafiachat.broadcast(`${player.user.username} attacked ${targetPlayer.user.username}.`);
+        game.mafiachat.broadcast(
+          `${player.user.username} attacked ${targetPlayer.user.username}.`,
+        );
         if (targetPlayer.healed) {
-          game.mafiachat.broadcast(`The target was healed and so survived the attack.`);
+          game.mafiachat.broadcast(
+            `The target was healed and so survived the attack.`,
+          );
         }
         return !targetPlayer.healed;
       } else {
-        console.log('Err: mafia killer not passed into mafiaKill')
+        console.log("Err: mafia killer not passed into mafiaKill");
         return false;
       }
     },
-    action: Abilities.kill.action
-  }
+    action: Abilities.kill.action,
+  };
   export const godfatherOrder: Ability = {
-    condition: (targetPlayer: ClassicPlayer, game: Classic, player?: Player) => {
-      return !game.players.find(player => player.role == Roles.mafioso && !player.roleBlocked) && Abilities.mafiaKill.condition(targetPlayer, game, player as Player)
+    condition: (
+      targetPlayer: ClassicPlayer,
+      game: Classic,
+      player?: Player,
+    ) => {
+      return (
+        !game.players.find(
+          player =>
+            player.role == Roles.mafioso &&
+            !player.roleBlocked &&
+            game.getPlayer(player.target) !== undefined,
+        ) && Abilities.mafiaKill.condition(targetPlayer, game, player as Player)
+      );
     },
-    action: Abilities.kill.action
-  }
+    action: Abilities.kill.action,
+  };
   export const mafiosoKill: Ability = {
     condition: Conditions.alwaysTrue,
-    action: (targetPlayer: ClassicPlayer, game: Classic, player?: ClassicPlayer) => {
+    action: (
+      targetPlayer: ClassicPlayer,
+      game: Classic,
+      player?: ClassicPlayer,
+    ) => {
       if (player) {
         let godfather = game.players.find(elem => elem.role == Roles.godfather);
         if (godfather) {
@@ -197,8 +226,8 @@ namespace Abilities {
           Abilities.kill.action(targetPlayer, game, player);
         }
       }
-    }
-  }
+    },
+  };
   export const heal: Ability = {
     condition: Conditions.alwaysTrue,
     action: (targetPlayer: ClassicPlayer, game: Classic) => {
@@ -256,7 +285,7 @@ export function getRoleBackgroundColor(role: Role): Colors {
   } else if (role.alignment == Alignment.mafia) {
     return Colors.red;
   } else {
-    return role.backgroundColor ? role.backgroundColor : role.color as Colors;
+    return role.backgroundColor ? role.backgroundColor : (role.color as Colors);
   }
 }
 function mafia(role: Role) {
@@ -282,7 +311,7 @@ export namespace Roles {
     winCondition: WinConditions.mafia,
     abilities: [],
     passives: [],
-  }
+  };
   export const mafioso: Role = {
     roleName: "mafioso",
     alignment: Alignment.mafia,
@@ -357,7 +386,7 @@ export namespace Roles {
     color: Colors.grey,
     abilities: [],
     passives: [],
-  }
+  };
   export const retributionist: Role = {
     roleName: "retributionist",
     alignment: Alignment.town,
@@ -411,5 +440,5 @@ export const priorities = [
   Roles.medium,
   Roles.survivor,
   Roles.jester,
-  Roles.executioner
+  Roles.executioner,
 ];

@@ -36,7 +36,7 @@ import {
 } from "../classic/roles";
 
 import { ClassicPlayer } from "./classicPlayer";
-import { DEBUGMODE } from "../../app";
+//import { DEBUGMODE } from "../../app";
 import { Phrase } from "../../core/user";
 
 enum Phase {
@@ -60,9 +60,9 @@ let roleLists: { defaultLists: Array<Array<string>> } = JSON.parse(
 
 let globalMinimumPlayerCount = 4;
 //four player games are for debugging only
-if (DEBUGMODE) {
-  globalMinimumPlayerCount = 4;
-}
+//if (DEBUGMODE) {
+//globalMinimumPlayerCount = 4;
+//}
 export class Classic extends Game {
   private phase: string = Phase.day;
   //what stage the trial is in
@@ -189,7 +189,9 @@ export class Classic extends Game {
               color: Colors.brightGreen,
             },
           ]);
-          player.user.send([{ text: "*** YOU WIN! ***", color: Colors.brightGreen }]);
+          player.user.send([
+            { text: "*** YOU WIN! ***", color: Colors.brightGreen },
+          ]);
         } else {
           player.user.headerSend([
             {
@@ -197,7 +199,9 @@ export class Classic extends Game {
               color: Colors.brightRed,
             },
           ]);
-          player.user.send([{ text: "*** YOU LOSE! ***", color: Colors.brightRed }]);
+          player.user.send([
+            { text: "*** YOU LOSE! ***", color: Colors.brightRed },
+          ]);
         }
       }
       //list all winners in the chat
@@ -234,17 +238,21 @@ export class Classic extends Game {
     for (let i = 0; i < randomDeck.length; i++) {
       this.players.push(new ClassicPlayer(this.users[i], randomDeck[i]));
     }
-    this.players.filter(elem => elem.alignment == Alignment.mafia).forEach(player => {
-      this.mafiachat.addUser(player.user);
-      this.mafiachat.mute(player.user);
-    });
+    this.players
+      .filter(elem => elem.alignment == Alignment.mafia)
+      .forEach(player => {
+        this.mafiachat.addUser(player.user);
+        this.mafiachat.mute(player.user);
+      });
     for (let player of this.players) {
       //tell the player what their role is
       this.sendRole(player);
     }
     //print the list of roles in the left panel
     for (let player of this.players) {
-      for (let role of roleList.sort((a, b) => priorities.indexOf(a) - priorities.indexOf(b))) {
+      for (let role of roleList.sort(
+        (a, b) => priorities.indexOf(a) - priorities.indexOf(b),
+      )) {
         player.user.leftSend(role.roleName, getRoleColor(role));
       }
     }
@@ -254,15 +262,25 @@ export class Classic extends Game {
         this.deadChat.addUser(player.user);
       }
     }
-    this.players.filter(player => player.role.winCondition == WinConditions.lynchTarget).forEach(player => {
-      player.assignLynchTarget(Utils.chooseCombination(this.players, 1)[0]);
-      player.user.send(`Your target is ${player.winLynchTarget!.user.username} : if they are lynched, you win!`);
-    });
+    this.players
+      .filter(player => player.role.winCondition == WinConditions.lynchTarget)
+      .forEach(player => {
+        player.assignLynchTarget(Utils.chooseCombination(this.players, 1)[0]);
+        player.user.send(
+          `Your target is ${
+            player.winLynchTarget!.user.username
+          } : if they are lynched, you win!`,
+        );
+      });
     this.setAllTime(5000, 0);
     setTimeout(this.night.bind(this), 5000);
   }
   private sendRole(player: ClassicPlayer) {
-    player.user.send(`You are a ${player.role.roleName}`, undefined, getRoleBackgroundColor(player.role));
+    player.user.send(
+      `You are a ${player.role.roleName}`,
+      undefined,
+      getRoleBackgroundColor(player.role),
+    );
     player.user.headerSend([
       { text: "You are a ", color: Colors.white },
       { text: player.role.roleName, color: getRoleColor(player.role) },
@@ -291,11 +309,29 @@ export class Classic extends Game {
     //Let the mafia communicate with one another
     this.mafiachat.unmuteAll();
     //if there is no godfather
-    if (!this.players.find(elem => elem.role == Roles.godfather && elem.alive)) {
+    if (
+      !this.players.find(elem => elem.role == Roles.godfather && elem.alive)
+    ) {
       //promote mafioso to godfather if one exists
-      if (!safeCall(this.players.find(elem => elem.role == Roles.mafioso && elem.alive), mafioso => { mafioso.upgradeToGodfather(); this.sendRole(mafioso) })) {
+      if (
+        !safeCall(
+          this.players.find(elem => elem.role == Roles.mafioso && elem.alive),
+          mafioso => {
+            mafioso.upgradeToGodfather();
+            this.sendRole(mafioso);
+          },
+        )
+      ) {
         //there is no mafioso, so promote one of the other mafia
-        safeCall(this.players.find(player => player.alignment == Alignment.mafia && player.alive), mafiaMember => { mafiaMember.upgradeToGodfather(); this.sendRole(mafiaMember) });
+        safeCall(
+          this.players.find(
+            player => player.alignment == Alignment.mafia && player.alive,
+          ),
+          mafiaMember => {
+            mafiaMember.upgradeToGodfather();
+            this.sendRole(mafiaMember);
+          },
+        );
       }
     }
     this.mafiachat.broadcast(
@@ -305,7 +341,7 @@ export class Classic extends Game {
     this.mafiachat.broadcast("The mafia are:");
     this.players
       .filter(player => player.alignment == Alignment.mafia)
-      .map(player => player.user.username + ' : ' + player.role.roleName)
+      .map(player => player.user.username + " : " + player.role.roleName)
       .forEach(elem => this.mafiachat.broadcast(elem));
 
     this.daychat.broadcast("Click on someone to perform your action on them.");
@@ -368,10 +404,10 @@ export class Classic extends Game {
       {
         text: `${target.user.username} has been revived`,
         color: Colors.standardWhite,
-      }]);
+      },
+    ]);
   }
   public kill(target: ClassicPlayer) {
-    console.log("KILL" + target.user.username);
     //let the other players know the target has died
     this.markAsDead(target.user.username);
     target.kill();
@@ -382,7 +418,9 @@ export class Classic extends Game {
   }
   public static nightResolution(game: Classic) {
     //sort players based off of the const priorities list
-    let nightPlayerArray = game.players.sort((a, b) => priorities.indexOf(a.role) - priorities.indexOf(b.role));
+    let nightPlayerArray = game.players.sort(
+      (a, b) => priorities.indexOf(a.role) - priorities.indexOf(b.role),
+    );
     //perform each player's ability in turn
     for (let actingPlayer of nightPlayerArray) {
       for (let ability of actingPlayer.abilities) {
@@ -399,10 +437,7 @@ export class Classic extends Game {
                 }
               }
             } else {
-              actingPlayer.user.send(
-                "You were roleblocked!",
-                Colors.brightRed,
-              );
+              actingPlayer.user.send("You were roleblocked!", Colors.brightRed);
             }
           } else {
             actingPlayer.user.send(
@@ -445,7 +480,7 @@ export class Classic extends Game {
           "2 minutes of general discussion until the trials begin. Discuss who to nominate.",
         );
         //make time to wait shorter if in debug mode
-        if (DEBUGMODE) {
+        if (false) {
           this.setAllTime(20000, 20000);
           setTimeout(this.trialVote.bind(this), 20000);
         } else {
@@ -521,7 +556,7 @@ export class Classic extends Game {
     this.daychat.broadcast("The accused can defend themselves for 30 seconds.");
     this.daychat.muteAll();
     this.daychat.unmute(this.players[defendant].user);
-    if (DEBUGMODE) {
+    if (false) {
       this.setAllTime(5000, 5000);
       setTimeout(this.finalVote.bind(this), 5 * 1000, defendant);
     } else {
@@ -589,7 +624,9 @@ export class Classic extends Game {
       for (let player of this.players) {
         player.user.hang([this.players[defendant].user.username]);
       }
-      this.daychat.broadcast("The dead player has 30 seconds for a death speech.")
+      this.daychat.broadcast(
+        "The dead player has 30 seconds for a death speech.",
+      );
       this.setAllTime(30000, 0);
       setTimeout(this.endDay.bind(this), 30 * 1000);
     } else {
@@ -632,7 +669,16 @@ export class Classic extends Game {
   }
   public end() {
     //read out all the roles
-    this.players.map(player => { return [{ text: `${player.user.username} was the `, color: Colors.standardWhite }, { text: player.role.roleName, color: getRoleColor(player.role) }] })
+    this.players
+      .map(player => {
+        return [
+          {
+            text: `${player.user.username} was the `,
+            color: Colors.standardWhite,
+          },
+          { text: player.role.roleName, color: getRoleColor(player.role) },
+        ];
+      })
       .forEach(elem => this.daychat.broadcast(elem));
     //reset initial conditions
     this.phase = Phase.day;
@@ -650,7 +696,11 @@ export class Classic extends Game {
 
     if (this.inPlay && player instanceof ClassicPlayer) {
       //let medium etc. talk in dead chat at night
-      if (player.alive && this.phase == Phase.night && player.role.passives.indexOf(Passives.speakWithDead) != -1) {
+      if (
+        player.alive &&
+        this.phase == Phase.night &&
+        player.role.passives.indexOf(Passives.speakWithDead) != -1
+      ) {
         this.deadChat.receive(player.user, [
           {
             text: "Hidden",
@@ -673,11 +723,17 @@ export class Classic extends Game {
                   "Your choice of '" + username + "' has been received.",
                 );
                 if (player.alignment == Alignment.mafia) {
-                  this.mafiachat.broadcast(`${player.user.username} has chosen to target ${this.players[i].user.username}.`);
+                  this.mafiachat.broadcast(
+                    `${player.user.username} has chosen to target ${
+                      this.players[i].user.username
+                    }.`,
+                  );
                 }
                 player.target = this.players[i].user.id;
                 if (!this.players[i].alive) {
-                  player.user.send("That player is dead - unless you are retributionist, you should pick someone else.");
+                  player.user.send(
+                    "That player is dead - unless you are retributionist, you should pick someone else.",
+                  );
                 }
               }
             }
@@ -693,11 +749,13 @@ export class Classic extends Game {
             if (player.target != "") {
               player.user.send(
                 `Your choice of "${
-                this.getPlayer(player.target)!.user.username
+                  this.getPlayer(player.target)!.user.username
                 }" has been cancelled.`,
               );
               if (player.alignment == Alignment.mafia) {
-                this.mafiachat.broadcast(`${player.user.username} cancelled their choice.`);
+                this.mafiachat.broadcast(
+                  `${player.user.username} cancelled their choice.`,
+                );
               }
               player.target = "";
             }
@@ -729,13 +787,13 @@ export class Classic extends Game {
               if (voteTarget) {
                 player.user.send(
                   "Your vote for " +
-                  voteTarget.user.username +
-                  " has been cancelled.",
+                    voteTarget.user.username +
+                    " has been cancelled.",
                 );
                 this.daychat.broadcast(
                   player.user.username +
-                  " cancelled their vote for " +
-                  voteTarget.user.username,
+                    " cancelled their vote for " +
+                    voteTarget.user.username,
                 );
                 player.clearVote();
               }
@@ -848,8 +906,12 @@ export class Classic extends Game {
     } else {
       //set general discussion length, in seconds
       if (Utils.isCommand(msg, "!daytime")) {
-        if (Utils.commandArguments(msg).length > 0 && parseInt(Utils.commandArguments(msg)[0])) {
-          this.generalDiscussionDuration = parseInt(Utils.commandArguments(msg)[0]) * 1000;
+        if (
+          Utils.commandArguments(msg).length > 0 &&
+          parseInt(Utils.commandArguments(msg)[0])
+        ) {
+          this.generalDiscussionDuration =
+            parseInt(Utils.commandArguments(msg)[0]) * 1000;
         }
       }
     }
