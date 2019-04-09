@@ -134,7 +134,7 @@ export class User {
   }
 }
 export const user = new User();
-//ReactDOM.render(<RoleSelection user={user} />, $("#roleSelection")[0]);
+ReactDOM.render(<RoleSelection user={user} />, $("#roleSelection")[0]);
 
 function lobbyItemClick(item: HTMLElement) {
   user.gameClicked = true;
@@ -275,7 +275,7 @@ function removePlayerFromLobbyList(username: string) {
     .remove();
 }
 
-function appendMessage(
+export function appendMessage(
   msg: Array<{
     text: string;
     color?: string;

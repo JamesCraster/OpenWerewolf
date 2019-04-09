@@ -5,10 +5,8 @@ import { ClassicPlayer } from "../games/classic/classicPlayer";
 import {
   Roles,
   Role,
-  priorities,
   GameEndConditions,
 } from "../games/classic/roles";
-import { Player } from "../core/core";
 
 let server = new Server();
 function initClassic(roles: Array<Role>) {

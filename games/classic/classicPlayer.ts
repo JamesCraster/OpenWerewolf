@@ -132,14 +132,6 @@ export class ClassicPlayer extends Player {
     this._alive = true;
     this._diedThisNight = false;
   }
-  public get mafiaVotes() {
-    return this._mafiaVotes;
-  }
-  public incrementMafiaVote() {
-    if (this.alignment != Alignment.mafia) {
-      this._mafiaVotes++;
-    }
-  }
   public set diedThisNight(diedThisNight: boolean) {
     this._diedThisNight = diedThisNight;
   }

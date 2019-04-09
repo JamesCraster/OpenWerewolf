@@ -1,14 +1,13 @@
 import * as React from "react";
-import { User } from "./client";
-import { ReactComponentLike } from "prop-types";
-import { TSImportEqualsDeclaration } from "babel-types";
+import { User, appendMessage } from "./client";
 
 type Props = {
   user: User;
 };
 
 type State = {
-  roles: Array<JSX.Element>;
+  roles: Array<{ roleName: string; color: string }>;
+  roleButtons: Array<JSX.Element>;
   key: number;
   roleNames: Array<string>;
   display: string;
@@ -17,14 +16,14 @@ type State = {
 class RoleSelection extends React.Component<Props, State> {
   constructor(props: any) {
     super(props);
-    this.state = { roles: [], key: 0, roleNames: [], display: "none" };
-    /*this.props.user.socket.on(
+    this.state = { roleButtons: [], key: 0, roleNames: [], display: "none", roles: [] };
+    this.props.user.socket.on(
       "makeHost",
       (roles: Array<{ roleName: string; color: string }>) => {
         this.addButtons(roles);
         this.setState({ display: "inherit" });
       },
-    );*/
+    );
   }
 
   addButtons = (roles: Array<{ roleName: string; color: string }>) => {
@@ -42,7 +41,8 @@ class RoleSelection extends React.Component<Props, State> {
         </button>,
       );
     }
-    this.setState({ roles: buttons });
+    this.setState({ roles: roles });
+    this.setState({ roleButtons: buttons });
     this.setState({ key: key });
   };
 
@@ -53,7 +53,7 @@ class RoleSelection extends React.Component<Props, State> {
     this.setState({
       roleNames: newRoleNames,
     });
-    console.log(newRoleNames);
+    appendMessage([{ text: target.textContent as string, color: (this.state.roles.find(elem => elem.roleName == target.textContent as string) as { roleName: string; color: string }).color as string }], "#roleNames");
   };
 
   render() {
@@ -98,7 +98,7 @@ class RoleSelection extends React.Component<Props, State> {
           <p>
             Select as many roles as you have players, then hit submit to start:
           </p>
-          <div id="allRolesForGameType">{this.state.roles}</div>
+          <div id="allRolesForGameType">{this.state.roleButtons}</div>
           <br />
           <button
             className="ui blue button"
