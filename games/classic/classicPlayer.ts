@@ -33,11 +33,18 @@ export class ClassicPlayer extends Player {
   //the username of the player that this player is nominating during the trial
   private _vote: string = "";
   private _finalVote: string = FinalVote.abstain;
+  //! Important: Roles are immutable, so to keep track of uses of abilities etc, a deep copy of abilities is made.
+  //! This deep copy is accessible by .abilities. Whenever role is updated, _abilities must be updated too.
+  //! The setter for roles will do this automatically.
+  //! TLDR: don't use this._role, use this.role instead.
   private _role: Role;
+  private _abilities: Array<{ ability: Ability; uses?: number }> = [];
   private _winLynchTarget: ClassicPlayer | undefined = undefined;
+  //the abilities of this player
   constructor(user: User, role: Role) {
     super(user);
     this._role = role;
+    this._abilities = Array.from(role.abilities) as Array<{ ability: Ability; uses?: number }>;
   }
   public get alive() {
     return this._alive;
@@ -45,8 +52,16 @@ export class ClassicPlayer extends Player {
   public get role() {
     return this._role;
   }
+  public set role(role: Role) {
+    this._role = role;
+    //give the player their abilities
+    this._abilities = Array.from(role.abilities) as Array<{ ability: Ability; uses?: number }>;
+  }
+  public get abilities() {
+    return this._abilities;
+  }
   public upgradeToGodfather() {
-    this._role = Roles.godfather;
+    this.role = Roles.godfather;
     this.user.send("You have been promoted to godfather - now you get final say on who to kill.");
   }
   get winLynchTarget() {
@@ -62,13 +77,13 @@ export class ClassicPlayer extends Player {
     this._hanged = true;
   }
   public get alignment(): Alignment {
-    return this._role.alignment;
+    return this.role.alignment;
   }
   public get roleName(): string {
-    return this._role.roleName;
+    return this.role.roleName;
   }
   public isRole(role: Role): boolean {
-    return this._role.roleName == role.roleName;
+    return this.role.roleName == role.roleName;
   }
   public set target(target: string) {
     this._target = target;
@@ -80,13 +95,13 @@ export class ClassicPlayer extends Player {
     this._target = "";
   }
   public get winCondition() {
-    return this._role.winCondition;
+    return this.role.winCondition;
   }
   public resetAfterNight() {
     this.clearTarget();
     this._healed = false;
     this._mafiaVotes = 0;
-    this._roleBlocked = false;
+    this.roleBlocked = false;
   }
   public resetAfterTrial() {
     this._vote = "";
@@ -99,7 +114,7 @@ export class ClassicPlayer extends Player {
     return this._healed;
   }
   public roleBlock() {
-    this._roleBlocked = true;
+    this.roleBlocked = true;
   }
   get roleBlocked() {
     return this._roleBlocked;
@@ -145,11 +160,5 @@ export class ClassicPlayer extends Player {
   }
   public get finalVote() {
     return this._finalVote;
-  }
-  public get abilities(): Array<{
-    ability: Ability;
-    uses?: number | undefined;
-  }> {
-    return this._role.abilities;
   }
 }
