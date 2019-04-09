@@ -268,7 +268,7 @@ export class Classic extends Game {
         player.assignLynchTarget(Utils.chooseCombination(this.players, 1)[0]);
         player.user.send(
           `Your target is ${
-            player.winLynchTarget!.user.username
+          player.winLynchTarget!.user.username
           } : if they are lynched, you win!`,
         );
       });
@@ -390,7 +390,7 @@ export class Classic extends Game {
       }
       this.playersCannotVote();
       this.day();
-    }, 6000);
+    }, 60000);
   }
   public hang(target: ClassicPlayer) {
     target.hang();
@@ -716,7 +716,7 @@ export class Classic extends Game {
                 if (player.alignment == Alignment.mafia) {
                   this.mafiachat.broadcast(
                     `${player.user.username} has chosen to target ${
-                      this.players[i].user.username
+                    this.players[i].user.username
                     }.`,
                   );
                 }
@@ -740,7 +740,7 @@ export class Classic extends Game {
             if (player.target != "") {
               player.user.send(
                 `Your choice of "${
-                  this.getPlayer(player.target)!.user.username
+                this.getPlayer(player.target)!.user.username
                 }" has been cancelled.`,
               );
               if (player.alignment == Alignment.mafia) {
@@ -778,13 +778,13 @@ export class Classic extends Game {
               if (voteTarget) {
                 player.user.send(
                   "Your vote for " +
-                    voteTarget.user.username +
-                    " has been cancelled.",
+                  voteTarget.user.username +
+                  " has been cancelled.",
                 );
                 this.daychat.broadcast(
                   player.user.username +
-                    " cancelled their vote for " +
-                    voteTarget.user.username,
+                  " cancelled their vote for " +
+                  voteTarget.user.username,
                 );
                 player.clearVote();
               }
@@ -875,8 +875,8 @@ export class Classic extends Game {
         }
       }, 500);
     }
-    //if the user is the host, on reload they are still the host
-    if (user.isHost) {
+    //if the user is the host, and the game is not in play, on reload they are still the host
+    if (user.isHost && !this.inPlay) {
       this.makeHost(user);
     }
   }
