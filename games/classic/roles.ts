@@ -34,12 +34,12 @@ type WinCondition = (player: ClassicPlayer, game: Classic) => boolean;
 type GameEndCondition = (game: Classic) => boolean;
 
 export type Ability = {
-  condition: (
+  readonly condition: (
     targetPlayer: ClassicPlayer,
     game: Classic,
     player?: Player,
   ) => boolean | undefined;
-  action: (
+  readonly action: (
     targetPlayer: ClassicPlayer,
     game: Classic,
     player?: ClassicPlayer,
@@ -47,14 +47,14 @@ export type Ability = {
 };
 
 export interface Role {
-  roleName: string;
-  alignment: Alignment;
-  winCondition: WinCondition;
-  abilities: Array<{ ability: Ability; uses?: number }>;
-  passives: Array<Passives>;
-  color?: Colors;
-  backgroundColor?: Colors;
-}
+  readonly roleName: string;
+  readonly alignment: Alignment;
+  readonly winCondition: WinCondition;
+  abilities: Readonly<Array<Readonly<{ ability: Ability; uses?: number }>>>;
+  readonly passives: Array<Passives>;
+  readonly color?: Colors;
+  readonly backgroundColor?: Colors;
+};
 
 export namespace GameEndConditions {
   //town wins if no mafia remain

@@ -516,24 +516,15 @@ export class Classic extends Game {
     this.tallyInterval = setInterval(this.tallyVotes.bind(this), 1000);
   }
   private tallyVotes() {
-    let count = 0;
     let defendant = 0;
     let aliveCount = this.players.filter(player => player.alive).length;
-    let beginTrial: boolean = false;
-    for (let i = 0; i < this.players.length; i++) {
-      count = 0;
-      if (beginTrial) {
+    let beginTrial = false;
+    for (let possibleDefendant of this.players) {
+      let count = this.players.map(elem => (elem.vote == possibleDefendant.user.id ? 1 : 0)).reduce<number>((acc, val) => acc + val, 0);
+      if (count >= Math.floor(aliveCount / 2) + 1) {
+        beginTrial = true;
+        defendant = this.players.indexOf(possibleDefendant);
         break;
-      }
-      for (let j = 0; j < this.players.length; j++) {
-        if (this.players[j].vote == this.players[i].user.id) {
-          count++;
-        }
-        if (count >= Math.floor(aliveCount / 2) + 1) {
-          beginTrial = true;
-          defendant = i;
-          break;
-        }
       }
     }
     if (beginTrial) {
