@@ -21,7 +21,7 @@ import {
   UserColorArray,
   Utils,
 } from "./utils";
-import { DEBUGMODE } from "../app";
+//import { DEBUGMODE } from "../app";
 
 export abstract class Game {
   protected endChat: MessageRoom = new MessageRoom();
@@ -73,9 +73,9 @@ export abstract class Game {
     license: string,
   ) {
     //debug mode will start game faster
-    if (DEBUGMODE) {
-      this._startWait = 10000;
-    }
+    //if (DEBUGMODE) {
+    //this._startWait = 10000;
+    //}
     this._uid = uid;
     this._server = server;
     this._minPlayerCount = minPlayerCount;
@@ -108,7 +108,7 @@ export abstract class Game {
     return this._users;
   }
   //update is supplied by concrete child class
-  protected update() { }
+  protected update() {}
   //returns array of usernames and their colors, to put in the lobby chat
   get usernameColorPairs(): Array<NameColorPair> {
     let usernameColorPairs = [];
@@ -260,10 +260,10 @@ export abstract class Game {
     ) {
       user.send(
         "The game will start in " +
-        Math.floor(
-          (this.startWait - this.startClock.time) / 1000,
-        ).toString() +
-        " seconds",
+          Math.floor(
+            (this.startWait - this.startClock.time) / 1000,
+          ).toString() +
+          " seconds",
       );
       user.send('Type "/start" to start the game immediately');
       user.setTime(this.startWait - this.startClock.time, 10000);
@@ -393,7 +393,7 @@ export abstract class Game {
     }
   }
   //to be overridden in child classes as necessary
-  public customAdminReceive(user: User, msg: string): void { }
+  public customAdminReceive(user: User, msg: string): void {}
   //generic admin commands
   public adminReceive(user: User, msg: string): void {
     if (user.admin == true && msg[0] == "!") {

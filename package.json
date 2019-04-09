@@ -46,7 +46,7 @@
     "webpack-cli": "^3.3.0"
   },
   "scripts": {
-    "test": "jest",
+    "test": "jest --silent --verbose",
     "watch:debug": "tsc \n webpack --watch & \n tsc --watch & \n sass --watch client/css/main.scss:client/css/main.css & \n nodemon app.js debug",
     "watch": "tsc \n webpack --watch & \n tsc --watch & \n sass --watch client/css/main.scss:client/css/main.css & \n nodemon app.js",
     "watch:database": "tsc \n webpack --watch & \n tsc --watch & \n sass --watch client/css/main.scss:client/css/main.css & \n nodemon app.js database",
