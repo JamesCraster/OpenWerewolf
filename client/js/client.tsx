@@ -27,18 +27,18 @@ enum States {
   GAMEENDED = "GAME ENDED",
 }
 class LeaveGameButton {
-  public action: () => void = () => { };
-  constructor() { }
+  public action: () => void = () => {};
+  constructor() {}
   setinPlayClick() {
     $("#leaveGame").off("click");
-    this.action = function () {
+    this.action = function() {
       $("#leaveGameModal").modal("show");
     };
     $("#leaveGame").click(this.action);
   }
   setNotInPlayClick() {
     $("#leaveGame").off("click");
-    this.action = function () {
+    this.action = function() {
       console.log(user.inGame);
       if (!user.inGame) {
         transitionFromGameToLobby();
@@ -134,7 +134,17 @@ export class User {
   }
 }
 export const user = new User();
-ReactDOM.render(<RoleSelection user={user} />, $("#roleSelection")[0]);
+export let players: Array<Player> = [];
+ReactDOM.render(
+  <RoleSelection
+    ref={roleSelection => {
+      //@ts-ignore
+      window.roleSelection = roleSelection;
+    }}
+    user={user}
+  />,
+  $("#roleSelection")[0],
+);
 
 function lobbyItemClick(item: HTMLElement) {
   user.gameClicked = true;
@@ -224,7 +234,7 @@ lostPlayerSound.volume = 0.1;
 //BODGE (needs neatening up):
 //Safari only permits audio playback if the user has previously interacted with the UI
 //Even if this code were to run on other browsers, it should have no effect
-$(document).on("click", function () {
+$(document).on("click", function() {
   //mute and play all the sound effects once
   notificationSound.muted = true;
   newPlayerSound.muted = true;
@@ -235,19 +245,19 @@ $(document).on("click", function () {
   lostPlayerSound.play();
 
   //unmute each sound effect once they have finished playing once
-  notificationSound.onended = function () {
+  notificationSound.onended = function() {
     if (notificationSound) {
       notificationSound.muted = false;
-      notificationSound.onended = () => { };
+      notificationSound.onended = () => {};
     }
   };
-  newPlayerSound.onended = function () {
+  newPlayerSound.onended = function() {
     newPlayerSound.muted = false;
-    newPlayerSound.onended = () => { };
+    newPlayerSound.onended = () => {};
   };
-  lostPlayerSound.onended = function () {
+  lostPlayerSound.onended = function() {
     lostPlayerSound.muted = false;
-    lostPlayerSound.onended = () => { };
+    lostPlayerSound.onended = () => {};
   };
 
   $(document).off("click");
@@ -257,8 +267,8 @@ function isClientScrolledDown() {
   return (
     Math.abs(
       $("#inner")[0].scrollTop +
-      $("#inner")[0].clientHeight -
-      $("#inner")[0].scrollHeight,
+        $("#inner")[0].clientHeight -
+        $("#inner")[0].scrollHeight,
     ) <= 10
   );
 }
@@ -269,7 +279,7 @@ function addPlayerToLobbyList(username: string) {
 
 function removePlayerFromLobbyList(username: string) {
   $("#lobbyList li")
-    .filter(function () {
+    .filter(function() {
       return $(this).text() === username;
     })
     .remove();
@@ -319,7 +329,7 @@ export function appendMessage(
 
 function removeMessage(msg: string, target: string) {
   $(target + " li")
-    .filter(function () {
+    .filter(function() {
       return $(this).text() === msg;
     })
     .remove();
@@ -327,12 +337,12 @@ function removeMessage(msg: string, target: string) {
 
 function lineThroughPlayer(msg: string, color: string) {
   $("#playerNames li span")
-    .filter(function () {
+    .filter(function() {
       return $(this).text() === msg;
     })
     .css("color", color);
   $("#playerNames li span")
-    .filter(function () {
+    .filter(function() {
       return $(this).text() === msg;
     })
     .css("text-decoration", "line-through");
@@ -342,7 +352,7 @@ let lobbyChatListContainerSimpleBar = new SimpleBar(
   $("#lobbyChatListContainer")[0],
 );
 
-$(function () {
+$(function() {
   //if navigator is not online, display a message warning that the user has disconnected
 
   if ($("#lobbyItemList .lobbyItem").length == 0) {
@@ -373,30 +383,30 @@ $(function () {
     return false;
   });
 
-  user.socket.on("reloadClient", function () {
+  user.socket.on("reloadClient", function() {
     console.log("client receipt");
     if (document.hidden) {
       location.reload();
     }
   });
 
-  $("#leaveGameForm").submit(function () {
+  $("#leaveGameForm").submit(function() {
     user.socket.emit("leaveGame");
   });
-  user.socket.on("transitionToLobby", function () {
+  user.socket.on("transitionToLobby", function() {
     transitionFromLandingToLobby();
   });
-  user.socket.on("transitionToGame", function (
+  user.socket.on("transitionToGame", function(
     name: string,
     uid: string,
     inPlay: boolean,
   ) {
     transitionFromLandingToGame(name, uid, inPlay);
   });
-  user.socket.on("message", function (message: Message, textColor: string) {
+  user.socket.on("message", function(message: Message, textColor: string) {
     appendMessage(message, "#chatbox", textColor);
   });
-  user.socket.on("headerTextMessage", function (standardArray: Message) {
+  user.socket.on("headerTextMessage", function(standardArray: Message) {
     let out = [];
     for (let i = 0; i < standardArray.length; i++) {
       out.push(
@@ -407,25 +417,25 @@ $(function () {
       mainText.push(out);
     }
   });
-  user.socket.on("restart", function () {
+  user.socket.on("restart", function() {
     user.restart();
   });
-  user.socket.on("registered", function (username: string) {
+  user.socket.on("registered", function(username: string) {
     transitionFromLandingToLobby();
     user.register();
     user.username = username;
     leaveGameButton.setNotInPlayClick();
   });
-  user.socket.on("clear", function () {
+  user.socket.on("clear", function() {
     $("ul").empty();
   });
-  user.socket.on("setTitle", function (title: string) {
+  user.socket.on("setTitle", function(title: string) {
     $(document).attr("title", title);
   });
-  user.socket.on("notify", function () {
+  user.socket.on("notify", function() {
     notificationSound.play();
   });
-  user.socket.on("removeGameFromLobby", function (uid: string) {
+  user.socket.on("removeGameFromLobby", function(uid: string) {
     $("#container .lobbyItem[uid=" + uid + "]").remove();
     if ($("#lobbyItemList .lobbyItem").length == 0) {
       ReactDOM.render(
@@ -444,7 +454,7 @@ $(function () {
       );
     }
   });
-  user.socket.on("addNewGameToLobby", function (
+  user.socket.on("addNewGameToLobby", function(
     name: string,
     type: string,
     uid: string,
@@ -458,19 +468,19 @@ $(function () {
       $("#container .simplebar-content .lobbyItemReactContainer:first")[0],
     );
     $(".lobbyItem").off("click");
-    $(".lobbyItem").click(function () {
+    $(".lobbyItem").click(function() {
       lobbyItemClick(this);
     });
   });
-  user.socket.on("newGame", function () {
+  user.socket.on("newGame", function() {
     user.state = States.INGAMEPLAYING;
   });
-  user.socket.on("endChat", function () {
+  user.socket.on("endChat", function() {
     console.log("active");
     user.state = States.GAMEENDED;
     leaveGameButton.setNotInPlayClick();
   });
-  user.socket.on("sound", function (sound: string) {
+  user.socket.on("sound", function(sound: string) {
     if (sound == "NEWGAME") {
       notificationSound.play();
     } else if (sound == "NEWPLAYER") {
@@ -479,24 +489,24 @@ $(function () {
       lostPlayerSound.play();
     }
   });
-  user.socket.on("registrationError", function (error: string) {
+  user.socket.on("registrationError", function(error: string) {
     $(
       '<p style="color:red;font-size:18px;margin-top:15px;">Invalid: ' +
-      error +
-      "</p>",
+        error +
+        "</p>",
     )
       .hide()
       .appendTo("#errors")
       .fadeIn(100);
   });
-  $("document").resize(function () { });
-  user.socket.on("lobbyMessage", function (msg: Message) {
+  $("document").resize(function() {});
+  user.socket.on("lobbyMessage", function(msg: Message) {
     appendMessage(msg, "#lobbyChatList");
     if (
       Math.abs(
         $("#lobbyChatListContainer")[0].scrollTop +
-        $("#lobbyChatListContainer")[0].clientHeight -
-        $("#lobbyChatListContainer")[0].scrollHeight,
+          $("#lobbyChatListContainer")[0].clientHeight -
+          $("#lobbyChatListContainer")[0].scrollHeight,
       ) <= 100
     ) {
       $("#lobbyChatListContainer")[0].scrollTop = $(
@@ -510,38 +520,38 @@ $(function () {
       `<span>${name} -</span><span style="color:${color};"> ${role}</span>`,
     );
   });
-  user.socket.on("rightMessage", function (msg: Message) {
+  user.socket.on("rightMessage", function(msg: Message) {
     appendMessage(msg, "#playerNames");
     addPlayer(msg[0].text);
   });
-  user.socket.on("leftMessage", function (msg: Message) {
+  user.socket.on("leftMessage", function(msg: Message) {
     appendMessage(msg, "#roleNames");
   });
-  user.socket.on("removeRight", function (msg: string) {
+  user.socket.on("removeRight", function(msg: string) {
     removeMessage(msg, "#playerNames");
     removeMessage(" " + msg, "#playerNames");
     console.log("active: " + msg);
     removePlayer(msg);
     removePlayer(" " + msg);
   });
-  user.socket.on("removeLeft", function (msg: string) {
+  user.socket.on("removeLeft", function(msg: string) {
     removeMessage(msg, "#roleNames");
   });
-  user.socket.on("lineThroughPlayer", function (msg: string, color: string) {
+  user.socket.on("lineThroughPlayer", function(msg: string, color: string) {
     lineThroughPlayer(msg, color);
     lineThroughPlayer(" " + msg, color);
   });
-  user.socket.on("markAsDead", function (msg: string) {
+  user.socket.on("markAsDead", function(msg: string) {
     markAsDead(msg);
     markAsDead(" " + msg);
     lineThroughPlayer(msg, "red");
     lineThroughPlayer(" " + msg, "red");
   });
-  window.addEventListener("offline", function (e) {
+  window.addEventListener("offline", function(e) {
     console.log("disconnected - show player warning");
     $("#offlineWarning").css("display", "block");
   });
-  user.socket.on("setTime", function (time: number, warn: number) {
+  user.socket.on("setTime", function(time: number, warn: number) {
     if (time > 0) {
       $("#gameClock").text("Time: " + user.convertTime(time));
     }
@@ -551,10 +561,10 @@ $(function () {
     user.warn = warn;
   });
   $(".lobbyItem").off("click");
-  $(".lobbyItem").click(function () {
+  $(".lobbyItem").click(function() {
     lobbyItemClick(this);
   });
-  user.socket.on("getAllRolesForSelection", function (
+  user.socket.on("getAllRolesForSelection", function(
     rolesArray: Array<{
       color: string;
       name: string;
@@ -564,14 +574,14 @@ $(function () {
     for (let roles of rolesArray) {
       $("#allRolesForGameType").append(
         '<button class="ui ' +
-        roles.color +
-        ' button">' +
-        roles.name +
-        "</button>",
+          roles.color +
+          ' button">' +
+          roles.name +
+          "</button>",
       );
     }
   });
-  user.socket.on("updateGame", function (
+  user.socket.on("updateGame", function(
     name: string,
     playerNames: Array<string>,
     playerColors: Array<string>,
@@ -600,29 +610,29 @@ $(function () {
       if (i == 0) {
         div.append(
           '<span class="username" style="color:' +
-          playerColors[i] +
-          '">' +
-          playerNames[i],
+            playerColors[i] +
+            '">' +
+            playerNames[i],
         );
       } else {
         div.append("<span>,");
         div.append(
           '<span class="username" style="color:' +
-          playerColors[i] +
-          '"> ' +
-          playerNames[i],
+            playerColors[i] +
+            '"> ' +
+            playerNames[i],
         );
       }
     }
   });
-  user.socket.on("addPlayerToLobbyList", function (username: string) {
+  user.socket.on("addPlayerToLobbyList", function(username: string) {
     addPlayerToLobbyList(username);
   });
-  user.socket.on("removePlayerFromLobbyList", function (username: string) {
+  user.socket.on("removePlayerFromLobbyList", function(username: string) {
     removePlayerFromLobbyList(username);
   });
   //removes player from game list
-  user.socket.on("removePlayerFromGameList", function (
+  user.socket.on("removePlayerFromGameList", function(
     name: string,
     game: string,
   ) {
@@ -644,7 +654,7 @@ $(function () {
       }
     }
   });
-  user.socket.on("addPlayerToGameList", function (
+  user.socket.on("addPlayerToGameList", function(
     name: string,
     color: string,
     game: string,
@@ -658,7 +668,7 @@ $(function () {
       div.append('<span class="username" style="color:' + color + '"> ' + name);
     }
   });
-  user.socket.on("markGameStatusInLobby", function (
+  user.socket.on("markGameStatusInLobby", function(
     game: string,
     status: string,
   ) {
@@ -673,7 +683,7 @@ $(function () {
       $("#container div[uid=" + game + "] p:last span:first").empty();
     }
   });
-  window.onhashchange = function () {
+  window.onhashchange = function() {
     if (location.hash == "") {
       location.hash = "2";
     } else if (location.hash == "#3" && user.gameClicked) {
@@ -687,7 +697,7 @@ $(function () {
     }
   };
 
-  $("#registerForm").submit(function () {
+  $("#registerForm").submit(function() {
     if ($("#registerBox").val() != "") {
       $("#errors").empty();
       user.socket.emit("message", $("#registerBox").val());
@@ -701,7 +711,7 @@ $(function () {
 });
 
 function transitionFromLandingToLobby() {
-  $("#landingPage").fadeOut(200, function () {
+  $("#landingPage").fadeOut(200, function() {
     $("#lobbyContainer").fadeIn(200);
     location.hash = "#2";
     //scroll down the lobby chat
@@ -718,7 +728,7 @@ function transitionFromLandingToGame(
   inGame: boolean,
 ) {
   console.log(inGame);
-  $("#landingPage").fadeOut("fast", function () {
+  $("#landingPage").fadeOut("fast", function() {
     $("#playerNames").empty();
     $("#playerNames").append("<li class='gameli'>Players:</li>");
     let usernameList = $(".lobbyItem[uid=" + uid + "] .username");
@@ -766,8 +776,8 @@ function transitionFromLandingToGame(
 }
 
 function transitionFromLobbyToGame(gameName?: string) {
-  $("#landingPage").fadeOut("fast", function () {
-    $("#lobbyContainer").fadeOut(200, function () {
+  $("#landingPage").fadeOut("fast", function() {
+    $("#lobbyContainer").fadeOut(200, function() {
       $("#topLevel").fadeIn(200);
       resize();
     });
@@ -780,8 +790,8 @@ function transitionFromLobbyToGame(gameName?: string) {
 }
 
 function transitionFromGameToLobby() {
-  $("#landingPage").fadeOut("fast", function () {
-    $("#topLevel").fadeOut(200, function () {
+  $("#landingPage").fadeOut("fast", function() {
+    $("#topLevel").fadeOut(200, function() {
       $("#lobbyContainer").fadeIn(200);
       //scroll down the lobby chat
       $("#lobbyChatListContainer")[0].scrollTop = $(
@@ -819,7 +829,7 @@ WebFont.load({
   custom: {
     families: ["Mercutio"],
   },
-  active: function () {
+  active: function() {
     mainText = new StandardMainTextList();
   },
 });
@@ -925,10 +935,11 @@ const playerTextureSelected2 = PIXI.Texture.fromImage(
   "assets/sprites/swordplayerbreathing/sprite_1_selected.png",
 );
 const graveTexture = PIXI.Texture.fromImage("assets/sprites/grave.png");
-let players: Array<Player> = [];
 //@ts-ignore
 window.players = players;
-const stoneBlockTexture = PIXI.Texture.fromImage("assets/sprites/stoneblock.png");
+const stoneBlockTexture = PIXI.Texture.fromImage(
+  "assets/sprites/stoneblock.png",
+);
 const stoneBlockContainer = new PIXI.Container();
 app.stage.addChild(stoneBlockContainer);
 class StoneBlock {
@@ -985,22 +996,22 @@ app.stage.on("pointerdown", () => {
     }
   }
 });
-user.socket.on("cancelVoteEffect", function () {
+user.socket.on("cancelVoteEffect", function() {
   cancelVote();
 });
-user.socket.on("selectPlayer", function (username: string) {
+user.socket.on("selectPlayer", function(username: string) {
   selectPlayer(username.trim());
 });
-user.socket.on("finalVerdict", function () {
+user.socket.on("finalVerdict", function() {
   $("#guiltyButtons").show();
 });
-user.socket.on("endVerdict", function () {
+user.socket.on("endVerdict", function() {
   $("#guiltyButtons").hide();
 });
-$("#guiltyButton").on("click", function () {
+$("#guiltyButton").on("click", function() {
   user.socket.emit("message", "/guilty");
 });
-$("#innocentButton").on("click", function () {
+$("#innocentButton").on("click", function() {
   user.socket.emit("message", "/innocent");
 });
 function cancelVote() {
@@ -1048,7 +1059,7 @@ function selectPlayer(username: string) {
     }
   }
 }
-class Player {
+export class Player {
   public sprite: PIXI.Sprite;
   public usernameText: PIXI.Text;
   public graveSprite: PIXI.Sprite;
@@ -1166,16 +1177,24 @@ class Player {
 let gallowsTexture = PIXI.Texture.fromImage("assets/sprites/gallows.png");
 let gallowsHangingAnimation: Array<PIXI.Texture> = [];
 gallowsHangingAnimation.push(
-  PIXI.Texture.fromImage("assets/sprites/swordplayerhanging/sprite_hanging0.png"),
+  PIXI.Texture.fromImage(
+    "assets/sprites/swordplayerhanging/sprite_hanging0.png",
+  ),
 );
 gallowsHangingAnimation.push(
-  PIXI.Texture.fromImage("assets/sprites/swordplayerhanging/sprite_hanging1.png"),
+  PIXI.Texture.fromImage(
+    "assets/sprites/swordplayerhanging/sprite_hanging1.png",
+  ),
 );
 gallowsHangingAnimation.push(
-  PIXI.Texture.fromImage("assets/sprites/swordplayerhanging/sprite_hanging2.png"),
+  PIXI.Texture.fromImage(
+    "assets/sprites/swordplayerhanging/sprite_hanging2.png",
+  ),
 );
 gallowsHangingAnimation.push(
-  PIXI.Texture.fromImage("assets/sprites/swordplayerhanging/sprite_hanging3.png"),
+  PIXI.Texture.fromImage(
+    "assets/sprites/swordplayerhanging/sprite_hanging3.png",
+  ),
 );
 class Gallows {
   public sprite: PIXI.Sprite;
@@ -1209,7 +1228,7 @@ class Gallows {
   }
 }
 export let gallows = new Gallows();
-user.socket.on("hang", function (usernames: Array<string>) {
+user.socket.on("hang", function(usernames: Array<string>) {
   //make invisible all those players who username matches one on the list
   for (let i = 0; i < players.length; i++) {
     for (let j = 0; j < usernames.length; j++) {
@@ -1222,7 +1241,7 @@ user.socket.on("hang", function (usernames: Array<string>) {
   //hanging animation
   gallows.hang();
 });
-user.socket.on("resetGallows", function () {
+user.socket.on("resetGallows", function() {
   gallows.reset();
 });
 export function removeAllPlayers() {
@@ -1230,6 +1249,8 @@ export function removeAllPlayers() {
     players[i].destructor();
   }
   players = [];
+  //@ts-ignore
+  window.roleSelection.forceUpdate();
   resize();
 }
 export function removePlayer(username: string) {
@@ -1240,6 +1261,8 @@ export function removePlayer(username: string) {
       resize();
     }
   }
+  //@ts-ignore
+  window.roleSelection.forceUpdate();
 }
 export function addPlayer(username: string) {
   players.push(new Player(username));
@@ -1247,6 +1270,8 @@ export function addPlayer(username: string) {
     app.stage.removeChild(mainText.container);
     app.stage.addChild(mainText.container);
   }
+  //@ts-ignore
+  window.roleSelection.forceUpdate();
   resize();
 }
 export function resize() {

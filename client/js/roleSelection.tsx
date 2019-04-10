@@ -1,5 +1,5 @@
 import * as React from "react";
-import { User, appendMessage } from "./client";
+import { User, appendMessage, players } from "./client";
 import RoleDisplay from "./roleDisplay";
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
 
 type State = {
   roles: Array<{ roleName: string; color: string }>;
-  selectedRoles: Array<{ roleName: string, color: string }>;
+  selectedRoles: Array<{ roleName: string; color: string }>;
   key: number;
   display: string;
 };
@@ -16,7 +16,12 @@ type State = {
 class RoleSelection extends React.Component<Props, State> {
   constructor(props: any) {
     super(props);
-    this.state = { roles: [], selectedRoles: [], key: 0, display: "none" };
+    this.state = {
+      roles: [],
+      selectedRoles: [],
+      key: 0,
+      display: "none",
+    };
     this.props.user.socket.on(
       "makeHost",
       (roles: Array<{ roleName: string; color: string }>) => {
@@ -26,12 +31,13 @@ class RoleSelection extends React.Component<Props, State> {
     );
   }
 
-
   handleRoleClick = (e: any) => {
     let newSelectedRoles = this.state.selectedRoles.slice();
     let target = e.target;
     let roleName = target.textContent as string;
-    let color = (this.state.roles.find(elem => elem.roleName == target.textContent as string) as { roleName: string; color: string }).color as string
+    let color = (this.state.roles.find(
+      elem => elem.roleName == (target.textContent as string),
+    ) as { roleName: string; color: string }).color as string;
     newSelectedRoles.push({ roleName: roleName, color: color });
     this.setState({
       selectedRoles: newSelectedRoles,
@@ -39,8 +45,12 @@ class RoleSelection extends React.Component<Props, State> {
   };
 
   removeRole = (e: any) => {
-    this.setState({ selectedRoles: this.state.selectedRoles.filter(elem => elem.roleName != e.target.textContent) })
-  }
+    this.setState({
+      selectedRoles: this.state.selectedRoles.filter(
+        elem => elem.roleName != e.target.textContent,
+      ),
+    });
+  };
 
   render() {
     let buttons = [];
@@ -98,21 +108,23 @@ class RoleSelection extends React.Component<Props, State> {
           <div className="ui form">
             <h4>Default</h4>
             <p>
-              Pressing the defalt button will start with the default rolelist (if
-              there are enough players):
-          </p>
+              Pressing the defalt button will start with the default rolelist
+              (if there are enough players):
+            </p>
             <button
               className="ui blue button"
               onClick={() => {
                 this.props.user.socket.emit("useDefaultRoleList");
               }}
-              disabled
+              disabled={!(players.length >= 4)}
             >
               Default
-          </button>
+            </button>
             <br /> <h4>Custom</h4>
             <p>
-              Select as many roles as you have players, then hit submit to start. To remove roles, click on them in the box to the right, where they are displayed.
+              Select as many roles as you have players, then hit submit to
+              start. To remove roles, click on them in the box to the right,
+              where they are displayed.
             </p>
             <div id="allRolesForGameType">{buttons}</div>
             <br />
@@ -124,14 +136,19 @@ class RoleSelection extends React.Component<Props, State> {
                   this.state.selectedRoles.map(elem => elem.roleName),
                 );
               }}
-              disabled
+              disabled={
+                !(
+                  this.state.selectedRoles.length >= 4 &&
+                  this.state.selectedRoles.length == players.length
+                )
+              }
             >
               Submit
-          </button>
+            </button>
           </div>
         </div>
-        <RoleDisplay user={this.props.user} buttons={selectedButtons}></RoleDisplay>
-      </div >
+        <RoleDisplay user={this.props.user} buttons={selectedButtons} />
+      </div>
     );
   }
 }
