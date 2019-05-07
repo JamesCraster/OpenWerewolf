@@ -13,13 +13,6 @@
       "title": "OpenWerewolf-OneDay",
       "author": "James Craster",
       "license": "Apache-2.0"
-    },
-    {
-      "name": "demo",
-      "location": "./games/demo/demo",
-      "title": "OpenWerewolf-Demo",
-      "author": "James Craster",
-      "license": "Apache-2.0"
     }
   ]
 }
