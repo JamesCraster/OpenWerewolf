@@ -22,6 +22,7 @@ class RoleSelection extends React.Component<Props, State> {
       key: 0,
       display: "none",
     };
+    //get the roles to add the buttons to the host's panel
     this.props.user.socket.on(
       "makeHost",
       (roles: Array<{ roleName: string; color: string }>) => {
@@ -30,7 +31,7 @@ class RoleSelection extends React.Component<Props, State> {
       },
     );
   }
-
+  //handle clicking on the buttons in the host's panel
   handleRoleClick = (e: any) => {
     let newSelectedRoles = this.state.selectedRoles.slice();
     let target = e.target;
@@ -38,16 +39,24 @@ class RoleSelection extends React.Component<Props, State> {
     let color = (this.state.roles.find(
       elem => elem.roleName == (target.textContent as string),
     ) as { roleName: string; color: string }).color as string;
-    newSelectedRoles.push({ roleName: roleName, color: color });
+    //get priority of the added role (taken from original list of buttons.)
+    let position = this.state.roles.findIndex(elem => elem.roleName == roleName);
+    //perform correct insertion
+    let i = 0;
+    while (i < newSelectedRoles.length && this.state.roles.findIndex(elem => elem.roleName == newSelectedRoles[i].roleName) < position) {
+      i++;
+    }
+    newSelectedRoles.splice(i, 0, { roleName: roleName, color: color });
     this.setState({
       selectedRoles: newSelectedRoles,
     });
   };
-
+  //handle removing a role (called within child RoleDisplay)
   removeRole = (e: any) => {
+    let foundFirst = false;
     this.setState({
       selectedRoles: this.state.selectedRoles.filter(
-        elem => elem.roleName != e.target.textContent,
+        elem => { if (elem.roleName == e.target.textContent && !foundFirst) { foundFirst = true; return false; } else { return true } },
       ),
     });
   };
