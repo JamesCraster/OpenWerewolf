@@ -53,11 +53,10 @@ class RoleSelection extends React.Component<Props, State> {
   };
   //handle removing a role (called within child RoleDisplay)
   removeRole = (e: any) => {
-    let foundFirst = false;
+    let newSelectedRoles = this.state.selectedRoles.slice();
+    newSelectedRoles.splice(e.target.dataset.index, 1);
     this.setState({
-      selectedRoles: this.state.selectedRoles.filter(
-        elem => { if (elem.roleName == e.target.textContent && !foundFirst) { foundFirst = true; return false; } else { return true } },
-      ),
+      selectedRoles: newSelectedRoles
     });
   };
 
@@ -83,13 +82,15 @@ class RoleSelection extends React.Component<Props, State> {
       selectedButtons.push(
         <li
           className="gameli"
-          key={key++}
+          key={key}
+          data-index={key}
           onClick={(e: any) => this.removeRole(e)}
           style={{ color: role.color }}
         >
-          {role.roleName}
+          <span style={{ color: "#cecece" }}>[X]</span>{" " + role.roleName}
         </li>,
       );
+      key++;
     }
     return (
       <div>
