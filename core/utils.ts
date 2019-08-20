@@ -96,17 +96,6 @@ export namespace Utils {
       return combination;
     }
   }
-
-  export function arrayToCommaSeparated(array: Array<string>): string {
-    let string = "";
-    for (let i = 0; i < array.length; i++) {
-      if (i != 0) {
-        string += ", ";
-      }
-      string += array[i];
-    }
-    return string;
-  }
 }
 
 /**

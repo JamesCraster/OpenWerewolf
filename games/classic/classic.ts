@@ -892,7 +892,7 @@ export class Classic extends Game {
       //show the rolelist for a given number of people
       if (Utils.isCommand(msg, "!show")) {
         let number = parseInt(Utils.commandArguments(msg)[0]);
-        user.send(Utils.arrayToCommaSeparated(roleLists.defaultLists[number]));
+        user.send((roleLists.defaultLists[number]).join(", "));
       }
     } else {
       //set general discussion length, in seconds
