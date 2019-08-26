@@ -21,9 +21,10 @@ import {
   UserColorArray,
   Utils,
 } from "./utils";
-//import { DEBUGMODE } from "../app";
 
+//deals with features not specific to any game
 export abstract class Game {
+  //chat that starts at the end of the game
   protected endChat: MessageRoom = new MessageRoom();
   //the time players are given at the end to discuss the game before they are kicked
   protected endTime: number = 60000;
@@ -51,15 +52,12 @@ export abstract class Game {
   private _inEndChat: boolean = false;
   //the name the game creator gave the game
   private _name: string;
+  //unique id of this game for the server to use
   private _uid: string;
   //if no one is in the game for this long, the game is closed by the server
   private idleTime: number = 60000 * 5;
   //timer that keeps track of game inactivity
   private idleTimer: Stopwatch = new Stopwatch();
-  //game data printed when the game starts
-  private readonly author: string;
-  private readonly title: string;
-  private readonly license: string;
 
   public constructor(
     server: Server,
@@ -68,23 +66,17 @@ export abstract class Game {
     gameType: string,
     name: string,
     uid: string,
-    title: string,
-    author: string,
-    license: string,
+    // game data read at start
+    private readonly title: string,
+    private readonly author: string,
+    private readonly license: string,
   ) {
-    //debug mode will start game faster
-    //if (DEBUGMODE) {
-    //this._startWait = 10000;
-    //}
     this._uid = uid;
     this._server = server;
     this._minPlayerCount = minPlayerCount;
     this._maxPlayerCount = maxPlayerCount;
     this._gameType = gameType;
     this._name = name;
-    this.title = title;
-    this.author = author;
-    this.license = license;
     //run update functions periodically
     setInterval(this.pregameLobbyUpdate.bind(this), 500);
     setInterval(this.update.bind(this), 500);
@@ -108,17 +100,10 @@ export abstract class Game {
     return this._users;
   }
   //update is supplied by concrete child class
-  protected update() {}
+  protected update() { }
   //returns array of usernames and their colors, to put in the lobby chat
   get usernameColorPairs(): Array<NameColorPair> {
-    let usernameColorPairs = [];
-    for (let i = 0; i < this._users.length; i++) {
-      usernameColorPairs.push(<NameColorPair>{
-        username: this._users[i].username,
-        color: this._users[i].color,
-      });
-    }
-    return usernameColorPairs;
+    return this._users.map(elem => <NameColorPair>{ username: elem.username, color: elem.color });
   }
   public get gameType() {
     return this._gameType;
@@ -134,55 +119,40 @@ export abstract class Game {
   }
   //returns how many more players are needed to start
   get minimumPlayersNeeded() {
-    if (this._inPlay) {
-      return 0;
-    } else {
-      return this._minPlayerCount - this._registeredPlayerCount;
-    }
+    return this._inPlay ? 0 : this._minPlayerCount - this._registeredPlayerCount;
   }
   //returns how many players are wanted
   get playersWanted() {
-    if (this._inPlay) {
-      return 0;
-    } else {
-      return this._maxPlayerCount - this._registeredPlayerCount;
-    }
+    return this._inPlay ? 0 : this._maxPlayerCount - this._registeredPlayerCount;
   }
   public getUser(id: string): User | undefined {
-    for (let i = 0; i < this._users.length; i++) {
-      if (this._users[i].id == id) {
-        return this._users[i];
-      }
+    let result = this._users.find(elem => elem.id == id);
+    if (result == undefined) {
+      console.log("Error: Game.getUser: No user found with given id");
     }
-    console.log("Error: Game.getUser: No user found with given id");
-    return undefined;
+    return result;
   }
   public isUser(id: string): boolean {
-    for (let i = 0; i < this._users.length; i++) {
-      if (this._users[i].id == id) {
-        return true;
-      }
-    }
-    return false;
+    return this.getUser(id) != undefined;
   }
   public setAllTime(time: number, warnTime: number) {
-    for (let i = 0; i < this._users.length; i++) {
-      this._users[i].setTime(time, warnTime);
+    for (let user of this._users) {
+      user.setTime(time, warnTime);
     }
   }
   private setAllTitle(title: string) {
-    for (let i = 0; i < this._users.length; i++) {
-      this._users[i].title = title;
+    for (let user of this._users) {
+      user.title = title;
     }
   }
   public markAsDead(name: string) {
-    for (let i = 0; i < this.users.length; i++) {
-      this.users[i].markAsDead(name);
+    for (let user of this._users) {
+      user.markAsDead(name);
     }
   }
   protected cancelVoteSelection() {
-    for (let i = 0; i < this.users.length; i++) {
-      this.users[i].cancelVoteEffect();
+    for (let user of this._users) {
+      user.cancelVoteEffect();
     }
   }
   private pregameLobbyUpdate() {
@@ -238,8 +208,8 @@ export abstract class Game {
   public addUser(user: User) {
     this.endChat.addUser(user);
     this.endChat.muteAll();
-    for (let i = 0; i < this._users.length; i++) {
-      this._users[i].sound("NEWPLAYER");
+    for (let user of this._users) {
+      user.sound("NEWPLAYER");
     }
     user.color = this.colorPool[0];
     user.headerSend([
@@ -260,10 +230,10 @@ export abstract class Game {
     ) {
       user.send(
         "The game will start in " +
-          Math.floor(
-            (this.startWait - this.startClock.time) / 1000,
-          ).toString() +
-          " seconds",
+        Math.floor(
+          (this.startWait - this.startClock.time) / 1000,
+        ).toString() +
+        " seconds",
       );
       user.send('Type "/start" to start the game immediately');
       user.setTime(this.startWait - this.startClock.time, 10000);
@@ -393,7 +363,7 @@ export abstract class Game {
     }
   }
   //to be overridden in child classes as necessary
-  public customAdminReceive(user: User, msg: string): void {}
+  public customAdminReceive(user: User, msg: string): void { }
   //generic admin commands
   public adminReceive(user: User, msg: string): void {
     if (user.admin == true && msg[0] == "!") {
@@ -456,9 +426,7 @@ export abstract class Game {
  */
 class MessageRoomMember {
   private _muted: boolean = false;
-  private _deafened: boolean = false;
   private _permanentlyMuted: boolean = false;
-  private _permanentlyDeafened: boolean = false;
   private _member: User;
   constructor(member: User) {
     this._member = member;
@@ -467,15 +435,8 @@ class MessageRoomMember {
     this._permanentlyMuted = true;
     this._muted = true;
   }
-  public permanentlyDeafen() {
-    this._permanentlyDeafened = true;
-    this._deafened = true;
-  }
   public get muted(): boolean {
     return this._muted;
-  }
-  public get deafened() {
-    return this._deafened;
   }
   public mute() {
     this._muted = true;
@@ -483,14 +444,6 @@ class MessageRoomMember {
   public unmute() {
     if (!this._permanentlyMuted) {
       this._muted = false;
-    }
-  }
-  public deafen() {
-    this._deafened = true;
-  }
-  public undeafen() {
-    if (!this._permanentlyDeafened) {
-      this._deafened = false;
     }
   }
   get id() {
@@ -506,44 +459,23 @@ class MessageRoomMember {
 }
 export class MessageRoom {
   private _members: Array<MessageRoomMember> = [];
-  public getMemberById(id: string): MessageRoomMember | undefined {
-    for (let i = 0; i < this._members.length; i++) {
-      if (this._members[i].id == id) {
-        return this._members[i];
-      }
-    }
-    console.log(
-      "Error: MessageRoom.getMemberById: No message room member found with given id",
-    );
-    return undefined;
+  public getMemberById(id: string) {
+    return this._members.find(elem => elem.id == id);
   }
-  public receive(
-    sender: User,
-    msg: string | Message,
-    textColor?: Colors,
-    backgroundColor?: Colors,
-  ) {
+  public receive(sender: User, msg: string | Message, textColor?: Colors, backgroundColor?: Colors) {
     //if id passed in, find the sender within the message room
     let messageRoomSender = this.getMemberById(sender.id);
     if (messageRoomSender instanceof MessageRoomMember) {
       if (!messageRoomSender.muted) {
-        for (let i = 0; i < this._members.length; i++) {
-          if (!this._members[i].deafened) {
-            this._members[i].send(msg, textColor, backgroundColor);
-          }
+        for (let member of this._members) {
+          member.send(msg, textColor, backgroundColor);
         }
       }
     }
   }
-  public broadcast(
-    msg: string | Message,
-    textColor?: Colors,
-    backgroundColor?: Colors,
-  ) {
-    for (let i = 0; i < this._members.length; i++) {
-      if (!this._members[i].deafened) {
-        this._members[i].send(msg, textColor, backgroundColor);
-      }
+  public broadcast(msg: string | Message, textColor?: Colors, backgroundColor?: Colors) {
+    for (let member of this._members) {
+      member.send(msg, textColor, backgroundColor);
     }
   }
   public addUser(user: User) {
@@ -552,10 +484,7 @@ export class MessageRoom {
   public removeUser(user: User) {
     let member = this.getMemberById(user.id);
     if (member instanceof MessageRoomMember) {
-      let indexOf = this._members.indexOf(member);
-      if (indexOf != -1) {
-        this._members.splice(indexOf, 1);
-      }
+      this._members.filter(elem => elem !== member);
     }
   }
   public mute(user: User) {
@@ -564,22 +493,10 @@ export class MessageRoom {
       member.mute();
     }
   }
-  public deafen(user: User) {
-    let member = this.getMemberById(user.id);
-    if (member instanceof MessageRoomMember) {
-      member.deafen();
-    }
-  }
   public unmute(user: User) {
     let member = this.getMemberById(user.id);
     if (member instanceof MessageRoomMember) {
       member.unmute();
-    }
-  }
-  public undeafen(user: User) {
-    let member = this.getMemberById(user.id);
-    if (member instanceof MessageRoomMember) {
-      member.undeafen();
     }
   }
   public muteAll() {
@@ -587,19 +504,9 @@ export class MessageRoom {
       member.mute();
     });
   }
-  public deafenAll() {
-    this._members.forEach(member => {
-      member.deafen();
-    });
-  }
   public unmuteAll() {
     this._members.forEach(member => {
       member.unmute();
-    });
-  }
-  public undeafenAll() {
-    this._members.forEach(member => {
-      member.undeafen();
     });
   }
 }

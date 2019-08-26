@@ -92,6 +92,8 @@ class RoleSelection extends React.Component<Props, State> {
       );
       key++;
     }
+    //send the updated role list to the server
+    this.props.user.socket.emit("updateRoleList", this.state.selectedRoles);
     return (
       <div>
         <div
@@ -141,8 +143,9 @@ class RoleSelection extends React.Component<Props, State> {
             <button
               className="ui blue button"
               onClick={() => {
+                //send the finalized role list to the server
                 this.props.user.socket.emit(
-                  "supplyRoleList",
+                  "submitRoleList",
                   this.state.selectedRoles.map(elem => elem.roleName),
                 );
               }}
