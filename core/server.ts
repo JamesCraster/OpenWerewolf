@@ -25,16 +25,13 @@ export class Server {
   private _debugMode: boolean = false;
   private _lobbyChatCache: Array<Message> = [];
   public constructor() {
-    this._games = [];
     //join waiting users to games that need them
     setInterval(this.joinGame.bind(this), 50);
   }
   public reloadClient(id: string) {
-    console.log("reloadClient");
     let user = this.getUser(id);
     if (user instanceof User) {
       user.reloadClient();
-      console.log("called reload");
     }
   }
   get games() {
@@ -49,30 +46,14 @@ export class Server {
       user.gameClickedLast = gameId;
     }
   }
-  public get gameTypes() {
-    let gameTypes = [];
-    for (let i = 0; i < this.numberOfGames; i++) {
-      gameTypes.push(this._games[i].gameType);
-    }
-    return gameTypes;
+  public get gameTypes(): string[] {
+    return this._games.map(elem => elem.gameType)
   }
   public get inPlayArray() {
-    let inPlayArray = [];
-    for (let i = 0; i < this._games.length; i++) {
-      inPlayArray.push(this._games[i].inPlay);
-    }
-    return inPlayArray;
-  }
-  public get numberOfGames() {
-    return this._games.length;
+    return this._games.map(elem => elem.inPlay);
   }
   public getGameById(uid: string): Game | undefined {
-    for (let i = 0; i < this._games.length; i++) {
-      if (this._games[i].uid == uid) {
-        return this._games[i];
-      }
-    }
-    return undefined;
+    return this._games.find(elem => elem.uid == uid);
   }
   public getIndexOfGameById(uid: string): number | undefined {
     for (let i = 0; i < this._games.length; i++) {
@@ -83,47 +64,36 @@ export class Server {
     return undefined;
   }
   public get usernameColorPairs() {
-    let usernameColorPairs = [];
-    for (let i = 0; i < this._games.length; i++) {
-      usernameColorPairs.push(this._games[i].usernameColorPairs);
-    }
-    return usernameColorPairs;
+    return this._games.map(elem => elem.usernameColorPairs);
   }
   public addGame(game: Game) {
     this._games.push(game);
-    for (let i = 0; i < this._users.length; i++) {
-      this._users[i].addNewGameToLobby(game.name, game.gameType, game.uid);
+    for (let user of this._users) {
+      user.addNewGameToLobby(game.name, game.gameType, game.uid);
     }
   }
   public removeGame(game: Game) {
     let index = this._games.indexOf(game);
     if (index != -1) {
-      for (let i = 0; i < this._users.length; i++) {
-        this._users[i].removeGameFromLobby(this._games[index].uid);
+      for (let user of this._users) {
+        user.removeGameFromLobby(this._games[index].uid);
       }
       this._games.splice(index, 1);
     }
   }
   public leaveGame(id: string) {
     let user = this.getUser(id);
-    if (user instanceof User) {
-      if (user.registered && user.inGame) {
-        if (user.game != undefined) {
-          if (user.game.inPlay == false || user.game.inEndChat) {
-            user.game.kick(user);
-            user.resetAfterGame();
-          } else if (user.game.inPlay) {
-            //if game is in play, disconnect the player from the client
-            //without destroying its data (its role etc.)
-            user.disconnect();
-            user.game.disconnect(user);
-            let index = this._users.indexOf(user);
-            if (index != -1) {
-              this._users.splice(index, 1)[0];
-            }
-            user.reloadClient();
-          }
-        }
+    if (user instanceof User && user.registered && user.inGame && user.game != undefined) {
+      if (user.game.inPlay == false || user.game.inEndChat) {
+        user.game.kick(user);
+        user.resetAfterGame();
+      } else if (user.game.inPlay) {
+        //if game is in play, disconnect the player from the client
+        //without destroying its data (its role etc.)
+        user.disconnect();
+        user.game.disconnect(user);
+        this._users.filter(elem => elem !== user);
+        user.reloadClient();
       }
     }
   }
