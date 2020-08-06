@@ -18,7 +18,6 @@ import {
   User,
   Utils,
   Colors,
-  Stopwatch,
   Player,
 } from "../../core/core";
 class OneDayPlayer extends Player {
@@ -282,30 +281,7 @@ export class OneDay extends Game {
     );
     super.addMessageRoom(this.playerchat);
   }
-  public resendData() { }
-  private getPlayersWithInitialRole(role: string) {
-    let players = [];
-    for (let i = 0; i < this.players.length; i++) {
-      if (this.players[i].actionRole == role) {
-        players.push(this.players[i]);
-      }
-    }
-    return players;
-  }
-
-  private getPlayersWithInitialRoleInArray(
-    players: Array<OneDayPlayer>,
-    role: string,
-  ) {
-    let out = [];
-    for (let i = 0; i < players.length; i++) {
-      if (players[i].actionRole == role) {
-        out.push(players[i]);
-      }
-    }
-    return out;
-  }
-
+  public resendData() {}
   private getRandomPlayerExcludingPlayer(index: number) {
     let randomvar = Math.floor(Math.random() * (this.players.length - 1));
     if (randomvar >= this.players.length - 1) {
@@ -347,9 +323,9 @@ export class OneDay extends Game {
             this.players[j].voteCount++;
             this.playerchat.broadcast(
               this.players[i].user.username +
-              " voted for " +
-              this.players[j].user.username +
-              ".",
+                " voted for " +
+                this.players[j].user.username +
+                ".",
             );
           }
         }
@@ -362,7 +338,6 @@ export class OneDay extends Game {
       }
     }
     let winningTeam = "";
-    let losers: Array<User> = [];
     if (noMoreThanOne) {
       this.playerchat.broadcast("No-one was hanged.");
       showWinWait = 3000;
@@ -551,11 +526,11 @@ export class OneDay extends Game {
       for (let i = 0; i < this.players.length; i++) {
         this.playerchat.broadcast(
           this.players[i].user.username +
-          " started as a " +
-          this.players[i].initialRole +
-          " and became a " +
-          this.players[i].role +
-          ".",
+            " started as a " +
+            this.players[i].initialRole +
+            " and became a " +
+            this.players[i].role +
+            ".",
         );
       }
     }, showWinWait);
@@ -587,8 +562,8 @@ export class OneDay extends Game {
       ) {
         this.playerchat.broadcast(
           "There are " +
-          (this.length - this.minutes).toString() +
-          " minutes remaining.",
+            (this.length - this.minutes).toString() +
+            " minutes remaining.",
         );
         this.minutes += 2;
       } else if (
@@ -698,11 +673,11 @@ export class OneDay extends Game {
       );
       this.playerchat.broadcast(
         this.length +
-        " minutes remain. You can secretly vote to kill someone at any time by clicking on that player. If everyone votes, the game ends early.",
+          " minutes remain. You can secretly vote to kill someone at any time by clicking on that player. If everyone votes, the game ends early.",
       );
       this.playerchat.broadcast(
         "In the trial, if a werewolf is killed, the town team win. If no werewolves are killed, the werewolves win. If the " +
-        "jester is killed, the jester wins, and everyone else loses.",
+          "jester is killed, the jester wins, and everyone else loses.",
       );
       //for debugging purposes, you can choose the deck:
       //randomDeck = [Roles.seer, Roles.werewolf, Roles.transporter, Roles.werewolf, Roles.villager, Roles.transporter];
@@ -777,7 +752,7 @@ export class OneDay extends Game {
           //start timer
           this.time = Date.now();
           this.playerchat.broadcast("*** DISCUSSION ***", Colors.brightGreen);
-          setInterval(() => { }, 4000);
+          setInterval(() => {}, 4000);
           for (let i = 0; i < this.users.length; i++) {
             this.users[i].headerSend([
               { text: "*** DISCUSSION ***", color: Colors.brightGreen },
@@ -872,19 +847,18 @@ export class OneDay extends Game {
       if (this.players[i].actionRole == Roles.mason) {
         temporaryArray = this.players.slice();
         temporaryArray.splice(i, 1);
-        let masons = this.getPlayersWithInitialRoleInArray(
-          temporaryArray,
-          Roles.mason,
+        let masons = temporaryArray.filter(
+          elem => elem.actionRole == Roles.mason,
         );
         this.players[i].user.send("You see if there are other masons.");
         if (masons.length == 2) {
           this.players[i].user.send("There are three masons.");
           this.players[i].user.send(
             "Your mason partners are " +
-            masons[0].user.username +
-            " and " +
-            masons[1].user.username +
-            ".",
+              masons[0].user.username +
+              " and " +
+              masons[1].user.username +
+              ".",
           );
         } else if (masons.length == 1) {
           this.players[i].user.send("There are two masons.");
@@ -901,7 +875,9 @@ export class OneDay extends Game {
       switch (this.players[i].actionRole) {
         //tell the minion who the werewolves are
         case Roles.minion:
-          werewolves = this.getPlayersWithInitialRole(Roles.werewolf);
+          werewolves = this.players.filter(
+            elem => elem.actionRole == Roles.werewolf,
+          );
           this.players[i].user.send(
             "You look to see if there are any werewolves.",
           );
@@ -926,9 +902,8 @@ export class OneDay extends Game {
         case Roles.werewolf:
           temporaryArray = this.players.slice();
           temporaryArray.splice(i, 1);
-          werewolves = this.getPlayersWithInitialRoleInArray(
-            temporaryArray,
-            Roles.werewolf,
+          werewolves = temporaryArray.filter(
+            elem => elem.actionRole == Roles.werewolf,
           );
           this.players[i].user.send(
             "You look to see if there are other wolves.",
@@ -937,10 +912,10 @@ export class OneDay extends Game {
             this.players[i].user.send("There are three werewolves.");
             this.players[i].user.send(
               "Your werewolf partners are " +
-              werewolves[0].user.username +
-              " and " +
-              werewolves[1].user.username +
-              ".",
+                werewolves[0].user.username +
+                " and " +
+                werewolves[1].user.username +
+                ".",
             );
             this.players[i].user.send(
               "Try not to be suspicious! You must all pretend to be something else.",
@@ -966,10 +941,10 @@ export class OneDay extends Game {
           this.players[i].user.send("You swap your card with someone else's.");
           this.players[i].user.send(
             "You swapped your card with '" +
-            randomPlayer.user.username +
-            "' who was a " +
-            randomPlayer.role +
-            ".",
+              randomPlayer.user.username +
+              "' who was a " +
+              randomPlayer.role +
+              ".",
           );
           if (
             randomPlayer.role == Roles.werewolf ||
@@ -1015,22 +990,22 @@ export class OneDay extends Game {
           if (combo.indexOf("left") != -1) {
             this.players[i].user.send(
               "You look at the left card. The left card is a " +
-              this.leftCard +
-              ".",
+                this.leftCard +
+                ".",
             );
           }
           if (combo.indexOf("middle") != -1) {
             this.players[i].user.send(
               "You look at the middle card. The middle card is a " +
-              this.middleCard +
-              ".",
+                this.middleCard +
+                ".",
             );
           }
           if (combo.indexOf("right") != -1) {
             this.players[i].user.send(
               "You look at the right card. The right card is a " +
-              this.rightCard +
-              ".",
+                this.rightCard +
+                ".",
             );
           }
           break;
@@ -1056,22 +1031,22 @@ export class OneDay extends Game {
         if (firstTarget.user.equals(this.players[i].user)) {
           this.players[i].user.send(
             "You swapped your own card with " +
-            secondTarget.user.username +
-            "'s card.",
+              secondTarget.user.username +
+              "'s card.",
           );
         } else if (secondTarget.user.equals(this.players[i].user)) {
           this.players[i].user.send(
             "You swapped your own card with " +
-            firstTarget.user.username +
-            "'s card.",
+              firstTarget.user.username +
+              "'s card.",
           );
         } else {
           this.players[i].user.send(
             "You swapped '" +
-            firstTarget.user.username +
-            "''s card with '" +
-            secondTarget.user.username +
-            "''s card.",
+              firstTarget.user.username +
+              "''s card with '" +
+              secondTarget.user.username +
+              "''s card.",
           );
         }
         let temporaryRole = firstTarget.role;
@@ -1090,10 +1065,10 @@ export class OneDay extends Game {
         let secondTarget = combo[1];
         this.players[i].user.send(
           "You swapped '" +
-          firstTarget.user.username +
-          "''s card with '" +
-          secondTarget.user.username +
-          "''s card.",
+            firstTarget.user.username +
+            "''s card with '" +
+            secondTarget.user.username +
+            "''s card.",
         );
         let temporaryRole = firstTarget.role;
         firstTarget.role = secondTarget.role;
@@ -1148,16 +1123,16 @@ export class OneDay extends Game {
           ) {
             this.players[i].user.send(
               "Your card has been swapped by somebody. You are now a " +
-              this.players[i].role +
-              ".",
+                this.players[i].role +
+                ".",
               undefined,
               Colors.red,
             );
           } else if (this.players[i].role == Roles.jester) {
             this.players[i].user.send(
               "Your card has been swapped by somebody. You are now a " +
-              this.players[i].role +
-              ".",
+                this.players[i].role +
+                ".",
               undefined,
               Colors.yellow,
             );
@@ -1167,8 +1142,8 @@ export class OneDay extends Game {
           } else {
             this.players[i].user.send(
               "Your card has been swapped by somebody. You are now a " +
-              this.players[i].role +
-              ".",
+                this.players[i].role +
+                ".",
               undefined,
               Colors.green,
             );
@@ -1214,7 +1189,7 @@ export class OneDay extends Game {
           default:
             player.send(
               "Error: number of players is missing or incorrect." +
-              " Example usage: !show 5 will show the rolelist for 5 players",
+                " Example usage: !show 5 will show the rolelist for 5 players",
               Colors.brightRed,
             );
             break;
@@ -1244,7 +1219,7 @@ export class OneDay extends Game {
           default:
             player.send(
               "Error: number of players is missing or incorrect." +
-              " Example usage: !set 5 ... will set the rolelist for 5 players",
+                " Example usage: !set 5 ... will set the rolelist for 5 players",
               Colors.brightRed,
             );
         }
@@ -1272,7 +1247,7 @@ export class OneDay extends Game {
           default:
             player.send(
               "Error: number of players is missing or incorrect." +
-              " Example usage: !default 5 will show the rolelist for 5 players",
+                " Example usage: !default 5 will show the rolelist for 5 players",
               Colors.brightRed,
             );
             break;
@@ -1280,7 +1255,7 @@ export class OneDay extends Game {
       } else if (Utils.isCommand(msg, "!gamehelp")) {
         player.send(
           "!roundtime !sround !stop, !start, !resume, !restart, !time, !hold," +
-          " !release, !show, !set, !default, !yell, !help",
+            " !release, !show, !set, !default, !yell, !help",
           undefined,
           Colors.green,
         );

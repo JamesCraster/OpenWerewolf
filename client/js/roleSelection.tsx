@@ -37,13 +37,20 @@ class RoleSelection extends React.Component<Props, State> {
     let target = e.target;
     let roleName = target.textContent as string;
     let color = (this.state.roles.find(
-      elem => elem.roleName == (target.textContent as string),
+      (elem) => elem.roleName == (target.textContent as string),
     ) as { roleName: string; color: string }).color as string;
     //get priority of the added role (taken from original list of buttons.)
-    let position = this.state.roles.findIndex(elem => elem.roleName == roleName);
+    let position = this.state.roles.findIndex(
+      (elem) => elem.roleName == roleName,
+    );
     //perform correct insertion
     let i = 0;
-    while (i < newSelectedRoles.length && this.state.roles.findIndex(elem => elem.roleName == newSelectedRoles[i].roleName) < position) {
+    while (
+      i < newSelectedRoles.length &&
+      this.state.roles.findIndex(
+        (elem) => elem.roleName == newSelectedRoles[i].roleName,
+      ) < position
+    ) {
       i++;
     }
     newSelectedRoles.splice(i, 0, { roleName: roleName, color: color });
@@ -53,10 +60,11 @@ class RoleSelection extends React.Component<Props, State> {
   };
   //handle removing a role (called within child RoleDisplay)
   removeRole = (e: any) => {
+    console.log(e);
     let newSelectedRoles = this.state.selectedRoles.slice();
-    newSelectedRoles.splice(e.target.dataset.index, 1);
+    newSelectedRoles.splice(e.currentTarget.dataset.index, 1);
     this.setState({
-      selectedRoles: newSelectedRoles
+      selectedRoles: newSelectedRoles,
     });
   };
 
@@ -87,7 +95,8 @@ class RoleSelection extends React.Component<Props, State> {
           onClick={(e: any) => this.removeRole(e)}
           style={{ color: role.color }}
         >
-          <span style={{ color: "#cecece" }}>[X]</span>{" " + role.roleName}
+          <span style={{ color: "#cecece" }}>[X]</span>
+          {" " + role.roleName}
         </li>,
       );
       key++;
@@ -143,7 +152,7 @@ class RoleSelection extends React.Component<Props, State> {
               onClick={() => {
                 this.props.user.socket.emit(
                   "supplyRoleList",
-                  this.state.selectedRoles.map(elem => elem.roleName),
+                  this.state.selectedRoles.map((elem) => elem.roleName),
                 );
               }}
               disabled={

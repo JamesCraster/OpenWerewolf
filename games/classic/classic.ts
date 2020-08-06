@@ -268,7 +268,7 @@ export class Classic extends Game {
         player.assignLynchTarget(Utils.chooseCombination(this.players, 1)[0]);
         player.user.send(
           `Your target is ${
-          player.winLynchTarget!.user.username
+            player.winLynchTarget!.user.username
           } : if they are lynched, you win!`,
         );
       });
@@ -520,7 +520,9 @@ export class Classic extends Game {
     let aliveCount = this.players.filter(player => player.alive).length;
     let beginTrial = false;
     for (let possibleDefendant of this.players) {
-      let count = this.players.map(elem => (elem.vote == possibleDefendant.user.id ? 1 : 0)).reduce<number>((acc, val) => acc + val, 0);
+      let count = this.players
+        .map(elem => (elem.vote == possibleDefendant.user.id ? 1 : 0))
+        .reduce<number>((acc, val) => acc + val, 0);
       if (count >= Math.floor(aliveCount / 2) + 1) {
         beginTrial = true;
         defendant = this.players.indexOf(possibleDefendant);
@@ -547,13 +549,8 @@ export class Classic extends Game {
     this.daychat.broadcast("The accused can defend themselves for 30 seconds.");
     this.daychat.muteAll();
     this.daychat.unmute(this.players[defendant].user);
-    if (false) {
-      this.setAllTime(5000, 5000);
-      setTimeout(this.finalVote.bind(this), 5 * 1000, defendant);
-    } else {
-      this.setAllTime(30000, 5000);
-      setTimeout(this.finalVote.bind(this), 30 * 1000, defendant);
-    }
+    this.setAllTime(30000, 5000);
+    setTimeout(this.finalVote.bind(this), 30 * 1000, defendant);
   }
   private finalVote(defendant: number) {
     this.trial = Trial.verdict;
@@ -715,9 +712,7 @@ export class Classic extends Game {
                 );
                 if (player.alignment == Alignment.mafia) {
                   this.mafiachat.broadcast(
-                    `${player.user.username} has chosen to target ${
-                    this.players[i].user.username
-                    }.`,
+                    `${player.user.username} has chosen to target ${this.players[i].user.username}.`,
                   );
                 }
                 player.target = this.players[i].user.id;
@@ -740,7 +735,7 @@ export class Classic extends Game {
             if (player.target != "") {
               player.user.send(
                 `Your choice of "${
-                this.getPlayer(player.target)!.user.username
+                  this.getPlayer(player.target)!.user.username
                 }" has been cancelled.`,
               );
               if (player.alignment == Alignment.mafia) {
@@ -778,13 +773,13 @@ export class Classic extends Game {
               if (voteTarget) {
                 player.user.send(
                   "Your vote for " +
-                  voteTarget.user.username +
-                  " has been cancelled.",
+                    voteTarget.user.username +
+                    " has been cancelled.",
                 );
                 this.daychat.broadcast(
                   player.user.username +
-                  " cancelled their vote for " +
-                  voteTarget.user.username,
+                    " cancelled their vote for " +
+                    voteTarget.user.username,
                 );
                 player.clearVote();
               }
@@ -892,7 +887,7 @@ export class Classic extends Game {
       //show the rolelist for a given number of people
       if (Utils.isCommand(msg, "!show")) {
         let number = parseInt(Utils.commandArguments(msg)[0]);
-        user.send((roleLists.defaultLists[number]).join(", "));
+        user.send(roleLists.defaultLists[number].join(", "));
       }
     } else {
       //set general discussion length, in seconds
