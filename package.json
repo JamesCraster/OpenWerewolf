@@ -14,7 +14,7 @@
     "@types/socket.io": "^1.4.40",
     "@types/socket.io-client": "^1.4.32",
     "@types/webfontloader": "^1.6.29",
-    "bcrypt": "^3.0.2",
+    "bcrypt": "^5.0.0",
     "connect-redis": "^3.4.0",
     "csstype": "^2.6.1",
     "express": "^4.16.4",
