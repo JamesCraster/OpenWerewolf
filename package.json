@@ -21,7 +21,7 @@
     "express-session": "^1.15.6",
     "grawlix": "^1.0.6",
     "mysql": "^2.16.0",
-    "nodemailer": "^4.6.8",
+    "nodemailer": "^6.4.16",
     "pixi.js": "^4.8.5",
     "pug": "^2.0.3",
     "react": "^16.7.0",
