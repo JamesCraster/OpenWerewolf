@@ -17,7 +17,7 @@
     "bcrypt": "^3.0.2",
     "connect-redis": "^3.4.0",
     "csstype": "^2.6.1",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "express-session": "^1.15.6",
     "grawlix": "^1.0.6",
     "mysql": "^2.16.0",
