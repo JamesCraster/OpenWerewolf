@@ -33,17 +33,17 @@
     "simplebar": "^3.0.0-beta.5",
     "socket.io": "^2.1.1",
     "systemjs": "^3.0.0",
-    "ts-loader": "^5.3.3",
+    "ts-loader": "^9.4.2",
     "typescript": "^3.2.2",
     "webfontloader": "^1.6.28",
-    "webpack": "^4.29.0"
+    "webpack": "^5.75.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.11",
     "jest": "^24.7.1",
     "mocha": "^5.2.0",
     "ts-jest": "^24.0.1",
-    "webpack-cli": "^3.3.0"
+    "webpack-cli": "^5.0.1"
   },
   "scripts": {
     "test": "jest --silent --verbose",
